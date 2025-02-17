@@ -1,0 +1,11 @@
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\bin\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.deps.json
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\bin\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\bin\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.AssemblyInfoInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.AssemblyInfo.cs
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.csproj.CoreCompileInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\refint\PssFunctionApp.Reponsitory.Interfaces.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\PssFunctionApp.Reponsitory.Interfaces.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory.Interfaces\obj\Release\net8.0\ref\PssFunctionApp.Reponsitory.Interfaces.dll

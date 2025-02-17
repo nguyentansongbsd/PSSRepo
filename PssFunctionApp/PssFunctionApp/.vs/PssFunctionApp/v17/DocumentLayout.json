@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8C8A5F70-4D02-4C3B-BB2F-0A4662E500EB}|PssFunctionApp\\PssFunctionApp.csproj|c:\\users\\ngsong\\desktop\\disk_d\\c\u00F4ng vi\u1EC7c\\actionpss\\pssfunctionapp\\pssfunctionapp\\pssfunctionapp\\getimages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C8A5F70-4D02-4C3B-BB2F-0A4662E500EB}|PssFunctionApp\\PssFunctionApp.csproj|solutionrelative:pssfunctionapp\\getimages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{027012B0-5D91-4F1D-8B3D-497248E0F017}|PssFunctionApp.Reponsitory.Interfaces\\PssFunctionApp.Reponsitory.Interfaces.csproj|c:\\users\\ngsong\\desktop\\disk_d\\c\u00F4ng vi\u1EC7c\\actionpss\\pssfunctionapp\\pssfunctionapp\\pssfunctionapp.reponsitory.interfaces\\iunitreponsitory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{027012B0-5D91-4F1D-8B3D-497248E0F017}|PssFunctionApp.Reponsitory.Interfaces\\PssFunctionApp.Reponsitory.Interfaces.csproj|solutionrelative:pssfunctionapp.reponsitory.interfaces\\iunitreponsitory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{59E7286B-DCCB-484C-947A-21549802BAA1}|PssFunctionApp.Reponsitory\\PssFunctionApp.Reponsitory.csproj|c:\\users\\ngsong\\desktop\\disk_d\\c\u00F4ng vi\u1EC7c\\actionpss\\pssfunctionapp\\pssfunctionapp\\pssfunctionapp.reponsitory\\unitreponsitory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{59E7286B-DCCB-484C-947A-21549802BAA1}|PssFunctionApp.Reponsitory\\PssFunctionApp.Reponsitory.csproj|solutionrelative:pssfunctionapp.reponsitory\\unitreponsitory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IUnitReponsitory.cs",
+              "DocumentMoniker": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp.Reponsitory.Interfaces\\IUnitReponsitory.cs",
+              "RelativeDocumentMoniker": "PssFunctionApp.Reponsitory.Interfaces\\IUnitReponsitory.cs",
+              "ToolTip": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp.Reponsitory.Interfaces\\IUnitReponsitory.cs",
+              "RelativeToolTip": "PssFunctionApp.Reponsitory.Interfaces\\IUnitReponsitory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-13T03:40:56.369Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UnitReponsitory.cs",
+              "DocumentMoniker": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp.Reponsitory\\UnitReponsitory.cs",
+              "RelativeDocumentMoniker": "PssFunctionApp.Reponsitory\\UnitReponsitory.cs",
+              "ToolTip": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp.Reponsitory\\UnitReponsitory.cs",
+              "RelativeToolTip": "PssFunctionApp.Reponsitory\\UnitReponsitory.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAwwBMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-13T04:05:05.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "GetImages.cs",
+              "DocumentMoniker": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp\\GetImages.cs",
+              "RelativeDocumentMoniker": "PssFunctionApp\\GetImages.cs",
+              "ToolTip": "C:\\Users\\NgSong\\Desktop\\Disk_D\\C\u00F4ng vi\u1EC7c\\ActionPSS\\PssFunctionApp\\PssFunctionApp\\PssFunctionApp\\GetImages.cs",
+              "RelativeToolTip": "PssFunctionApp\\GetImages.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAgwC0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-11T07:50:21.334Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

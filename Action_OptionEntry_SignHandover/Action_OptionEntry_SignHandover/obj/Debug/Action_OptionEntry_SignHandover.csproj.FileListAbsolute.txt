@@ -1,0 +1,11 @@
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Action_OptionEntry_SignHandover.dll
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Action_OptionEntry_SignHandover.pdb
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Microsoft.Xrm.Sdk.dll
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\bin\Debug\Microsoft.Xrm.Sdk.xml
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\obj\Debug\Action_OptionEntry_SignHandover.csproj.AssemblyReference.cache
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\obj\Debug\Action_OptionEntry_SignHandover.csproj.CoreCompileInputs.cache
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\obj\Debug\Action_OptionEntry_SignHandover.csproj.CopyComplete
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\obj\Debug\Action_OptionEntry_SignHandover.dll
+D:\Công việc\ActionPSS\Action_OptionEntry_SignHandover\Action_OptionEntry_SignHandover\obj\Debug\Action_OptionEntry_SignHandover.pdb

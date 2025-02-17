@@ -1,0 +1,17 @@
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Reponsitory.deps.json
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Reponsitory.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Reponsitory.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.AssemblyInfoInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.AssemblyInfo.cs
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.csproj.CoreCompileInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\refint\PssFunctionApp.Reponsitory.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\ref\PssFunctionApp.Reponsitory.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Entities.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Reponsitory.Interfaces.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Reponsitory.Interfaces.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\bin\Debug\net8.0\PssFunctionApp.Entities.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunctionApp.Reponsitory.csproj.AssemblyReference.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PssFunctionApp\PssFunctionApp\PssFunctionApp.Reponsitory\obj\Debug\net8.0\PssFunct.ED23685D.Up2Date

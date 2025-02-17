@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34729.46
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "HWL_SPA_05_VN_2005", "HWL_SPA_05_VN_2005\HWL_SPA_05_VN_2005.rptproj", "{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Debug|Default.ActiveCfg = Debug
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Debug|Default.Build.0 = Debug
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Debug|Default.Deploy.0 = Debug
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.DebugLocal|Default.Build.0 = DebugLocal
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Release|Default.ActiveCfg = Release
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Release|Default.Build.0 = Release
+		{F767F5AE-C603-497D-8A0F-8CF171F0FFF3}.Release|Default.Deploy.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8559BC7C-F3C7-4FC6-9C31-AA0F9F8B4384}
+	EndGlobalSection
+EndGlobal

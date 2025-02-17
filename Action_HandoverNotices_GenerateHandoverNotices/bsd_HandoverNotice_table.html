@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            padding: 0px;
+            margin: 0px;
+            font-family: Segoe UI, Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        #page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        .button {
+            display: block;
+            line-height: 25px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #B1D6F0;
+            border: 1px solid #0094ff;
+        }
+
+
+        .textArea {
+            width: 100%;
+            height: 150px;
+            box-sizing: border-box;
+            margin: 5px 0 5px 0;
+        }
+
+        .noti {
+            font-size: 16px;
+            margin: 0 0 0 10px;
+        }
+
+        .container {
+            height: 150px;
+            padding: 30px 10px 0px 25%;
+            overflow: auto;
+        }
+
+        .lableradio {
+            display: block;
+            padding: 5px 0px 5px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <select name="r" style="font-size:24px;">
+            <option value="r62">Import R62</option>
+            <option value="r49">Import R49</option>
+        </select>
+    </div>
+    <div style="display: block; padding: 5px 20px 5px 20px; position: relative; background-color: #f8f8f8;">
+        <a id="okBtn" class="button" style="margin-left:10px" onclick="chao();">OK</a>
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">
+            function chao() {
+                window.top.UploadFile();
+                window.close();
+            }
+    </script>
+</body>
+</html>

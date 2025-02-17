@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="select2.css" />
+    <script type="text/javascript" src="jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="jquery.blockUI.js"></script>
+    <script type="text/javascript" src="sdk.metadata.js"></script>
+    <script type="text/javascript" src="select2.min.js"></script>
+    <script type="text/javascript" src="CrmFetchKit.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe\000020UI,Tahoma,Arial;
+            font-size: 11px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function (doc) {
+            $("#e9").select2();
+        });
+
+
+        function InitRowEntity(callback) {
+            var style = document.getElementById("select2css");
+            if (style == null) {
+                style = document.createElement("link");
+                style.rel = "stylesheet";
+                style.type = "text/css";
+                style.href = "webresources/bsd_select2.css";
+                document.head.appendChild(style);
+            }
+            var entityRow = document.getElementById("entityrow");
+            if (entityRow == null) {
+                entityRow = document.createElement("tr");
+                entityRow.id = "entityrow";
+                var targetRow = document.getElementById("bsd_name_c").parentElement;
+                $(entityRow).insertAfter($(targetRow));
+                var entityRowContent = [];
+                entityRowContent.push('<td class="ms-crm-ReadField-Normal ms-crm-FieldLabel-LeftAlign" id="bsd_entity_c" title="Select entity.">');
+                entityRowContent.push('<span class="ms-crm-InlineEditLabel">');
+                entityRowContent.push('<span class="ms-crm-InlineEditLabelText" style="max-width:105px;text-align:Left;">Entity</span>');
+                entityRowContent.push('<img alt="Required" src="/_imgs/imagestrips/transparent_spacer.gif?ver=-1043241157" class="ms-crm-ImageStrip-frm_required ms-crm-Inline-RequiredLevel">');
+                entityRowContent.push('</span>');
+                entityRowContent.push('</td>');
+                entityRowContent.push('<td class="ms-crm-Field-Data-Print" id="bsd_entity_d" style="padding-left:23px;"><div style="display:block;"><select id="selectEntity" style="width:100%"><option value="">Select Entity</option></select></div></td>');
+
+                entityRowContent.push('<td class="ms-crm-ReadField-Normal ms-crm-FieldLabel-LeftAlign" id="bsd_fieldname_c" title="Field">');
+                entityRowContent.push('<span class="ms-crm-InlineEditLabel">');
+                entityRowContent.push('<span class="ms-crm-InlineEditLabelText" style="max-width:105px;text-align:Left;">Field</span>');
+                entityRowContent.push('<img alt="Required" src="/_imgs/imagestrips/transparent_spacer.gif?ver=-1043241157" class="ms-crm-ImageStrip-frm_required ms-crm-Inline-RequiredLevel">');
+                entityRowContent.push('</span>');
+                entityRowContent.push('</td>');
+
+                entityRowContent.push('<td class="ms-crm-Field-Data-Print" id="bsd_fieldname_d" style="padding-left:23px;">');
+                entityRowContent.push('<div style="display:block;"><select id="selectField" style="width:99%"><option value="">Select field</option></select></div>');
+                entityRowContent.push('</td>');
+
+                entityRowContent.push('<td class="ms-crm-Field-Data-Print" colspan="2"><div class="ms-crm-Field-Data-Print" data-height="24" colspan="2"></div></td>');
+                entityRow.innerHTML = entityRowContent.join('');
+                var tds = $(entityRow).children("td");
+                if (callback != null)
+                    callback(tds[1].firstElementChild.firstElementChild, tds[3].firstElementChild.firstElementChild);
+            }
+            else {
+                var tds = $(entityRow).children("td");
+                if (callback != null)
+                    callback(tds.eq(1).children("div:first").children('select:first')[0], tds.eq(3).children("div:first").children('select:first')[0]);
+            }
+        }
+
+        function RetrieveEntities(select, callback) {
+            select = document.createElement("select");
+            select.innerHTML = "";
+            SDK.Metadata.RetrieveAllEntities(1, false, function (ents) {
+                var opts = '<option value="" selected="selected">Select entity</option>';
+                var opt = document.createElement("option");
+                opt.innerHTML = "Select entity";
+                opt.value = "";
+                select.appendChild(opt);
+                var len = ents.length;
+                for (var i = 0; i < len; i++) {
+                    if (ents[i].IsCustomizable != null && ents[i].IsCustomizable.Value == true && ents[i].OwnershipType != null && ents[i].OwnershipType != 'None') {
+                        obj = ents[i];
+                        var o = document.createElement("option");
+                        o.innerHTML = obj.LogicalName;
+                        o.value = obj.MetadataId + "-" + obj.loadEntities;
+                        select.appendChild(o);
+                    }
+
+                }
+                if (callback != null)
+                    callback(select);
+            },
+            function (error) {
+                console.log("[RetrieveEntities]" + error.message);
+            });
+        }
+
+        function RetrieveFields(select, lname, eid, callback) {
+            //select = document.getElementById();
+            var dopt = document.createElement("option");
+            dopt.innerHTML = "Select field";
+            dopt.value = "";
+            select.appendChild(dopt);
+            SDK.Metadata.RetrieveEntity(2, lname, eid, false
+                    , function (rs) {
+                        var flen = rs.Attributes.length;
+                        for (i = 0; i < flen; i++) {
+                            var tmp = rs.Attributes[i];
+                            if (tmp.IsCustomizable != null
+                                && tmp.IsCustomizable.Value == true
+                                && tmp.DisplayName.LocalizedLabels[0] != null
+                                && ("[customer][virtual][status][owner][uniqueidentifier]").indexOf('[' + tmp.AttributeType.toLocaleLowerCase() + ']') < 0) {
+                                var obj = {
+                                    'label': tmp.DisplayName.LocalizedLabels[0].Label
+                                    , 'name': tmp.LogicalName
+                                    , 'sname': tmp.SchemaName
+                                    , 'type': tmp.AttributeType
+                                };
+                                opts += '<option value="{label:\'' + obj.label + '\',sname:\'' + obj.sname + '\',name:\'' + obj.name + '\',type:\'' + obj.type + '\'}">' + obj.label + '</option>';
+                                var opt = document.createElement("option");
+                                opt.innerHTML = obj.label;
+                                opt.value = obj.name + '&' + obj.type;
+                                select.appendChild(opt);
+                            }
+                        }
+                        if (callback != null)
+                            callback(select);
+                    }
+                    , function (err) {
+                        console.log("[RetrieveFields] " + err.message);
+                        if (callback != null)
+                            callback(select);
+                    });
+        }
+
+    </script>
+</head>
+<body>
+
+    <table>
+        <tr height="24">
+
+
+
+
+            
+        </tr>
+    </table>
+
+    <table width="400" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td width="200">
+                <select name="e9" id="e9" style="width:100%">
+                    <option value="{'label':'Khả năng thanh toán tài chính mark','name':'new_kntttcmark','sname':'new_kntttcmark','type':'Decimal'}">Khả năng thanh toán tài chính mark</option>
+                    <option value="{'label':'Trạng thái','name':'new_trangthai','sname':'new_trangthai','type':'Boolean'}">Trạng thái</option>
+                    <option value="{'label':'Nơi cấp','name':'new_noicap','sname':'new_noicap','type':'Lookup'}">Nơi cấp</option>
+                    <option value="{'label':'Cư trú','name':'address1_county','sname':'Address1_County','type':'String'}">Cư trú</option>
+                    <option value="{'label':'Dư nợ (Base)','name':'new_duno_base','sname':'new_duno_Base','type':'Money'}">Dư nợ (Base)</option>
+                    <option value="{'label':'Thời gian tại nơi cư trú','name':'new_thoigiancutru','sname':'new_thoigiancutru','type':'Picklist'}">Thời gian tại nơi cư trú</option>
+                    <option value="{'label':'Address 3: UTC Offset','name':'address3_utcoffset','sname':'Address3_UTCOffset','type':'Integer'}">Address 3: UTC Offset</option>
+                    <option value="{'label':'Record Created On','name':'overriddencreatedon','sname':'OverriddenCreatedOn','type':'DateTime'}">Record Created On</option>
+                    <option value="{'label':'Phân khúc khách hàng','name':'new_phankhuckh','sname':'new_phankhuckh','type':'Picklist'}">Phân khúc khách hàng</option>
+                    <option value="{'label':'product checked','name':'new_productchecked','sname':'new_productchecked','type':'String'}">product checked</option>
+                    <option value="{'label':'Department','name':'department','sname':'Department','type':'String'}">Department</option>
+                    <option value="{'label':'Has Children','name':'haschildrencode','sname':'HasChildrenCode','type':'Picklist'}">Has Children</option>
+                    <option value="{'label':'Back Office Customer','name':'isbackofficecustomer','sname':'IsBackofficeCustomer','type':'Boolean'}">Back Office Customer</option>
+                    <option value="{'label':'Chi nhánh','name':'new_lookupchinhanh','sname':'new_lookupchinhanh','type':'Lookup'}">Chi nhánh</option>
+                    <option value="{'label':'Address 1: Longitude','name':'address1_longitude','sname':'Address1_Longitude','type':'Double'}">Address 1: Longitude</option>
+                    <option value="{'label':'Use Phone','name':'new_usephone','sname':'new_UsePhone','type':'Boolean'}">Use Phone</option>
+                    <option value="{'label':'Manager','name':'managername','sname':'ManagerName','type':'String'}">Manager</option>
+                    <option value="{'label':'Home Phone','name':'telephone2','sname':'Telephone2','type':'String'}">Home Phone</option>
+                    <option value="{'label':'Nhân viên giới thiệu','name':'new_nhanviengioithieu','sname':'new_nhanviengioithieu','type':'Lookup'}">Nhân viên giới thiệu</option>
+                    <option value="{'label':'Address 2: UTC Offset','name':'address2_utcoffset','sname':'Address2_UTCOffset','type':'Integer'}">Address 2: UTC Offset</option>
+                    <option value="{'label':'Relationship Type','name':'customertypecode','sname':'CustomerTypeCode','type':'Picklist'}">Relationship Type</option>
+                    <option value="{'label':'Address 1: UPS Zone','name':'address1_upszone','sname':'Address1_UPSZone','type':'String'}">Address 1: UPS Zone</option>
+                    <option value="{'label':'Address 1: Freight Terms','name':'address1_freighttermscode','sname':'Address1_FreightTermsCode','type':'Picklist'}">Address 1: Freight Terms</option>
+                    <option value="{'label':'Import Sequence Number','name':'importsequencenumber','sname':'ImportSequenceNumber','type':'Integer'}">Import Sequence Number</option>
+                    <option value="{'label':'Giới tính','name':'gendercode','sname':'GenderCode','type':'Picklist'}">Giới tính</option>
+                    <option value="{'label':'Do not allow Mails','name':'donotpostalmail','sname':'DoNotPostalMail','type':'Boolean'}">Do not allow Mails</option>
+                    <option value="{'label':'Tổng giá trị tài khoản (Last Updated On)','name':'new_tonggttaikhoan_date','sname':'new_Tonggttaikhoan_Date','type':'DateTime'}">Tổng giá trị tài khoản (Last Updated On)</option>
+                    <option value="{'label':'Khả năng cho vay','name':'new_khanangchovay','sname':'new_khanangchovay','type':'Money'}">Khả năng cho vay</option>
+                    <option value="{'label':'Address 1: Address Type','name':'address1_addresstypecode','sname':'Address1_AddressTypeCode','type':'Picklist'}">Address 1: Address Type</option>
+                    <option value="{'label':'Phường ( Thường trú )','name':'new_phuong1','sname':'new_phuong1','type':'String'}">Phường ( Thường trú )</option>
+                    <option value="{'label':'Phường ( Khác )','name':'new_phuong2','sname':'new_phuong2','type':'String'}">Phường ( Khác )</option>
+                    <option value="{'label':'Telephone 3','name':'telephone3','sname':'Telephone3','type':'String'}">Telephone 3</option>
+                    <option value="{'label':'Address 1: Phone','name':'address1_telephone1','sname':'Address1_Telephone1','type':'String'}">Address 1: Phone</option>
+                    <option value="{'label':'Address 1: Telephone 2','name':'address1_telephone2','sname':'Address1_Telephone2','type':'String'}">Address 1: Telephone 2</option>
+                    <option value="{'label':'Address 1: Telephone 3','name':'address1_telephone3','sname':'Address1_Telephone3','type':'String'}">Address 1: Telephone 3</option>
+                    <option value="{'label':'Address 1: Fax','name':'address1_fax','sname':'Address1_Fax','type':'String'}">Address 1: Fax</option>
+                    <option value="{'label':'Address 2: UPS Zone','name':'address2_upszone','sname':'Address2_UPSZone','type':'String'}">Address 2: UPS Zone</option>
+                    <option value="{'label':'Address 3: Telephone2','name':'address3_telephone2','sname':'Address3_Telephone2','type':'String'}">Address 3: Telephone2</option>
+                    <option value="{'label':'Address 3: Telephone3','name':'address3_telephone3','sname':'Address3_Telephone3','type':'String'}">Address 3: Telephone3</option>
+                    <option value="{'label':'Fax','name':'fax','sname':'Fax','type':'String'}">Fax</option>
+                    <option value="{'label':'Assistant','name':'assistantname','sname':'AssistantName','type':'String'}">Assistant</option>
+                    <option value="{'label':'Address 2: Street 3','name':'address2_line3','sname':'Address2_Line3','type':'String'}">Address 2: Street 3</option>
+                    <option value="{'label':'Tổng giá trị sổ tiết kiệm','name':'new_tonggiatristk','sname':'new_tonggiatristk','type':'Money'}">Tổng giá trị sổ tiết kiệm</option>
+                    <option value="{'label':'Tổng giá trị nhà','name':'new_tonggiatrinha','sname':'new_tonggiatrinha','type':'Money'}">Tổng giá trị nhà</option>
+                    <option value="{'label':'Owning Business Unit','name':'owningbusinessunit','sname':'OwningBusinessUnit','type':'Lookup'}">Owning Business Unit</option>
+                    <option value="{'label':'Tran ID T24','name':'new_transid','sname':'new_transid','type':'Integer'}">Tran ID T24</option>
+                    <option value="{'label':'GB Tên đầy đủ','name':'fullname','sname':'FullName','type':'String'}">GB Tên đầy đủ</option>
+                    <option value="{'label':'Address 2: Longitude','name':'address2_longitude','sname':'Address2_Longitude','type':'Double'}">Address 2: Longitude</option>
+                    <option value="{'label':'tonggiatritaisankhac (Base)','name':'new_tonggiatritaisankhac_base','sname':'new_tonggiatritaisankhac_Base','type':'Money'}">tonggiatritaisankhac (Base)</option>
+                    <option value="{'label':'Ngày cập nhật','name':'new_ngaycapnhat','sname':'new_ngaycapnhat','type':'DateTime'}">Ngày cập nhật</option>
+                    <option value="{'label':'Address 1: Latitude','name':'address1_latitude','sname':'Address1_Latitude','type':'Double'}">Address 1: Latitude</option>
+                    <option value="{'label':'Aging 30','name':'aging30','sname':'Aging30','type':'Money'}">Aging 30</option>
+                    <option value="{'label':'Tổng giá trị tài khoản','name':'new_tonggttaikhoan','sname':'new_Tonggttaikhoan','type':'Money'}">Tổng giá trị tài khoản</option>
+                    <option value="{'label':'Last Date Included in Campaign','name':'lastusedincampaign','sname':'LastUsedInCampaign','type':'DateTime'}">Last Date Included in Campaign</option>
+                    <option value="{'label':'Xếp hạng','name':'new_xephang','sname':'new_xephang','type':'String'}">Xếp hạng</option>
+                    <option value="{'label':'Address 3: Fax','name':'address3_fax','sname':'Address3_Fax','type':'String'}">Address 3: Fax</option>
+                    <option value="{'label':'Shipping Method','name':'shippingmethodcode','sname':'ShippingMethodCode','type':'Picklist'}">Shipping Method</option>
+                    <option value="{'label':'Tình trạng KH','name':'new_tinhtrangkh','sname':'new_tinhtrangkh','type':'String'}">Tình trạng KH</option>
+                    <option value="{'label':'Address 2: Telephone 1','name':'address2_telephone1','sname':'Address2_Telephone1','type':'String'}">Address 2: Telephone 1</option>
+                    <option value="{'label':'Preferred Time','name':'preferredappointmenttimecode','sname':'PreferredAppointmentTimeCode','type':'Picklist'}">Preferred Time</option>
+                    <option value="{'label':'Credit Limit (Base)','name':'creditlimit_base','sname':'CreditLimit_Base','type':'Money'}">Credit Limit (Base)</option>
+                    <option value="{'label':'Preferred Service','name':'preferredserviceid','sname':'PreferredServiceId','type':'Lookup'}">Preferred Service</option>
+                    <option value="{'label':'Pager','name':'pager','sname':'Pager','type':'String'}">Pager</option>
+                    <option value="{'label':'Salutation','name':'salutation','sname':'Salutation','type':'String'}">Salutation</option>
+                    <option value="{'label':'Address 2: City','name':'address2_city','sname':'Address2_City','type':'String'}">Address 2: City</option>
+                    <option value="{'label':'Nơi cấp Passport','name':'new_noicappassport','sname':'new_noicappassport','type':'Lookup'}">Nơi cấp Passport</option>
+                    <option value="{'label':'Số người phụ thuộc','name':'new_songuoiphuthuoc','sname':'new_songuoiphuthuoc','type':'Integer'}">Số người phụ thuộc</option>
+                    <option value="{'label':'Tong gt tai san (State)','name':'new_tonggttaisan_state','sname':'new_Tonggttaisan_State','type':'Integer'}">Tong gt tai san (State)</option>
+                    <option value="{'label':'Address3: ZIP/Postal Code','name':'address3_postalcode','sname':'Address3_PostalCode','type':'String'}">Address3: ZIP/Postal Code</option>
+                    <option value="{'label':'Address 2: Street 2','name':'address2_line2','sname':'Address2_Line2','type':'String'}">Address 2: Street 2</option>
+                    <option value="{'label':'Aging 60','name':'aging60','sname':'Aging60','type':'Money'}">Aging 60</option>
+                    <option value="{'label':'Tong gt tai san (Last Updated On)','name':'new_tonggttaisan_date','sname':'new_Tonggttaisan_Date','type':'DateTime'}">Tong gt tai san (Last Updated On)</option>
+                    <option value="{'label':'Danh xưng','name':'new_danhxung','sname':'new_danhxung','type':'Picklist'}">Danh xưng</option>
+                    <option value="{'label':'Aging 90','name':'aging90','sname':'Aging90','type':'Money'}">Aging 90</option>
+                    <option value="{'label':'Tình trạng liên hệ','name':'new_tinhtranglienhe','sname':'new_tinhtranglienhe','type':'Picklist'}">Tình trạng liên hệ</option>
+                    <option value="{'label':'Tổng giá trị đắt (Base)','name':'new_tonggiatridat_base','sname':'new_tonggiatridat_Base','type':'Money'}">Tổng giá trị đắt (Base)</option>
+                    <option value="{'label':'Address 3: UPS Zone','name':'address3_upszone','sname':'Address3_UPSZone','type':'String'}">Address 3: UPS Zone</option>
+                    <option value="{'label':'Address 3: County','name':'address3_county','sname':'Address3_County','type':'String'}">Address 3: County</option>
+                    <option value="{'label':'Government','name':'governmentid','sname':'GovernmentId','type':'String'}">Government</option>
+                    <option value="{'label':'Assest Mark','name':'new_assestmark','sname':'new_assestmark','type':'Decimal'}">Assest Mark</option>
+                    <option value="{'label':'Callback Number','name':'callback','sname':'Callback','type':'String'}">Callback Number</option>
+                    <option value="{'label':'Ngày cấp','name':'new_ngaycap','sname':'new_ngaycap','type':'DateTime'}">Ngày cấp</option>
+                    <option value="{'label':'Mobile banking','name':'new_mobilebanking','sname':'new_Mobilebanking','type':'Boolean'}">Mobile banking</option>
+                    <option value="{'label':'Parent Contact','name':'parentcontactid','sname':'ParentContactId','type':'Lookup'}">Parent Contact</option>
+                    <option value="{'label':'Address 2: Freight Terms','name':'address2_freighttermscode','sname':'Address2_FreightTermsCode','type':'Picklist'}">Address 2: Freight Terms</option>
+                    <option value="{'label':'Payment Terms','name':'paymenttermscode','sname':'PaymentTermsCode','type':'Picklist'}">Payment Terms</option>
+                    <option value="{'label':'Tổng giá trị tài khoản (Base)','name':'new_tonggttaikhoan_base','sname':'new_tonggttaikhoan_Base','type':'Money'}">Tổng giá trị tài khoản (Base)</option>
+                    <option value="{'label':'Business Phone 2','name':'business2','sname':'Business2','type':'String'}">Business Phone 2</option>
+                    <option value="{'label':'Tổng tiền vay (Base)','name':'new_tongtienvay_base','sname':'new_tongtienvay_Base','type':'Money'}">Tổng tiền vay (Base)</option>
+                    <option value="{'label':'Primary bank account','name':'new_primarybankaccount','sname':'new_Primarybankaccount','type':'Lookup'}">Primary bank account</option>
+                    <option value="{'label':'Currency','name':'transactioncurrencyid','sname':'TransactionCurrencyId','type':'Lookup'}">Currency</option>
+                    <option value="{'label':'Yomi Full Name','name':'yomifullname','sname':'YomiFullName','type':'String'}">Yomi Full Name</option>
+                    <option value="{'label':'Address 2: Telephone 2','name':'address2_telephone2','sname':'Address2_Telephone2','type':'String'}">Address 2: Telephone 2</option>
+                    <option value="{'label':'Ngành nghề','name':'new_nganhnghe','sname':'new_nganhnghe','type':'Lookup'}">Ngành nghề</option>
+                    <option value="{'label':'Description','name':'description','sname':'Description','type':'Memo'}">Description</option>
+                    <option value="{'label':'Chữ ký','name':'new_chuky','sname':'new_chuky','type':'String'}">Chữ ký</option>
+                    <option value="{'label':'Loại hình','name':'new_loaihinh','sname':'new_loaihinh','type':'Picklist'}">Loại hình</option>
+                    <option value="{'label':'Address 2: ZIP/Postal Code','name':'address2_postalcode','sname':'Address2_PostalCode','type':'String'}">Address 2: ZIP/Postal Code</option>
+                    <option value="{'label':'Ngày sinh','name':'birthdate','sname':'BirthDate','type':'DateTime'}">Ngày sinh</option>
+                    <option value="{'label':'Spouse/Partner Name','name':'spousesname','sname':'SpousesName','type':'String'}">Spouse/Partner Name</option>
+                    <option value="{'label':'ngayhethan','name':'new_ngayhethan','sname':'new_ngayhethan','type':'DateTime'}">ngayhethan</option>
+                    <option value="{'label':'Address 1: UTC Offset','name':'address1_utcoffset','sname':'Address1_UTCOffset','type':'Integer'}">Address 1: UTC Offset</option>
+                    <option value="{'label':'Yomi Middle Name','name':'yomimiddlename','sname':'YomiMiddleName','type':'String'}">Yomi Middle Name</option>
+                    <option value="{'label':'Traversed Path','name':'traversedpath','sname':'TraversedPath','type':'String'}">Traversed Path</option>
+                    <option value="{'label':'Exchange Rate','name':'exchangerate','sname':'ExchangeRate','type':'Decimal'}">Exchange Rate</option>
+                    <option value="{'label':'Quận huyện khác','name':'new_quanhuyennew2','sname':'new_quanhuyennew2','type':'Lookup'}">Quận huyện khác</option>
+                    <option value="{'label':'Address 1: Street 3','name':'address1_line3','sname':'Address1_Line3','type':'String'}">Address 1: Street 3</option>
+                    <option value="{'label':'Address3: Country/Region','name':'address3_country','sname':'Address3_Country','type':'String'}">Address3: Country/Region</option>
+                    <option value="{'label':'Số ĐTDĐ 2','name':'new_sodtdd','sname':'new_Sodtdd','type':'String'}">Số ĐTDĐ 2</option>
+                    <option value="{'label':'Address 3: Telephone1','name':'address3_telephone1','sname':'Address3_Telephone1','type':'String'}">Address 3: Telephone1</option>
+                    <option value="{'label':'Quận/ Huyện (Thường trú)','name':'new_quanhuyennew1','sname':'new_quanhuyennew1','type':'Lookup'}">Quận/ Huyện (Thường trú)</option>
+                    <option value="{'label':'Trình độ học vấn','name':'new_trinhdohocvan','sname':'new_trinhdohocvan','type':'Picklist'}">Trình độ học vấn</option>
+                    <option value="{'label':'Role','name':'accountrolecode','sname':'AccountRoleCode','type':'Picklist'}">Role</option>
+                    <option value="{'label':'Middle Name','name':'middlename','sname':'MiddleName','type':'String'}">Middle Name</option>
+                    <option value="{'label':'Manager Phone','name':'managerphone','sname':'ManagerPhone','type':'String'}">Manager Phone</option>
+                    <option value="{'label':'Address 2: State/Province','name':'address2_stateorprovince','sname':'Address2_StateOrProvince','type':'String'}">Address 2: State/Province</option>
+                    <option value="{'label':'Parent Customer','name':'parentcustomerid','sname':'ParentCustomerId','type':'Customer'}">Parent Customer</option>
+                    <option value="{'label':'Revenue (Base)','name':'new_revenue_base','sname':'new_revenue_Base','type':'Money'}">Revenue (Base)</option>
+                    <option value="{'label':'Children's Names','name':'childrensnames','sname':'ChildrensNames','type':'String'}">Children's Names</option>
+                    <option value="{'label':'Do not allow Bulk Mails','name':'donotbulkpostalmail','sname':'DoNotBulkPostalMail','type':'Boolean'}">Do not allow Bulk Mails</option>
+                    <option value="{'label':'Address 2: Name','name':'address2_name','sname':'Address2_Name','type':'String'}">Address 2: Name</option>
+                    <option value="{'label':'Address3: State/Province','name':'address3_stateorprovince','sname':'Address3_StateOrProvince','type':'String'}">Address3: State/Province</option>
+                    <option value="{'label':'Entity Image','name':'entityimage','sname':'EntityImage','type':'Virtual'}">Entity Image</option>
+                    <option value="{'label':'Address3: Street 1','name':'address3_line1','sname':'Address3_Line1','type':'String'}">Address3: Street 1</option>
+                    <option value="{'label':'Quận/Huyện ( Liên lạc )','name':'new_quanhuyennew','sname':'new_quanhuyennew','type':'Lookup'}">Quận/Huyện ( Liên lạc )</option>
+                    <option value="{'label':'Anniversary','name':'anniversary','sname':'Anniversary','type':'DateTime'}">Anniversary</option>
+                    <option value="{'label':'Khả năng thang toán tài chính','name':'new_khnngthanhtontichnh','sname':'new_Khnngthanhtontichnh','type':'Money'}">Khả năng thang toán tài chính</option>
+                    <option value="{'label':'Địa chỉ thường trú','name':'new_sonhaduong1','sname':'new_sonhaduong1','type':'String'}">Địa chỉ thường trú</option>
+                    <option value="{'label':'Send Marketing Materials','name':'donotsendmm','sname':'DoNotSendMM','type':'Boolean'}">Send Marketing Materials</option>
+                    <option value="{'label':'Do not allow Bulk Emails','name':'donotbulkemail','sname':'DoNotBulkEMail','type':'Boolean'}">Do not allow Bulk Emails</option>
+                    <option value="{'label':'Address 1: Primary Contact Name','name':'address1_primarycontactname','sname':'Address1_PrimaryContactName','type':'String'}">Address 1: Primary Contact Name</option>
+                    <option value="{'label':'Preferred User','name':'preferredsystemuserid','sname':'PreferredSystemUserId','type':'Lookup'}">Preferred User</option>
+                    <option value="{'label':'Điểm đánh giá','name':'new_diemdanhgia','sname':'new_diemdanhgia','type':'Decimal'}">Điểm đánh giá</option>
+                    <option value="{'label':'Ngôn ngữ','name':'new_ngonngu','sname':'new_ngonngu','type':'Picklist'}">Ngôn ngữ</option>
+                    <option value="{'label':'Home Phone 2','name':'home2','sname':'Home2','type':'String'}">Home Phone 2</option>
+                    <option value="{'label':'Address 1: Name','name':'address1_name','sname':'Address1_Name','type':'String'}">Address 1: Name</option>
+                    <option value="{'label':'Address 2: Telephone 3','name':'address2_telephone3','sname':'Address2_Telephone3','type':'String'}">Address 2: Telephone 3</option>
+                    <option value="{'label':'Phương thức nhận tiền','name':'new_phuongthucnhantien','sname':'new_phuongthucnhantien','type':'Picklist'}">Phương thức nhận tiền</option>
+                    <option value="{'label':'Chi nhánh 1','name':'new_chinhanh','sname':'new_chinhanh','type':'Lookup'}">Chi nhánh 1</option>
+                    <option value="{'label':'Address 3: Primary Contact Name','name':'address3_primarycontactname','sname':'Address3_PrimaryContactName','type':'String'}">Address 3: Primary Contact Name</option>
+                    <option value="{'label':'FTP Site','name':'ftpsiteurl','sname':'FtpSiteUrl','type':'String'}">FTP Site</option>
+                    <option value="{'label':'Address 1: ZIP/Postal Code','name':'address1_postalcode','sname':'Address1_PostalCode','type':'String'}">Address 1: ZIP/Postal Code</option>
+                    <option value="{'label':'Tổng giá trị xe (Base)','name':'new_tonggiatrixe_base','sname':'new_tonggiatrixe_Base','type':'Money'}">Tổng giá trị xe (Base)</option>
+                    <option value="{'label':'Address 3: Freight Terms','name':'address3_freighttermscode','sname':'Address3_FreightTermsCode','type':'Picklist'}">Address 3: Freight Terms</option>
+                    <option value="{'label':'Created On','name':'createdon','sname':'CreatedOn','type':'DateTime'}">Created On</option>
+                    <option value="{'label':'Originating Lead','name':'originatingleadid','sname':'OriginatingLeadId','type':'Lookup'}">Originating Lead</option>
+                    <option value="{'label':'Address 1: State/Province','name':'address1_stateorprovince','sname':'Address1_StateOrProvince','type':'String'}">Address 1: State/Province</option>
+                    <option value="{'label':'Aging 90 (Base)','name':'aging90_base','sname':'Aging90_Base','type':'Money'}">Aging 90 (Base)</option>
+                    <option value="{'label':'jobtitle','name':'jobtitle','sname':'JobTitle','type':'String'}">jobtitle</option>
+                    <option value="{'label':'Phân loại khách hàng','name':'new_phanloaikhachhang','sname':'new_phanloaikhachhang','type':'Picklist'}">Phân loại khách hàng</option>
+                    <option value="{'label':'Master ID','name':'masterid','sname':'MasterId','type':'Lookup'}">Master ID</option>
+                    <option value="{'label':'Annual Income (Base)','name':'annualincome_base','sname':'AnnualIncome_Base','type':'Money'}">Annual Income (Base)</option>
+                    <option value="{'label':'Giá trị','name':'new_giatri','sname':'new_giatri','type':'String'}">Giá trị</option>
+                    <option value="{'label':'Price List','name':'defaultpricelevelid','sname':'DefaultPriceLevelId','type':'Lookup'}">Price List</option>
+                    <option value="{'label':'Khả năng thang toán tài chính (Base)','name':'new_khnngthanhtontichnh_base','sname':'new_khnngthanhtontichnh_Base','type':'Money'}">Khả năng thang toán tài chính (Base)</option>
+                    <option value="{'label':'Loại khách hàng cá nhân save','name':'new_loaikhcanhansave','sname':'new_loaikhcanhansave','type':'String'}">Loại khách hàng cá nhân save</option>
+                    <option value="{'label':'Tong gt tai san (Base)','name':'new_tonggttaisan_base','sname':'new_tonggttaisan_Base','type':'Money'}">Tong gt tai san (Base)</option>
+                    <option value="{'label':'Khả năng cho vay mark','name':'new_kncvmark','sname':'new_kncvmark','type':'Decimal'}">Khả năng cho vay mark</option>
+                    <option value="{'label':'Thu nhận hàng tháng (Base)','name':'new_thunhaphangthang_base','sname':'new_thunhaphangthang_Base','type':'Money'}">Thu nhận hàng tháng (Base)</option>
+                    <option value="{'label':'Address 1: Shipping Method','name':'address1_shippingmethodcode','sname':'Address1_ShippingMethodCode','type':'Picklist'}">Address 1: Shipping Method</option>
+                    <option value="{'label':'Preferred Day','name':'preferredappointmentdaycode','sname':'PreferredAppointmentDayCode','type':'Picklist'}">Preferred Day</option>
+                    <option value="{'label':'Address 2: Fax','name':'address2_fax','sname':'Address2_Fax','type':'String'}">Address 2: Fax</option>
+                    <option value="{'label':'Tổng giá trị nhà (Base)','name':'new_tonggiatrinha_base','sname':'new_tonggiatrinha_Base','type':'Money'}">Tổng giá trị nhà (Base)</option>
+                    <option value="{'label':'Customer Size','name':'customersizecode','sname':'CustomerSizeCode','type':'Picklist'}">Customer Size</option>
+                    <option value="{'label':'Status','name':'statecode','sname':'StateCode','type':'State'}">Status</option>
+                    <option value="{'label':'Annual Income','name':'annualincome','sname':'AnnualIncome','type':'Money'}">Annual Income</option>
+                    <option value="{'label':'Status Reason','name':'statuscode','sname':'StatusCode','type':'Status'}">Status Reason</option>
+                    <option value="{'label':'Nguồn thu nhập','name':'new_nguonthunhap','sname':'new_nguonthunhap','type':'Picklist'}">Nguồn thu nhập</option>
+                    <option value="{'label':'Employee','name':'employeeid','sname':'EmployeeId','type':'String'}">Employee</option>
+                    <option value="{'label':'InfoMark','name':'new_infomark','sname':'new_infomark','type':'Decimal'}">InfoMark</option>
+                    <option value="{'label':'Address 1: Post Office Box','name':'address1_postofficebox','sname':'Address1_PostOfficeBox','type':'String'}">Address 1: Post Office Box</option>
+                    <option value="{'label':'Loại khách hàng cá nhân','name':'new_loaikhcanhan','sname':'new_loaikhcanhan','type':'Picklist'}">Loại khách hàng cá nhân</option>
+                    <option value="{'label':'Address 1: City','name':'address1_city','sname':'Address1_City','type':'String'}">Address 1: City</option>
+                    <option value="{'label':'Credit Limit','name':'creditlimit','sname':'CreditLimit','type':'Money'}">Credit Limit</option>
+                    <option value="{'label':'Time Zone Rule Version Number','name':'timezoneruleversionnumber','sname':'TimeZoneRuleVersionNumber','type':'Integer'}">Time Zone Rule Version Number</option>
+                    <option value="{'label':'Owning User','name':'owninguser','sname':'OwningUser','type':'Lookup'}">Owning User</option>
+                    <option value="{'label':'Ngày bắt đầu làm việc (Cty hiện nay)','name':'new_ngaybatdaulamviec','sname':'new_ngaybatdaulamviec','type':'DateTime'}">Ngày bắt đầu làm việc (Cty hiện nay)</option>
+                    <option value="{'label':'Preferred Method of Contact','name':'preferredcontactmethodcode','sname':'PreferredContactMethodCode','type':'Picklist'}">Preferred Method of Contact</option>
+                    <option value="{'label':'Lead Source','name':'leadsourcecode','sname':'LeadSourceCode','type':'Picklist'}">Lead Source</option>
+                    <option value="{'label':'CIF','name':'new_cifnumber','sname':'new_cifnumber','type':'String'}">CIF</option>
+                    <option value="{'label':'Tên không dấu','name':'new_tenkhongdau','sname':'new_tenkhongdau','type':'String'}">Tên không dấu</option>
+                    <option value="{'label':'Địa chỉ liên hệ (nếu khác)','name':'address2_line1','sname':'Address2_Line1','type':'String'}">Địa chỉ liên hệ (nếu khác)</option>
+                    <option value="{'label':'Dư nợ','name':'new_duno','sname':'new_duno','type':'Money'}">Dư nợ</option>
+                    <option value="{'label':'Address3: Street 2','name':'address3_line2','sname':'Address3_Line2','type':'String'}">Address3: Street 2</option>
+                    <option value="{'label':'Aging 60 (Base)','name':'aging60_base','sname':'Aging60_Base','type':'Money'}">Aging 60 (Base)</option>
+                    <option value="{'label':'Preferred Facility/Equipment','name':'preferredequipmentid','sname':'PreferredEquipmentId','type':'Lookup'}">Preferred Facility/Equipment</option>
+                    <option value="{'label':'Tong tien vay tien gui','name':'new_totalloanandeposit','sname':'new_totalloanandeposit','type':'Money'}">Tong tien vay tien gui</option>
+                    <option value="{'label':'Credit Hold','name':'creditonhold','sname':'CreditOnHold','type':'Boolean'}">Credit Hold</option>
+                    <option value="{'label':'Participates in Workflow','name':'participatesinworkflow','sname':'ParticipatesInWorkflow','type':'Boolean'}">Participates in Workflow</option>
+                    <option value="{'label':'Khu vực','name':'new_khuvuc','sname':'new_khuvuc','type':'Lookup'}">Khu vực</option>
+                    <option value="{'label':'Address 2: Post Office Box','name':'address2_postofficebox','sname':'Address2_PostOfficeBox','type':'String'}">Address 2: Post Office Box</option>
+                    <option value="{'label':'Email Address 3','name':'emailaddress3','sname':'EMailAddress3','type':'String'}">Email Address 3</option>
+                    <option value="{'label':'Email Address 2','name':'emailaddress2','sname':'EMailAddress2','type':'String'}">Email Address 2</option>
+                    <option value="{'label':'Email','name':'emailaddress1','sname':'EMailAddress1','type':'String'}">Email</option>
+                    <option value="{'label':'Tổng tiền gửi','name':'new_tongtiengui','sname':'new_tongtiengui','type':'Money'}">Tổng tiền gửi</option>
+                    <option value="{'label':'Tổng giá trị sổ tiết kiệm (Base)','name':'new_tonggiatristk_base','sname':'new_tonggiatristk_Base','type':'Money'}">Tổng giá trị sổ tiết kiệm (Base)</option>
+                    <option value="{'label':'Website','name':'websiteurl','sname':'WebSiteUrl','type':'String'}">Website</option>
+                    <option value="{'label':'Nickname','name':'nickname','sname':'NickName','type':'String'}">Nickname</option>
+                    <option value="{'label':'Tổng giá trị xe','name':'new_tonggiatrixe','sname':'new_tonggiatrixe','type':'Money'}">Tổng giá trị xe</option>
+                    <option value="{'label':'Address 3: Name','name':'address3_name','sname':'Address3_Name','type':'String'}">Address 3: Name</option>
+                    <option value="{'label':'Tên','name':'lastname','sname':'LastName','type':'String'}">Tên</option>
+                    <option value="{'label':'Address 3: Longitude','name':'address3_longitude','sname':'Address3_Longitude','type':'Double'}">Address 3: Longitude</option>
+                    <option value="{'label':'Tỉnh/ Thành ( Liên lạc )','name':'new_tinhthanhnew','sname':'new_tinhthanhnew','type':'Lookup'}">Tỉnh/ Thành ( Liên lạc )</option>
+                    <option value="{'label':'Use Email','name':'new_useemail','sname':'new_UseEmail','type':'Boolean'}">Use Email</option>
+                    <option value="{'label':'Loại cư trú','name':'new_loaicutru','sname':'new_loaicutru','type':'Picklist'}">Loại cư trú</option>
+                    <option value="{'label':'Merged','name':'merged','sname':'Merged','type':'Boolean'}">Merged</option>
+                    <option value="{'label':'Tong tien vay tien gui (Base)','name':'new_totalloanandeposit_base','sname':'new_totalloanandeposit_Base','type':'Money'}">Tong tien vay tien gui (Base)</option>
+                    <option value="{'label':'Address 3: Shipping Method','name':'address3_shippingmethodcode','sname':'Address3_ShippingMethodCode','type':'Picklist'}">Address 3: Shipping Method</option>
+                    <option value="{'label':'Nhân viên QLKH','name':'ownerid','sname':'OwnerId','type':'Owner'}">Nhân viên QLKH</option>
+                    <option value="{'label':'Tổng giá trị tài sản','name':'new_tonggttaisan','sname':'new_Tonggttaisan','type':'Money'}">Tổng giá trị tài sản</option>
+                    <option value="{'label':'Điện thoại nhà','name':'telephone1','sname':'Telephone1','type':'String'}">Điện thoại nhà</option>
+                    <option value="{'label':'Mục tiêu','name':'new_muctieu','sname':'new_muctieu','type':'String'}">Mục tiêu</option>
+                    <option value="{'label':'Address 2: Address Type','name':'address2_addresstypecode','sname':'Address2_AddressTypeCode','type':'Picklist'}">Address 2: Address Type</option>
+                    <option value="{'label':'Address 3: Post Office Box','name':'address3_postofficebox','sname':'Address3_PostOfficeBox','type':'String'}">Address 3: Post Office Box</option>
+                    <option value="{'label':'Modified By (Delegate)','name':'modifiedonbehalfby','sname':'ModifiedOnBehalfBy','type':'Lookup'}">Modified By (Delegate)</option>
+                    <option value="{'label':'Assistant Phone','name':'assistantphone','sname':'AssistantPhone','type':'String'}">Assistant Phone</option>
+                    <option value="{'label':'Contact segment mark','name':'new_contactsegmentmark','sname':'new_contactsegmentmark','type':'Decimal'}">Contact segment mark</option>
+                    <option value="{'label':'Address 1','name':'address1_composite','sname':'Address1_Composite','type':'Memo'}">Address 1</option>
+                    <option value="{'label':'Do not allow Faxes','name':'donotfax','sname':'DoNotFax','type':'Boolean'}">Do not allow Faxes</option>
+                    <option value="{'label':'Chức vụ','name':'new_chucvu','sname':'new_chucvu','type':'Picklist'}">Chức vụ</option>
+                    <option value="{'label':'Thu nhập hàng tháng','name':'new_thunhaphangthang','sname':'new_thunhaphangthang','type':'Money'}">Thu nhập hàng tháng</option>
+                    <option value="{'label':'Address3: Street 3','name':'address3_line3','sname':'Address3_Line3','type':'String'}">Address3: Street 3</option>
+                    <option value="{'label':'Address 2: Shipping Method','name':'address2_shippingmethodcode','sname':'Address2_ShippingMethodCode','type':'Picklist'}">Address 2: Shipping Method</option>
+                    <option value="{'label':'Address 2: Country/Region','name':'address2_country','sname':'Address2_Country','type':'String'}">Address 2: Country/Region</option>
+                    <option value="{'label':'Số điện thoại nơi làm việc','name':'new_sodtnoilamviec','sname':'new_sodtnoilamviec','type':'String'}">Số điện thoại nơi làm việc</option>
+                    <option value="{'label':'Số ĐTDĐ 1','name':'mobilephone','sname':'MobilePhone','type':'String'}">Số ĐTDĐ 1</option>
+                    <option value="{'label':'Địa chỉ khác','name':'address1_line1','sname':'Address1_Line1','type':'String'}">Địa chỉ khác</option>
+                    <option value="{'label':'Yomi First Name','name':'yomifirstname','sname':'YomiFirstName','type':'String'}">Yomi First Name</option>
+                    <option value="{'label':'Address 3: City','name':'address3_city','sname':'Address3_City','type':'String'}">Address 3: City</option>
+                    <option value="{'label':'Address 1: Country/Region','name':'address1_country','sname':'Address1_Country','type':'String'}">Address 1: Country/Region</option>
+                    <option value="{'label':'Phường ( Liên lạc )','name':'new_phuong','sname':'new_phuong','type':'String'}">Phường ( Liên lạc )</option>
+                    <option value="{'label':'External User Identifier','name':'externaluseridentifier','sname':'ExternalUserIdentifier','type':'String'}">External User Identifier</option>
+                    <option value="{'label':'Họ và tên đệm','name':'firstname','sname':'FirstName','type':'String'}">Họ và tên đệm</option>
+                    <option value="{'label':'Revenue','name':'new_revenue','sname':'new_revenue','type':'Money'}">Revenue</option>
+                    <option value="{'label':'Tỉnh/ Thành (Thường trú)','name':'new_tinhthanhnew1','sname':'new_tinhthanhnew1','type':'Lookup'}">Tỉnh/ Thành (Thường trú)</option>
+                    <option value="{'label':'Tỉnh thành khác','name':'new_tinhthanhnew2','sname':'new_tinhthanhnew2','type':'Lookup'}">Tỉnh thành khác</option>
+                    <option value="{'label':'Modified By','name':'modifiedby','sname':'ModifiedBy','type':'Lookup'}">Modified By</option>
+                    <option value="{'label':'Internet banking','name':'new_internetbanking','sname':'new_Internetbanking','type':'Boolean'}">Internet banking</option>
+                    <option value="{'label':'Đối tượng khách hàng','name':'new_loaikhachhang','sname':'new_loaikhachhang','type':'Lookup'}">Đối tượng khách hàng</option>
+                    <option value="{'label':'Do not allow Phone Calls','name':'donotphone','sname':'DoNotPhone','type':'Boolean'}">Do not allow Phone Calls</option>
+                    <option value="{'label':'Suffix','name':'suffix','sname':'Suffix','type':'String'}">Suffix</option>
+                    <option value="{'label':'Territory','name':'territorycode','sname':'TerritoryCode','type':'Picklist'}">Territory</option>
+                    <option value="{'label':'Tổng giá trị tài khoản (State)','name':'new_tonggttaikhoan_state','sname':'new_Tonggttaikhoan_State','type':'Integer'}">Tổng giá trị tài khoản (State)</option>
+                    <option value="{'label':'Address 2: Latitude','name':'address2_latitude','sname':'Address2_Latitude','type':'Double'}">Address 2: Latitude</option>
+                    <option value="{'label':'Address 3','name':'address3_composite','sname':'Address3_Composite','type':'Memo'}">Address 3</option>
+                    <option value="{'label':'Contact type mark','name':'new_contacttypemark','sname':'new_contacttypemark','type':'Decimal'}">Contact type mark</option>
+                    <option value="{'label':'Công ty','name':'new_congty','sname':'new_congty','type':'Lookup'}">Công ty</option>
+                    <option value="{'label':'Address 3: Address Type','name':'address3_addresstypecode','sname':'Address3_AddressTypeCode','type':'Picklist'}">Address 3: Address Type</option>
+                    <option value="{'label':'Aging 30 (Base)','name':'aging30_base','sname':'Aging30_Base','type':'Money'}">Aging 30 (Base)</option>
+                    <option value="{'label':'Quốc tịch','name':'new_quoctich','sname':'new_quoctich','type':'Lookup'}">Quốc tịch</option>
+                    <option value="{'label':'tonggiatritaisankhac','name':'new_tonggiatritaisankhac','sname':'new_tonggiatritaisankhac','type':'Money'}">tonggiatritaisankhac</option>
+                    <option value="{'label':'Khả năng cho vay (Base)','name':'new_khanangchovay_base','sname':'new_khanangchovay_Base','type':'Money'}">Khả năng cho vay (Base)</option>
+                    <option value="{'label':'Địa chỉ liên lạc','name':'new_sonhaduong','sname':'new_sonhaduong','type':'String'}">Địa chỉ liên lạc</option>
+                    <option value="{'label':'Tình trạng hôn nhân','name':'familystatuscode','sname':'FamilyStatusCode','type':'Picklist'}">Tình trạng hôn nhân</option>
+                    <option value="{'label':'UTC Conversion Time Zone Code','name':'utcconversiontimezonecode','sname':'UTCConversionTimeZoneCode','type':'Integer'}">UTC Conversion Time Zone Code</option>
+                    <option value="{'label':'Address 2: County','name':'address2_county','sname':'Address2_County','type':'String'}">Address 2: County</option>
+                    <option value="{'label':'Contact','name':'contactid','sname':'ContactId','type':'Uniqueidentifier'}">Contact</option>
+                    <option value="{'label':'Address 2: Primary Contact Name','name':'address2_primarycontactname','sname':'Address2_PrimaryContactName','type':'String'}">Address 2: Primary Contact Name</option>
+                    <option value="{'label':'Tổng tiền vay','name':'new_tongtienvay','sname':'new_tongtienvay','type':'Money'}">Tổng tiền vay</option>
+                    <option value="{'label':'Owning Team','name':'owningteam','sname':'OwningTeam','type':'Lookup'}">Owning Team</option>
+                    <option value="{'label':'Address 1: Street 2','name':'address1_line2','sname':'Address1_Line2','type':'String'}">Address 1: Street 2</option>
+                    <option value="{'label':'Ngày nhận sao kê','name':'new_ngaynhansaoke','sname':'new_ngaynhansaoke','type':'DateTime'}">Ngày nhận sao kê</option>
+                    <option value="{'label':'KeywordT24','name':'new_keywordt24','sname':'new_keywordt24','type':'String'}">KeywordT24</option>
+                    <option value="{'label':'Số điện thoại nơi làm việc (khác)','name':'new_sodtnoilamviec1','sname':'new_sodtnoilamviec1','type':'String'}">Số điện thoại nơi làm việc (khác)</option>
+                    <option value="{'label':'Auto-created','name':'isautocreate','sname':'IsAutoCreate','type':'Boolean'}">Auto-created</option>
+                    <option value="{'label':'Do not allow Emails','name':'donotemail','sname':'DoNotEMail','type':'Boolean'}">Do not allow Emails</option>
+                    <option value="{'label':'Yomi Last Name','name':'yomilastname','sname':'YomiLastName','type':'String'}">Yomi Last Name</option>
+                    <option value="{'label':'Education','name':'educationcode','sname':'EducationCode','type':'Picklist'}">Education</option>
+                    <option value="{'label':'Tổng tiền gửi (Base)','name':'new_tongtiengui_base','sname':'new_tongtiengui_Base','type':'Money'}">Tổng tiền gửi (Base)</option>
+                    <option value="{'label':'Modified On','name':'modifiedon','sname':'ModifiedOn','type':'DateTime'}">Modified On</option>
+                    <option value="{'label':'Khối quản lý','name':'new_khoiquanly','sname':'new_khoiquanly','type':'String'}">Khối quản lý</option>
+                    <option value="{'label':'Cư trú với','name':'new_cutruvoi','sname':'new_cutruvoi','type':'Picklist'}">Cư trú với</option>
+                    <option value="{'label':'Account','name':'accountid','sname':'AccountId','type':'Lookup'}">Account</option>
+                    <option value="{'label':'Company Phone','name':'company','sname':'Company','type':'String'}">Company Phone</option>
+                    <option value="{'label':'Trạng thái KH','name':'new_trangthaikh','sname':'new_trangthaikh','type':'Picklist'}">Trạng thái KH</option>
+                    <option value="{'label':'Created By (Delegate)','name':'createdonbehalfby','sname':'CreatedOnBehalfBy','type':'Lookup'}">Created By (Delegate)</option>
+                    <option value="{'label':'Loại giấy tờ','name':'new_loaigiayto','sname':'new_loaigiayto','type':'Picklist'}">Loại giấy tờ</option>
+                    <option value="{'label':'Address 2','name':'address2_composite','sname':'Address2_Composite','type':'Memo'}">Address 2</option>
+                    <option value="{'label':'Created By','name':'createdby','sname':'CreatedBy','type':'Lookup'}">Created By</option>
+                    <option value="{'label':'No. of Children','name':'numberofchildren','sname':'NumberOfChildren','type':'Integer'}">No. of Children</option>
+                    <option value="{'label':'Address 3: Latitude','name':'address3_latitude','sname':'Address3_Latitude','type':'Double'}">Address 3: Latitude</option>
+                    <option value="{'label':'Tình trạng nghề nghiệp','name':'new_tinhtrangnghenghiep','sname':'new_tinhtrangnghenghiep','type':'Picklist'}">Tình trạng nghề nghiệp</option>
+                    <option value="{'label':'Tổng giá trị đất','name':'new_tonggiatridat','sname':'new_tonggiatridat','type':'Money'}">Tổng giá trị đất</option>
+                    <option value="{'label':'Nhân viên hỗ trợ TD','name':'new_nhanvienhotrotd','sname':'new_nhanvienhotrotd','type':'Lookup'}">Nhân viên hỗ trợ TD</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+</body>
+</html>

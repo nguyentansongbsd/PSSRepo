@@ -1,0 +1,11 @@
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.dll
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.pdb
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.dll
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.xml
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.AssemblyReference.cache
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CoreCompileInputs.cache
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CopyComplete
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.dll
+D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.pdb

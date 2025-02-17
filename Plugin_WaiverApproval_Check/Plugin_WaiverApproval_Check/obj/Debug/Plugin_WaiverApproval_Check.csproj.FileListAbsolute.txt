@@ -1,0 +1,11 @@
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Plugin_WaiverApproval_Check.dll
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Plugin_WaiverApproval_Check.pdb
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\obj\Debug\Plugin_WaiverApproval_Check.csproj.AssemblyReference.cache
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\obj\Debug\Plugin_WaiverApproval_Check.csproj.CoreCompileInputs.cache
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\obj\Debug\Plugin_WaiverApproval_Check.csproj.CopyComplete
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\obj\Debug\Plugin_WaiverApproval_Check.dll
+C:\Users\dell\Downloads\PSS\Plugin_WaiverApproval_Check\Plugin_WaiverApproval_Check\obj\Debug\Plugin_WaiverApproval_Check.pdb

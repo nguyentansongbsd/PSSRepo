@@ -1,0 +1,11 @@
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\PLugin_UnitType_CheckUnitTypeCode.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\PLugin_UnitType_CheckUnitTypeCode.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\obj\Debug\PLugin_UnitType_CheckUnitTypeCode.csproj.AssemblyReference.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\obj\Debug\PLugin_UnitType_CheckUnitTypeCode.csproj.CoreCompileInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\obj\Debug\PLugin_UnitType_CheckUnitTypeCode.csproj.CopyComplete
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\obj\Debug\PLugin_UnitType_CheckUnitTypeCode.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\PLugin_UnitType_CheckUnitTypeCode\PLugin_UnitType_CheckUnitTypeCode\obj\Debug\PLugin_UnitType_CheckUnitTypeCode.pdb

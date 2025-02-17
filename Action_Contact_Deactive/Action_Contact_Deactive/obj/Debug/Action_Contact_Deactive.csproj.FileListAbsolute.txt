@@ -1,0 +1,11 @@
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Action_Contact_Deactive.dll
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Action_Contact_Deactive.pdb
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\obj\Debug\Action_Contact_Deactive.csproj.AssemblyReference.cache
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\obj\Debug\Action_Contact_Deactive.csproj.CoreCompileInputs.cache
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\obj\Debug\Action_Contact_Deactive.csproj.CopyComplete
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\obj\Debug\Action_Contact_Deactive.dll
+C:\Users\dell\Downloads\PSS\Action_Contact_Deactive\Action_Contact_Deactive\obj\Debug\Action_Contact_Deactive.pdb
