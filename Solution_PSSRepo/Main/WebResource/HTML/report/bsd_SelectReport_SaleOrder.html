@@ -1,0 +1,235 @@
+<html><head>
+    <title></title>
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.js"></script>
+    <script type="text/javascript" src="bsd_common.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            padding: 0px;
+            margin: 0px;
+            font-family: Segoe UI, Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        #page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        .button {
+            display: block;
+            line-height: 25px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;       
+            font-family: Segoe UI, Arial, sans-serif;
+        }
+
+        button:hover {
+            background-color: #B1D6F0;
+            border: 1px solid #0094ff;
+        }
+
+
+        .textArea {
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            margin: 5px 0 5px 0;
+        }
+
+        .noti {
+            font-size: 14px;
+            margin: 0 0 0 10px;
+        }
+
+        .container {
+            height: 239px;
+            padding: 0 10px 0 10px;
+            overflow: auto;
+        }
+
+        .lableradio {
+            display: block;
+            padding: 5px 0px 5px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+        .al {
+            font-family: 'Segoe UI';
+        }
+    </style>
+    <meta>
+<meta><meta><meta></head>
+<body style="word-wrap: break-word;" onfocusout="parent.setEmailRange();" data-new-gr-c-s-check-loaded="14.1052.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1052.0">
+    <div id="page-title" style="font-family: Segoe UI;">
+        <span style="text-align:center;display:block">Select Form</span>
+    </div>
+    <p class="noti" style="font-family: Segoe UI;"> Please select the template for printing:</p>
+    <div class="container" id="container" style="font-family: Segoe UI;">
+        <!--<label style='display:block;'><input type="radio" name="optradio">Option 1</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 2</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 3</label>-->
+    </div>
+    <div style="display: block; padding: 5px 20px; position: relative; background-color: rgb(248, 248, 248); font-family: undefined;">
+        <a id="okBtn" class="button" style="margin-left:20px;font-family: Segoe UI, Arial, sans-serif;" onclick="RunReport()">Print</a>
+
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">
+        //var reportID = null;
+        //var fileName = null;
+        var data = new Array();
+        var reportId = null;
+        var type = "";
+        debugger;
+        $(document).ready(function (doc) {        
+            var customernoticesId = common.getParameterByName("data");
+            var data_cus = getParameterByName("data");
+            data_cus = data_cus.split(",");
+            var entity = customernoticesId[1];
+            type = data_cus[data_cus.length-1];
+            //report list - chinh ten template hien thi
+            data.push({ value: "DF", text: "01_LUMI_Confirmation Letter_Ver01_24052024" }); //DEF
+            data.push({ value: "SENQ PREMR", text: "Senique_Total_Payment_Confirmation_SPA" }); //DEF
+            data.push({ value: "LUMI_TL_V1", text: "01_LUMI_Confirmation Letter_Ver01_24052024_TL" }); //DEF
+            data.push({ value: "LUMI_SPA", text: "LUMI_Total Payment Confirmation SPA" }); //DEF
+            switch (type) {
+                case 'sendemail':
+                    $('#okBtn').html('Preview');
+                    data.push({ value: "attachfile", text: "Send attach file" });
+
+                    break;
+                case 'Bulkcheckemail':
+                    $('#okBtn').html('Preview');
+                    data.push({ value: "attachfile", text: "Send attach file" });
+                    parent.$("h1[data-id='dialogTitleText']", parent.document).html("Bulk Check Send");
+                    break;
+                case 'Bulksendemail':
+                    $('#okBtn').html('Preview');
+                    data.push({ value: "attachfile", text: "Send attach file" });
+                    parent.$("h1[data-id='dialogTitleText']", parent.document).html("Bulk Send Mail");
+                    break;
+                case 'createfile':
+                    $('#okBtn').html('Create file');
+                    parent.$("h1[data-id='dialogTitleText']", parent.document).html("Create File PDF");
+                    break;
+                default:
+                    $('#btnCreateFile').hide();
+                    parent.$("h1[data-id='dialogTitleText']", parent.document).html("Bulk Print");
+            }
+            var container = document.getElementById("container");
+            for (var i = 0; i < data.length; i++) {
+                var radio1 = document.createElement('input');
+                radio1.id = 'myRadioId' + i.toString();
+                radio1.type = 'radio';
+                radio1.name = 'radioGroup';
+                radio1.value = data[i].value + "," + data[i].text;
+
+                var label1 = document.createElement('label');
+                label1.htmlFor = radio1.id;
+                label1.classList.add("lableradio");
+                label1.appendChild(radio1);
+                label1.appendChild(document.createTextNode(data[i].text));
+                $(label1).click(function (e) {
+                    var radio = this.firstElementChild;
+                    radio = radio.value.split(",");
+                    data.text = radio[1];
+                    reportId = radio[0];
+                });
+                container.appendChild(label1);
+            }
+        });
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        function RunReport() {
+            if (reportId) {
+                debugger;
+                var paratype = "type=print";
+                if (type != "") {
+                    paratype = "type=" + type;
+                }
+                var idrecord = common.getParameterByName("data").replace('{', '').replace('}', '');             
+                var nameReport = "Option Entry Form";
+                var urlreport;
+                switch (reportId) {
+                    // chọn case = value truyền vào ở trên
+					case "DF":
+                        urlreport = Xrm.Page.context.getClientUrl() + "/webresources/bsd_OptionEntryReport_GXN?" + paratype + "&data=" + idrecord;
+                        window.top.winpopup = window.open(urlreport, nameReport, "resizable=1,width=800,height=700");
+                        break;
+                    case "SENQ PREMR":
+                        urlreport = Xrm.Page.context.getClientUrl() + "/webresources/bsd_Senique_Total_Payment_Confirmation_SPA?" + paratype + "&data=" + idrecord;
+                        window.top.winpopup = window.open(urlreport, nameReport, "resizable=1,width=800,height=700");
+                        break;
+                    case "LUMI_TL_V1":
+                        urlreport = Xrm.Page.context.getClientUrl() + "/webresources/bsd_01_Lumi_Confirmation_LetTer_ver1_24052024_TL?" + paratype + "&data=" + idrecord;
+                        window.top.winpopup = window.open(urlreport, nameReport, "resizable=1,width=800,height=700");
+                        break;
+                    case "LUMI_SPA":
+                        urlreport = Xrm.Page.context.getClientUrl() + "/webresources/bsd_lumi_total_payment_confirmation_spa?" + paratype + "&data=" + idrecord;
+                        window.top.winpopup = window.open(urlreport, nameReport, "resizable=1,width=800,height=700");
+                        break;
+
+                }
+                window.parent.$('button[data-id="dialogCloseIconButton"]').click();
+            }
+        }
+    </script>
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration><ddict-div style="visibility: visible !important;"></ddict-div></body></html>

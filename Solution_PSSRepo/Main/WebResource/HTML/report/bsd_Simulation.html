@@ -1,0 +1,1223 @@
+<html><head>
+    <meta>
+    <meta>
+    <meta>
+<meta><meta><meta><meta></head>
+
+<body style="word-wrap: break-word;" onfocusout="parent.setEmailRange();">
+    ﻿
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Editable Invoice</title>
+
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.bundle.js"></script>
+    <script type="text/javascript" src="bsd_execute.services.ultilities.js"></script>
+    <script type="text/javascript" src="bsd_common.js"></script>
+    <link rel="stylesheet" href="bsd_simulate/bootstrap.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.15.4/extensions/print/bootstrap-table-print.js"></script>
+    <style type="text/css">
+        #hiderow,
+        .delete {
+            display: none;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Segoe\000020UI;
+            font-size: 12px;
+        }
+
+        #page-wrap {
+            width: 900px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            border: none;
+            overflow: hidden;
+            resize: none;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table td,
+        table th {
+            border: 1px solid black;
+            padding: 4px;
+        }
+
+        #header {
+            /*height: 30px;*/
+            width: 100%;
+            margin: 45px 0;
+            font-weight: bolder;
+            /*background: #222;*/
+            text-align: center;
+            color: black;
+            font-family: Segoe\000020UI;
+            font-size: 18px;
+            text-decoration: uppercase;
+            /*letter-spacing: 20px;*/
+            /*padding: 8px 0px;*/
+        }
+
+        #address {
+            width: 250px;
+            height: 150px;
+            float: left;
+        }
+
+        #customer {
+            overflow: hidden;
+        }
+
+        #logo {
+            text-align: right;
+            float: right;
+            position: relative;
+            margin-top: 25px;
+            border: 1px solid #fff;
+            max-width: 540px;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        #logo:hover,
+        #logo.edit {
+            border: 1px solid #000;
+            margin-top: 0px;
+            max-height: 125px;
+        }
+
+        #logoctr {
+            display: none;
+        }
+
+        #logo:hover #logoctr,
+        #logo.edit #logoctr {
+            display: block;
+            text-align: right;
+            line-height: 25px;
+            background: #eee;
+            padding: 0 5px;
+        }
+
+        #logohelp {
+            text-align: left;
+            display: none;
+            font-style: italic;
+            padding: 10px 5px;
+        }
+
+        #logohelp input {
+            margin-bottom: 5px;
+        }
+
+        .edit #logohelp {
+            display: block;
+        }
+
+        .edit #save-logo,
+        .edit #cancel-logo {
+            display: inline;
+        }
+
+        .edit #image,
+        #save-logo,
+        #cancel-logo,
+        .edit #change-logo,
+        .edit #delete-logo {
+            display: none;
+        }
+
+        #customer-title {
+            font-size: 20px;
+            font-weight: bold;
+            float: left;
+        }
+
+        #meta {
+            margin-top: 1px;
+            float: left;
+            width: 100%;
+            margin-bottom: 10px;
+            border: none;
+        }
+
+        #meta td {
+            text-align: right;
+        }
+
+        #meta td.meta-head {
+            text-align: left;
+            border: 1px none black;
+        }
+
+        #meta td.meta-info {
+            text-align: right;
+        }
+
+        #meta td textarea {
+            width: 100%;
+            height: 20px;
+            text-align: right;
+        }
+
+        #items {
+            clear: both;
+            width: 102%;
+            margin: 30px 0 0 0;
+            border: 1px solid black;
+            font-size: 12px;
+        }
+
+        #items th {
+            background: #eee;
+        }
+
+
+
+        #items tr.item-row td {
+            /*border: 1px solid black;*/
+            vertical-align: middle;
+            height: 28px;
+        }
+
+        #items td.description {
+            width: 300px;
+        }
+
+        #items td.item-name {
+            width: 175px;
+        }
+
+        #items td.description textarea,
+        #items td.item-name textarea {
+            width: 100%;
+        }
+
+        #items td.total-line {
+            text-align: right;
+        }
+
+        #items td.total-value {
+            border-left: 0;
+            padding: 10px;
+        }
+
+        #items td.total-value textarea {
+            height: 20px;
+            background: none;
+        }
+
+        #items td.balance {
+            background: #eee;
+        }
+
+        #items td.blank {
+            border: 0;
+        }
+
+        #items .tb_foot td {
+            padding: 4px;
+        }
+
+        #items .tb_foot .td_foot {
+            border-right: none;
+        }
+
+        .items1 {
+            clear: both;
+            width: 103%;
+            margin: 0px 0 0 0;
+            border: 1px solid black;
+            font-size: 12px;
+        }
+
+        .items1 td,
+        .items1 th {
+            padding: 5px;
+        }
+
+        .items1 th {
+            background: #eee;
+        }
+
+
+        .items1 tr.item-row td {
+            border: 0;
+            vertical-align: top;
+        }
+
+        .items1 td.description {
+            width: 300px;
+        }
+
+        .items1 td.item-name {
+            width: 175px;
+        }
+
+        .items1 td.description textarea,
+        .items1 td.item-name textarea {
+            width: 100%;
+        }
+
+        .items1 td.total-line {
+            border-right: 0;
+            text-align: right;
+        }
+
+        .items1 td.total-value {
+            border-left: 0;
+            padding: 10px;
+        }
+
+        .items1 td.total-value textarea {
+            height: 20px;
+            background: none;
+        }
+
+        .items1 td.balance {
+            background: #eee;
+        }
+
+        .items1 td.blank {
+            border: 0;
+        }
+
+        #terms {
+            text-align: center;
+            margin: 20px 0 0 0;
+        }
+
+        #terms h5 {
+            text-transform: uppercase;
+            font-family: Segoe\000020UI;
+            font-size: 12px;
+            letter-spacing: 10px;
+            border-bottom: 1px solid black;
+            padding: 0 0 8px 0;
+            margin: 0 0 8px 0;
+        }
+
+        #terms textarea {
+            width: 100%;
+            text-align: center;
+        }
+
+
+
+        textarea:hover,
+        textarea:focus,
+        #items td.total-value textarea:hover,
+        #items td.total-value textarea:focus,
+        .delete:hover {
+            background-color: #EEFF88;
+        }
+
+        .delete-wpr {
+            position: relative;
+        }
+
+        .delete {
+            display: block;
+            color: #000;
+            text-decoration: none;
+            position: absolute;
+            background: #EEEEEE;
+            font-weight: bold;
+            padding: 0px 3px;
+            border: 1px solid;
+            top: -6px;
+            left: -22px;
+            font-family: Segoe\000020UI;
+            font-size: 12px;
+        }
+
+        .divlogo {
+            float: left;
+            height: 159px;
+            width: 100%;
+        }
+
+        .logo {
+            height: 130px;
+            width: 180px;
+            position: absolute;
+        }
+
+        .lagre {
+            width: 48%;
+        }
+
+        .aligncenter {
+            text-align: center !important;
+        }
+
+        .print {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-decoration: none !important;
+            cursor: pointer;
+        }
+
+        /*#field_paymentscheme {
+            border: none;
+            overflow: hidden;
+            background: none;
+            font-family: Segoe\000020UI;
+            font-size: 13px;
+            width: 100% !important;
+            height: auto;
+        }*/
+
+        #info_table td {}
+
+        .nowrap {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    </style>
+
+    <a id="printBtn" class="print glyphicon glyphicon-print" onclick = "addToFav()">
+    </a>
+<!--    <div id="toolbar" style='margin-right:10px'> 
+   <button type='button' class='btn btn-warning btn-lg'><span class='glyphicon glyphicon-print' onclick = "addToFav()"></span></button> 
+</div>
+-->
+    <div id="page-wrap" style="font-family: undefined;">
+        <div style="clear:both"></div>
+        <div class="divlogo">
+            <img class="logo" src="bsd_logo.png">
+            <p id="header">ƯỚC TÍNH LÃI | INTEREST SIMULATION</p>
+        </div>
+        <table width="100%" id="info_table">
+            <tbody>
+                <tr>
+                    <td class="lagre" style="border: none;padding:0px;" valign="top">
+                        <table class="items1" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr style="height:28px">
+                                    <th colspan="2" class="aligncenter">THÔNG TIN CĂN HỘ | UNIT INFORMATION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="font-weight:bold">
+                                    <td width="250px">Option Entry | <i>Hợp Đồng</i></td>
+                                    <td id="field_optionentry"></td>
+                                </tr>
+                                <tr style="font-weight:bold">
+                                    <td>Unit No. | <i>Số Căn Hộ</i></td>
+                                    <td id="field_units"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Payment Scheme | <i>Lịch Thanh Toán</i></td>
+                                    <!--<td valign="middle"><textarea id="field_paymentscheme" readonly="readonly" cols="15" rows="1"></textarea> </td>-->
+                                    <td id="field_paymentscheme"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Simulation Date | <i>Ngày Ước Tính</i></td>
+                                    <td id="field_date"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Interest Percent | <i>Lãi Suất Trễ (%)</i></td>
+                                    <td id="field_interestpercent"> </td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Tolerance Interest Amount</td>
+                                    <td id="field_toleranceinterestamount"> </td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Tolerance Interest (%)</td>
+                                    <td id="field_toleranceinterestpercent"> </td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Tolerance Interest (%) Amount</td>
+                                    <td id="field_interestpercentamount"> </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </td>
+                    <td style="border: none;"></td>
+                    <td class="lagre" style="border: none;padding:0px;" valign="top">
+                        <table class="items1">
+                            <thead>
+                                <tr style="height:28px">
+                                    <th colspan="2" class="aligncenter">THÔNG TIN KHÁCH HÀNG | CUSTOMER INFORMATION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="font-weight:bold">
+                                    <td width="180">Full Name | <i>Họ và Tên</i></td>
+                                    <td id="field_customer"></td>
+                                </tr>
+                                <tr style="font-weight:bold">
+                                    <td>ID No. | <i>Số CMND</i></td>
+                                    <td id="field_socmnd"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Phone | <i>Điện Thoại</i></td>
+                                    <td id="field_dienthoai"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Email</td>
+                                    <td id="field_email"></td>
+                                </tr>
+                                <tr style="font-weight: 500;">
+                                    <td>Address | <i>Địa Chỉ</i></td>
+                                    <td id="field_diachi"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="items">
+            <thead>
+                <tr style="height:28px">
+                    <th colspan="11" class="aligncenter">ĐỢT THANH TOÁN | INSTALLMENTS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-weight:bolder" class="aligncenter">
+                    <td>No.</td>
+                    <td>Installment</td>
+                    <td>Due Date</td>
+                    <td>Interest Start Date</td>
+                    <td>Days Late</td>
+                    <td>Payable Amount (VND)</td>
+                    <td>Waiver Amount (VND)</td>
+                    <td>Unpaid Installment (VND)</td>
+                    <td>Interest (VND)(Actual)</td>
+                    <td>Interest (VND)(Simulation)</td>
+                    <td>Total Interest(VND)</td>
+                </tr>
+                <tr style="font-weight:bolder;font-style:italic" class="aligncenter">
+                    <td>STT.</td>
+                    <td>Đợt thanh toán</td>
+                    <td>Hạn thanh toán</td>
+                    <td>Ngày bắt đầu tính lãi</td>
+                    <td>Số ngày chậm TT</td>
+                    <td>Số tiền gốc theo HĐ (VND)</td>
+                    <td>Số tiền miễn giảm (VND)</td>
+                    <td>Số tiền gốc còn nợ (VND)</td>
+                    <td>Tiền lãi (VND)(Thực tế)</td>
+                    <td>Tiền lãi (VND)(Ước tính)</td>
+                    <td>Tổng tiền lãi (VND)</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="tb_foot">
+                    <!--<td colspan="3" class="td_foot" style="border-top:1px solid #000;"> </td>-->
+                    <td colspan="8" class="total-line" style="border-top:1px solid #000; font-weight:bolder;">Total
+                        Outstanding | <i>Tổng tiền còn nợ:</i></td>
+                    <td colspan="3" id="field_totalAoTP" class="total-value" style="border-top:1px solid #000;text-align:right">
+                        <div id="subtotal"></div>
+                    </td>
+                </tr>
+
+                <tr class="tb_foot">
+                    <!--<td colspan="3" class="td_foot"> </td>-->
+                    <td colspan="8" class="total-line" style="font-weight:bolder;">Total Interest | <i>Tổng tiền lãi</i>
+                    </td>
+                    <td colspan="3" id="field_totalIC" class="total-value" style="text-align:right"></td>
+                </tr>
+                <tr class="tb_foot">
+                    <!--<td colspan="3" class="td_foot"> </td>-->
+                    <td colspan="8" class="total-line balance" style="font-weight:bolder;">Total | <i>Tổng tiền</i></td>
+                    <td colspan="3" id="field_total" class="total-value balance" style="text-align:right;font-weight:bold"></td>
+                </tr>
+            </tfoot>
+
+        </table>
+        <div id="terms"> </div>
+    </div>
+    <script type="text/javascript">
+        //var Xrm = window.opener.Xrm;
+        var Xrm = window.parent.Xrm;
+        function addToFav() {
+<!--                this.style.visibility = "hidden";
+-->
+                window.print();
+                var me = this;
+                setTimeout(function () { me.style.visibility = "visible"; }, 1000);
+
+}
+        function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    var conds = '' + decodeURIComponent(url.substring(url.indexOf("data"))).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"').replace(/\s/g, '') + '';
+    conds = conds.replace(/\\/g, "");
+    var result = conds.split('' + name.toLocaleLowerCase() + '":"')[1];
+    return JSON.parse(result);
+    // name = name.replace(/[\[\]]/g, "\\$&");
+    // var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    //     results = regex.exec(url);
+    // if (!results) return null;
+    // if (!results[2]) return '';
+    // return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+// function getParameterByName(name, url) {
+//     if (!url) url = window.location.href;
+//     name = name.replace(/[\[\]]/g, "\\$&");
+//     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+//         results = regex.exec(url);
+//     if (!results) return null;
+//     if (!results[2]) return '';
+//     return decodeURIComponent(results[2].replace(/\+/g, " "));
+// }
+
+function tinhInterestCharge(amountPay, lateday, phantramTinhlai) {
+
+
+    var interestCharge = amountPay * ((phantramTinhlai / 30) / 100) * lateday;
+    //var range;
+    //rangePercent = rangePercent * amountPay;
+    //if (rangeAmount && rangePercent)
+    //    range = rangeAmount < rangePercent ? rangeAmount : rangePercent;
+    //else if (rangeAmount && !rangePercent)
+    //    range = rangeAmount;
+    //else if (!rangeAmount && rangePercent)
+    //    range = rangePercent
+    //else range = null;
+
+    //if (range && interestCharge > range)
+    //    interestCharge = range;
+
+    return interestCharge;
+}
+function tinhNumberOfLateDays(duedate, receiptDate, datetype) {
+    var lateday = (receiptDate - duedate) / (1000 * 3600 * 24);
+    if (lateday < 0)
+        //    lateday = datetype == 100000000 ? (lateday + graceDay) : lateday;
+        //else
+        lateday = 0;
+    return lateday;
+}
+function GetUserSetting(UserID) {
+   var userSettings = Xrm.Utility.getGlobalContext().userSettings;
+    var dateTimeFormat = userSettings.dateFormattingInfo.ShortDatePattern;
+
+    return dateTimeFormat;
+}
+
+function setRowOfTextarea(text) {
+    var n = text.length / 15;
+    var d = text.length % 15;
+    var row = 1;
+    if (n > 1) {
+        if (d > 0)
+            row = n + 1;
+        else
+            row = n;
+    }
+    if (row > 1)
+        document.getElementById("field_paymentscheme").rows = row;
+
+}
+function tinhTongTienLai(enInstallment) {
+    var tong = (enInstallment.attributes.bsd_interestchargeamount ? enInstallment.attributes.bsd_interestchargeamount.value : 0) - (enInstallment.attributes.bsd_interestwaspaid ? enInstallment.attributes.bsd_interestwaspaid.value : 0);
+    return tong;
+}
+
+function CovertDateToString(date, format) {
+    var today = "";
+    var dd = date.getDate();
+    var mm = date.getMonth() + 1;
+
+    var yyyy = date.getFullYear();
+
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+    if (format == "d/M/yyyy")
+        today = dd + '/' + mm + '/' + yyyy;
+    else if (format == "M/d/yyyy")
+        today = mm + '/' + dd + '/' + yyyy;
+    return today;
+}
+
+function CheckDailyInterestCharge(OE) {
+    var xml = [];
+    var flag = false;
+    xml.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>");
+    xml.push("<entity name='bsd_project'>");
+    xml.push("<attribute name='bsd_projectid' />");
+    xml.push("<attribute name='bsd_dailyinterestchargebank' />");
+    xml.push("<link-entity name='salesorder' from='bsd_project' to='bsd_projectid' alias='aa'>");
+    xml.push("<filter type='and'>");
+    xml.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + OE + "' />");
+    xml.push("</filter>");
+    xml.push("</link-entity>");
+    xml.push("</entity>");
+    xml.push("</fetch>");
+    var rs = CrmFetchKitNew.FetchSync(xml.join(""));
+        if (rs.length > 0 && rs[0].attributes.bsd_dailyinterestchargebank && (Boolean)(rs[0].attributes.bsd_dailyinterestchargebank.value) == true) {
+            flag = true;
+        }
+
+    return flag;
+}
+function tinhPhantramLai2(OE) {//theo project->daily interest rate
+    var xml = [];
+    var phantramlai = 0;
+    xml.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>");
+    xml.push("<entity name='bsd_dailyinterestrate'>");
+    xml.push("<attribute name='bsd_dailyinterestrateid' />");
+    xml.push("<attribute name='bsd_interestrate' />");
+    xml.push("<attribute name='bsd_date' />");
+    xml.push("<order attribute='bsd_date' descending='true' />");
+    xml.push("<link-entity name='bsd_project' from='bsd_projectid' to='bsd_project' alias='ae'>");
+    xml.push("<link-entity name='salesorder' from='bsd_project' to='bsd_projectid' alias='af'>");
+    xml.push("<filter type='and'>");
+    xml.push("<condition attribute='salesorderid' operator='eq' uitype='salesorder' value='" + OE + "' />");
+    xml.push("</filter>");
+    xml.push("</link-entity>");
+    xml.push("</link-entity>");
+    xml.push("</entity>");
+    xml.push("</fetch>");
+        var rs = CrmFetchKitNew.FetchSync(xml.join(""));
+        if (rs.length > 0 && rs[0].attributes.bsd_interestrate) {
+            phantramlai = rs[0].attributes.bsd_interestrate.value;
+        }
+    return phantramlai;
+}
+function formatNumber(text) {
+    var arr = text.split(".");
+    var first = arr[0];
+    var rs = "";
+    var n = 0;
+    for (var i = first.length - 1; i >= 0; i--) {
+        n++;
+        rs = first[i] + rs;
+        if (n == 3) {
+            n = 0;
+            if (i != 0)
+                rs = "," + rs;
+        }
+    }
+    if (arr.length > 1)
+        rs += "." + arr[1];
+    return (rs);
+}
+function CallAction(sFirstParamValue, sSecondParamValue) {
+    var objActionCallRequest = null;
+    var objMetadata = null;
+    var sActionName = "rk_LeadAction";
+    try {
+        objActionCallRequest = {
+            sFirstParam: sFirstParamValue,
+            sSecondParam: sSecondParamValue,
+            getMetadata: function () {
+                objMetadata = {
+                    boundParameter: "entity",
+                    parameterTypes: {
+                        "sFirstParam": {
+                            "typeName": "Edm.String",
+                            "structuralProperty": 1
+                        },
+                        "sSecondParam": {
+                            "typeName": "Edm.String",
+                            "structuralProperty": 1
+                        }
+                    },
+                    operationName: sActionName,
+                    operationType: 0    // 0 is for Calling Action using Xrm.WebApi.execute
+                };
+                return objMetadata;
+            }
+        };
+        Xrm.WebApi.online.execute(objActionCallRequest).then(
+            function success(result) {
+                alert("Success : Action is called");
+            },
+            function (ex) {
+                Xrm.Navigation.openErrorDialog({ message: "Error :: " + ex.message, details: ex.message });
+            }
+        );
+    }
+    catch (ex) {
+        Xrm.Navigation.openErrorDialog({ message: ex.message, details: ex.message });
+    }
+}
+function sumInterestPhase() {
+    //Tính sum cột Interest(Actual)
+    var data = getParameterByName("Data");
+    //  var datas = getParameterByName1();
+    // data = eval("x=" + data);
+    var receiptdate_string = data.cur;
+    var receiptDate = new Date(receiptdate_string);
+    var opEntryID = data.id;
+
+    var xml2 = []; var sumlaiConLai = 0;
+    xml2.push("<fetch version='1.0'>");
+    xml2.push("<entity name='salesorder'>");
+    xml2.push("<attribute name='salesorderid' />");
+    xml2.push("<order attribute='createdon' descending='true' />");
+    xml2.push("<filter type='and'>");
+    xml2.push("<condition attribute='salesorderid' operator='eq' uitype='salesorder' value='" + opEntryID + "' />");
+    xml2.push("</filter>");
+    xml2.push("<link-entity name='bsd_paymentschemedetail' from='bsd_optionentry' to='salesorderid' link-type='outer' alias='ab'>");
+    xml2.push("<attribute name='bsd_paymentschemedetailid' />");
+    xml2.push("<attribute name='bsd_waiverinterest' />");
+    xml2.push("<attribute name='bsd_interestchargeamount'  />");
+    xml2.push("<attribute name='bsd_interestwaspaid'  />");
+    xml2.push("<attribute name='bsd_duedate' />");
+    xml2.push("<attribute name='bsd_actualgracedays' />");
+    xml2.push("<attribute name='statuscode' />");
+    xml2.push("</link-entity>");
+    xml2.push("</entity>");
+    xml2.push("</fetch>");
+    var rs2 = CrmFetchKitNew.FetchSync(xml2.join(""));
+        if (rs2.length > 0) {
+
+            var laiConLai = 0;
+            for (var i = 0; i < rs2.length; i++) {
+                var laiConLai = rs2[i].attributes['ab.bsd_interestchargeamount'] ? rs2[i].attributes['ab.bsd_interestchargeamount'].value : 0;
+                var bsd_waiverinterest = rs2[i].attributes['ab.bsd_waiverinterest'] ? rs2[i].attributes['ab.bsd_waiverinterest'].value : 0;
+
+                sumlaiConLai += laiConLai - bsd_waiverinterest;
+            }
+        }
+    return sumlaiConLai;
+}
+
+        $(document).ready(function (doc) {
+            $("#printBtn").click(function (e) {
+                debugger;
+                this.style.visibility = "hidden";
+                window.print();
+                var me = this;
+                setTimeout(function () { me.style.visibility = "visible"; }, 1000);
+            });
+
+            var table = document.getElementById("items");
+            var tbody = table.firstElementChild.nextElementSibling;
+            //var $table = $("#items").children("tbody:first");
+            try {
+               // var data = getParameterByName("Data");
+
+                var data= getParameterByName("Data");
+               // data = eval("x=" + data);
+                var receiptdate_string = data.cur;
+                var receiptDate = new Date(receiptdate_string);
+                var opEntryID = data.id;
+                if (opEntryID) {
+                    var fetch = [];
+
+                    //fetch.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>  ");
+                    //fetch.push("<entity name='salesorderdetail'>    ");
+                    //fetch.push("<attribute name='productid' />");
+                    //fetch.push("<attribute name='salesorderdetailid' />");
+                    //fetch.push("<order attribute='productid' descending='false' />");
+                    //fetch.push("<filter type='and'>");
+                    //fetch.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + opEntryID + "' />");
+                    //fetch.push("</filter>");
+                    //fetch.push("<link-entity name='salesorder' from='salesorderid' to='salesorderid' alias='OE'>");
+                    //fetch.push("<attribute name='bsd_paymentscheme' />");
+                    //fetch.push("<attribute name='name' />");
+                    //fetch.push("<attribute name='bsd_optionno' />");
+                    //fetch.push("<attribute name='customerid' />");
+                    //fetch.push("</link-entity>");
+                    //fetch.push("</entity>");
+                    //fetch.push("</fetch>");
+                    fetch.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>  ");
+                    fetch.push("<entity name='salesorderdetail'>    ");
+                    fetch.push("<attribute name='productid' />");
+                    fetch.push("<attribute name='salesorderdetailid' />");
+                    fetch.push("<order attribute='productid' descending='false' />");
+                    fetch.push("<filter type='and'>");
+                    fetch.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + opEntryID + "' />");
+                    fetch.push("</filter>");
+                    fetch.push("<link-entity name='product' from='productid' to='productid' alias='PRO' >");
+                    fetch.push("<attribute name='bsd_unitscodesams' />");
+                    fetch.push("<attribute name='bsd_projectcode' />");
+                    fetch.push("<link-entity name='bsd_project' from='bsd_projectid' to='bsd_projectcode' >");
+                    fetch.push("<attribute name='bsd_projectcode' />");
+                    fetch.push("</link-entity>");
+                    fetch.push("</link-entity>");
+                    fetch.push("<link-entity name='salesorder' from='salesorderid' to='salesorderid' alias='OE'>");
+                    fetch.push("<attribute name='bsd_paymentscheme' />");
+                    fetch.push("<attribute name='name' />");
+                    fetch.push("<attribute name='bsd_optionno' />");
+                    fetch.push("<attribute name='customerid' />");
+                    fetch.push("</link-entity>");
+                    fetch.push("</entity>");
+                    fetch.push("</fetch>");
+                    var rs = CrmFetchKitNew.FetchSync(fetch.join(""));
+
+
+                        if (rs.length > 0) {
+                            document.getElementById("field_optionentry").innerHTML = (rs[0].attributes["OE.bsd_optionno"] ? rs[0].attributes["OE.bsd_optionno"].value : "");
+                            document.getElementById("field_customer").innerHTML = (rs[0].attributes["OE.customerid"] ? rs[0].attributes["OE.customerid"].name : "");
+                            if (rs[0].attributes["OE.customerid"]) {
+                                var xml2 = [];
+                                if (rs[0].attributes["OE.customerid"].logicalName == "contact") {
+                                    var contact = rs[0].attributes["OE.customerid"].guid;
+                                    xml2.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>");
+                                    xml2.push("<entity name='contact'>");
+                                    xml2.push("<attribute name='fullname' />");
+                                    xml2.push("<attribute name='contactid' />");
+                                    xml2.push("<attribute name='mobilephone' />");
+                                    xml2.push("<attribute name='bsd_identitycardnumber' />");
+                                    xml2.push("<attribute name='emailaddress1' />");
+                                    xml2.push("<attribute name='bsd_contactaddress' />");
+                                    xml2.push("<filter type='and'>");
+                                    xml2.push("<condition attribute='contactid' operator='eq' uitype='contact' value='" + rs[0].attributes["OE.customerid"].guid + "' />");
+                                    xml2.push("</filter>");
+                                    xml2.push("</entity>");
+                                    xml2.push("</fetch>");
+                                    var rs1 = CrmFetchKitNew.FetchSync(xml2.join(""));
+
+                                        if (rs1.length > 0) {
+                                            document.getElementById("field_socmnd").innerHTML = (rs1[0].attributes.bsd_identitycardnumber ? rs1[0].attributes.bsd_identitycardnumber.value : "");
+                                            document.getElementById("field_diachi").innerHTML = (rs1[0].attributes.bsd_contactaddress ? rs1[0].attributes.bsd_contactaddress.value : "");
+                                            document.getElementById("field_email").innerHTML = (rs1[0].attributes.emailaddress1 ? rs1[0].attributes.emailaddress1.value : "");
+                                            document.getElementById("field_dienthoai").innerHTML = (rs1[0].attributes.mobilephone ? rs1[0].attributes.mobilephone.value : "");
+                                        }
+                                }
+                                else if (rs[0].attributes["OE.customerid"].logicalName == "account") {
+                                    var xml3 = [];
+                                    xml3.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>");
+                                    xml3.push("<entity name='account'>");
+                                    xml3.push("<attribute name='telephone1' />");
+                                    xml3.push("<attribute name='emailaddress1' />");
+                                    xml3.push("<attribute name='bsd_address' />");
+                                    xml3.push("<attribute name='bsd_vatregistrationnumber' />");
+                                    xml3.push("<attribute name='accountid' />");
+                                    xml3.push("<filter type='and'>");
+                                    xml3.push("<condition attribute='accountid' operator='eq' uitype='account' value='" + rs[0].attributes["OE.customerid"].guid + "' />");
+                                    xml3.push("</filter>");
+                                    xml3.push("</entity>");
+                                    xml3.push("</fetch>");
+                                    var rs2 = CrmFetchKitNew.FetchSync(xml3.join(""));
+                                        if (rs2.length > 0) {
+                                            document.getElementById("field_socmnd").innerHTML = (rs2[0].attributes.bsd_vatregistrationnumber ? rs2[0].attributes.bsd_vatregistrationnumber.value : "");
+                                            document.getElementById("field_diachi").innerHTML = (rs2[0].attributes.bsd_address ? rs2[0].attributes.bsd_address.value : "");
+                                            document.getElementById("field_email").innerHTML = (rs2[0].attributes.emailaddress1 ? rs2[0].attributes.emailaddress1.value : "");
+                                            document.getElementById("field_dienthoai").innerHTML = (rs2[0].attributes.telephone1 ? rs2[0].attributes.telephone1.value : "");
+                                        }
+                                }
+                            }
+                            document.getElementById("field_date").innerHTML = CovertDateToString(receiptDate, GetUserSetting());
+
+                            document.getElementById("field_paymentscheme").innerHTML = (rs[0].attributes["OE.bsd_paymentscheme"] ? rs[0].attributes["OE.bsd_paymentscheme"].name : "");
+                            //if (rs[0].attributes["OE.bsd_paymentscheme"]) {
+                            //    setRowOfTextarea(rs[0].attributes["OE.bsd_paymentscheme"].name);
+                            //}
+
+                            var bsd_projectcode = rs[0].attributes["bsd_project2.bsd_projectcode"] ? rs[0].attributes["bsd_project2.bsd_projectcode"].value : '';
+                            if (bsd_projectcode == 'MBL' || bsd_projectcode == 'BRV') {
+                                document.getElementById("field_units").innerHTML = (rs[0].attributes["PRO.bsd_unitscodesams"] ? rs[0].attributes["PRO.bsd_unitscodesams"].value : "");
+                            }
+                            else {
+                                document.getElementById("field_units").innerHTML = (rs[0].attributes.productid ? rs[0].attributes.productid.name : "");
+                            }
+                        }
+                    
+                    var xml0 = [];
+                    var phantramTinhlai, phantramTinhlai_1 = 0, phantramTinhlai_2 = 0, datetype, rangeAmount, rangePercent, graceDay;
+
+                    xml0.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>");
+                    xml0.push("<entity name='bsd_interestratemaster'>");
+                    xml0.push("<attribute name='bsd_termsinterestpercentage' />");
+                    xml0.push("<attribute name='bsd_intereststartdatetype' />");
+                    xml0.push("<attribute name='bsd_gracedays' />");
+                    xml0.push("<link-entity name='bsd_paymentscheme' from='bsd_interestratemaster' to='bsd_interestratemasterid' alias='aa'>");
+                    xml0.push("<link-entity name='salesorder' from='bsd_paymentscheme' to='bsd_paymentschemeid' alias='ab'>");
+                    xml0.push("<filter type='and'>");
+                    xml0.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + opEntryID + "' />");
+                    xml0.push("</filter>");
+                    xml0.push("</link-entity>");
+                    xml0.push("</link-entity>");
+                    xml0.push("</entity>");
+                    xml0.push("</fetch>");
+                    var rs3 = CrmFetchKitNew.FetchSync(xml0.join(""));
+                        if (rs3.length > 0) {
+                            phantramTinhlai_1 = rs3[0].attributes.bsd_termsinterestpercentage ? rs3[0].attributes.bsd_termsinterestpercentage.value : 0;
+                            datetype = rs3[0].attributes.bsd_intereststartdatetype.value;
+
+                            graceDay = rs3[0].attributes.bsd_gracedays.value;
+                        }
+                    
+                    if (CheckDailyInterestCharge(opEntryID) == true)
+                        phantramTinhlai_2 = tinhPhantramLai2(opEntryID);
+                    phantramTinhlai = (phantramTinhlai_1 + phantramTinhlai_2);
+                    //phantramTinhlai.toFixed(2);
+                    document.getElementById("field_interestpercent").innerHTML = phantramTinhlai + "%";
+
+                    ////Tính Tolerance Interest Amount/Tolerance Interest (%)/Tolerance Interest (%) Amount
+                    var cap = 0; var toleranceinterest_amount = 0; var toleranceinterest_percentage = 0;
+                    var op_totalamount = 0; var percent_amount = 0;
+                    var xml1 = [];
+                    xml1.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+                    xml1.push("<entity name='salesorder'>");
+                    xml1.push("<attribute name='name' />");
+                    xml1.push("<attribute name='totalamount' />");
+                    xml1.push("<attribute name='bsd_phaseslaunch' />");
+                    xml1.push("<attribute name='salesorderid' />");
+                    xml1.push("<order attribute='createdon' descending='true' />");
+                    xml1.push("<filter type='and'>");
+                    xml1.push("<condition attribute='salesorderid' operator='eq' uitype='salesorder' value='" + opEntryID + "' />");
+                    xml1.push("</filter>");
+                    xml1.push("<link-entity name='bsd_paymentscheme' from='bsd_paymentschemeid' to='bsd_paymentscheme' alias='ag'>");
+                    xml1.push("<link-entity name='bsd_interestratemaster' from='bsd_interestratemasterid' to='bsd_interestratemaster' alias='ah'>");
+                    xml1.push("<attribute name='bsd_toleranceinterestamount' />");
+                    xml1.push("<attribute name='bsd_toleranceinterestpercentage' />");
+                    xml1.push("</link-entity>");
+                    xml1.push("</link-entity>");
+                    xml1.push("</entity>");
+                    xml1.push("</fetch>");
+                    var rs4 = CrmFetchKitNew.FetchSync(xml1.join(""));
+                        if (rs4.length > 0) {
+
+                            toleranceinterest_amount = rs4[0].attributes['ah.bsd_toleranceinterestamount'] ? rs4[0].attributes['ah.bsd_toleranceinterestamount'].value : 0;
+                            toleranceinterest_percentage = rs4[0].attributes['ah.bsd_toleranceinterestpercentage'] ? rs4[0].attributes['ah.bsd_toleranceinterestpercentage'].value : 0;
+
+                            op_totalamount = rs4[0].attributes.totalamount ? rs4[0].attributes.totalamount.value : 0;
+                            percent_amount = Math.round((toleranceinterest_percentage * op_totalamount) / 100);
+
+                            var row_amount = document.getElementById("field_toleranceinterestamount");
+                            row_amount.innerHTML = formatNumber(toleranceinterest_amount.toString()) + " đ";
+
+                            var row_percent = document.getElementById("field_toleranceinterestpercent");
+                            row_percent.innerHTML = formatNumber(toleranceinterest_percentage.toString()) + "%";
+
+                            var row_amount_percent = document.getElementById("field_interestpercentamount");
+                            row_amount_percent.innerHTML = formatNumber(percent_amount.toString()) + " đ";
+
+                            if (toleranceinterest_amount < percent_amount) {
+                                cap = toleranceinterest_amount;
+                            }
+                            else {
+                                cap = percent_amount;
+                            }
+
+                            if (toleranceinterest_amount == 0) {
+                                cap = percent_amount;
+                            }
+                            if (percent_amount == 0) {
+                                cap = toleranceinterest_amount;
+                            }
+                        }
+
+
+                    //cap....
+
+
+
+
+
+
+                    //Tính các field trong table đợt thanh toán
+                    var xml = [];
+                    xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+                    xml.push("<entity name='bsd_paymentschemedetail'>");
+                    xml.push("<attribute name='bsd_paymentschemedetailid' />");
+                    xml.push("<attribute name='bsd_name' />");
+                    xml.push("<attribute name='statuscode' />");
+                    xml.push("<attribute name='bsd_ordernumber' />");
+                    xml.push("<attribute name='bsd_waiverinterest' />");
+                    xml.push("<attribute name='bsd_waiverinstallment' />");
+
+                    xml.push("<attribute name='bsd_duedate' />");
+                    xml.push("<attribute name='bsd_intereststartdate' />");
+                    xml.push("<attribute name='bsd_depositamount' />");
+                    xml.push("<attribute name='bsd_actualgracedays' />");
+                    xml.push("<attribute name='bsd_amountwaspaid' />");
+                    xml.push("<attribute name='bsd_amountofthisphase' />");
+                    xml.push("<attribute name='bsd_interestchargeamount'  />");
+                    xml.push("<attribute name='bsd_interestwaspaid'  />");
+                    xml.push("<order attribute='bsd_ordernumber' descending='false' />");
+                    xml.push("<filter type='and'>");
+                    xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + opEntryID + "' />");
+                    xml.push("</filter>");
+                    xml.push("</entity>");
+                    xml.push("</fetch>");
+                    var rs5 = CrmFetchKitNew.FetchSync(xml.join(""));
+                        if (rs5.length > 0) {
+
+                            var totalamount = 0, totalpaid = 0, totalinterestcharge = 0; var totalbalance = 0;
+                            var dem = 0;
+                            var laiMoi = 0; var interestCharge; var sumlaiMoi = 0;
+                            var sum_bsd_waiverinterest = 0;
+                            var lateday = 0; var actual = 0; var notpaid = false; var laiConLai = 0;
+                            var sumlaiConLai = sumInterestPhase(sumlaiConLai);
+                            var capConLai = cap - sumlaiConLai;
+                            var strIntereststartdate="";
+                            for (var i = 0; i < rs5.length; i++) {
+
+                                lateday = 0;
+                                var html = [];
+                                var duedate = rs5[i].attributes.bsd_duedate ? rs5[i].attributes.bsd_duedate.value : null;
+
+                                var installmentid = rs5[i].Id;
+                                var bsd_waiverinterest = rs5[i].attributes.bsd_waiverinterest ? rs5[i].attributes.bsd_waiverinterest.value : 0;
+                                sum_bsd_waiverinterest += bsd_waiverinterest;
+                                var intereststartdate = rs5[i].attributes.bsd_intereststartdate ? rs5[i].attributes.bsd_intereststartdate.value : null;
+                                if (duedate) {
+                                    duedate = new Date(duedate.toDateString());
+                                    var new_duedate = new Date(duedate.toDateString());
+                                    new_duedate.setDate(duedate.getDate() + (graceDay ? graceDay : 0));
+                                    if (rs5[i].attributes.statuscode.value == 100000000) {//not paid
+                                        notpaid = true;
+                                        lateday = tinhNumberOfLateDays(new_duedate, receiptDate, datetype);
+
+                                    }
+                                    else if (rs5[i].attributes.statuscode.value == 100000001)//paid
+                                        actual = rs5[i].attributes.bsd_actualgracedays ? rs5[i].attributes.bsd_actualgracedays.value : 0;
+
+                                    if (lateday > 0 || actual > 0 || (notpaid == true && receiptDate >= duedate)) {
+
+                                        dem = dem + 1;
+                                        var balance = 0;
+                                        var amountOfTP = rs5[i].attributes.bsd_amountofthisphase ? rs5[i].attributes.bsd_amountofthisphase.value : 0;
+                                        var amountPaid = rs5[i].attributes.bsd_amountwaspaid ? rs5[i].attributes.bsd_amountwaspaid.value : 0;
+                                        var waiverinstallment = rs5[i].attributes.bsd_waiverinstallment ? rs5[i].attributes.bsd_waiverinstallment.value : 0;
+                                        var waiverinterest = rs5[i].attributes.bsd_waiverinterest ? rs5[i].attributes.bsd_waiverinterest.value : 0;
+                                        var waiver = waiverinstallment + waiverinterest;
+                                        if (rs5[i].attributes.bsd_ordernumber && rs5[i].attributes.bsd_ordernumber.value == 1) {
+                                            var deposited = rs5[i].attributes.bsd_depositamount ? rs5[i].attributes.bsd_depositamount.value : 0;
+                                            amountPaid += deposited;
+                                        }
+
+                                        balance = (amountOfTP - amountPaid - waiverinstallment);
+                                        laiConLai = tinhTongTienLai(rs5[i]) - waiverinterest;
+
+
+                                        if (rs5[i].attributes.statuscode.value == 100000000)//Not paid
+                                        {
+                                            totalamount += rs5[i].attributes.bsd_amountofthisphase ? rs5[i].attributes.bsd_amountofthisphase.value : 0;
+                                            totalpaid += amountPaid;
+                                        }
+
+                                        if (lateday > 0 || (actual > 0 && laiConLai > 0) || (notpaid == true && receiptDate >= duedate) && (balance > 0 && laiConLai > 0)) {
+                                        /*
+                                            console.log("VAO DAY NE: "+dem);
+                                            html.push("<td class='nowrap' align='center' style='font-weight: 500;' >" + dem + "</td>");
+                                            html.push("<td class='nowrap' align='center'  height:70px' style='font-weight: 500;'>" + (rs5[i].attributes.bsd_name ? rs5[i].attributes.bsd_name.value : "") + "</td>");
+                                            html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + (rs5[i].attributes.bsd_duedate ? (rs5[i].attributes.bsd_duedate.formattedValue) : "") + "</td>");//due date
+                                            console.log("html: "+html);*/
+											totalbalance += Number(balance);
+											//var jobj = $(this);
+
+var tenins = rs5[i].attributes.bsd_name.value;
+var tendueate = rs5[i].attributes.bsd_duedate.formattedValue;
+var count =0;
+sleep(500);
+											ExecuteAction(
+											""
+											, ""
+											, "bsd_Action_Calculate_Interest_SIMULATION_report"
+											, [{ name: 'installmentid', type: 'string', value: installmentid },
+											 { name: 'amountpay', type: 'string', value: balance.toString() },
+												{ name: 'receiptdate', type: 'string', value: receiptDate.toDateString() }
+											]
+											, function (result) {
+												if (result != null) {
+                                                count ++;
+																	if (result.status == "error") {
+
+																		console.log("ERROR: "+result.data);
+																	}
+																	else if (result.status == "success") {
+                                                                        var html = [];
+                                                                        html.push("<td class='nowrap' align='center' style='font-weight: 500;' >" + count + "</td>");
+
+                                                                    
+                                                                    //var data=result.data.result.value.split("///");
+																		var data = JSON.parse(result.data.result.value);
+                                                                        debugger;
+                                                                        laiConLai = data.laiConLai;
+                                                                        html.push("<td class='nowrap' align='center'  height:70px' style='font-weight: 500;'>" + data.name + "</td>");
+                                                                        html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + common.formateDate(new Date(parseInt(data.Duedate.substr(6))), '/') + "</td>");//due date
+																		var newtotalinterestcharge = totalinterestcharge + Math.round(Number(data.InterestCharge) + laiConLai);
+																		//if (newtotalinterestcharge <= sum_bsd_waiverinterest + cap) {
+																			totalinterestcharge += Math.round(Number(data.InterestCharge) + laiConLai);
+
+																			var strInterestCharge = common.formatNumberEx1(Math.round(data.InterestCharge).toString());
+																			var strtTotalInterestCharge = common.formatNumberEx1(Math.round(data.InterestCharge + laiConLai).toString());
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + common.formateDate(new Date(parseInt(data.InterestStarDate.substr(6))), '/') + "</td>");//intereststartdate
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + (notpaid == true ? data.LateDays : actual) + "</td>");//number of late days
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.AmoutThisPhase.toString()) + " đ</td>");//amount of this phase
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.Waiver.toString()) + " đ</td>");//waiver
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.Balance.toString()) + " đ</td>");//Balance
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(laiConLai.toString()) + " đ</td>");// interest phase
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + strInterestCharge.toString() + " đ</td>")//new interest
+																			html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + strtTotalInterestCharge.toString() + " đ</td>")//total interest
+																		
+																		var row = document.getElementById("field_totalAoTP");
+																		row.innerHTML = common.formatNumberEx1(Math.round(totalbalance).toString()) + " đ";
+																		var row2 = document.getElementById("field_totalIC");
+																		row2.innerHTML = common.formatNumberEx1(Math.round(totalinterestcharge).toString()) + " đ";
+																		var row3 = document.getElementById("field_total");
+																		row3.innerHTML = common.formatNumberEx1(Math.round(totalbalance + totalinterestcharge).toString()) + " đ";
+                                                                        
+                                                                        var r = document.createElement("tr");
+                                                                        r.classList.add("item-row");
+                                                                        r.innerHTML = html.join("");
+                                                                        tbody.appendChild(r);
+                                                                        
+																	}
+																}
+												
+											},true
+
+										);
+                                        /*
+                                            var row = document.createElement("tr");
+                                            row.classList.add("item-row");
+                                            row.innerHTML = html.join("");
+                                            tbody.appendChild(row);
+                                            */
+                                            strIntereststartdate += i + ":" + installmentid + ":" + balance.toString() + ":" +laiConLai.toString() + ",";
+                                        }
+
+                                    }
+                                }
+                                
+                            }
+                              
+                            
+                        }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+        });
+        function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+    </script>
+
+
+
+
+
+
+
+
+
+</body></html>
