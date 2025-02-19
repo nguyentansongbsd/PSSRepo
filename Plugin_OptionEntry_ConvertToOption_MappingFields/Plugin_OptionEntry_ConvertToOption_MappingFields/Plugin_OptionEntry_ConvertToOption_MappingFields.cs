@@ -29,8 +29,11 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             try
             {
                 if (this.context.Depth > 3) return;
-                if (this.context.MessageName != "Create") return;
-                this.target = (Entity)this.context.InputParameters["Target"];
+                if (this.context.MessageName != "Update") return;
+                Entity _target = (Entity)this.context.InputParameters["Target"];
+                this.target = this.service.Retrieve(_target.LogicalName,_target.Id,new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+                if (this.target.Contains("bsd_unittype")) return;
+
                 if (((OptionSetValue)this.target["statuscode"]).Value != 100000000) return; // 100000000 = Option
 
                 MappingFiels();
@@ -46,6 +49,7 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             {
                 Entity enOption = new Entity(this.target.LogicalName, this.target.Id);
                 enOption["bsd_unittype"] = getUnitType();
+                enOption["bsd_unitsspecification"] = null;
                 this.service.Update(enOption);
             }
             catch (InvalidPluginExecutionException ex)
@@ -57,9 +61,11 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
         {
             try
             {
+                tracingService.Trace("get unit type");
                 if (!this.target.Contains("bsd_unitnumber")) return null;
                 Entity enUnit = this.service.Retrieve(((EntityReference)this.target["bsd_unitnumber"]).LogicalName, ((EntityReference)this.target["bsd_unitnumber"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(new string[] { "bsd_unittype" }));
                 if (!enUnit.Contains("bsd_unittype")) return null;
+                tracingService.Trace("Có unit type");
                 return (EntityReference)enUnit["bsd_unittype"];
             }
             catch (InvalidPluginExecutionException ex)
