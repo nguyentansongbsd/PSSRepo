@@ -67,6 +67,7 @@
     <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallment.js" />
     <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallmentapprove_form.js" />
     <Content Include="JS\Update Estimate Handover Date\bsd_updateestimatehandoverdate.js" />
+    <Content Include="JS\Update Land Value\bsd_bsd_updatelandvalue_form.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HTML\main\" />
