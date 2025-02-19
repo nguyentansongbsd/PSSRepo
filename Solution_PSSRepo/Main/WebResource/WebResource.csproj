@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F22E0825-F0D9-4CDC-A7D9-25580E4AA00B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebResource</RootNamespace>
+    <AssemblyName>WebResource</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HTML\compoent\bsd_Payment_Notices.html" />
+    <Content Include="HTML\compoent\bsd_terminateletter_option_filter_generate.html" />
+    <Content Include="HTML\compoent\select_date.html" />
+    <Content Include="HTML\compoent\select_date_simulation_optionEntryForm.html" />
+    <Content Include="HTML\report\bsd_01_Lumi_Confirmation_LetTer_ver1_24052024_TL.html" />
+    <Content Include="HTML\report\bsd_lumi_total_payment_confirmation_spa.html" />
+    <Content Include="HTML\report\bsd_OptionEntryReport_GXN.html" />
+    <Content Include="HTML\report\bsd_SelectReport_SaleOrder.html" />
+    <Content Include="HTML\report\bsd_Senique_Total_Payment_Confirmation_SPA.html" />
+    <Content Include="HTML\report\bsd_Simulation_Report_InOptionEntryForm.html" />
+    <Content Include="JS\bsd_btnSaleOrderView.js" />
+    <Content Include="JS\bsd_BulkPrint_SaleOrder.js" />
+    <Content Include="JS\bsd_CrmFetchKit.js" />
+    <Content Include="JS\button\bsd_btn_EnableRule.js" />
+    <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
+    <Content Include="HTML\report\bsd_Simulation.html" />
+    <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
+    <Content Include="JS\Update Due Date Detail\bsd_Update_Dua_Date.js" />
+    <Content Include="JS\Update Due Date Detail\bsd_Update_Due_Date_Detail.js" />
+    <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallment.js" />
+    <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallmentapprove_form.js" />
+    <Content Include="JS\Update Estimate Handover Date\bsd_updateestimatehandoverdate.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HTML\main\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

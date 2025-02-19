@@ -1,0 +1,212 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            padding: 0px;
+            margin: 0px;
+            font-family: Segoe UI, Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        #page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        .button {
+            display: block;
+            line-height: 25px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #B1D6F0;
+            border: 1px solid #0094ff;
+        }
+
+
+        .textArea {
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            margin: 5px 0 5px 0;
+        }
+
+        .noti {
+            font-size: 14px;
+            margin: 0 0 0 10px;
+        }
+
+        .container {
+            height: 210px;
+            padding: 0 10px 0 10px;
+            overflow: auto;
+        }
+
+        .lableradio {
+            display: block;
+            padding: 5px 0px 5px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="page-title">
+        <span style="text-align:center;display:block">Reports</span>
+    </div>
+    <p class="noti"> Please select the reports:</p>
+    <div class="container" id="container">
+        <!--<label style='display:block;'><input type="radio" name="optradio">Option 1</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 2</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 3</label>-->
+    </div>
+    <div style="display: block; padding: 5px 20px 5px 20px; position: relative; background-color: #f8f8f8;">
+        <a id="okBtn" class="button" style="margin-left:20px" onclick="RunReport()">Print</a>
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">
+        var ReportID = null;
+        var FileName = null;
+        $(document).ready(function (doc) {
+            debugger;
+            var entity = window.top.Mscrm.EntityPropUtil.EntityTypeName2CodeMap["bsd_advancepayment"];
+            var xml = [];
+            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>");
+            xml.push("<entity name='report'>");
+            xml.push("<attribute name='name' />");
+            xml.push("<attribute name='reportid' />");
+            xml.push("<attribute name='filename' />");
+            xml.push("<order attribute='createdon' descending='false' />");
+            xml.push("<filter type='and'>");
+            xml.push("<condition attribute='name' operator='like' value='%Receipt[_]AdvancePayment%' />");
+            xml.push("</filter>");
+            xml.push("</entity>");
+            xml.push("</fetch>");
+            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+                if (rs.length > 0) {
+
+                    var container = document.getElementById("container");
+                    for (var i = 0; i < rs.length; i++) {
+                        var radio1 = document.createElement('input');
+                        radio1.id = 'myRadioId' + i.toString();
+                        radio1.type = 'radio';
+                        radio1.name = "select";
+                        radio1.value = rs[i].attributes.reportid.value.toString()+","+rs[i].attributes.filename.value.toString();
+
+
+                        var label1 = document.createElement('label');
+                        label1.htmlFor = radio1.id;
+                        label1.classList.add("lableradio");
+                        label1.appendChild(radio1);
+                        label1.appendChild(document.createTextNode(rs[i].attributes.name.value));
+                        $(label1).click(function (e) {
+                            var radio = this.firstElementChild;
+                            radio = radio.value.split(",");
+                            ReportID = radio[0];
+                            FileName = radio[1];
+                        });
+                        container.appendChild(label1);
+                    }
+                }
+            }, function (er) {
+                console.log(er.message)
+            });
+
+        });
+
+        function RunReport() {
+            debugger;
+            if (ReportID && FileName) {
+                window.top.setReceiptDate();
+                var idrecord = getParameterByName("id").replace('{', '').replace('}', '');
+                var nameReport = "Contract Form";
+                var urlreport = getReportURL("run", FileName, ReportID, idrecord, window.top.Mscrm.EntityPropUtil.EntityTypeName2CodeMap["bsd_advancepayment"]);
+                window.open(urlreport, nameReport, "resizable=1,width=800,height=700");
+                closeWindow();
+            }
+
+        }
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        function getReportURL(action, fileName, idreport, idrecord, recordstype) {
+            debugger;
+            //var orgUrl = GetGlobalContext().getClientUrl();
+            var orgUrl = Xrm.Page.context.getClientUrl();
+            var reportUrl = orgUrl +
+             "/crmreports/viewer/viewer.aspx?action=" +
+             encodeURIComponent(action) + "&context=records" +
+             "&helpID=" +
+             encodeURIComponent(fileName) +
+             "&id=%7b" +
+             encodeURIComponent(idreport) +
+             "%7d" +
+             "&records=%7b" + encodeURIComponent(idrecord) +
+             "%7d&recordstype=" + recordstype + "";
+            return reportUrl;
+        }
+    </script>
+
+</body>
+</html>

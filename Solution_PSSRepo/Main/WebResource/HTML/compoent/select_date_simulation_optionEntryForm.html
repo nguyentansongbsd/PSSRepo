@@ -1,0 +1,191 @@
+﻿<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="bootstrap_datetimepicker.css">
+    <link rel="stylesheet" href="bootstrap.css">
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        a {
+            font-family: Segoe UI,Tahoma,Arial;
+        }
+
+        span#page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+        a.button {
+            position: absolute;
+            display: block;
+            width: 22px;
+            height: 22px;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+
+            a.button:hover {
+                border: 1px solid #0094ff;
+                width: 20px;
+                height: 20px;
+            }
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        a.ftButton {
+            display: block;
+            line-height: 24px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;
+        }
+
+            a.ftButton:hover {
+                background-color: #B1D6F0;
+            }
+
+        #datetimepicker12 {
+            font-family: 'Segoe UI', Tahoma, Arial;
+        }
+    </style>
+    <script type="text/javascript" src="../new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="moment_with_locales.js"></script>
+    <script type="text/javascript" src="bootstrap_datetimepicker.js"></script>
+    <script type="text/javascript" src="jquery.base64.js"></script>
+    <meta>
+    <meta>
+    <meta>
+    <meta>
+    <meta>
+</head>
+<body style="word-wrap: break-word;" onfocusout="parent.setEmailRange();">
+    <span id="page-title" style="text-align: center;font-weight: bold;">
+        Select simulate date
+    </span>
+    <div id="main">
+        <div class="content">
+            <div class="container">
+                <div style="overflow:hidden;">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div id="datetimepicker12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: block; padding: 5px 20px; position: relative; background-color: rgb(248, 248, 248);">
+        <a id="okBtn" class="ftButton" style="margin-left:20px">Simulate</a>
+        <!--<a id="closeBtn" class="ftButton" onclick="javascript: window.close()">Close</a>-->
+        <!--<a class="ftButton" style="margin-right:10px;">Save</a>-->
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        var Xrm = window.parent.Xrm;
+        function OpenSimulation() {
+            debugger;
+            var data = $('#datetimepicker12').data();
+            var cur = data.DateTimePicker.date();
+            var id = getParameterByName("id");
+            var ids = getParameterByName1();
+            var param = '{"id":"' + ids + '", "cur":"' + cur.toISOString() + '"}';
+            Xrm.Utility.openWebResource("bsd_Simulation_Report_InOptionEntryForm",param, 1000, 600);
+        }
+        function getParameterByName1(name, url) {
+            if (!url) url = window.location.href;
+            var conds = '' + decodeURIComponent(url.substring(url.indexOf("data"))).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"').replace(/\s/g, '') + '';
+            conds = conds.replace(/\\/g, "");
+            var result = conds.split('data":"')[1];
+            return result;
+            // name = name.replace(/[\[\]]/g, "\\$&");
+            // var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            //     results = regex.exec(url);
+            // if (!results) return null;
+            // if (!results[2]) return '';
+            // return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        $(document).ready(function (doc) {
+            $('#datetimepicker12').datetimepicker({
+                inline: true,
+                format: "MM/DD/YYYY",
+                defaultDate: false,
+                useCurrent: true
+            });
+            //$(dateseletor).datetimepicker({
+            //    format: "MM/DD/YYYY",
+            //    useCurrent: true,
+            //    defaultDate: false,
+            //    //locale: "vi"
+            //});
+
+            $("#okBtn").click(function (e) {
+                OpenSimulation();
+
+            });
+
+            $("#closeBtn").click(function (e) {
+                closeWindow();
+            });
+        });</script>
+</body>
+</html>
