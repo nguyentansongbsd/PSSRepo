@@ -36,7 +36,7 @@ namespace Plugin_UpdatePriceList_Import
                 if (((OptionSetValue)this.en["statuscode"]).Value != 1) throw new InvalidPluginExecutionException("The price update status is not \"Active\", the action cannot be performed.");
                 Entity enUnit = getProductPrice();
                 if(!enUnit.Contains("price") || ((Money)enUnit["price"]).Value <= 0) throw new InvalidPluginExecutionException("The product price is less than or equal to 0. Please check the information again.");
-                if (((OptionSetValue)enUnit["statuscode"]).Value != 1 || ((OptionSetValue)enUnit["statuscode"]).Value != 100000000) throw new InvalidPluginExecutionException("Products that are not in the \"Available\" or \"Preparing\" status will not have their prices updated.");
+                if (((OptionSetValue)enUnit["statuscode"]).Value != 1 && ((OptionSetValue)enUnit["statuscode"]).Value != 100000000) throw new InvalidPluginExecutionException("Products that are not in the \"Available\" or \"Preparing\" status will not have their prices updated.");
 
                 update(((Money)enUnit["price"]).Value);
             }
