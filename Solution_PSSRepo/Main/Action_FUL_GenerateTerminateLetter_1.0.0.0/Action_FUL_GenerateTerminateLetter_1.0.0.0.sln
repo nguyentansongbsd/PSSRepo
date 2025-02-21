@@ -1,0 +1,20 @@
+
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_FUL_GenerateTerminateLetter", "Action_FUL_GenerateTerminateLetter_1.0.0.0.csproj", "{586A83F5-9D4A-4203-BC12-F3B391AD58DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{586A83F5-9D4A-4203-BC12-F3B391AD58DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{586A83F5-9D4A-4203-BC12-F3B391AD58DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{586A83F5-9D4A-4203-BC12-F3B391AD58DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{586A83F5-9D4A-4203-BC12-F3B391AD58DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

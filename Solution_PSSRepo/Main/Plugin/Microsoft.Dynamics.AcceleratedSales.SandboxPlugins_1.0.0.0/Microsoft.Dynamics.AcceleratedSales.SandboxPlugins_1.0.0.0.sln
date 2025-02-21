@@ -1,0 +1,20 @@
+
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Dynamics.AcceleratedSales.SandboxPlugins", "Microsoft.Dynamics.AcceleratedSales.SandboxPlugins_1.0.0.0.csproj", "{A2F463CD-D97E-44B0-95DF-D609E0AB7B79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2F463CD-D97E-44B0-95DF-D609E0AB7B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F463CD-D97E-44B0-95DF-D609E0AB7B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F463CD-D97E-44B0-95DF-D609E0AB7B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F463CD-D97E-44B0-95DF-D609E0AB7B79}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

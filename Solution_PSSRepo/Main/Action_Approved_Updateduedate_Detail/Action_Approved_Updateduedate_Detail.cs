@@ -290,7 +290,6 @@ namespace Action_Approved_Updateduedate_Detail
             request["duedatenew"] = newDate.AddHours(7).ToString();
             request["statuscode"] = 100000000;
             service.Execute(request);
-
         }
         public void HandleError(Entity item, string error)
         {
