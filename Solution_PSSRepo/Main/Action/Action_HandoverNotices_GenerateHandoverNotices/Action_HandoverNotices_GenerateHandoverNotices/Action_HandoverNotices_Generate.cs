@@ -306,7 +306,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             decimal interest = 0;
             //GET INSTALLMENT
             QueryExpression q1 = new QueryExpression("bsd_paymentschemedetail");
-            q1.ColumnSet = new ColumnSet(new string[] { "bsd_paymentschemedetailid", "bsd_duedate", "bsd_balance", });
+            q1.ColumnSet = new ColumnSet(true);
             q1.Criteria = new FilterExpression(LogicalOperator.And);
             q1.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, oe.Id));
             q1.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, "100000000"));//NOT PAID

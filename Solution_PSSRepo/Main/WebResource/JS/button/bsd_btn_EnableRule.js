@@ -104,14 +104,18 @@ function CheckEnable_Role() {
 }
 
 function CheckEnable_Condition(tyle) {
-    let status = crmcontrol.getValue("statuscode");
+    debugger;
+    let status = Xrm.Page.getAttribute("statuscode").getValue();
     switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
         case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
 
             if (getStatusCodeValueByName("Approved") === status)
                 return false;
             break;
-
+        case "bsd_updatelandvalue-bsd_landvalue-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status)
+                return false;
+            break;
         case "bsd_updateduedate-subgriddetail":
             if (getStatusCodeValueByName("Approved") === status)
                 return false;
@@ -120,7 +124,22 @@ function CheckEnable_Condition(tyle) {
             if (getStatusCodeValueByName("Approved") === status)
                 return false;
             break;
-
+        case "bsd_discount-form_statuscode":
+            if (getStatusCodeValueByName("Approved") === status)
+                return false;
+            break;
+        case "bsd_packageselling-form_statuscode":
+            if (getStatusCodeValueByName("Approved") === status)
+                return false;
+            break;
+        case "bsd_phaseslaunch-bsd_promotion-subgriddetail":
+            if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status)
+                return false;
+            break;
+        case "bsd_phaseslaunch-bsd_packageselling-subgriddetail":
+            if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status)
+                return false;
+            break;
         default:
             return false;
     }
@@ -208,3 +227,4 @@ function CheckDetailForMaster(entityName, entityId) {
         "</fetch>"
     ].join("");
 }
+

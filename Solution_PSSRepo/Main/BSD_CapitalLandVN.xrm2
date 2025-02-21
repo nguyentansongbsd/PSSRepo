@@ -37,6 +37,37 @@
           ]
         },
         {
+          "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "49b22a8a-380b-448f-b68a-dcd06aa97d26",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_UpdateLandValue_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -54,6 +85,52 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_UpdateLandValue_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Approve.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Approve.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "bc278aa3-9302-4c85-a493-b4c05725881e",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Approve.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_CreatePriceListItem.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_CreatePriceListItem.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "51c44752-9dcb-47d4-b25c-55274a422613",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreatePriceListItem.dll",
                 "SourceType": 0
               }
             }
@@ -86,6 +163,16 @@
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
+            {
+              "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
+            },
+            {
+              "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
+            },
             {
               "CrmId": "d4015a18-5b8b-e911-a98f-000d3aa00fc2",
               "FileType": 3,
