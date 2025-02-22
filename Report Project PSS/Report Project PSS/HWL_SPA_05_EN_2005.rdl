@@ -610,6 +610,9 @@
 &lt;link-entity name="bsd_block" from="bsd_blockid" to="bsd_blocknumber" alias="block"&gt;
         &lt;attribute name="bsd_blockid" alias="blockid" /&gt;
       &lt;/link-entity&gt;
+&lt;link-entity name="bsd_unittype" from="bsd_unittypeid" to="bsd_unittype" alias="unittype"&gt;
+      &lt;attribute name="bsd_unittypeid" alias="unittypeid" /&gt;
+    &lt;/link-entity&gt;
       &lt;/link-entity&gt;
     &lt;/link-entity&gt;
   &lt;/entity&gt;
@@ -738,6 +741,10 @@
         </Field>
         <Field Name="blockid">
           <DataField>blockid</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="unittypeid">
+          <DataField>unittypeid</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -78159,7 +78166,7 @@ CDate(Fields!ContractDate.Value))</Value>
             <ReportItems>
               <Image Name="Image2">
                 <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=unit&amp;id=" &amp; First(Fields!unitid.Value, "dsUnitInfo")</Value>
+                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=unittype&amp;id=" &amp; First(Fields!unittypeid.Value, "dsUnitInfo") &amp; "&amp;blockid=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
                 <Sizing>Fit</Sizing>
                 <Top>0.26458cm</Top>
                 <Left>0cm</Left>
