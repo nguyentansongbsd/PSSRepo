@@ -70,8 +70,14 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
                     enOption["bsd_mandatoryprimary"] = getMandatoryPrimary(enDeveloper);
                 if (!this.target.Contains("bsd_floor"))
                     enOption["bsd_floor"] = getFloor();
-                if (!this.target.Contains("bsd_theunitpriceof01sqm"))
-                    enOption["bsd_theunitpriceof01sqm"] = ((Money)this.target["totalamount"]).Value / (decimal)this.target["bsd_netusablearea"];
+                //if (!this.target.Contains("bsd_theunitpriceof01sqm"))
+                //{
+                //    decimal totalamount = this.target.Contains("totalamount") ? ((Money)this.target["totalamount"]).Value : 0;
+                //    decimal netusablearea = this.target.Contains("bsd_netusablearea") ? (decimal)this.target["bsd_netusablearea"] : 0;
+                //    tracingService.Trace(totalamount + " - " + netusablearea);
+                //    enOption["bsd_theunitpriceof01sqm"] = netusablearea > 0 ?  totalamount / netusablearea : 0;
+                //}    
+                    
                 this.service.Update(enOption);
             }
             catch (InvalidPluginExecutionException ex)
@@ -99,6 +105,7 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
         {
             try
             {
+                tracingService.Trace("get developer");
                 Entity enProject = this.service.Retrieve(((EntityReference)this.target["bsd_project"]).LogicalName, ((EntityReference)this.target["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(new string[] { "bsd_investor" }));
                 if (enProject.Contains("bsd_investor")) return (EntityReference)enProject["bsd_investor"];
                 else return null;
@@ -112,6 +119,7 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
         {
             try
             {
+                tracingService.Trace("get primary");
                 Entity enContact = this.service.Retrieve(enfDeveloper.LogicalName, enfDeveloper.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(new string[] { "primarycontactid" }));
                 if (enContact.Contains("primarycontactid")) return (EntityReference)enContact["primarycontactid"];
                 else return null;
@@ -125,6 +133,7 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
         {
             try
             {
+                tracingService.Trace("get floor");
                 Entity enUnit = this.service.Retrieve(((EntityReference)this.target["bsd_unitnumber"]).LogicalName, ((EntityReference)this.target["bsd_unitnumber"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(new string[] { "bsd_floor" }));
                 if (enUnit.Contains("bsd_floor")) return (EntityReference)enUnit["bsd_floor"];
                 else return null;
