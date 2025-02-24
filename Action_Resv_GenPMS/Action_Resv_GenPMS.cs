@@ -93,7 +93,8 @@ namespace Action_Resv_GenPMS
                         "createdon",
                         "bsd_netusablearea",
                         "bsd_unitno",
-                        "bsd_quotecodesams"
+                        "bsd_quotecodesams",
+                        "bsd_ngaydatcoc"
                 }));
 
 
@@ -120,7 +121,7 @@ namespace Action_Resv_GenPMS
                 } 
                 traceService.Trace("2");
                 traceService.Trace("2.1");
-                DateTime date = (DateTime)QO["createdon"];
+                DateTime date = (DateTime)QO["bsd_ngaydatcoc"];
                 if (QO.Contains("statuscode") && ((OptionSetValue)QO["statuscode"]).Value == 100000000) //reservation
                 {
                     if (!QO.Contains("bsd_reservationtime")) throw new InvalidPluginExecutionException("Reservation did not contain Reservation time! Please check again!");
@@ -623,7 +624,9 @@ namespace Action_Resv_GenPMS
             bool b_typeofstartdate = ((bool)en["bsd_typeofstartdate"]);
             if (b_typeofstartdate) // Nếu bsd_typeofstartdate = Yes => set lại ngày = bsd_reservationtime
             {
-                date = (DateTime)QO["createdon"];
+                //date = (DateTime)QO["createdon"]; 
+                //sửa lại lấy theo ngày đặt cọc
+                date = (DateTime)QO["bsd_ngaydatcoc"];
                 if (QO.Contains("statuscode") && ((OptionSetValue)QO["statuscode"]).Value == 100000000) //reservation
                 {
                     if (!QO.Contains("bsd_reservationtime")) throw new InvalidPluginExecutionException("Reservation did not contain Reservation time! Please check again!");

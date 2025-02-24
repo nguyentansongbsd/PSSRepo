@@ -148,11 +148,10 @@ namespace Action_Approved_Updateduedate_Detail
             switch (enHD_name)
             {
                 case "bsd_quotation":
-                    if (((OptionSetValue)enHD["statuscode"]).Value == 100000006)
+                    if (((OptionSetValue)enHD["statuscode"]).Value == 100000001)
                     {
                         var mess = "The record contains a contract that has already been liquidated. Please check again.";
                         HandleError(item, mess);
-
                         result = false;
                     }
                     break;
@@ -166,7 +165,7 @@ namespace Action_Approved_Updateduedate_Detail
                     }
                     break;
                 case "quote":
-                    if (((OptionSetValue)enHD["statuscode"]).Value == 100000006)
+                    if (((OptionSetValue)enHD["statuscode"]).Value == 100000001)
                     {
                         var mess = "The record contains a contract that has already been liquidated. Please check again.";
                         HandleError(item, mess);
@@ -174,12 +173,7 @@ namespace Action_Approved_Updateduedate_Detail
                         result = false;
                     }
                     break;
-
-
-            }    
-
-
-
+            }
         }
         /// <summary>
         /// kiểm tra đợt trong entity detail được thanh toán không? 
@@ -266,7 +260,7 @@ namespace Action_Approved_Updateduedate_Detail
 
             tracingService.Trace($"{enInstallment.Id}");
             tracingService.Trace($"newDate {newDate}");
-            if ((newDate - ((DateTime)enInstallment["bsd_duedate"]).AddHours(7)).TotalDays <= 0)
+            if ((newDate - ((DateTime)enInstallment["bsd_duedate"]).AddHours(7)).TotalDays == 0)
             {
                 
 

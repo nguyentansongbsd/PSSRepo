@@ -90,8 +90,19 @@ namespace Action_UpdateLandValue_Detail
                         {
                             EntityReference entityReference3 = entity4.Contains("bsd_installment") ? (EntityReference)entity4["bsd_installment"] : (EntityReference)null;
                             Entity entity6 = this.service.Retrieve(entityReference3.LogicalName, entityReference3.Id, new ColumnSet(true));
-                            entity6["bsd_amountofthisphase"] = (object)num9;
-                            this.service.Update(entity6);
+                            Entity enUpdate= new Entity(entity6.LogicalName, entity6.Id);
+                            enUpdate["bsd_amountofthisphase"] = (object)num9;
+                            #region tính bsd_balance
+                            //bsd_amountofthisphase-bsd_depositamount-bsd_amountwaspaid-bsd_waiverinstallment
+                            var bsd_amountofthisphase = num9;
+                            var bsd_depositamount = entity6.Contains("bsd_depositamount") ? (decimal)entity6["bsd_depositamount"] : 0M;
+                            var bsd_amountwaspaid = entity6.Contains("bsd_amountwaspaid") ? (decimal)entity6["bsd_amountwaspaid"] : 0M;
+
+                            var bsd_waiverinstallment = entity6.Contains("bsd_waiverinstallment") ? (decimal)entity6["bsd_waiverinstallment"] : 0M;
+
+                            enUpdate["bsd_balance"] =new Money( bsd_amountofthisphase - bsd_depositamount - bsd_amountwaspaid - bsd_waiverinstallment);
+                            #endregion
+                            this.service.Update(enUpdate);
                         }
                     }
                 }
