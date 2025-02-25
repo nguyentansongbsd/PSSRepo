@@ -38,6 +38,7 @@ function fillter_OE() {
                     name: rs[0].attributes.name.value,
                     entityType: "salesorder"
                 }]);
+                onchange_OE()
             }
         },
             function (err) {
