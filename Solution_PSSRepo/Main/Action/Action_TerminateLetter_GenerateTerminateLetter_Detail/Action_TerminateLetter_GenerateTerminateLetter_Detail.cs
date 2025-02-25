@@ -234,7 +234,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     if(resCheckCaseSign)
                     {
                         tracingService.Trace($"resCheckCaseSign:true");
-                        entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
+                        entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage/100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
                     }    
                     tracingService.Trace($"bsd_termsinterestpercentage: {bsd_termsinterestpercentage}");
                     tracingService.Trace($"bsd_gracedays: {bsd_gracedays}");
