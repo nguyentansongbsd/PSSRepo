@@ -37,6 +37,22 @@
           ]
         },
         {
+          "Name": "Action_Approved_Updateduedate_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a011561f-581e-44a7-a5cd-aff34186133d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedate_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -44,6 +60,21 @@
               "PropertiesType": 1,
               "Config": {
                 "Id": "49b22a8a-380b-448f-b68a-dcd06aa97d26",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_Resv_GenPMS.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "849830ac-0dd5-41af-bb76-e4d7f3b3d5a6",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "SourceType": 0
@@ -114,6 +145,29 @@
           ]
         },
         {
+          "Name": "Plugin_Create_UpdateLandValueUnits.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_UpdateLandValueUnits.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "5a34e880-122a-4dcd-b132-c4dcacc6abec",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateLandValueUnits.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_CreatePriceListItem.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -131,6 +185,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_CreatePriceListItem.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Updateduedate.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "210fcb6e-e3e6-4e7b-bda0-6a7eb9077a8c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Updateduedate.dll",
                 "SourceType": 0
               }
             }
@@ -174,9 +244,34 @@
               "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
             },
             {
+              "CrmId": "39e45875-2ef0-ef11-9341-000d3aa205ba",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
+            },
+            {
+              "CrmId": "ea0c1fcf-2af0-ef11-9341-6045bd207277",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Quotation Reservation\\bsd_quote_form.js"
+            },
+            {
+              "CrmId": "ad8500b1-f58a-e811-814c-3863bb360c48",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Dua_Date.js"
+            },
+            {
+              "CrmId": "5d3d8873-c888-e811-8153-3863bb367d20",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Due_Date_Detail.js"
+            },
+            {
               "CrmId": "d4015a18-5b8b-e911-a98f-000d3aa00fc2",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Update Land Value\\bsd_bsd_updatelandvalue_form.js"
+            },
+            {
+              "CrmId": "bb891a05-2db2-e611-80fa-3863bb36ffd0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Land Value\\bsd_updatelandvalueofunits.js"
             }
           ]
         }

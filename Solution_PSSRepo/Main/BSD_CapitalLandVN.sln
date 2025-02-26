@@ -75,6 +75,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Quotation Reservation", "Qu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Resv_GenPMS", "..\..\Action_Resv_GenPMS\Action_Resv_GenPMS.csproj", "{E3AC7A4A-6849-4658-93E5-DA0AAFD2E219}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Create Entity", "Create Entity", "{6DBB064F-C901-4B38-99DD-57E1F19CFABC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_UpdateLandValueUnits", "Plugin\Create Entity\Plugin_Create_UpdateLandValueUnits\Plugin_Create_UpdateLandValueUnits.csproj", "{0397DC87-A570-4287-9B6B-A5B4EEA4AF48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +197,10 @@ Global
 		{E3AC7A4A-6849-4658-93E5-DA0AAFD2E219}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3AC7A4A-6849-4658-93E5-DA0AAFD2E219}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3AC7A4A-6849-4658-93E5-DA0AAFD2E219}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0397DC87-A570-4287-9B6B-A5B4EEA4AF48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0397DC87-A570-4287-9B6B-A5B4EEA4AF48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0397DC87-A570-4287-9B6B-A5B4EEA4AF48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0397DC87-A570-4287-9B6B-A5B4EEA4AF48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -231,6 +239,8 @@ Global
 		{DC951C5A-1B2E-4E76-9323-FED24684E67A} = {000F12FC-0A81-4323-85B2-85BA366A99BF}
 		{8810B24E-C28F-4FEB-AF6C-BA0BA6149069} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
 		{E3AC7A4A-6849-4658-93E5-DA0AAFD2E219} = {8810B24E-C28F-4FEB-AF6C-BA0BA6149069}
+		{6DBB064F-C901-4B38-99DD-57E1F19CFABC} = {000F12FC-0A81-4323-85B2-85BA366A99BF}
+		{0397DC87-A570-4287-9B6B-A5B4EEA4AF48} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}
