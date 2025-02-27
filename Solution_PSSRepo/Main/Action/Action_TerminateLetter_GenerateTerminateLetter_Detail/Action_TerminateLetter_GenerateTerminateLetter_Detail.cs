@@ -196,11 +196,13 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     }
                     #endregion
                     #region  Overdue Interest
+                    tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
                     var en_bsd_interestratemaster = this.service.Retrieve("bsd_interestratemaster",
                         ((EntityReference)en_bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet(true));
                     var bsd_termsinterestpercentage =(decimal)installment["bsd_interestchargeper"];
                     var bsd_gracedays= (int)en_bsd_interestratemaster["bsd_gracedays"];
                     var bsd_duedate = ((DateTime)installment["bsd_duedate"]).AddHours(7);
+                    tracingService.Trace("step 4");
                     #region check caseSign
                     var bsd_signedcontractdate = new DateTime();
 
@@ -232,7 +234,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     if(resCheckCaseSign)
                     {
                         tracingService.Trace($"resCheckCaseSign:true");
-                        entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
+                        entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage/100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
                     }    
                     tracingService.Trace($"bsd_termsinterestpercentage: {bsd_termsinterestpercentage}");
                     tracingService.Trace($"bsd_gracedays: {bsd_gracedays}");
@@ -476,13 +478,13 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[5]
+            query.ColumnSet = new ColumnSet(new string[7]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase"
+        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));

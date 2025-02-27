@@ -50,9 +50,7 @@
     &lt;attribute name="totalamount" alias="optTotalAmount" /&gt;
     &lt;attribute name="bsd_discount" alias="optTotalDiscount" /&gt;
     &lt;filter type="and"&gt;
-      &lt;condition attribute="bsd_project" operator="in"&gt;
-        &lt;value&gt;@Project&lt;/value&gt;
-      &lt;/condition&gt;
+      &lt;condition attribute="bsd_project" operator="in" value="@Project" /&gt;
       &lt;condition attribute="createdon" operator="on-or-after" value="@FromDate" /&gt;
       &lt;condition attribute="createdon" operator="on-or-before" value="@ToDate" /&gt;
       &lt;condition attribute="statuscode" operator="neq" value="100000006" /&gt;

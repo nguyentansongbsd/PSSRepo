@@ -59,14 +59,19 @@
     <Content Include="JS\bsd_BulkPrint_SaleOrder.js" />
     <Content Include="JS\bsd_CrmFetchKit.js" />
     <Content Include="JS\button\bsd_btn_EnableRule.js" />
+    <Content Include="JS\button\bsd_button_action.js" />
+    <Content Include="JS\Follow up list\bsd_followuplist_formnew.js" />
     <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
     <Content Include="HTML\report\bsd_Simulation.html" />
+    <Content Include="JS\Quotation Reservation\bsd_quote_form.js" />
     <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Dua_Date.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Due_Date_Detail.js" />
     <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallment.js" />
     <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallmentapprove_form.js" />
     <Content Include="JS\Update Estimate Handover Date\bsd_updateestimatehandoverdate.js" />
+    <Content Include="JS\Update Land Value\bsd_bsd_updatelandvalue_form.js" />
+    <Content Include="JS\Update Land Value\bsd_updatelandvalueofunits.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HTML\main\" />

@@ -1,0 +1,335 @@
+{
+  "SolutionType": 1,
+  "Organizations": [
+    {
+      "ConnectionProtocol": 3072,
+      "OrganizationDisplayName": "CapitaLand Preview",
+      "OrganizationName": "pssvn-preview",
+      "OrganizationUrl": "https://pssvn-preview.crm5.dynamics.com",
+      "UserFriendlyName": "https://pssvn-preview.crm5.dynamics.com/",
+      "CurrentSolution": {
+        "Id": "fd140aaf-4df4-11dd-bd17-0019b9312238",
+        "Name": "Default Solution",
+        "UniqueName": "Default"
+      },
+      "Projects": [
+        {
+          "Name": "Action_Action_UpdateLandValue.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_Action_UpdateLandValue.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "342dd899-a93a-44db-8a76-0551387de569",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Action_UpdateLandValue.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_Approved_Updateduedate_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a011561f-581e-44a7-a5cd-aff34186133d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedate_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "49b22a8a-380b-448f-b68a-dcd06aa97d26",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_Resv_GenPMS.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "849830ac-0dd5-41af-bb76-e4d7f3b3d5a6",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_UpdateLandValue_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_UpdateLandValue_Detail.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "90b57b19-37f2-4b86-b46e-c08a3ba95774",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_UpdateLandValue_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Approve.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Approve.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "bc278aa3-9302-4c85-a493-b4c05725881e",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Approve.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_UpdateLandValueUnits.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_UpdateLandValueUnits.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "5a34e880-122a-4dcd-b132-c4dcacc6abec",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateLandValueUnits.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_CreatePriceListItem.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_CreatePriceListItem.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "51c44752-9dcb-47d4-b25c-55274a422613",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreatePriceListItem.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Updateduedate.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "210fcb6e-e3e6-4e7b-bda0-6a7eb9077a8c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Updateduedate.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_UpdateLandvalueUnit_Approve.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "679e0237-6ec5-4ef3-be82-9e45f1d15879",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateLandvalueUnit_Approve.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "WebResource.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
+            },
+            {
+              "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
+            },
+            {
+              "CrmId": "39e45875-2ef0-ef11-9341-000d3aa205ba",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
+            },
+            {
+              "CrmId": "ea0c1fcf-2af0-ef11-9341-6045bd207277",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Quotation Reservation\\bsd_quote_form.js"
+            },
+            {
+              "CrmId": "ad8500b1-f58a-e811-814c-3863bb360c48",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Dua_Date.js"
+            },
+            {
+              "CrmId": "5d3d8873-c888-e811-8153-3863bb367d20",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Due_Date_Detail.js"
+            },
+            {
+              "CrmId": "d4015a18-5b8b-e911-a98f-000d3aa00fc2",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Land Value\\bsd_bsd_updatelandvalue_form.js"
+            },
+            {
+              "CrmId": "bb891a05-2db2-e611-80fa-3863bb36ffd0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Land Value\\bsd_updatelandvalueofunits.js"
+            }
+          ]
+        }
+      ],
+      "Settings": [
+        {
+          "CssMinification": 1,
+          "JavaScriptMinification": 1,
+          "SettingType": 6
+        },
+        {
+          "AddDebuggerNonUserCodeAttribute": true,
+          "AddExcludeFromCodeCoverageAttribute": true,
+          "AddStringLengthAttribute": false,
+          "BaseProxyClassFileName": "BaseProxyClass",
+          "CustomProxyNamingServiceDllPath": "",
+          "EnumsFileName": "OptionSetEnums",
+          "GeneratedCodeAttributeVersionPrecision": 4,
+          "GenerateProxyEnumsInSeparateClasses": true,
+          "MakeAllPropertiesEditable": false,
+          "ProxyEntityClassPath": "\\ProxyClasses",
+          "ProxyEntityNamingConvention": 1,
+          "ProxyEntityNamingPattern": "{0}",
+          "ProxyEnumPath": "\\ProxyClasses\\Enums",
+          "ProxyGenerationMethod": 1,
+          "ProxyMessagesPath": "\\ProxyClasses\\Messages",
+          "ProxyNamingMethod": 0,
+          "ProxyTypesThatShouldUseExistingNamesWhenRegenerating": 511,
+          "ServiceContextName": "CrmServiceContext",
+          "SettingType": 4,
+          "UseStronglyTypedNameForProxyRelatedEntities": true
+        },
+        {
+          "ChartPath": "\\Charts",
+          "CssPath": "\\Web",
+          "CustomAssemblyConfigPath": "\\AssemblyConfig",
+          "EmailTemplatePath": "\\EmailTemplates",
+          "EntityMetadataPath": "\\EntityMetadata",
+          "HtmlPath": "\\Web",
+          "ImagePath": "\\Web",
+          "JavaScriptPath": "\\Web",
+          "PluginConfigurationsPath": "\\PluginConfigurations",
+          "ProcessPath": "\\Processes",
+          "ResourcePath": "\\Web",
+          "SettingType": 5,
+          "SilverlightPath": "\\Xap",
+          "SitemapPath": "\\Sitemap",
+          "TypeScriptIntellisensePath": "\\Web\\IntellisenseFiles",
+          "TypeScriptPath": "\\Web",
+          "ViewPath": "\\Views",
+          "XmlPath": "\\Web",
+          "XslPath": "\\Web"
+        },
+        {
+          "PluginStepNameTemplate": "{messageDisplayName} - {primaryEntityDisplayName} - {pipelineStageDisplayName}",
+          "SettingType": 1
+        }
+      ]
+    }
+  ]
+}

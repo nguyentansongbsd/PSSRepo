@@ -98,12 +98,27 @@ function disableFormFields(onOff) {
         }
     });
 }
+function onFieldChange(executionContext) {
+    var formContext = executionContext.getFormContext(); // Lấy ngữ cảnh form
+
+    // Kiểm tra xem trường cụ thể đã thay đổi hay chưa
+    var fieldValue = formContext.getAttribute("bsd_project").getValue(); // Thay "your_field_name" bằng tên trường của bạn
+
+    // Nếu trường có giá trị, thực hiện lưu
+    if (fieldValue !== null) {
+        formContext.data.entity.save(); // Lưu form
+    }
+}
 function onSaveReload(executionContext) {
     var formContext = executionContext.getFormContext();
     var saveEventArgs = executionContext.getEventArgs();
+
+    Xrm.Page.getAttribute("bsd_errordetail").setValue(null);
+    Xrm.Page.getAttribute("bsd_error").setValue(false);
     formContext.data.entity.addOnPostSave(function () {
 
         window.parent.processingDlg.show();
+
         var intervalId = setInterval(function () {
             checkPA();
         }, 2000)

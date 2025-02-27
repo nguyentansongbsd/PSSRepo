@@ -123,8 +123,10 @@ function fillter_ins() {
 }
 function fillter_olddate() {
     var installment = Xrm.Page.getAttribute("bsd_installment").getValue();
-    var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
-    if (installment != null && optionentry != null) {
+    //var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
+    
+    
+    if (installment != null) {
 
         var xml = [];
         xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
@@ -135,7 +137,7 @@ function fillter_olddate() {
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_paymentschemedetailid' operator='eq' value='" + installment[0].id + "'/>");
-        xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionentry[0].id + "' />");
+        //xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionentry[0].id + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -249,15 +251,15 @@ function fillter_pro_unit_quote() {
     var bsd_quote = Xrm.Page.getAttribute("bsd_quote").getValue();
     var units = null;
     var project = null;
-    if (optionentry != null) {
+    if (bsd_quote != null) {
         var xml = [];
         xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' count='1' distinct='false'>");
         xml.push("<entity name='quote'>");
         xml.push("<attribute name='bsd_projectid' />");
         xml.push("<attribute name='bsd_unitno' />");
-        xml.push("<attribute name='quote' />");
+        xml.push("<attribute name='quoteid' />");
         xml.push("<filter type='and'>");
-        xml.push("<condition attribute='quote' operator='eq'  uitype='quote' value='" + bsd_quote[0].id + "' />");
+        xml.push("<condition attribute='quoteid' operator='eq'  uitype='quote' value='" + bsd_quote[0].id + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -413,6 +415,13 @@ function Filter_quote(executionContextObj) {
     //Filteroe += "<condition attribute='statuscode' operator='neq' value='100000006'/>";
     if (bsd_project != null) {
         Filteroe += "<condition attribute='bsd_projectid' operator='eq' value='" + bsd_project[0].id + "'/>";
+        Filteroe +=
+            "      <condition attribute='statuscode' operator='in'>" +
+            "        <value>"+ 100000004+ "</value>" +
+            "        <value>"+ 100000007+ "</value>" +
+            "        <value>"+ 100000000+ "</value>" +
+            "        <value>"+ 100000006+ "</value>" +
+            "      </condition>";
     }
     Filteroe += "</filter>";
     var customerAccountFilter = Filteroe;

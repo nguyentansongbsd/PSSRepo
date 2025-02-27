@@ -50,7 +50,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Report Include="01_1-IT Test Form Template (1).rdl" />
+    <Report Include="HWL_SPA_05_EN_2005.rdl" />
+    <Report Include="HWL_SPA_05_VN_2005.rdl" />
     <Report Include="Lumi_Xac Nhan CDT(contact)_VN_29112024.rdl" />
+    <Report Include="rp52_SM_Purchaser Info_SALES_CCR_Final (1).rdl" />
     <Report Include="rp52_SM_Purchaser Info_SALES_CCR_Final.rdl" />
     <Report Include="SENIQUE PREMIER_EA_EN_03Feb2025.rdl" />
     <Report Include="SENIQUE PREMIER_EA_VN_03Feb2025.rdl" />
