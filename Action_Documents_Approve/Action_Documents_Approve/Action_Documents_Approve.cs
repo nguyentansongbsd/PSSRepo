@@ -43,7 +43,7 @@ namespace Action_Documents_Approve
             {
                 this.target = (EntityReference)this.context.InputParameters["Target"];
                 this.base64File = !string.IsNullOrWhiteSpace((string)this.context.InputParameters["File"]) ? (string)this.context.InputParameters["File"] : null;
-                this.en = this.service.Retrieve(this.target.LogicalName, this.target.Id, new ColumnSet(new string[] { "bsd_name", "bsd_project", "bsd_filewordtemplatedocx", "statuscode" }));
+                this.en = this.service.Retrieve(this.target.LogicalName, this.target.Id, new ColumnSet(new string[] { "bsd_name", "bsd_project", "bsd_filewordtemplatedocx", "statuscode", "bsd_type" }));
                 
                 if (((OptionSetValue)this.en["statuscode"]).Value == 100000000) return; //100000000 = approved
                 //DownloadFile();
@@ -81,10 +81,9 @@ namespace Action_Documents_Approve
                 documentTemplate["name"] = this.en.Contains("bsd_name") ? this.en["bsd_name"].ToString() : null;
                 documentTemplate["description"] = this.en.Id.ToString();
                 documentTemplate["documenttype"] = new OptionSetValue(2); //2 = Word
-                documentTemplate["associatedentitytypecode"] = "salesorder";
-                if(!string.IsNullOrWhiteSpace(this.base64File)) documentTemplate["content"] = this.base64File;
+                documentTemplate["associatedentitytypecode"] = entityAssocia();
+                if (!string.IsNullOrWhiteSpace(this.base64File)) documentTemplate["content"] = DownloadFile(this.en.Id); // this.base64File;
 
-                // Tạo record trong hệ thống
                 this.service.Create(documentTemplate);
                 tracingService.Trace("End create Document template");
             }
@@ -93,11 +92,34 @@ namespace Action_Documents_Approve
                 throw ex;
             }
         }
-        private void DownloadFile()
+        private string entityAssocia()
+        {
+            try
+            {
+                string entity = string.Empty;
+                switch (((OptionSetValue)this.en["bsd_type"]).Value)
+                {
+                    case 100000000:
+                        entity = "salesorder";
+                        break;
+                    case 100000001:
+                        entity = "bsd_customernotices";
+                        break;
+                    default:
+                        break;
+                }
+                return entity;
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
+            }
+        }
+        private string DownloadFile(Guid documentId)
         {
             InitializeFileBlocksDownloadRequest initializeFileBlocksDownloadRequest = new InitializeFileBlocksDownloadRequest()
             {
-                Target = new EntityReference("bsd_documents", new Guid("757e592a-7ff2-ef11-be20-0022485a0a4f")),
+                Target = new EntityReference("bsd_documents", documentId),
                 FileAttributeName = "bsd_filewordtemplatedocx"
             };
 
@@ -147,6 +169,7 @@ namespace Action_Documents_Approve
             }
             string base64String = Convert.ToBase64String(fileBytes.ToArray());
             tracingService.Trace(base64String);
+            return base64String;
         }
     }
 }
