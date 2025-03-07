@@ -299,6 +299,7 @@ namespace Action_Resv_GenPMS
                     enIntallment["bsd_duedatecalculatingmethod"] = bsd_duedatecalculatingmethod;
                     bool bsd_lastinstallment = encolInstallmentMaster[i].Contains("bsd_lastinstallment") ? (bool)encolInstallmentMaster[i]["bsd_lastinstallment"] : false;
                     enIntallment["bsd_lastinstallment"] = bsd_lastinstallment;
+                    if(bsd_lastinstallment) enIntallment["bsd_duedatewordtemplate"] = null;
                     service.Update(enIntallment);
                 }
             }
@@ -573,7 +574,7 @@ namespace Action_Resv_GenPMS
 
                         if (payment_type == null || payment_type == 1)//default or month
                         {
-                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
                         }
                         else if (payment_type == 2)//times
                         {
@@ -593,7 +594,7 @@ namespace Action_Resv_GenPMS
                                 if (j == number - 1)
                                     date = date.AddDays(i_bsd_nextdaysofendphase);
                                 traceService.Trace("VAO DAY: " + j);
-                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
                             }
 
                         }
@@ -609,7 +610,7 @@ namespace Action_Resv_GenPMS
             }
         }
 
-        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList)
+        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_last)
         {
             double extraDay = 0;
             int i_nextMonth = 1;
@@ -848,6 +849,9 @@ namespace Action_Resv_GenPMS
 
             SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
+            if (!f_last)
+                tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
+
             traceService.Trace("Installment " + orderNumber + " --- " + (tmpamount - Math.Round(tax * landValue / 100, MidpointRounding.AwayFromZero)));
             service.Create(tmp);
 
@@ -1004,6 +1008,9 @@ namespace Action_Resv_GenPMS
 
                 SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
+                if (!f_last)
+                    tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
+
                 tmp.Id = Guid.NewGuid();
 
                 service.Create(tmp);
@@ -1141,6 +1148,9 @@ namespace Action_Resv_GenPMS
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
+                    if (!f_last)
+                        tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
+
                     traceService.Trace("Installment " + orderNumber);
                     Guid guid = service.Create(tmp);
 
@@ -1172,6 +1182,9 @@ namespace Action_Resv_GenPMS
                     tmp["bsd_gracedays"] = graceDays;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+
+                    if (!f_last)
+                        tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                     Guid guid = service.Create(tmp);
 
