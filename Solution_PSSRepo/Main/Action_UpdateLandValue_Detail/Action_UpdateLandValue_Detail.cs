@@ -42,17 +42,29 @@ namespace Action_UpdateLandValue_Detail
             try
             {
                 Entity entity3 = en;
-                this.service.Update(new Entity(entity3.LogicalName, entity3.Id)
-                {
-                    ["statecode"] = (object)new OptionSetValue(0),
-                    ["statuscode"] = (object)new OptionSetValue(100000002)
-                });
+               
                 tracingService.Trace("step1");
                 Entity entity4 = this.service.Retrieve(entity3.LogicalName, entity3.Id, new ColumnSet(true));
-                if (((OptionSetValue)entity4["bsd_type"]).Value == 100000000)
+                if(((OptionSetValue)entity4["bsd_type"]).Value == 100000001)
                 {
+                    tracingService.Trace("step1.1");
+                    this.service.Update(new Entity(entity3.LogicalName, entity3.Id)
+                    {
+                        ["statecode"] = (object)new OptionSetValue(0),
+                        ["statuscode"] = (object)new OptionSetValue(100000002)
+                    });
+                }    
+                else if (((OptionSetValue)entity4["bsd_type"]).Value == 100000000)
+                {
+                    tracingService.Trace("step1.2");
+                    this.service.Update(new Entity(entity3.LogicalName, entity3.Id)
+                    {
+                        ["statecode"] = (object)new OptionSetValue(0),
+                        ["statuscode"] = (object)new OptionSetValue(100000002)
+                    });
                     tracingService.Trace("step2");
-
+                    if (!entity4.Contains("bsd_optionentry"))
+                        return;
                     Decimal num1 = entity4.Contains("bsd_listedpricenew") ? ((Money)entity4["bsd_listedpricenew"]).Value : 0M;
                     Decimal num2 = entity4.Contains("bsd_discountnew") ? ((Money)entity4["bsd_discountnew"]).Value : 0M;
                     Decimal num3 = entity4.Contains("bsd_handoverconditionamountnew") ? ((Money)entity4["bsd_handoverconditionamountnew"]).Value : 0M;

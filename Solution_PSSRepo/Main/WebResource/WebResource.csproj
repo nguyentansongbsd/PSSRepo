@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="HTML\compoent\bsd_Entityview_SelectReport.html" />
     <Content Include="HTML\compoent\bsd_Payment_Notices.html" />
     <Content Include="HTML\compoent\bsd_terminateletter_option_filter_generate.html" />
     <Content Include="HTML\compoent\select_date.html" />
@@ -58,6 +59,7 @@
     <Content Include="JS\bsd_btnSaleOrderView.js" />
     <Content Include="JS\bsd_BulkPrint_SaleOrder.js" />
     <Content Include="JS\bsd_CrmFetchKit.js" />
+    <Content Include="JS\button\bsd_btn_BulkPrint_WithWordTemplate.js" />
     <Content Include="JS\button\bsd_btn_EnableRule.js" />
     <Content Include="JS\button\bsd_button_action.js" />
     <Content Include="JS\Follow up list\bsd_followuplist_formnew.js" />
@@ -75,6 +77,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HTML\main\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HTML\compoent\.editorconfig" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

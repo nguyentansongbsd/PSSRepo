@@ -69,7 +69,10 @@ function disableFormFields(onOff) {
         return controlType != "iframe" && controlType != "webresource" && controlType != "subgrid";
     }
     Xrm.Page.ui.controls.forEach(function (control, index) {
-        if (doesControlHaveAttribute(control)) {
+        if (control.name == "header_statuscode" || control.name == "header_bsd_discountnumber") {
+            control.setDisabled(true);
+        }
+        else if (doesControlHaveAttribute(control)) {
             control.setDisabled(onOff);
         }
     });
