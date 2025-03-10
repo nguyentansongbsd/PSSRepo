@@ -68,6 +68,135 @@
           ]
         },
         {
+          "Name": "Action_MergeFilePDF.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "IsWorkflow": true,
+              "RelativeFilePath": "\\Action_MergeFilePDF.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a14e5d5c-6a99-43fe-983e-dac31256fcf3",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_MergeFilePDF.dll",
+                "SourceType": 0,
+                "PluginTypeConfigs": [
+                  {
+                    "Id": "7d8203e2-b3c3-4e7a-a164-9d1b14ae6ef7",
+                    "IsWorkflow": true,
+                    "TypeName": "Action_MergeFilePDF.Action_MergeFilePDF"
+                  }
+                ]
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.Bcl.AsyncInterfaces"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp.Charting"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Buffers"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Memory"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics.Vectors"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.CompilerServices.Unsafe"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Primitives"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Encodings.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Threading.Tasks.Extensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ValueTuple"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "Name": "Action_Resv_GenPMS.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -234,6 +363,16 @@
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
             {
+              "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
+            },
+            {
               "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
@@ -247,6 +386,11 @@
               "CrmId": "39e45875-2ef0-ef11-9341-000d3aa205ba",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
+            },
+            {
+              "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Option Entry\\bsd_btnOptionEntryForm.js"
             },
             {
               "CrmId": "ea0c1fcf-2af0-ef11-9341-6045bd207277",

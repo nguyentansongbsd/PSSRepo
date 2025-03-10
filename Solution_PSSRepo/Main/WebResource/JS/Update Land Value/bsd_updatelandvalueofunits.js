@@ -19,6 +19,14 @@ function fillter_OE() {
     var bsd_units = Xrm.Page.getAttribute("bsd_units").getValue();
     if (bsd_units != null) {
         var xml = [];
+        var fetchData = {
+            "statuscode": "100000001",
+            "statuscode2": "100000002",
+            "statuscode3": "100000003",
+            "statuscode4": "100000004",
+            "statuscode5": "100000005",
+            "statuscode6": "100000000"
+        };
         xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
         xml.push("<entity name='salesorder'>");
         xml.push("<attribute name='salesorderid' />");
@@ -27,6 +35,23 @@ function fillter_OE() {
         xml.push("<order attribute='name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_unitnumber' operator='eq' uitype='bsd_unitnumber' value='" + bsd_units[0].id + "' />");
+
+        xml.push("      <condition attribute='statuscode' operator='in'>",);
+        xml.push("        <value>"+ fetchData.statuscode/*100000001*/+ "</value>"+
+            "        <value>"+ fetchData.statuscode2/*100000002*/+ "</value>"+
+            "        <value>"+ fetchData.statuscode3/*100000003*/+ "</value>"+
+            "        <value>"+ fetchData.statuscode4/*100000004*/+ "</value>"+
+            "        <value>"+ fetchData.statuscode5/*100000005*/+ "</value>"+
+            "        <value>"+ fetchData.statuscode6/*100000000*/+ "</value>"+
+            "      </condition>");
+        xml.push("");
+        xml.push("");
+        xml.push("");
+        xml.push("");
+        xml.push("");
+        xml.push("");
+        xml.push("");
+
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
