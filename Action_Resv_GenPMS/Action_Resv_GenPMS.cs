@@ -855,7 +855,8 @@ namespace Action_Resv_GenPMS
 
             SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
-            if (!f_last)
+            //if (!f_last)
+            if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                 tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
             traceService.Trace("Installment " + orderNumber + " --- " + (tmpamount - Math.Round(tax * landValue / 100, MidpointRounding.AwayFromZero)));
@@ -1018,7 +1019,8 @@ namespace Action_Resv_GenPMS
 
                 SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
-                if (!f_last)
+                //if (!f_last)
+                if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                     tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                 tmp.Id = Guid.NewGuid();
@@ -1162,7 +1164,8 @@ namespace Action_Resv_GenPMS
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
-                    if (!f_last)
+                    //if (!f_last)
+                    if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                         tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                     traceService.Trace("Installment " + orderNumber);
@@ -1201,7 +1204,8 @@ namespace Action_Resv_GenPMS
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
-                    if (!f_last)
+                    //if (!f_last)
+                    if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                         tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                     Guid guid = service.Create(tmp);
