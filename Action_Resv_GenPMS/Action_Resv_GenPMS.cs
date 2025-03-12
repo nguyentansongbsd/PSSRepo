@@ -61,7 +61,7 @@ namespace Action_Resv_GenPMS
         decimal totalTax = 0;
         decimal bsd_freightamount = 0;
         decimal bsd_managementfee = 0;
-        bool isSPA = false;
+        bool isSignContract = false;
 
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
@@ -299,7 +299,7 @@ namespace Action_Resv_GenPMS
                     enIntallment["bsd_duedatecalculatingmethod"] = bsd_duedatecalculatingmethod;
                     bool bsd_lastinstallment = encolInstallmentMaster[i].Contains("bsd_lastinstallment") ? (bool)encolInstallmentMaster[i]["bsd_lastinstallment"] : false;
                     enIntallment["bsd_lastinstallment"] = bsd_lastinstallment;
-                    if(bsd_lastinstallment) enIntallment["bsd_duedatewordtemplate"] = null;
+                    if (bsd_lastinstallment) enIntallment["bsd_duedatewordtemplate"] = null;
                     service.Update(enIntallment);
                 }
             }
@@ -394,6 +394,7 @@ namespace Action_Resv_GenPMS
             bool f_ESmaintenancefees = false;
             bool f_ESmanagementfee = false;
             bool f_signcontractinstallment = false;
+            bool f_installmentForEDA = false;
             DateTime d_estimate = get_EstimatehandoverDate(QO);
 
             bool f_last_ES = true;
@@ -465,6 +466,7 @@ namespace Action_Resv_GenPMS
                 {
                     f_signcontractinstallment = (bool)ents.Entities[i]["bsd_signcontractinstallment"];
                 }
+                f_installmentForEDA = ents.Entities[i].Contains("bsd_installmentforeda") ? (bool)ents.Entities[i]["bsd_installmentforeda"] : false;
                 traceService.Trace(i.ToString());
                 traceService.Trace("f_ESmanagementfee: " + f_ESmanagementfee.ToString());
                 traceService.Trace("bsd_managementfee: " + bsd_managementfee.ToString());
@@ -493,7 +495,7 @@ namespace Action_Resv_GenPMS
                 {
 
                     CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount,
-                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_installmentForEDA);
 
                 }
                 else
@@ -574,7 +576,7 @@ namespace Action_Resv_GenPMS
 
                         if (payment_type == null || payment_type == 1)//default or month
                         {
-                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
+                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment, f_installmentForEDA);
                         }
                         else if (payment_type == 2)//times
                         {
@@ -594,7 +596,7 @@ namespace Action_Resv_GenPMS
                                 if (j == number - 1)
                                     date = date.AddDays(i_bsd_nextdaysofendphase);
                                 traceService.Trace("VAO DAY: " + j);
-                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
+                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment, f_installmentForEDA);
                             }
 
                         }
@@ -604,13 +606,13 @@ namespace Action_Resv_GenPMS
                     {
                         traceService.Trace("QUA DAY ");
                         //CreatePaymentPhase_fixDate(0, total_TMP, bsd_freightamount, ref f_last_ES, PM, ref orderNumber, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, trac);
-                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_installmentForEDA);
                     }
                 }
             }
         }
 
-        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_last)
+        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_last, bool f_installmentForEDA)
         {
             double extraDay = 0;
             int i_nextMonth = 1;
@@ -811,7 +813,7 @@ namespace Action_Resv_GenPMS
             #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
             tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
             tmp["bsd_managementfee"] = f_ESmanagementfee;
-            tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+            //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
             if (f_ESmanagementfee)
                 tmp["bsd_managementamount"] = new Money(bsd_managementfee);
             else tmp["bsd_managementamount"] = new Money(0);
@@ -842,10 +844,14 @@ namespace Action_Resv_GenPMS
             }
             #endregion
 
-            if (f_signcontractinstallment)
-                isSPA = true;
-            tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+            if (!f_installmentForEDA && !isSignContract)
+            {
+                isSignContract = true;
+                tmp["bsd_signcontractinstallment"] = true;
+            }
+            tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
             tmp["bsd_gracedays"] = graceDays;
+            tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
             SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
@@ -859,7 +865,7 @@ namespace Action_Resv_GenPMS
 
         // fixx date
         private void CreatePaymentPhase_fixDate(Entity PM, ref int orderNumber, decimal bsd_managementfee, decimal totalTMP, decimal bsd_maintenancefees, ref bool f_last_ES, Entity en, Entity quoteEN, EntityReference productId,
-            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList)
+            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_installmentForEDA)
         {
             //throw new InvalidPluginExecutionException("CreatePaymentPhase_fixDate");
             Entity tmp = new Entity(en.LogicalName);
@@ -969,7 +975,7 @@ namespace Action_Resv_GenPMS
                 #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                 tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                 tmp["bsd_managementfee"] = f_ESmanagementfee;
-                tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                 if (f_ESmanagementfee)
                     tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                 else tmp["bsd_managementamount"] = new Money(0);
@@ -1001,10 +1007,14 @@ namespace Action_Resv_GenPMS
                 }
                 #endregion
 
-                if (f_signcontractinstallment)
-                    isSPA = true;
-                tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                if (!f_installmentForEDA && !isSignContract)
+                {
+                    isSignContract = true;
+                    tmp["bsd_signcontractinstallment"] = true;
+                }
+                tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                 tmp["bsd_gracedays"] = graceDays;
+                tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                 SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
@@ -1107,7 +1117,7 @@ namespace Action_Resv_GenPMS
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                     tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                     tmp["bsd_managementfee"] = f_ESmanagementfee;
-                    tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                    //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                     if (f_ESmanagementfee)
                         tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                     else tmp["bsd_managementamount"] = new Money(0);
@@ -1141,10 +1151,14 @@ namespace Action_Resv_GenPMS
                     }
                     #endregion
 
-                    if (f_signcontractinstallment)
-                        isSPA = true;
-                    tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                    if (!f_installmentForEDA && !isSignContract)
+                    {
+                        isSignContract = true;
+                        tmp["bsd_signcontractinstallment"] = true;
+                    }
+                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                     tmp["bsd_gracedays"] = graceDays;
+                    tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
@@ -1167,7 +1181,7 @@ namespace Action_Resv_GenPMS
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                     tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                     tmp["bsd_managementfee"] = f_ESmanagementfee;
-                    tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                    //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                     if (f_ESmanagementfee)
                         tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                     else tmp["bsd_managementamount"] = new Money(0);
@@ -1176,10 +1190,14 @@ namespace Action_Resv_GenPMS
                     else tmp["bsd_maintenanceamount"] = new Money(0);
                     #endregion
 
-                    if (f_signcontractinstallment)
-                        isSPA = true;
-                    tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                    if (!f_installmentForEDA && !isSignContract)
+                    {
+                        isSignContract = true;
+                        tmp["bsd_signcontractinstallment"] = true;
+                    }
+                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                     tmp["bsd_gracedays"] = graceDays;
+                    tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
 
