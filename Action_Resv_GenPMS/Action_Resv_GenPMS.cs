@@ -255,7 +255,7 @@ namespace Action_Resv_GenPMS
                 {
                     traceService.Trace("4.1.1 ");
                     enPaymentdetailHandover["bsd_amountofthisphase"] = new Money(fee);
-                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(fee);
+                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(fee);
                     enPaymentdetailHandover["bsd_balance"] = new Money(fee);
                     service.Update(enPaymentdetailHandover);
                     traceService.Trace("4.1.2 ");
@@ -282,7 +282,7 @@ namespace Action_Resv_GenPMS
                         {
                             Entity entity3 = new Entity(item.LogicalName, item.Id);
                             entity3["bsd_amountofthisphase"] = new Money(tmp_amount);
-                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmp_amount);
+                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmp_amount);
                             entity3["bsd_balance"] = new Money(tmp_amount);
                             service.Update(entity3);
                         }
@@ -801,7 +801,7 @@ namespace Action_Resv_GenPMS
 
             decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
             tmp["bsd_balance"] = new Money(tmpamount);
             tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(100000001);
             if (!QO.Contains("bsd_quotecodesams"))
@@ -829,13 +829,13 @@ namespace Action_Resv_GenPMS
                 if (tmpamount > d_es_LandPercent)
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                     tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                 }
                 else
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
                 }
                 tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -950,7 +950,7 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_depositamount"] = new Money(depositfee);
                 decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
                 tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                 tmp["bsd_balance"] = new Money(tmpamount);
 
                 if (!quoteEN.Contains("bsd_quotecodesams"))
@@ -992,14 +992,14 @@ namespace Action_Resv_GenPMS
                     {
                         f_last_ES = true;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                         tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                     }
                     else
                     {
                         f_last_ES = false;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                     }
                     tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -1052,7 +1052,7 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG3: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1060,7 +1060,7 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG4: " + tmpamount);
                         }
@@ -1111,7 +1111,7 @@ namespace Action_Resv_GenPMS
 
                         //tmp["bsd_amountofthisphase"] = new Money(tmpamount + (tmpamount * tax / 100));
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                         traceService.Trace("HUNG5: " + tmpamount);
                     }
@@ -1135,7 +1135,7 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG6: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1143,7 +1143,7 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG7: " + tmpamount);
                         }
@@ -1178,7 +1178,7 @@ namespace Action_Resv_GenPMS
 
                     tmp["bsd_lastinstallment"] = true;
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
 
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
@@ -1235,7 +1235,7 @@ namespace Action_Resv_GenPMS
                         if ((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp) < 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //else
@@ -1246,7 +1246,7 @@ namespace Action_Resv_GenPMS
                         if (percent == 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //  throw new Exception((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp).ToString());
@@ -1521,7 +1521,6 @@ namespace Action_Resv_GenPMS
             string[] sotien = tien.ToString().Split('.');
             return TienBangChu(sotien[0], false);
         }
-
         private string GetTienBangChu_Decimal(decimal tien)
         {
             string[] sotien = tien.ToString().Split('.');
@@ -1718,6 +1717,110 @@ namespace Action_Resv_GenPMS
             }
 
         }
-    }
+        private string GetTienBangChu_ENG(decimal tien)
+        {
+            return NumberToWords(tien, "Vietnamese Dong");
+        }
 
+        public string NumberToWords(decimal number, string currency)
+        {
+            if (number == 0) return "zero";
+
+            bool isNegative = number < 0;
+            number = Math.Abs(number);
+
+            decimal integerPart = Math.Floor(number);
+            decimal fractionalPart = number - integerPart; // Phần thập phân
+
+            StringBuilder words = new StringBuilder();
+            if (isNegative) words.Append("negative ");
+
+            ConvertIntegerToWords(integerPart, words);
+
+            if (fractionalPart > 0)
+            {
+                words.Append(" point ");
+                ConvertDecimalToWords(fractionalPart, words);
+            }
+
+            return CapitalizeFirstLetter(words.ToString().Trim()) + " " + currency;
+        }
+
+        private void ConvertIntegerToWords(decimal number, StringBuilder words)
+        {
+            if (number == 0)
+            {
+                words.Append("zero");
+                return;
+            }
+
+            string[] units = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+            string[] tens = { "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+            string[] scales = { "", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion" };
+
+            int scaleIndex = 0;
+            while (number > 0)
+            {
+                decimal chunk = number % 1000;
+                if (chunk > 0)
+                {
+                    if (words.Length > 0) words.Insert(0, " ");
+                    words.Insert(0, ConvertThreeDigitNumber((int)chunk, units, tens) + (scaleIndex > 0 ? " " + scales[scaleIndex] : ""));
+                }
+                number = Math.Floor(number / 1000);
+                scaleIndex++;
+            }
+        }
+
+        private string ConvertThreeDigitNumber(int number, string[] units, string[] tens)
+        {
+            if (number == 0) return "";
+
+            StringBuilder words = new StringBuilder();
+            int hundreds = number / 100;
+            int remainder = number % 100;
+
+            if (hundreds > 0)
+            {
+                words.Append(units[hundreds] + " hundred");
+            }
+
+            if (remainder > 0)
+            {
+                if (words.Length > 0) words.Append(" ");
+                if (remainder < 20)
+                    words.Append(units[remainder]);
+                else
+                {
+                    words.Append(tens[remainder / 10]);
+                    if (remainder % 10 > 0)
+                        words.Append(" " + units[remainder % 10]);
+                }
+            }
+
+            return words.ToString();
+        }
+
+        private void ConvertDecimalToWords(decimal number, StringBuilder words)
+        {
+            string[] units = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+            number -= Math.Floor(number); // Chỉ lấy phần thập phân
+            number = Math.Round(number, 28); // Giữ tối đa 28 chữ số thập phân
+
+            while (number > 0)
+            {
+                number *= 10;
+                int digit = (int)number; // Lấy phần nguyên đầu tiên
+                words.Append(units[digit] + " ");
+                number -= digit; // Loại bỏ phần nguyên vừa lấy
+            }
+        }
+
+        private string CapitalizeFirstLetter(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return char.ToUpper(input[0]) + input.Substring(1);
+        }
+    }
 }
