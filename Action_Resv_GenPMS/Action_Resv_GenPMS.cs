@@ -1774,16 +1774,16 @@ namespace Action_Resv_GenPMS
             if (wordTemplateList_EN != null && wordTemplateList_EN.Entities.Count >= orderNumber)
             {
                 Entity item = wordTemplateList_EN[orderNumber - 1];
-                tmp["bsd_texten1"] = item.Contains("bsd_texten1") ? item["bsd_texten1"] : null;
-                tmp["bsd_texten2"] = item.Contains("bsd_texten2") ? item["bsd_texten2"] : null;
-                tmp["bsd_texten3"] = item.Contains("bsd_texten3") ? item["bsd_texten3"] : null;
-                tmp["bsd_texten4"] = item.Contains("bsd_texten4") ? item["bsd_texten4"] : null;
-                tmp["bsd_texten5"] = item.Contains("bsd_texten5") ? item["bsd_texten5"] : null;
-                tmp["bsd_texten6"] = item.Contains("bsd_texten6") ? item["bsd_texten6"] : null;
-                tmp["bsd_texten7"] = item.Contains("bsd_texten7") ? item["bsd_texten7"] : null;
-                tmp["bsd_texten8"] = item.Contains("bsd_texten8") ? item["bsd_texten8"] : null;
-                tmp["bsd_texten9"] = item.Contains("bsd_texten9") ? item["bsd_texten9"] : null;
-                tmp["bsd_texten10"] = item.Contains("bsd_texten10") ? item["bsd_texten10"] : null;
+                tmp["bsd_texten1"] = item.Contains("bsd_text1") ? item["bsd_text1"] : null;
+                tmp["bsd_texten2"] = item.Contains("bsd_text2") ? item["bsd_text2"] : null;
+                tmp["bsd_texten3"] = item.Contains("bsd_text3") ? item["bsd_text3"] : null;
+                tmp["bsd_texten4"] = item.Contains("bsd_text4") ? item["bsd_text4"] : null;
+                tmp["bsd_texten5"] = item.Contains("bsd_text5") ? item["bsd_text5"] : null;
+                tmp["bsd_texten6"] = item.Contains("bsd_text6") ? item["bsd_text6"] : null;
+                tmp["bsd_texten7"] = item.Contains("bsd_text7") ? item["bsd_text7"] : null;
+                tmp["bsd_texten8"] = item.Contains("bsd_text8") ? item["bsd_text8"] : null;
+                tmp["bsd_texten9"] = item.Contains("bsd_text9") ? item["bsd_text9"] : null;
+                tmp["bsd_texten10"] = item.Contains("bsd_text10") ? item["bsd_text10"] : null;
             }
 
         }
