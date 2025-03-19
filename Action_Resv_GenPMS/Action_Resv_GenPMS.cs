@@ -358,7 +358,7 @@ namespace Action_Resv_GenPMS
                 }
             }
 
-
+            traceService.Trace("z1:");
 
             EntityReference paymentScheme = (EntityReference)QO["bsd_paymentscheme"];
             // ## TriCM no need calculate deposit more - 16.07.12- Han require
@@ -411,6 +411,7 @@ namespace Action_Resv_GenPMS
                 "bsd_netsaleablearea"
                 }));
             // 170311 neu tren unit k tim duoc actual area thi su dung net sale able arae
+            traceService.Trace("z2:");
 
             decimal d_dientich = 0;
             if (en_Unit.Contains("bsd_actualarea"))
@@ -420,6 +421,8 @@ namespace Action_Resv_GenPMS
             Entity en_project = service.Retrieve(((EntityReference)QO["bsd_projectid"]).LogicalName, ((EntityReference)QO["bsd_projectid"]).Id,
                             new ColumnSet(new string[] { "bsd_name", "bsd_managementamount" }));
             decimal d_bsd_managementamount_pro = en_project.Contains("bsd_managementamount") ? ((Money)en_project["bsd_managementamount"]).Value : 0;
+
+            traceService.Trace("z3:");
 
             #region EDA, SPA
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -451,6 +454,7 @@ namespace Action_Resv_GenPMS
             #endregion
 
             EntityCollection wordTemplateList = GetDinhNghiaWordTemplate(paymentScheme);
+            EntityCollection wordTemplateList_EN = GetDinhNghiaWordTemplate_EN(paymentScheme);
 
             for (int i = 0; i < len; i++) // len = so luong INS detail
             {
@@ -497,7 +501,7 @@ namespace Action_Resv_GenPMS
                 {
 
                     CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount,
-                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_installmentForEDA);
+                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
 
                 }
                 else
@@ -578,7 +582,7 @@ namespace Action_Resv_GenPMS
 
                         if (payment_type == null || payment_type == 1)//default or month
                         {
-                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment, f_installmentForEDA);
+                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_lastinstallment, f_installmentForEDA);
                         }
                         else if (payment_type == 2)//times
                         {
@@ -598,7 +602,7 @@ namespace Action_Resv_GenPMS
                                 if (j == number - 1)
                                     date = date.AddDays(i_bsd_nextdaysofendphase);
                                 traceService.Trace("VAO DAY: " + j);
-                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment, f_installmentForEDA);
+                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_lastinstallment, f_installmentForEDA);
                             }
 
                         }
@@ -608,13 +612,13 @@ namespace Action_Resv_GenPMS
                     {
                         traceService.Trace("QUA DAY ");
                         //CreatePaymentPhase_fixDate(0, total_TMP, bsd_freightamount, ref f_last_ES, PM, ref orderNumber, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, trac);
-                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_installmentForEDA);
+                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
                     }
                 }
             }
         }
 
-        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_last, bool f_installmentForEDA)
+        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_last, bool f_installmentForEDA)
         {
             double extraDay = 0;
             int i_nextMonth = 1;
@@ -859,6 +863,7 @@ namespace Action_Resv_GenPMS
             tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
             SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+            SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
             //if (!f_last)
             if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
@@ -871,7 +876,7 @@ namespace Action_Resv_GenPMS
 
         // fixx date
         private void CreatePaymentPhase_fixDate(Entity PM, ref int orderNumber, decimal bsd_managementfee, decimal totalTMP, decimal bsd_maintenancefees, ref bool f_last_ES, Entity en, Entity quoteEN, EntityReference productId,
-            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_installmentForEDA)
+            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_installmentForEDA)
         {
             //throw new InvalidPluginExecutionException("CreatePaymentPhase_fixDate");
             Entity tmp = new Entity(en.LogicalName);
@@ -1026,6 +1031,7 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                 SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
                 //if (!f_last)
                 if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
@@ -1176,6 +1182,7 @@ namespace Action_Resv_GenPMS
                     tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                    SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
                     //if (!f_last)
                     if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
@@ -1217,6 +1224,7 @@ namespace Action_Resv_GenPMS
                     tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                    SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
                     //if (!f_last)
                     if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
@@ -1714,6 +1722,32 @@ namespace Action_Resv_GenPMS
             return service.RetrieveMultiple(new FetchExpression(fetchXml));
         }
 
+        private EntityCollection GetDinhNghiaWordTemplate_EN(EntityReference paymentScheme)
+        {
+            traceService.Trace("GetDinhNghiaWordTemplate_EN");
+
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
+              <entity name=""bsd_dinhnghiawordtemplate"">
+                <attribute name=""bsd_text1"" />
+                <attribute name=""bsd_text2"" />
+                <attribute name=""bsd_text3"" />
+                <attribute name=""bsd_text4"" />
+                <attribute name=""bsd_text5"" />
+                <attribute name=""bsd_text6"" />
+                <attribute name=""bsd_text7"" />
+                <attribute name=""bsd_text8"" />
+                <attribute name=""bsd_text9"" />
+                <attribute name=""bsd_text10"" />
+                <filter>
+                  <condition attribute=""bsd_paymentschemeen"" operator=""eq"" value=""{paymentScheme.Id}"" />
+                </filter>
+                <order attribute=""createdon"" />
+              </entity>
+            </fetch>";
+            return service.RetrieveMultiple(new FetchExpression(fetchXml));
+        }
+
         private void SetTextWordTemplate(ref Entity tmp, EntityCollection wordTemplateList, int orderNumber)
         {
             traceService.Trace("SetTextWordTemplate");
@@ -1733,6 +1767,27 @@ namespace Action_Resv_GenPMS
             }
 
         }
+
+        private void SetTextWordTemplate_EN(ref Entity tmp, EntityCollection wordTemplateList_EN, int orderNumber)
+        {
+            traceService.Trace("SetTextWordTemplate_EN");
+            if (wordTemplateList_EN != null && wordTemplateList_EN.Entities.Count >= orderNumber)
+            {
+                Entity item = wordTemplateList_EN[orderNumber - 1];
+                tmp["bsd_texten1"] = item.Contains("bsd_texten1") ? item["bsd_texten1"] : null;
+                tmp["bsd_texten2"] = item.Contains("bsd_texten2") ? item["bsd_texten2"] : null;
+                tmp["bsd_texten3"] = item.Contains("bsd_texten3") ? item["bsd_texten3"] : null;
+                tmp["bsd_texten4"] = item.Contains("bsd_texten4") ? item["bsd_texten4"] : null;
+                tmp["bsd_texten5"] = item.Contains("bsd_texten5") ? item["bsd_texten5"] : null;
+                tmp["bsd_texten6"] = item.Contains("bsd_texten6") ? item["bsd_texten6"] : null;
+                tmp["bsd_texten7"] = item.Contains("bsd_texten7") ? item["bsd_texten7"] : null;
+                tmp["bsd_texten8"] = item.Contains("bsd_texten8") ? item["bsd_texten8"] : null;
+                tmp["bsd_texten9"] = item.Contains("bsd_texten9") ? item["bsd_texten9"] : null;
+                tmp["bsd_texten10"] = item.Contains("bsd_texten10") ? item["bsd_texten10"] : null;
+            }
+
+        }
+
         private string GetTienBangChu_ENG(decimal tien)
         {
             return NumberToWords(tien, "Vietnamese Dong");
