@@ -255,7 +255,8 @@ namespace Action_Resv_GenPMS
                 {
                     traceService.Trace("4.1.1 ");
                     enPaymentdetailHandover["bsd_amountofthisphase"] = new Money(fee);
-                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(fee);
+                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_VN(fee);
+                    enPaymentdetailHandover["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(fee);
                     enPaymentdetailHandover["bsd_balance"] = new Money(fee);
                     service.Update(enPaymentdetailHandover);
                     traceService.Trace("4.1.2 ");
@@ -282,7 +283,8 @@ namespace Action_Resv_GenPMS
                         {
                             Entity entity3 = new Entity(item.LogicalName, item.Id);
                             entity3["bsd_amountofthisphase"] = new Money(tmp_amount);
-                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmp_amount);
+                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmp_amount);
+                            entity3["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmp_amount);
                             entity3["bsd_balance"] = new Money(tmp_amount);
                             service.Update(entity3);
                         }
@@ -801,7 +803,8 @@ namespace Action_Resv_GenPMS
 
             decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
             tmp["bsd_balance"] = new Money(tmpamount);
             tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(100000001);
             if (!QO.Contains("bsd_quotecodesams"))
@@ -829,13 +832,15 @@ namespace Action_Resv_GenPMS
                 if (tmpamount > d_es_LandPercent)
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                     tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                 }
                 else
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
                 }
                 tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -950,7 +955,8 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_depositamount"] = new Money(depositfee);
                 decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
                 tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                 tmp["bsd_balance"] = new Money(tmpamount);
 
                 if (!quoteEN.Contains("bsd_quotecodesams"))
@@ -992,14 +998,16 @@ namespace Action_Resv_GenPMS
                     {
                         f_last_ES = true;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                         tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                     }
                     else
                     {
                         f_last_ES = false;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                     }
                     tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -1052,7 +1060,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG3: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1060,7 +1069,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG4: " + tmpamount);
                         }
@@ -1111,7 +1121,8 @@ namespace Action_Resv_GenPMS
 
                         //tmp["bsd_amountofthisphase"] = new Money(tmpamount + (tmpamount * tax / 100));
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                         traceService.Trace("HUNG5: " + tmpamount);
                     }
@@ -1135,7 +1146,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG6: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1143,7 +1155,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG7: " + tmpamount);
                         }
@@ -1178,7 +1191,8 @@ namespace Action_Resv_GenPMS
 
                     tmp["bsd_lastinstallment"] = true;
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
 
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
@@ -1235,7 +1249,8 @@ namespace Action_Resv_GenPMS
                         if ((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp) < 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_VN(0);
+                            a["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //else
@@ -1246,7 +1261,8 @@ namespace Action_Resv_GenPMS
                         if (percent == 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_ENG(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_VN(0);
+                            a["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //  throw new Exception((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp).ToString());
@@ -1521,7 +1537,7 @@ namespace Action_Resv_GenPMS
             string[] sotien = tien.ToString().Split('.');
             return TienBangChu(sotien[0], false);
         }
-        private string GetTienBangChu_Decimal(decimal tien)
+        private string GetTienBangChu_VN(decimal tien)
         {
             string[] sotien = tien.ToString().Split('.');
             return TienBangChu(sotien[0], false);
@@ -1787,7 +1803,7 @@ namespace Action_Resv_GenPMS
 
             if (remainder > 0)
             {
-                if (words.Length > 0) words.Append(" ");
+                if (words.Length > 0) words.Append(" and ");
                 if (remainder < 20)
                     words.Append(units[remainder]);
                 else
