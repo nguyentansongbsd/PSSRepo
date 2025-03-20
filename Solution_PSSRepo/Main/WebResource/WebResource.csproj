@@ -65,6 +65,7 @@
     <Content Include="JS\Follow up list\bsd_followuplist_formnew.js" />
     <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
     <Content Include="HTML\report\bsd_Simulation.html" />
+    <Content Include="JS\Payments\Report\bsd_payment_report_05_08_2020.js" />
     <Content Include="JS\Quotation Reservation\bsd_quote_form.js" />
     <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Dua_Date.js" />
@@ -80,6 +81,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HTML\compoent\.editorconfig" />
+    <None Include="RDL\LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />
+    <None Include="RDL\Lumi_Xac Nhan CDT%28account%29_Lan 2_VN_4112022.rdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms">
+      <Version>150.1652.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
