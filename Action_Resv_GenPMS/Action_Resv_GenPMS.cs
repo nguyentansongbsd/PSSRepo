@@ -61,7 +61,7 @@ namespace Action_Resv_GenPMS
         decimal totalTax = 0;
         decimal bsd_freightamount = 0;
         decimal bsd_managementfee = 0;
-        bool isSPA = false;
+        bool isSignContract = false;
 
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
@@ -255,7 +255,8 @@ namespace Action_Resv_GenPMS
                 {
                     traceService.Trace("4.1.1 ");
                     enPaymentdetailHandover["bsd_amountofthisphase"] = new Money(fee);
-                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(fee);
+                    enPaymentdetailHandover["bsd_amountofthisphasetext"] = GetTienBangChu_VN(fee);
+                    enPaymentdetailHandover["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(fee);
                     enPaymentdetailHandover["bsd_balance"] = new Money(fee);
                     service.Update(enPaymentdetailHandover);
                     traceService.Trace("4.1.2 ");
@@ -282,7 +283,8 @@ namespace Action_Resv_GenPMS
                         {
                             Entity entity3 = new Entity(item.LogicalName, item.Id);
                             entity3["bsd_amountofthisphase"] = new Money(tmp_amount);
-                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmp_amount);
+                            entity3["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmp_amount);
+                            entity3["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmp_amount);
                             entity3["bsd_balance"] = new Money(tmp_amount);
                             service.Update(entity3);
                         }
@@ -299,7 +301,7 @@ namespace Action_Resv_GenPMS
                     enIntallment["bsd_duedatecalculatingmethod"] = bsd_duedatecalculatingmethod;
                     bool bsd_lastinstallment = encolInstallmentMaster[i].Contains("bsd_lastinstallment") ? (bool)encolInstallmentMaster[i]["bsd_lastinstallment"] : false;
                     enIntallment["bsd_lastinstallment"] = bsd_lastinstallment;
-                    if(bsd_lastinstallment) enIntallment["bsd_duedatewordtemplate"] = null;
+                    if (bsd_lastinstallment) enIntallment["bsd_duedatewordtemplate"] = null;
                     service.Update(enIntallment);
                 }
             }
@@ -356,7 +358,7 @@ namespace Action_Resv_GenPMS
                 }
             }
 
-
+            traceService.Trace("z1:");
 
             EntityReference paymentScheme = (EntityReference)QO["bsd_paymentscheme"];
             // ## TriCM no need calculate deposit more - 16.07.12- Han require
@@ -394,6 +396,7 @@ namespace Action_Resv_GenPMS
             bool f_ESmaintenancefees = false;
             bool f_ESmanagementfee = false;
             bool f_signcontractinstallment = false;
+            bool f_installmentForEDA = false;
             DateTime d_estimate = get_EstimatehandoverDate(QO);
 
             bool f_last_ES = true;
@@ -408,6 +411,7 @@ namespace Action_Resv_GenPMS
                 "bsd_netsaleablearea"
                 }));
             // 170311 neu tren unit k tim duoc actual area thi su dung net sale able arae
+            traceService.Trace("z2:");
 
             decimal d_dientich = 0;
             if (en_Unit.Contains("bsd_actualarea"))
@@ -417,6 +421,8 @@ namespace Action_Resv_GenPMS
             Entity en_project = service.Retrieve(((EntityReference)QO["bsd_projectid"]).LogicalName, ((EntityReference)QO["bsd_projectid"]).Id,
                             new ColumnSet(new string[] { "bsd_name", "bsd_managementamount" }));
             decimal d_bsd_managementamount_pro = en_project.Contains("bsd_managementamount") ? ((Money)en_project["bsd_managementamount"]).Value : 0;
+
+            traceService.Trace("z3:");
 
             #region EDA, SPA
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -448,6 +454,7 @@ namespace Action_Resv_GenPMS
             #endregion
 
             EntityCollection wordTemplateList = GetDinhNghiaWordTemplate(paymentScheme);
+            EntityCollection wordTemplateList_EN = GetDinhNghiaWordTemplate_EN(paymentScheme);
 
             for (int i = 0; i < len; i++) // len = so luong INS detail
             {
@@ -465,6 +472,7 @@ namespace Action_Resv_GenPMS
                 {
                     f_signcontractinstallment = (bool)ents.Entities[i]["bsd_signcontractinstallment"];
                 }
+                f_installmentForEDA = ents.Entities[i].Contains("bsd_installmentforeda") ? (bool)ents.Entities[i]["bsd_installmentforeda"] : false;
                 traceService.Trace(i.ToString());
                 traceService.Trace("f_ESmanagementfee: " + f_ESmanagementfee.ToString());
                 traceService.Trace("bsd_managementfee: " + bsd_managementfee.ToString());
@@ -493,7 +501,7 @@ namespace Action_Resv_GenPMS
                 {
 
                     CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount,
-                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
 
                 }
                 else
@@ -574,7 +582,7 @@ namespace Action_Resv_GenPMS
 
                         if (payment_type == null || payment_type == 1)//default or month
                         {
-                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
+                            CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_lastinstallment, f_installmentForEDA);
                         }
                         else if (payment_type == 2)//times
                         {
@@ -594,7 +602,7 @@ namespace Action_Resv_GenPMS
                                 if (j == number - 1)
                                     date = date.AddDays(i_bsd_nextdaysofendphase);
                                 traceService.Trace("VAO DAY: " + j);
-                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, f_lastinstallment);
+                                CreatePaymentPhase(PM, ref orderNumber, ents.Entities[i], QO, i_localization, totalAmount, percent, ref date, trac, i_paymentdatemonthly_def, f_ESmaintenancefees, f_ESmanagementfee, bsd_managementfee, bsd_freightamount, len, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_lastinstallment, f_installmentForEDA);
                             }
 
                         }
@@ -604,13 +612,13 @@ namespace Action_Resv_GenPMS
                     {
                         traceService.Trace("QUA DAY ");
                         //CreatePaymentPhase_fixDate(0, total_TMP, bsd_freightamount, ref f_last_ES, PM, ref orderNumber, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, trac);
-                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList);
+                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
                     }
                 }
             }
         }
 
-        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, bool f_last)
+        private void CreatePaymentPhase(Entity PM, ref int orderNumber, Entity en, Entity QO, int i_localization, decimal reservationAmount, decimal percent, ref DateTime date, ITracingService trac, int i_paymentdatemonthly, bool f_ESmaintenancefees, bool f_ESmanagementfee, decimal bsd_managementfee, decimal bsd_maintenancefees, int InstallmentCount, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_last, bool f_installmentForEDA)
         {
             double extraDay = 0;
             int i_nextMonth = 1;
@@ -799,7 +807,8 @@ namespace Action_Resv_GenPMS
 
             decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
             tmp["bsd_balance"] = new Money(tmpamount);
             tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(100000001);
             if (!QO.Contains("bsd_quotecodesams"))
@@ -811,7 +820,7 @@ namespace Action_Resv_GenPMS
             #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
             tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
             tmp["bsd_managementfee"] = f_ESmanagementfee;
-            tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+            //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
             if (f_ESmanagementfee)
                 tmp["bsd_managementamount"] = new Money(bsd_managementfee);
             else tmp["bsd_managementamount"] = new Money(0);
@@ -827,13 +836,15 @@ namespace Action_Resv_GenPMS
                 if (tmpamount > d_es_LandPercent)
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                     tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                 }
                 else
                 {
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
                 }
                 tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -842,14 +853,20 @@ namespace Action_Resv_GenPMS
             }
             #endregion
 
-            if (f_signcontractinstallment)
-                isSPA = true;
-            tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+            if (!f_installmentForEDA && !isSignContract)
+            {
+                isSignContract = true;
+                tmp["bsd_signcontractinstallment"] = true;
+            }
+            tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
             tmp["bsd_gracedays"] = graceDays;
+            tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
             SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+            SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
-            if (!f_last)
+            //if (!f_last)
+            if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                 tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
             traceService.Trace("Installment " + orderNumber + " --- " + (tmpamount - Math.Round(tax * landValue / 100, MidpointRounding.AwayFromZero)));
@@ -859,7 +876,7 @@ namespace Action_Resv_GenPMS
 
         // fixx date
         private void CreatePaymentPhase_fixDate(Entity PM, ref int orderNumber, decimal bsd_managementfee, decimal totalTMP, decimal bsd_maintenancefees, ref bool f_last_ES, Entity en, Entity quoteEN, EntityReference productId,
-            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList)
+            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_installmentForEDA)
         {
             //throw new InvalidPluginExecutionException("CreatePaymentPhase_fixDate");
             Entity tmp = new Entity(en.LogicalName);
@@ -943,7 +960,8 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_depositamount"] = new Money(depositfee);
                 decimal tmpamount = Math.Round((percent * reservationAmount / 100), MidpointRounding.AwayFromZero);
                 tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                 tmp["bsd_balance"] = new Money(tmpamount);
 
                 if (!quoteEN.Contains("bsd_quotecodesams"))
@@ -969,7 +987,7 @@ namespace Action_Resv_GenPMS
                 #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                 tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                 tmp["bsd_managementfee"] = f_ESmanagementfee;
-                tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                 if (f_ESmanagementfee)
                     tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                 else tmp["bsd_managementamount"] = new Money(0);
@@ -985,14 +1003,16 @@ namespace Action_Resv_GenPMS
                     {
                         f_last_ES = true;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                         tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                     }
                     else
                     {
                         f_last_ES = false;
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                     }
                     tmp["bsd_estimateamount"] = new Money(tmpamount);
@@ -1001,14 +1021,20 @@ namespace Action_Resv_GenPMS
                 }
                 #endregion
 
-                if (f_signcontractinstallment)
-                    isSPA = true;
-                tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                if (!f_installmentForEDA && !isSignContract)
+                {
+                    isSignContract = true;
+                    tmp["bsd_signcontractinstallment"] = true;
+                }
+                tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                 tmp["bsd_gracedays"] = graceDays;
+                tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                 SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
-                if (!f_last)
+                //if (!f_last)
+                if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                     tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                 tmp.Id = Guid.NewGuid();
@@ -1040,7 +1066,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG3: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1048,7 +1075,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG4: " + tmpamount);
                         }
@@ -1099,7 +1127,8 @@ namespace Action_Resv_GenPMS
 
                         //tmp["bsd_amountofthisphase"] = new Money(tmpamount + (tmpamount * tax / 100));
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                        tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                        tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                         tmp["bsd_balance"] = new Money(tmpamount);
                         traceService.Trace("HUNG5: " + tmpamount);
                     }
@@ -1107,7 +1136,7 @@ namespace Action_Resv_GenPMS
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                     tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                     tmp["bsd_managementfee"] = f_ESmanagementfee;
-                    tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                    //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                     if (f_ESmanagementfee)
                         tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                     else tmp["bsd_managementamount"] = new Money(0);
@@ -1123,7 +1152,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = true;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount - d_es_LandPercent);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount - d_es_LandPercent);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount - d_es_LandPercent);
                             tmp["bsd_balance"] = new Money(tmpamount - d_es_LandPercent);
                             traceService.Trace("HUNG6: " + (tmpamount - d_es_LandPercent));
                         }
@@ -1131,7 +1161,8 @@ namespace Action_Resv_GenPMS
                         {
                             f_last_ES = false;
                             tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                            tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                            tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                             tmp["bsd_balance"] = new Money(tmpamount);
                             traceService.Trace("HUNG7: " + tmpamount);
                         }
@@ -1141,14 +1172,20 @@ namespace Action_Resv_GenPMS
                     }
                     #endregion
 
-                    if (f_signcontractinstallment)
-                        isSPA = true;
-                    tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                    if (!f_installmentForEDA && !isSignContract)
+                    {
+                        isSignContract = true;
+                        tmp["bsd_signcontractinstallment"] = true;
+                    }
+                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                     tmp["bsd_gracedays"] = graceDays;
+                    tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                    SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
-                    if (!f_last)
+                    //if (!f_last)
+                    if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                         tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                     traceService.Trace("Installment " + orderNumber);
@@ -1161,13 +1198,14 @@ namespace Action_Resv_GenPMS
 
                     tmp["bsd_lastinstallment"] = true;
                     tmp["bsd_amountofthisphase"] = new Money(tmpamount);
-                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(tmpamount);
+                    tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
+                    tmp["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(tmpamount);
                     tmp["bsd_balance"] = new Money(tmpamount);
 
                     #region if bsd_maintenancefees/ bsd_managementfee = yes => set amount
                     tmp["bsd_maintenancefees"] = f_ESmaintenancefees;
                     tmp["bsd_managementfee"] = f_ESmanagementfee;
-                    tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
+                    //tmp["bsd_signcontractinstallment"] = f_signcontractinstallment;
                     if (f_ESmanagementfee)
                         tmp["bsd_managementamount"] = new Money(bsd_managementfee);
                     else tmp["bsd_managementamount"] = new Money(0);
@@ -1176,14 +1214,20 @@ namespace Action_Resv_GenPMS
                     else tmp["bsd_maintenanceamount"] = new Money(0);
                     #endregion
 
-                    if (f_signcontractinstallment)
-                        isSPA = true;
-                    tmp["bsd_interestchargeper"] = isSPA ? spa : eda;
+                    if (!f_installmentForEDA && !isSignContract)
+                    {
+                        isSignContract = true;
+                        tmp["bsd_signcontractinstallment"] = true;
+                    }
+                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
                     tmp["bsd_gracedays"] = graceDays;
+                    tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
                     SetTextWordTemplate(ref tmp, wordTemplateList, orderNumber);
+                    SetTextWordTemplate_EN(ref tmp, wordTemplateList_EN, orderNumber);
 
-                    if (!f_last)
+                    //if (!f_last)
+                    if (!(tmp.Contains("bsd_signcontractinstallment") && (bool)tmp["bsd_signcontractinstallment"]) && !(en.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)en["bsd_duedatecalculatingmethod"]).Value == 100000002))
                         tmp["bsd_duedatewordtemplate"] = tmp.Contains("bsd_duedate") ? tmp["bsd_duedate"] : null;
 
                     Guid guid = service.Create(tmp);
@@ -1213,7 +1257,8 @@ namespace Action_Resv_GenPMS
                         if ((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp) < 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_VN(0);
+                            a["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //else
@@ -1224,7 +1269,8 @@ namespace Action_Resv_GenPMS
                         if (percent == 0)
                         {
                             a["bsd_amountofthisphase"] = new Money(0);
-                            a["bsd_amountofthisphasetext"] = GetTienBangChu_Decimal(0);
+                            a["bsd_amountofthisphasetext"] = GetTienBangChu_VN(0);
+                            a["bsd_amountofthisphasetexten"] = GetTienBangChu_ENG(0);
                             a["bsd_balance"] = new Money(0);
                         }
                         //  throw new Exception((tmpamount + totalTMP - bsd_maintenancefees - d_SumTmp).ToString());
@@ -1499,8 +1545,7 @@ namespace Action_Resv_GenPMS
             string[] sotien = tien.ToString().Split('.');
             return TienBangChu(sotien[0], false);
         }
-
-        private string GetTienBangChu_Decimal(decimal tien)
+        private string GetTienBangChu_VN(decimal tien)
         {
             string[] sotien = tien.ToString().Split('.');
             return TienBangChu(sotien[0], false);
@@ -1677,6 +1722,32 @@ namespace Action_Resv_GenPMS
             return service.RetrieveMultiple(new FetchExpression(fetchXml));
         }
 
+        private EntityCollection GetDinhNghiaWordTemplate_EN(EntityReference paymentScheme)
+        {
+            traceService.Trace("GetDinhNghiaWordTemplate_EN");
+
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
+              <entity name=""bsd_dinhnghiawordtemplate"">
+                <attribute name=""bsd_text1"" />
+                <attribute name=""bsd_text2"" />
+                <attribute name=""bsd_text3"" />
+                <attribute name=""bsd_text4"" />
+                <attribute name=""bsd_text5"" />
+                <attribute name=""bsd_text6"" />
+                <attribute name=""bsd_text7"" />
+                <attribute name=""bsd_text8"" />
+                <attribute name=""bsd_text9"" />
+                <attribute name=""bsd_text10"" />
+                <filter>
+                  <condition attribute=""bsd_paymentschemeen"" operator=""eq"" value=""{paymentScheme.Id}"" />
+                </filter>
+                <order attribute=""createdon"" />
+              </entity>
+            </fetch>";
+            return service.RetrieveMultiple(new FetchExpression(fetchXml));
+        }
+
         private void SetTextWordTemplate(ref Entity tmp, EntityCollection wordTemplateList, int orderNumber)
         {
             traceService.Trace("SetTextWordTemplate");
@@ -1696,6 +1767,131 @@ namespace Action_Resv_GenPMS
             }
 
         }
-    }
 
+        private void SetTextWordTemplate_EN(ref Entity tmp, EntityCollection wordTemplateList_EN, int orderNumber)
+        {
+            traceService.Trace("SetTextWordTemplate_EN");
+            if (wordTemplateList_EN != null && wordTemplateList_EN.Entities.Count >= orderNumber)
+            {
+                Entity item = wordTemplateList_EN[orderNumber - 1];
+                tmp["bsd_texten1"] = item.Contains("bsd_text1") ? item["bsd_text1"] : null;
+                tmp["bsd_texten2"] = item.Contains("bsd_text2") ? item["bsd_text2"] : null;
+                tmp["bsd_texten3"] = item.Contains("bsd_text3") ? item["bsd_text3"] : null;
+                tmp["bsd_texten4"] = item.Contains("bsd_text4") ? item["bsd_text4"] : null;
+                tmp["bsd_texten5"] = item.Contains("bsd_text5") ? item["bsd_text5"] : null;
+                tmp["bsd_texten6"] = item.Contains("bsd_text6") ? item["bsd_text6"] : null;
+                tmp["bsd_texten7"] = item.Contains("bsd_text7") ? item["bsd_text7"] : null;
+                tmp["bsd_texten8"] = item.Contains("bsd_text8") ? item["bsd_text8"] : null;
+                tmp["bsd_texten9"] = item.Contains("bsd_text9") ? item["bsd_text9"] : null;
+                tmp["bsd_texten10"] = item.Contains("bsd_text10") ? item["bsd_text10"] : null;
+            }
+
+        }
+
+        private string GetTienBangChu_ENG(decimal tien)
+        {
+            return NumberToWords(tien, "Vietnamese Dong");
+        }
+
+        public string NumberToWords(decimal number, string currency)
+        {
+            if (number == 0) return "zero";
+
+            bool isNegative = number < 0;
+            number = Math.Abs(number);
+
+            decimal integerPart = Math.Floor(number);
+            decimal fractionalPart = number - integerPart; // Phần thập phân
+
+            StringBuilder words = new StringBuilder();
+            if (isNegative) words.Append("negative ");
+
+            ConvertIntegerToWords(integerPart, words);
+
+            if (fractionalPart > 0)
+            {
+                words.Append(" point ");
+                ConvertDecimalToWords(fractionalPart, words);
+            }
+
+            return CapitalizeFirstLetter(words.ToString().Trim()) + " " + currency;
+        }
+
+        private void ConvertIntegerToWords(decimal number, StringBuilder words)
+        {
+            if (number == 0)
+            {
+                words.Append("zero");
+                return;
+            }
+
+            string[] units = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+            string[] tens = { "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+            string[] scales = { "", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion" };
+
+            int scaleIndex = 0;
+            while (number > 0)
+            {
+                decimal chunk = number % 1000;
+                if (chunk > 0)
+                {
+                    if (words.Length > 0) words.Insert(0, " ");
+                    words.Insert(0, ConvertThreeDigitNumber((int)chunk, units, tens) + (scaleIndex > 0 ? " " + scales[scaleIndex] : ""));
+                }
+                number = Math.Floor(number / 1000);
+                scaleIndex++;
+            }
+        }
+
+        private string ConvertThreeDigitNumber(int number, string[] units, string[] tens)
+        {
+            if (number == 0) return "";
+
+            StringBuilder words = new StringBuilder();
+            int hundreds = number / 100;
+            int remainder = number % 100;
+
+            if (hundreds > 0)
+            {
+                words.Append(units[hundreds] + " hundred");
+            }
+
+            if (remainder > 0)
+            {
+                if (words.Length > 0) words.Append(" and ");
+                if (remainder < 20)
+                    words.Append(units[remainder]);
+                else
+                {
+                    words.Append(tens[remainder / 10]);
+                    if (remainder % 10 > 0)
+                        words.Append(" " + units[remainder % 10]);
+                }
+            }
+
+            return words.ToString();
+        }
+
+        private void ConvertDecimalToWords(decimal number, StringBuilder words)
+        {
+            string[] units = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+            number -= Math.Floor(number); // Chỉ lấy phần thập phân
+            number = Math.Round(number, 28); // Giữ tối đa 28 chữ số thập phân
+
+            while (number > 0)
+            {
+                number *= 10;
+                int digit = (int)number; // Lấy phần nguyên đầu tiên
+                words.Append(units[digit] + " ");
+                number -= digit; // Loại bỏ phần nguyên vừa lấy
+            }
+        }
+
+        private string CapitalizeFirstLetter(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return char.ToUpper(input[0]) + input.Substring(1);
+        }
+    }
 }

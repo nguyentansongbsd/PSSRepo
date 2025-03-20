@@ -166,6 +166,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         public void UpdateOPDateFromMasterToUnit(ref bool result, Entity master, Entity enUnit)
         {
             Entity enUnitUpdate = new Entity(enUnit.LogicalName, enUnit.Id);
+            if (!master.Contains("bsd_opdate")) return;
             enUnitUpdate["bsd_opdate"] = master["bsd_opdate"];
             service.Update(enUnitUpdate);
         }

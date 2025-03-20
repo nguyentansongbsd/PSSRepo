@@ -435,10 +435,10 @@
                                     <td>Simulation Date | <i>Ngày Ước Tính</i></td>
                                     <td id="field_date"></td>
                                 </tr>
-                                <tr style="font-weight: 500;">
+                                <!--<tr style="font-weight: 500;">
                                     <td>Interest Percent | <i>Lãi Suất Trễ (%)</i></td>
                                     <td id="field_interestpercent"> </td>
-                                </tr>
+                                </tr>-->
                                 <tr style="font-weight: 500;">
                                     <td>Tolerance Interest Amount</td>
                                     <td id="field_toleranceinterestamount"> </td>
@@ -496,7 +496,7 @@
         <table id="items">
             <thead>
                 <tr style="height:28px">
-                    <th colspan="11" class="aligncenter">ĐỢT THANH TOÁN | INSTALLMENTS</th>
+                    <th colspan="12" class="aligncenter">ĐỢT THANH TOÁN | INSTALLMENTS</th>
                 </tr>
             </thead>
             <tbody>
@@ -507,6 +507,9 @@
                     <td>Interest Start Date</td>
                     <td>Days Late</td>
                     <td>Payable Amount (VND)</td>
+                    <!--thêm cột 10/3/2025 Dev-Tu-->
+                    <td>Interest Percent (%)</td>
+                    <!---->
                     <td>Waiver Amount (VND)</td>
                     <td>Unpaid Installment (VND)</td>
                     <td>Interest (VND)(Actual)</td>
@@ -520,6 +523,9 @@
                     <td>Ngày bắt đầu tính lãi</td>
                     <td>Số ngày chậm TT</td>
                     <td>Số tiền gốc theo HĐ (VND)</td>
+                    <!--thêm cột 10/3/2025 Dev-Tu-->
+                    <td>Interest Percent (%)</td>
+                    <!---->
                     <td>Số tiền miễn giảm (VND)</td>
                     <td>Số tiền gốc còn nợ (VND)</td>
                     <td>Tiền lãi (VND)(Thực tế)</td>
@@ -534,7 +540,7 @@
                         Total
                         Outstanding | <i>Tổng tiền còn nợ:</i>
                     </td>
-                    <td colspan="3" id="field_totalAoTP" class="total-value" style="border-top:1px solid #000;text-align:right">
+                    <td colspan="4" id="field_totalAoTP" class="total-value" style="border-top:1px solid #000;text-align:right">
                         <div id="subtotal"></div>
                     </td>
                 </tr>
@@ -544,12 +550,12 @@
                     <td colspan="8" class="total-line" style="font-weight:bolder;">
                         Total Interest | <i>Tổng tiền lãi</i>
                     </td>
-                    <td colspan="3" id="field_totalIC" class="total-value" style="text-align:right"></td>
+                    <td colspan="4" id="field_totalIC" class="total-value" style="text-align:right"></td>
                 </tr>
                 <tr class="tb_foot">
                     <!--<td colspan="3" class="td_foot"> </td>-->
                     <td colspan="8" class="total-line balance" style="font-weight:bolder;">Total | <i>Tổng tiền</i></td>
-                    <td colspan="3" id="field_total" class="total-value balance" style="text-align:right;font-weight:bold"></td>
+                    <td colspan="4" id="field_total" class="total-value balance" style="text-align:right;font-weight:bold"></td>
                 </tr>
             </tfoot>
 
@@ -662,6 +668,10 @@
             if (format == "d/M/yyyy")
                 today = dd + '/' + mm + '/' + yyyy;
             else if (format == "M/d/yyyy")
+                today = mm + '/' + dd + '/' + yyyy;
+            if (format == "dd/MM/yyyy")
+                today = dd + '/' + mm + '/' + yyyy;
+            else if (format == "MM/dd/yyyy")
                 today = mm + '/' + dd + '/' + yyyy;
             return today;
         }
@@ -930,6 +940,7 @@
                                 }
                             }
                         }
+                        console.log("field_date:" + receiptDate);
                         document.getElementById("field_date").innerHTML = CovertDateToString(receiptDate, GetUserSetting());
 
                         document.getElementById("field_paymentscheme").innerHTML = (rs[0].attributes["OE.bsd_paymentscheme"] ? rs[0].attributes["OE.bsd_paymentscheme"].name : "");
@@ -975,7 +986,7 @@
                         phantramTinhlai_2 = tinhPhantramLai2(opEntryID);
                     phantramTinhlai = (phantramTinhlai_1 + phantramTinhlai_2);
                     //phantramTinhlai.toFixed(2);
-                    document.getElementById("field_interestpercent").innerHTML = phantramTinhlai + "%";
+                    //document.getElementById("field_interestpercent").innerHTML = phantramTinhlai + "%";
 
                     ////Tính Tolerance Interest Amount/Tolerance Interest (%)/Tolerance Interest (%) Amount
                     var cap = 0; var toleranceinterest_amount = 0; var toleranceinterest_percentage = 0;
@@ -1188,6 +1199,10 @@
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + common.formateDate(new Date(parseInt(data.InterestStarDate.substr(6))), '/') + "</td>");//intereststartdate
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" +  (notpaid == true ? data.LateDays : actual) + "</td>");//number of late days
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.AmoutThisPhase.toString()) + " đ</td>");//amount of this phase
+                                                        //thêm cột 10/3/2025
+                                                        html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.InterestCharge_MucLaiPhat.toString()) + "%</td>");//waiver
+
+                                                        //
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.Waiver.toString()) + " đ</td>");//waiver
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(data.Balance.toString()) + " đ</td>");//Balance
                                                         html.push("<td class='nowrap' align='right' style='font-weight: 500;'>" + formatNumber(laiConLai.toString()) + " đ</td>");// interest phase
