@@ -602,17 +602,9 @@
         &lt;attribute name="name" alias="prod_name" /&gt;
         &lt;attribute name="bsd_netsaleablearea" alias="prod_netsaleablearea" /&gt;
         &lt;attribute name="bsd_estimatehandoverdate" alias="prod_estimatehandoverdate" /&gt;
-&lt;attribute name="productid" alias="unitid" /&gt;
         &lt;link-entity name="bsd_floor" from="bsd_floorid" to="bsd_floor" link-type="outer" alias="floor" &gt;
           &lt;attribute name="bsd_floor" alias="prod_floor" /&gt;
-&lt;attribute name="bsd_floorid" alias="prod_floorid" /&gt;
         &lt;/link-entity&gt;
-&lt;link-entity name="bsd_block" from="bsd_blockid" to="bsd_blocknumber" alias="block"&gt;
-        &lt;attribute name="bsd_blockid" alias="blockid" /&gt;
-      &lt;/link-entity&gt;
-&lt;link-entity name="bsd_unittype" from="bsd_unittypeid" to="bsd_unittype" alias="unittype"&gt;
-      &lt;attribute name="bsd_unittypeid" alias="unittypeid" /&gt;
-    &lt;/link-entity&gt;
       &lt;/link-entity&gt;
     &lt;/link-entity&gt;
   &lt;/entity&gt;
@@ -730,22 +722,6 @@
         <Field Name="prod_estimatehandoverdateValue">
           <DataField>prod_estimatehandoverdateValue</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="unitid">
-          <DataField>unitid</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="prod_floorid">
-          <DataField>prod_floorid</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="blockid">
-          <DataField>blockid</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="unittypeid">
-          <DataField>unittypeid</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -2442,25 +2418,6 @@
         </Field>
         <Field Name="FloorNumber">
           <DataField>FloorNumber</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="GetUrlPA">
-      <Query>
-        <DataSourceName>CRM</DataSourceName>
-        <CommandText>&lt;fetch&gt;
-  &lt;entity name="bsd_configgolive"&gt;
-    &lt;attribute name="bsd_url" alias="urlPa" /&gt;
-    &lt;filter&gt;
-      &lt;condition attribute="bsd_name" operator="eq" value="GetImageSharepoint" /&gt;
-    &lt;/filter&gt;
-  &lt;/entity&gt;
-&lt;/fetch&gt;</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="urlPa">
-          <DataField>urlPa</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -52007,7 +51964,7 @@ True, False)</Hidden>
                         </Style>
                       </TextRun>
                       <TextRun>
-                        <Value>TAN WANG KENG</Value>
+                        <Value>TAN WAN KENG</Value>
                         <Style>
                           <FontStyle>Normal</FontStyle>
                           <FontFamily>Times New Roman</FontFamily>
@@ -52623,8 +52580,8 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>700.11328cm</Top>
-            <Left>0.53458cm</Left>
+            <Top>675.58641cm</Top>
+            <Left>0.5cm</Left>
             <Height>3.13554cm</Height>
             <Width>17.5cm</Width>
             <ZIndex>27</ZIndex>
@@ -53201,7 +53158,7 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>755.54772cm</Top>
+            <Top>682.84527cm</Top>
             <Left>0.5cm</Left>
             <Height>8.76854cm</Height>
             <Width>17.53566cm</Width>
@@ -55286,7 +55243,7 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>764.51054cm</Top>
+            <Top>691.80809cm</Top>
             <Left>0.5cm</Left>
             <Height>26.66353cm</Height>
             <Width>17.5cm</Width>
@@ -65485,7 +65442,7 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>821.65948cm</Top>
+            <Top>748.95703cm</Top>
             <Left>0.5cm</Left>
             <Height>104.11667cm</Height>
             <Width>17.5cm</Width>
@@ -66223,7 +66180,7 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>925.95674cm</Top>
+            <Top>853.25429cm</Top>
             <Left>0.5cm</Left>
             <Height>9.71194cm</Height>
             <Width>17.5cm</Width>
@@ -67405,8 +67362,8 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>727.62422cm</Top>
-            <Left>0.57024cm</Left>
+            <Top>678.89834cm</Top>
+            <Left>0.5cm</Left>
             <Height>3.73375cm</Height>
             <Width>17.5cm</Width>
             <ZIndex>33</ZIndex>
@@ -67735,27 +67692,13 @@ IIf(Fields!psordernumberValue.Value = 3, "rd installment",
                                 <TextRun>
                                   <Value>=IIF(Fields!psLastInstallmentValue.Value &lt;&gt; True 
 And Fields!duedatecalculatingmethodValue.Value &lt;&gt; 100000002 And Fields!psordernumberValue.Value &lt;&gt; 2 And Fields!psordernumberValue.Value &lt;&gt; 1, 
-"Payment term: no later than ", "")</Value>
+"Payment term: no later than the date of this Contract", "")</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <Format>#,0;(#,0)</Format>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Language>vi-VN</Language>
-                                    <NumeralLanguage>vi-VN</NumeralLanguage>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=IIF(Fields!psLastInstallmentValue.Value &lt;&gt; True And Fields!psordernumberValue.Value &gt; 2 And Fields!duedatecalculatingmethodValue.Value &lt;&gt; 100000002 , 
-CDate(Fields!psduedate.Value), "")</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Format>dd/MM/yyyy</Format>
                                     <TextDecoration>None</TextDecoration>
                                     <Language>vi-VN</Language>
                                     <NumeralLanguage>vi-VN</NumeralLanguage>
@@ -75704,7 +75647,7 @@ CDate(Fields!con_dategrant.Value))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>791.35049cm</Top>
+            <Top>718.64804cm</Top>
             <Left>0.5cm</Left>
             <Height>7.2961cm</Height>
             <Width>17.5cm</Width>
@@ -77461,7 +77404,7 @@ CDate(Fields!con_dategrant.Value))</Value>
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>798.90116cm</Top>
+            <Top>726.19871cm</Top>
             <Left>0.5cm</Left>
             <Height>22.28559cm</Height>
             <Width>17.53566cm</Width>
@@ -78162,95 +78105,8 @@ CDate(Fields!ContractDate.Value))</Value>
               </Border>
             </Style>
           </Tablix>
-          <Rectangle Name="Rectangle2">
-            <ReportItems>
-              <Image Name="Image2">
-                <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=unittype&amp;id=" &amp; First(Fields!unittypeid.Value, "dsUnitInfo") &amp; "&amp;blockid=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
-                <Sizing>Fit</Sizing>
-                <Top>0.26458cm</Top>
-                <Left>0cm</Left>
-                <Height>24.00902cm</Height>
-                <Width>17.26542cm</Width>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                </Style>
-              </Image>
-            </ReportItems>
-            <KeepTogether>true</KeepTogether>
-            <Top>675.66329cm</Top>
-            <Left>0.53458cm</Left>
-            <Height>24.27361cm</Height>
-            <Width>17.53566cm</Width>
-            <ZIndex>43</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
-          <Rectangle Name="Rectangle5">
-            <ReportItems>
-              <Image Name="Image5">
-                <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo")</Value>
-                <Sizing>Fit</Sizing>
-                <Top>0.29104cm</Top>
-                <Left>0.05946cm</Left>
-                <Height>23.65933cm</Height>
-                <Width>17.18809cm</Width>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                </Style>
-              </Image>
-            </ReportItems>
-            <KeepTogether>true</KeepTogether>
-            <Top>703.49746cm</Top>
-            <Left>0.55245cm</Left>
-            <Height>23.95037cm</Height>
-            <Width>17.51779cm</Width>
-            <ZIndex>44</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
-          <Rectangle Name="Rectangle6">
-            <ReportItems>
-              <Image Name="Image6">
-                <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=block&amp;id=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
-                <Sizing>Fit</Sizing>
-                <Top>0.30358cm</Top>
-                <Left>0cm</Left>
-                <Height>23.37869cm</Height>
-                <Width>17.19796cm</Width>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                </Style>
-              </Image>
-            </ReportItems>
-            <KeepTogether>true</KeepTogether>
-            <Top>731.53436cm</Top>
-            <Left>0.5cm</Left>
-            <Height>23.68228cm</Height>
-            <Width>17.49796cm</Width>
-            <ZIndex>45</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
         </ReportItems>
-        <Height>935.66868cm</Height>
+        <Height>863.12257cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -78320,7 +78176,7 @@ CDate(Fields!ContractDate.Value))</Value>
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes/&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
+          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes /&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
         </Values>
       </DefaultValue>
       <Prompt>CRM_salesorder</Prompt>

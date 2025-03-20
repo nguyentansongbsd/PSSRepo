@@ -53,6 +53,38 @@
           ]
         },
         {
+          "Name": "Action_Approved_Updateestimatehandoverdate_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "02d6c535-59c7-4b01-b0bf-11ef4fd7405d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateestimatehandoverdate_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_Calculate_Interest_SIMULATION_report.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "8410d3aa-048a-4454-a29b-69022d1c23ec",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Calculate_Interest_SIMULATION_report.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -212,6 +244,50 @@
           ]
         },
         {
+          "Name": "Action_SignedContract_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_SignedContract\\Action_SignedContract.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "86beed2c-6f02-4d72-9ccb-c620eeb30bac",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_SignedContract.dll",
+                "SourceType": 0,
+                "PluginTypeConfigs": [
+                  {
+                    "Id": "7eae0af2-4ae3-4a84-98f1-9613e5a85d30",
+                    "TypeName": "BSDLibrary.Action_SignedContract"
+                  }
+                ],
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 1,
+                    "Id": "2a7a82bd-9904-45b4-97dd-3a1fcaa8b601",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Action_SignedContract - Option Entry - Post-operation",
+                    "PluginTypeId": "7eae0af2-4ae3-4a84-98f1-9613e5a85d30",
+                    "SdkMessageFilterId": "90fdedf2-678b-e911-a98a-000d3aa04914",
+                    "SdkMessageId": "7ddd2b16-568b-e911-a98f-000d3aa00fc2",
+                    "Stage": 40
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -269,6 +345,39 @@
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Approve.dll",
                 "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_FUL.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_FUL.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "4497dd3b-dd94-4bff-a118-b1b630cfa840",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_FUL.dll",
+                "SourceType": 0,
+                "ImageConfigs": [
+                  {
+                    "EntityAlias": "EntityAlias",
+                    "Id": "b3a1f6f7-0183-448b-9db3-f13b759f5b03",
+                    "ImageType": 2,
+                    "MessagePropertyName": "Target",
+                    "Name": "Image",
+                    "PluginStepId": "e8563fbe-6e67-4710-9870-16fefc8a9577"
+                  }
+                ]
               }
             }
           ]
@@ -368,6 +477,11 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
             },
             {
+              "CrmId": "aa1dc0ee-32d9-ef11-8ee9-000d3ac84358",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\report\\bsd_Simulation_Report_InOptionEntryForm.html"
+            },
+            {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
@@ -391,6 +505,11 @@
               "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Option Entry\\bsd_btnOptionEntryForm.js"
+            },
+            {
+              "CrmId": "2fe9b4c0-05d7-ea11-a813-000d3aa0fe67",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Payments\\Report\\bsd_payment_report_05_08_2020.js"
             },
             {
               "CrmId": "ea0c1fcf-2af0-ef11-9341-6045bd207277",

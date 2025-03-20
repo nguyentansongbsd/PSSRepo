@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action_CustomerNotices_Generate.cs" />
+    <Compile Include="Action_CustomerNotices_Generate_Backup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

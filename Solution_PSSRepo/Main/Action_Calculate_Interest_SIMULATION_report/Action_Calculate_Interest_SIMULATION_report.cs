@@ -152,6 +152,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
             var bsd_balance = enInstallment.Contains("bsd_balance") ? ((Money)enInstallment["bsd_balance"]).Value : 0;
             strMess.AppendLine($"Balance:{bsd_balance}");
             resultReport.Balance = bsd_balance;
+            resultReport.InterestCharge_MucLaiPhat = enInstallment.Contains("bsd_interestchargeper") ? ((decimal)enInstallment["bsd_interestchargeper"]) : 0;
             //Tiền lãi (VND)(Thực tế)
             TracingSe.Trace("step7");
             var bsd_interestchargeamount = enInstallment.Contains("bsd_interestchargeamount") ? ((Money)enInstallment["bsd_interestchargeamount"]).Value : 0;
@@ -788,6 +789,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
         public decimal bsd_toleranceinterestamount { get; set; }
 
         public decimal InterestCharge { get; set; }
+        public decimal InterestCharge_MucLaiPhat { get; set; }
         public decimal Balance { get; set; }
         public decimal laiConLai { get; set; }
         public DateTime InterestStarDate { get; set; }

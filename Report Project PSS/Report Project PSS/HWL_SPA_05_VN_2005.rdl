@@ -56854,7 +56854,7 @@ True, False)</Hidden>
                         </Style>
                       </TextRun>
                       <TextRun>
-                        <Value>TAN WANG KENG</Value>
+                        <Value>TAN WAN KENG</Value>
                         <Style>
                           <FontStyle>Normal</FontStyle>
                           <FontFamily>times New Roman</FontFamily>
@@ -57245,9 +57245,6 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
                 </Style>
               </Textbox>
             </ReportItems>
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
             <KeepTogether>true</KeepTogether>
             <Top>607.13407cm</Top>
             <Left>0.53458cm</Left>
@@ -57409,9 +57406,6 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
                 </Style>
               </Textbox>
             </ReportItems>
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
             <KeepTogether>true</KeepTogether>
             <Top>634.25765cm</Top>
             <Left>0.53459cm</Left>
@@ -72950,9 +72944,6 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
                 </Style>
               </Textbox>
             </ReportItems>
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
             <KeepTogether>true</KeepTogether>
             <Top>660.91573cm</Top>
             <Left>0.61709cm</Left>
@@ -73264,29 +73255,13 @@ CDate(First(Fields!ContractDate.Value, "dsContract")))</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=IIF(Fields!psLastInstallmentValue.Value &lt;&gt; True And Fields!duedatecalculatingmethodValue.Value &lt;&gt; 100000002 And Fields!psordernumberValue.Value &gt; 2, "Thời hạn thanh toán: chậm nhất vào ngày ", "")</Value>
+                                  <Value>=IIF(Fields!psLastInstallmentValue.Value &lt;&gt; True And Fields!duedatecalculatingmethodValue.Value &lt;&gt; 100000002 And Fields!psordernumberValue.Value &gt; 2, "Thời hạn thanh toán: chậm nhất vào ngày của Hợp Đồng này", "")</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <Format>#,0;(#,0)</Format>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Language>vi-VN</Language>
-                                    <NumeralLanguage>vi-VN</NumeralLanguage>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=IIF(Fields!psLastInstallmentValue.Value &lt;&gt; True 
-And Fields!duedatecalculatingmethodValue.Value &lt;&gt; 100000002 
-And Fields!psordernumberValue.Value &gt; 2, 
-CDate(Fields!psduedate.Value), "")</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Format>dd/MM/yyyy</Format>
                                     <TextDecoration>None</TextDecoration>
                                     <Language>vi-VN</Language>
                                     <NumeralLanguage>vi-VN</NumeralLanguage>
@@ -81952,10 +81927,9 @@ CDate(Fields!primary_dategrant.Value))</Value>
             <ReportItems>
               <Image Name="Image1">
                 <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=unittype&amp;id=" &amp; First(Fields!unittypeid.Value, "dsUnitInfo") &amp; "&amp;blockid=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
+                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=unittype&amp;id=" &amp; First(Fields!unittypeid.Value, "dsUnitInfo") &amp; "&amp;blockid=" &amp; First(Fields!blockid.Value, "dsUnitInfo") &amp; "&amp;stt=1"</Value>
                 <Sizing>Fit</Sizing>
                 <Top>0.25983cm</Top>
-                <Left>0cm</Left>
                 <Height>23.19273cm</Height>
                 <Width>17.25568cm</Width>
                 <Style>
@@ -81971,6 +81945,9 @@ CDate(Fields!primary_dategrant.Value))</Value>
             <Height>23.45256cm</Height>
             <Width>17.45568cm</Width>
             <ZIndex>42</ZIndex>
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -81981,10 +81958,8 @@ CDate(Fields!primary_dategrant.Value))</Value>
             <ReportItems>
               <Image Name="Image2">
                 <Source>External</Source>
-                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo")</Value>
+                <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo") &amp; "&amp;stt=1"</Value>
                 <Sizing>Fit</Sizing>
-                <Top>0cm</Top>
-                <Left>0cm</Left>
                 <Height>23.05651cm</Height>
                 <Width>17.15167cm</Width>
                 <Style>
@@ -82000,6 +81975,9 @@ CDate(Fields!primary_dategrant.Value))</Value>
             <Height>23.05651cm</Height>
             <Width>17.45166cm</Width>
             <ZIndex>43</ZIndex>
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -82012,8 +81990,6 @@ CDate(Fields!primary_dategrant.Value))</Value>
                 <Source>External</Source>
                 <Value>=First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=block&amp;id=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
                 <Sizing>Fit</Sizing>
-                <Top>0cm</Top>
-                <Left>0cm</Left>
                 <Height>23.65786cm</Height>
                 <Width>17.11781cm</Width>
                 <Style>
@@ -82032,6 +82008,9 @@ CDate(Fields!primary_dategrant.Value))</Value>
             <Height>23.65786cm</Height>
             <Width>17.40031cm</Width>
             <ZIndex>44</ZIndex>
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -82109,7 +82088,7 @@ CDate(Fields!primary_dategrant.Value))</Value>
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes/&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
+          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes /&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
         </Values>
       </DefaultValue>
       <Prompt>CRM_salesorder</Prompt>
