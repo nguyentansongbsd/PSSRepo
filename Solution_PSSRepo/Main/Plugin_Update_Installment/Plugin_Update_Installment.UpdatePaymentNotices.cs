@@ -54,11 +54,13 @@ namespace Plugin_Update_Installment
             #region Amount in EDA (bsd_amountofthisphase) mapping từ Instalment của đợt làm payment notices
             enUpdate["bsd_amountofthisphase"] = enInsDetail.Contains("bsd_amountofthisphase") ? enInsDetail["bsd_amountofthisphase"]: new Money(0);
             #endregion
+            tracingService.Trace("1");
             #region bsd_totaladvancepayment (Số tiền thanh toán trước)-->Field tính toán (Mapping từ option entry)-->Field tính toán
             enUpdate["bsd_totaladvancepayment"] = EnOP.Contains("bsd_totaladvancepayment")? EnOP["bsd_totaladvancepayment"]:new Money(0);
             #endregion
+            tracingService.Trace("2");
             #region (Tổng số tiền thanh toán trước)-->bsd_totalprepaymentamount=bsd_totaladvancepayment+ bsd_amountwaspaid (của đợt paymnent notices)-->Hiển thị số âm (Field tính toán)
-            if(enInsDetail.Contains("bsd_amountwaspaid"))
+            if (enInsDetail.Contains("bsd_amountwaspaid"))
             {
                 enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)enUpdate["bsd_totaladvancepayment"]).Value + ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
 
@@ -68,7 +70,9 @@ namespace Plugin_Update_Installment
                 enUpdate["bsd_totalprepaymentamount"] = enUpdate["bsd_totaladvancepayment"];
 
             }
-            #endregion
+            #endregion                        tracingService.Trace("1");
+
+            tracingService.Trace("3");
             #region Shortfall in previous Installment (Số tiền chưa thanh toán các đợt trước) (bsd_Shoftfall Installment= Sum(bsd_balance) Tổng số tiền chưa thanh toán của các đợt trước đợt làm payment notice -->Field tính toán
             decimal sum_bsd_balance = 0;
             int orderNumberInsDetail = (int)enInsDetail["bsd_ordernumber"];
@@ -87,7 +91,9 @@ namespace Plugin_Update_Installment
                 }
             }
             enUpdate["bsd_shortfallinpreviousinstallment"] = new Money(sum_bsd_balance);
-            #endregion
+            #endregion                        tracingService.Trace("1");
+            tracingService.Trace("4");
+
             #region Amount to transfer (Số tiền phải chuyển)=bsd_totaladvancepayment+Totalprepaymentamount+bsd_Shoftfall Installment -->Field tính toán
             enUpdate["bsd_amounttotransfer"] = new Money(
                 ((Money)enUpdate["bsd_totaladvancepayment"]).Value +
@@ -95,6 +101,7 @@ namespace Plugin_Update_Installment
                 ((Money)enUpdate["bsd_shortfallinpreviousinstallment"]).Value
                 );
             #endregion
+            tracingService.Trace("5");
 
             service.Update(enUpdate);
         }
