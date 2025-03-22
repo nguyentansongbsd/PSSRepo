@@ -350,6 +350,29 @@
           ]
         },
         {
+          "Name": "Plugin_AutoShareRecord_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_AutoShareRecord_V2.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "cdfd14f8-ae15-418b-ac06-c7ff417f642a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_AutoShareRecord.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_FUL.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -378,6 +401,52 @@
                     "PluginStepId": "e8563fbe-6e67-4710-9870-16fefc8a9577"
                   }
                 ]
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_OP_MapField.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_OP_MapField.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "afb6b7a6-1e51-4581-8710-c5632e6a41f7",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_OP_MapField.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_PaymentNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_PaymentNotices.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "f4536f3b-f174-4a2b-ba4c-dda4417ee79e",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_PaymentNotices.dll",
+                "SourceType": 0
               }
             }
           ]
@@ -423,6 +492,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_CreatePriceListItem.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Update_Installment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Update_Installment.UpdatePaymentNotices.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "75d0235c-08b9-4d79-9333-28f033969580",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_Installment.dll",
                 "SourceType": 0
               }
             }
