@@ -36,6 +36,7 @@ namespace Plugin_Update_Installment
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             Entity entity = (Entity)context.InputParameters["Target"];
             Entity enTarget = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+            tracingService.Trace("start id:" + entity.Id);
             #region tìm đến PaymentNotices được map
             // lấy Option Entry
             EntityReference enOPRef = (EntityReference)enTarget["bsd_optionentry"];
@@ -44,19 +45,20 @@ namespace Plugin_Update_Installment
             //lấy ra PaymentNotices hiện hữu <tại một thời điểm chỉ có một paymentnotice-OP-Ins trạng thái Generate(1)>
             Entity enCreated = GetPaymentNoticesByInstalment(enTarget.Id.ToString(),EnOP.Id.ToString());
             if (enCreated == null) return;
+            tracingService.Trace("paymentnotices: "+enCreated.Id.ToString());
             Entity enUpdate = new Entity(enCreated.LogicalName, enCreated.Id);
             //lấy Instalment detail 
             EntityReference enInsDetailRef = (EntityReference)enCreated["bsd_paymentschemedetail"];
             Entity enInsDetail = service.Retrieve(enInsDetailRef.LogicalName, enInsDetailRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             
             #region Amount in EDA (bsd_amountofthisphase) mapping từ Instalment của đợt làm payment notices
-            enUpdate["bsd_amountofthisphase"] = enInsDetail["bsd_amountofthisphase"];
+            enUpdate["bsd_amountofthisphase"] = enInsDetail.Contains("bsd_amountofthisphase") ? enInsDetail["bsd_amountofthisphase"]: new Money(0);
             #endregion
             #region bsd_totaladvancepayment (Số tiền thanh toán trước)-->Field tính toán (Mapping từ option entry)-->Field tính toán
-            enUpdate["bsd_totaladvancepayment"] = EnOP["bsd_totaladvancepayment"];
+            enUpdate["bsd_totaladvancepayment"] = EnOP.Contains("bsd_totaladvancepayment")? EnOP["bsd_totaladvancepayment"]:new Money(0);
             #endregion
             #region (Tổng số tiền thanh toán trước)-->bsd_totalprepaymentamount=bsd_totaladvancepayment+ bsd_amountwaspaid (của đợt paymnent notices)-->Hiển thị số âm (Field tính toán)
-            enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)EnOP["bsd_totaladvancepayment"]).Value + ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
+            enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)enUpdate["bsd_totaladvancepayment"]).Value + ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
             #endregion
             #region Shortfall in previous Installment (Số tiền chưa thanh toán các đợt trước) (bsd_Shoftfall Installment= Sum(bsd_balance) Tổng số tiền chưa thanh toán của các đợt trước đợt làm payment notice -->Field tính toán
             decimal sum_bsd_balance = 0;
@@ -71,6 +73,7 @@ namespace Plugin_Update_Installment
             {
                 foreach (var item in insDetailList.Entities)
                 {
+                    if (!item.Contains("bsd_balance")) continue;
                     sum_bsd_balance += ((Money)item["bsd_balance"]).Value;
                 }
             }
