@@ -2,7 +2,6 @@
 // Type: Plugin_PackagesSelling_Associate.Plugin_PackagesSelling_Associate
 // Assembly: Plugin_PackagesSelling_Associate, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e7b199793955ed9
 // MVID: 2BBA803A-91E1-455F-9747-205D7EB1020D
-// Assembly location: D:\Git\BSD\Capitaland\Pl_Ass_Resv_revent_Promotion\Pl_Ass_Resv_revent_Promotion\bin\Debug\Plugin_PackagesSelling_Associate Prod.dll
 
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -29,10 +28,12 @@ namespace Plugin_PackagesSelling_Associate
             if (service1.MessageName == "Associate")
             {
                 Relationship inputParameter1 = (Relationship)service1.InputParameters["Relationship"];
+                EntityReference target = (EntityReference)service1.InputParameters["Target"];
+                traceService.Trace("target: " + target.LogicalName + " " + target.Id);
+
                 //if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling" || inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling")
-                if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling")
+                if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling" && target.LogicalName == "bsd_packageselling")
                 {
-                    EntityReference inputParameter2 = (EntityReference)service1.InputParameters["Target"];
                     EntityReferenceCollection inputParameter3 = (EntityReferenceCollection)service1.InputParameters["RelatedEntities"];
                     Entity entity1 = new Entity();
                     string attributeName = "";
@@ -47,35 +48,42 @@ namespace Plugin_PackagesSelling_Associate
                         attributeName = "bsd_phaseslaunch";
                         str = "bsd_salesorder_bsd_packageselling";
                     }
-                    Entity entity2 = this.service.Retrieve(inputParameter2.LogicalName, inputParameter2.Id, new ColumnSet(new string[4]
+                    //        Entity entity2 = this.service.Retrieve(inputParameter2.LogicalName, inputParameter2.Id, new ColumnSet(new string[4]
+                    //        {
+                    //attributeName,
+                    //"bsd_totalamountlessfreight",
+                    //"bsd_detailamount",
+                    //"bsd_discount"
+                    //        }));
+                    Entity enHD = this.service.Retrieve(inputParameter3[0].LogicalName, inputParameter3[0].Id, new ColumnSet(new string[4]
                     {
-            attributeName,
-            "bsd_totalamountlessfreight",
-            "bsd_detailamount",
-            "bsd_discount"
+                        attributeName,
+                        "bsd_totalamountlessfreight",
+                        "bsd_detailamount",
+                        "bsd_discount"
                     }));
-                    if (!entity2.Contains(attributeName))
+                    if (!enHD.Contains(attributeName))
                         throw new InvalidPluginExecutionException("The Phases launch is currently empty. Please fill in the blank before processing this transaction.");
-                    if (this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                                      <entity name='bsd_bsd_phaseslaunch_bsd_packageselling'>\r\n                                            <filter type='and'>\r\n                                              <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}' />\r\n                                              <condition attribute='bsd_packagesellingid' operator='eq' value='{1}' />\r\n                                            </filter>\r\n                                      </entity>\r\n                                    </fetch>", (object)((EntityReference)entity2[attributeName]).Id, (object)inputParameter3[0].Id))).Entities.Count == 0)
+                    if (this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                                      <entity name='bsd_bsd_phaseslaunch_bsd_packageselling'>\r\n                                            <filter type='and'>\r\n                                              <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}' />\r\n                                              <condition attribute='bsd_packagesellingid' operator='eq' value='{1}' />\r\n                                            </filter>\r\n                                      </entity>\r\n                                    </fetch>", ((EntityReference)enHD[attributeName]).Id, target.Id))).Entities.Count == 0)
                         throw new InvalidPluginExecutionException("The package you selected is not on this phase launch. Please pick another one.");
                     StringBuilder stringBuilder1 = new StringBuilder();
                     stringBuilder1.AppendLine("<fetch mapping='logical' version='1.0'>");
                     stringBuilder1.AppendLine("<entity name='" + str + "'>");
                     stringBuilder1.AppendLine("<filter type='and'>");
                     if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling")
-                        stringBuilder1.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)inputParameter2.Id));
+                        stringBuilder1.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)enHD.Id));
                     else if (inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling")
-                        stringBuilder1.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)inputParameter2.Id));
+                        stringBuilder1.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)enHD.Id));
                     stringBuilder1.AppendLine("</filter>");
                     stringBuilder1.AppendLine("</entity>");
                     stringBuilder1.AppendLine("</fetch>");
                     EntityCollection entityCollection1 = this.service.RetrieveMultiple((QueryBase)new FetchExpression(stringBuilder1.ToString()));
-                    Entity entity3 = new Entity(inputParameter2.LogicalName);
-                    entity3.Id = inputParameter2.Id;
+                    Entity entity3 = new Entity(enHD.LogicalName);
+                    entity3.Id = enHD.Id;
                     Decimal num1 = 0M;
                     foreach (Entity entity4 in (Collection<Entity>)entityCollection1.Entities)
                     {
-                        Entity entity5 = this.service.Retrieve(inputParameter3[0].LogicalName, (Guid)entity4["bsd_packagesellingid"], new ColumnSet(new string[8]
+                        Entity entity5 = this.service.Retrieve(target.LogicalName, (Guid)entity4["bsd_packagesellingid"], new ColumnSet(new string[8]
                         {
               "bsd_name",
               "bsd_amount",
@@ -98,13 +106,13 @@ namespace Plugin_PackagesSelling_Associate
                             {
                                 stringBuilder2.AppendLine("<link-entity name='quotedetail' from='productid' to='productid' alias='af'>");
                                 stringBuilder2.AppendLine("<filter type='and'>");
-                                stringBuilder2.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)entity2.Id));
+                                stringBuilder2.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)enHD.Id));
                             }
                             else if (inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling")
                             {
                                 stringBuilder2.AppendLine("<link-entity name='salesorderdetail' from='productid' to='productid' alias='ae'>");
                                 stringBuilder2.AppendLine("<filter type='and'>");
-                                stringBuilder2.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)entity2.Id));
+                                stringBuilder2.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)enHD.Id));
                             }
                             stringBuilder2.AppendLine("</filter>");
                             stringBuilder2.AppendLine("</link-entity>");
@@ -155,8 +163,8 @@ namespace Plugin_PackagesSelling_Associate
                                                 }
                                                 break;
                                             case 100000002:
-                                                Decimal num6 = ((Money)entity2["bsd_discount"]).Value;
-                                                Decimal num7 = ((Money)entity2["bsd_detailamount"]).Value;
+                                                Decimal num6 = ((Money)enHD["bsd_discount"]).Value;
+                                                Decimal num7 = ((Money)enHD["bsd_detailamount"]).Value;
                                                 Decimal num8 = entity5.Contains("bsd_percent") ? (Decimal)entity5["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover Condition " + (string)entity5["bsd_name"]);
                                                 num1 += (num7 - num6) * num8 / 100M;
                                                 break;
@@ -202,8 +210,8 @@ namespace Plugin_PackagesSelling_Associate
                                         }
                                         break;
                                     case 100000002:
-                                        Decimal num13 = ((Money)entity2["bsd_discount"]).Value;
-                                        Decimal num14 = ((Money)entity2["bsd_detailamount"]).Value;
+                                        Decimal num13 = ((Money)enHD["bsd_discount"]).Value;
+                                        Decimal num14 = ((Money)enHD["bsd_detailamount"]).Value;
                                         Decimal num15 = entity5.Contains("bsd_percent") ? (Decimal)entity5["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover condition " + (string)entity5["bsd_name"]);
                                         num1 += (num14 - num13) * num15 / 100M;
                                         break;
@@ -214,10 +222,8 @@ namespace Plugin_PackagesSelling_Associate
                     entity3["bsd_packagesellingamount"] = (object)new Money(num1);
                     this.service.Update(entity3);
                 }
-                else if ("bsd_salesorder_bsd_packageselling".Equals(inputParameter1.SchemaName))
+                else if ("bsd_salesorder_bsd_packageselling".Equals(inputParameter1.SchemaName) && "bsd_packageselling".Equals(target.LogicalName))
                 {
-                    EntityReference target = (EntityReference)service1.InputParameters["Target"];
-                    traceService.Trace("target: " + target.LogicalName + " " + target.Id);
                     Entity enPackagesSelling = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_name", "bsd_amount" }));
                     string bsd_name = enPackagesSelling.Contains("bsd_name") ? (string)enPackagesSelling["bsd_name"] : string.Empty;
                     decimal bsd_amount = enPackagesSelling.Contains("bsd_amount") ? ((Money)enPackagesSelling["bsd_amount"]).Value : 0;
@@ -228,10 +234,11 @@ namespace Plugin_PackagesSelling_Associate
             else if (service1.MessageName == "Disassociate")
             {
                 Relationship inputParameter4 = (Relationship)service1.InputParameters["Relationship"];
+                EntityReference target = (EntityReference)service1.InputParameters["Target"];
+                traceService.Trace("target: " + target.LogicalName + " " + target.Id);
                 //if (inputParameter4.SchemaName == "bsd_quote_bsd_packageselling" || inputParameter4.SchemaName == "bsd_salesorder_bsd_packageselling")
-                if (inputParameter4.SchemaName == "bsd_quote_bsd_packageselling")
+                if (inputParameter4.SchemaName == "bsd_quote_bsd_packageselling" && target.LogicalName == "quote")
                 {
-                    EntityReference inputParameter5 = (EntityReference)service1.InputParameters["Target"];
                     EntityReferenceCollection inputParameter6 = (EntityReferenceCollection)service1.InputParameters["RelatedEntities"];
                     Entity entity8 = new Entity();
                     string str1 = "";
@@ -247,7 +254,7 @@ namespace Plugin_PackagesSelling_Associate
                         str2 = "bsd_salesorder_bsd_packageselling";
                     }
                     if (inputParameter4.SchemaName == "bsd_quote_bsd_packageselling")
-                        entity8 = this.service.Retrieve(inputParameter5.LogicalName, inputParameter5.Id, new ColumnSet(new string[4]
+                        entity8 = this.service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[4]
                         {
             str1,
             "bsd_totalamountlessfreight",
@@ -255,7 +262,7 @@ namespace Plugin_PackagesSelling_Associate
             "bsd_discount"
                         }));
                     else if (inputParameter4.SchemaName == "bsd_salesorder_bsd_packageselling")
-                        entity8 = this.service.Retrieve(inputParameter5.LogicalName, inputParameter5.Id, new ColumnSet(new string[1]
+                        entity8 = this.service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[1]
                         {
             str1
                         }));
@@ -264,15 +271,15 @@ namespace Plugin_PackagesSelling_Associate
                     stringBuilder3.AppendLine("<entity name='" + str2 + "'>");
                     stringBuilder3.AppendLine("<filter type='and'>");
                     if (inputParameter4.SchemaName == "bsd_quote_bsd_packageselling")
-                        stringBuilder3.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)inputParameter5.Id));
+                        stringBuilder3.AppendLine(string.Format("<condition attribute='quoteid' operator='eq' value='{0}' />", (object)target.Id));
                     else if (inputParameter4.SchemaName == "bsd_salesorder_bsd_packageselling")
-                        stringBuilder3.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)inputParameter5.Id));
+                        stringBuilder3.AppendLine(string.Format("<condition attribute='salesorderid' operator='eq' value='{0}' />", (object)target.Id));
                     stringBuilder3.AppendLine("</filter>");
                     stringBuilder3.AppendLine("</entity>");
                     stringBuilder3.AppendLine("</fetch>");
                     EntityCollection entityCollection3 = this.service.RetrieveMultiple((QueryBase)new FetchExpression(stringBuilder3.ToString()));
-                    Entity entity9 = new Entity(inputParameter5.LogicalName);
-                    entity9.Id = inputParameter5.Id;
+                    Entity entity9 = new Entity(target.LogicalName);
+                    entity9.Id = target.Id;
                     Decimal num16 = 0M;
                     foreach (Entity entity10 in (Collection<Entity>)entityCollection3.Entities)
                     {
@@ -417,13 +424,10 @@ namespace Plugin_PackagesSelling_Associate
                     entity9["bsd_packagesellingamount"] = (object)new Money(num16);
                     this.service.Update(entity9);
                 }
-                else if ("bsd_salesorder_bsd_packageselling".Equals(inputParameter4.SchemaName))
+                else if ("bsd_salesorder_bsd_packageselling".Equals(inputParameter4.SchemaName) && "salesorder".Equals(target.LogicalName))
                 {
-                    EntityReference target = (EntityReference)service1.InputParameters["Target"];
-                    traceService.Trace("target: " + target.LogicalName + " " + target.Id);
-
                     EntityReferenceCollection relatedEntities = (EntityReferenceCollection)service1.InputParameters["RelatedEntities"];
-                    if(relatedEntities.Count > 0)
+                    if (relatedEntities.Count > 0)
                     {
                         List<Guid> listId = new List<Guid>();
                         foreach (var relatedEntity in relatedEntities)

@@ -86,6 +86,7 @@ namespace Pl_Ass_Resv_revent_Promotion
           "name",
           "statuscode"
                 }));
+                service2.Trace(entity.LogicalName + " " + entity.Id);
                 if (entity.Contains("statuscode") && ((OptionSetValue)entity["statuscode"]).Value != 100000007 && (inputParameter1.SchemaName == "bsd_quote_bsd_promotion" || inputParameter1.SchemaName == "bsd_quote_bsd_packageselling"))
                     throw new InvalidPluginExecutionException("Cannot excute this step for Quotation Reservation " + (string)entity["name"] + " without Quotation status!");
             }
