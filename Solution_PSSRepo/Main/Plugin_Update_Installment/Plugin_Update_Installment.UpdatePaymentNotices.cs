@@ -17,7 +17,7 @@ namespace Plugin_Update_Installment
         Entity en = new Entity();
         private Entity GetPaymentNoticesByInstalment(string  instalmentId,string OPId)
         {
-            var query = new QueryExpression("bsd_paymentschemedetail");
+            var query = new QueryExpression("bsd_customernotices");
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, OPId);
             query.Criteria.AddCondition("bsd_paymentschemedetail", ConditionOperator.Equal, instalmentId);
