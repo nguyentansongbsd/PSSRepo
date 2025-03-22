@@ -58,7 +58,16 @@ namespace Plugin_Update_Installment
             enUpdate["bsd_totaladvancepayment"] = EnOP.Contains("bsd_totaladvancepayment")? EnOP["bsd_totaladvancepayment"]:new Money(0);
             #endregion
             #region (Tổng số tiền thanh toán trước)-->bsd_totalprepaymentamount=bsd_totaladvancepayment+ bsd_amountwaspaid (của đợt paymnent notices)-->Hiển thị số âm (Field tính toán)
-            enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)enUpdate["bsd_totaladvancepayment"]).Value + ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
+            if(enInsDetail.Contains("bsd_amountwaspaid"))
+            {
+                enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)enUpdate["bsd_totaladvancepayment"]).Value + ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
+
+            }
+            else
+            {
+                enUpdate["bsd_totalprepaymentamount"] = enUpdate["bsd_totaladvancepayment"];
+
+            }
             #endregion
             #region Shortfall in previous Installment (Số tiền chưa thanh toán các đợt trước) (bsd_Shoftfall Installment= Sum(bsd_balance) Tổng số tiền chưa thanh toán của các đợt trước đợt làm payment notice -->Field tính toán
             decimal sum_bsd_balance = 0;
