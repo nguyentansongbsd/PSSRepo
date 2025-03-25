@@ -41,10 +41,11 @@ namespace Plugin_Update_Installment
             // lấy Option Entry
             EntityReference enOPRef = (EntityReference)enTarget["bsd_optionentry"];
             Entity EnOP = service.Retrieve(enOPRef.LogicalName, enOPRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-            #endregion
+           
             //lấy ra PaymentNotices hiện hữu <tại một thời điểm chỉ có một paymentnotice-OP-Ins trạng thái Generate(1)>
             Entity enCreated = GetPaymentNoticesByInstalment(enTarget.Id.ToString(),EnOP.Id.ToString());
             if (enCreated == null) return;
+            #endregion
             tracingService.Trace("paymentnotices: "+enCreated.Id.ToString());
             Entity enUpdate = new Entity(enCreated.LogicalName, enCreated.Id);
             //lấy Instalment detail 
@@ -96,7 +97,7 @@ namespace Plugin_Update_Installment
 
             #region Amount to transfer (Số tiền phải chuyển)=bsd_totaladvancepayment+Totalprepaymentamount+bsd_Shoftfall Installment -->Field tính toán
             enUpdate["bsd_amounttotransfer"] = new Money(
-                ((Money)enUpdate["bsd_totaladvancepayment"]).Value +
+                ((Money)enUpdate["bsd_amountofthisphase"]).Value -
                 ((Money)enUpdate["bsd_totalprepaymentamount"]).Value +
                 ((Money)enUpdate["bsd_shortfallinpreviousinstallment"]).Value
                 );

@@ -3,16 +3,13 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Crm.Sdk.Messages;
-using System.Collections;
 
-namespace Action_Approved_Updateduedate_Detail
+namespace Plugin_Create_UpdateDueDateDetail
 {
-    public class Action_Approved_Updateduedate_Detail : IPlugin
+    public class Plugin_Create_UpdateDueDateDetail : IPlugin
     {
 
         IPluginExecutionContext context = null;
@@ -29,17 +26,14 @@ namespace Action_Approved_Updateduedate_Detail
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = (IOrganizationService)factory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-            //DownloadFile();
-            //return;
             //get entity
-            string enDetailid = context.InputParameters["id"].ToString();
+            Entity entity = (Entity)context.InputParameters["Target"];
+            Guid recordId = entity.Id;
+            en = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+            string enDetailid = entity.Id.ToString();
             en = service.Retrieve("bsd_updateduedatedetail", new Guid(enDetailid), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             var item = en;
-            if (!CheckConditionRun(en))
-            {
-                tracingService.Trace("stop");
-                return;
-            }
+
             var status = ((OptionSetValue)en["statuscode"]).Value;
             tracingService.Trace("start :" + status);
             tracingService.Trace("enDetailid :" + enDetailid);
@@ -76,7 +70,7 @@ namespace Action_Approved_Updateduedate_Detail
                         else
                         {
                             HandleError(item, "not found entity!");
-                        }    
+                        }
 
                     }
 
@@ -109,16 +103,11 @@ namespace Action_Approved_Updateduedate_Detail
                 tracingService.Trace("Approve");
                 if (!result) return;
 
-                Approve(ref result, item, enInstallment);
             }
             catch (Exception ex)
             {
                 HandleError(item, ex.Message);
             }
-
-
-
-           
         }
         /// <summary>
         ///  Dự án ở entity detail có trùng với entity Cha không?
@@ -143,11 +132,19 @@ namespace Action_Approved_Updateduedate_Detail
         /// </summary>
         public void CheckIsLast(ref bool result, Entity item, Entity enInstallment)
         {
-            if (((bool)enInstallment["bsd_lastinstallment"]) || (enInstallment.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)enInstallment["bsd_duedatecalculatingmethod"]).Value == 100000002))
+            if (((bool)enInstallment["bsd_lastinstallment"]))
             {
-                var mess = "The record contains a handover batch. Please check again.";
+                var mess = "This is last installment. Cannot perform this action.";
                 HandleError(item, mess);
                 result = false;
+            }
+            else if ((enInstallment.Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)enInstallment["bsd_duedatecalculatingmethod"]).Value == 100000002))
+            {
+
+                var mess = "This is estimate handover date. Cannot perform this action.";
+                HandleError(item, mess);
+                result = false;
+
             }
         }
         /// <summary>
@@ -233,9 +230,8 @@ namespace Action_Approved_Updateduedate_Detail
                     {
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
                         {
-                            var mess = "The new due date is earlier than the next batch. Please check again.";
+                            var mess = "The new due date is earlier than the next batch.Please check again."; 
                             HandleError(item, mess);
-
                             result = false;
                             break;
                         }
@@ -244,7 +240,7 @@ namespace Action_Approved_Updateduedate_Detail
                     {
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
                         {
-                            var mess = "The new due date is later than the previous batch. Please check again."; 
+                            var mess = "The new due date is later than the previous batch. Please check again.";
                             HandleError(item, mess);
                             result = false;
                             break;
@@ -252,7 +248,6 @@ namespace Action_Approved_Updateduedate_Detail
                         }
                     }
                 }
-
             }
         }
         /// <summary>
@@ -273,7 +268,7 @@ namespace Action_Approved_Updateduedate_Detail
             tracingService.Trace($"newDate {newDate}");
             if ((newDate - ((DateTime)enInstallment["bsd_duedate"]).AddHours(7)).TotalDays == 0)
             {
-                
+
 
                 var mess = "The new due date is the same as the old due date. Please check again.";
                 HandleError(item, mess);
@@ -281,110 +276,9 @@ namespace Action_Approved_Updateduedate_Detail
             }
 
         }
-        public void Approve(ref bool result, Entity item, Entity enInstallment)
-        {
-            // Status Reason(entity cha) = Approved
-            //Approved / Rejected Date[bsd_approvedrejecteddate] = Ngày cập nhật thành công
-            //Approved / Rejected Person[bsd_approvedrejectedperson] = Người nhấn nút duyệt
-            //Status Reason(entity Detail) = Approved
-            //Due Date(New) (ở entity Detail) về field Due Date của installment ở entity Detail
-            var request = new OrganizationRequest("bsd_Action_Approved_Updateduedate_Master");
-
-            var newDate = (DateTime)item["bsd_duedatenew"];
-            request["detail_id"] = item.Id.ToString();
-            request["duedatenew"] = new DateTime(newDate.Year, newDate.Month, newDate.Day).AddHours(7).ToString();// newDate.AddHours(7).ToString();
-            request["statuscode"] = 100000000;
-            service.Execute(request);
-        }
         public void HandleError(Entity item, string error)
         {
-            var enMasterRef = (EntityReference)item["bsd_updateduedate"];
-            var enMaster = new Entity("bsd_updateduedate", enMasterRef.Id);
-            enMaster["bsd_error"] = true;
-            enMaster["bsd_errordetail"] = error;
-            enMaster["bsd_processing_pa"] = false;
-            enMaster["statuscode"] = new OptionSetValue(1);
-
-            enMaster["bsd_approvedrejecteddate"] = null ;
-            enMaster["bsd_approvedrejectedperson"] = null;
-            service.Update(enMaster);
-        }
-        public bool CheckConditionRun(Entity item)
-        {
-            var enMasterRef = (EntityReference)item["bsd_updateduedate"];
-            var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
-            if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-
-        }
-        /// <summary>
-        /// Downloads a file or image
-        /// </summary>
-        /// <param name="service">The service</param>
-        /// <param name="entityReference">A reference to the record with the file or image column</param>
-        /// <param name="attributeName">The name of the file or image column</param>
-        /// <returns></returns>
-        private  void DownloadFile(
-                    )
-        {
-            InitializeFileBlocksDownloadRequest initializeFileBlocksDownloadRequest = new InitializeFileBlocksDownloadRequest()
-            {
-                Target = new EntityReference("bsd_documents",new Guid("757e592a-7ff2-ef11-be20-0022485a0a4f")),
-                FileAttributeName = "bsd_filewordtemplatedocx"
-            };
-
-            var initializeFileBlocksDownloadResponse =
-                  (InitializeFileBlocksDownloadResponse)service.Execute(initializeFileBlocksDownloadRequest);
-
-            string fileContinuationToken = initializeFileBlocksDownloadResponse.FileContinuationToken;
-            long fileSizeInBytes = initializeFileBlocksDownloadResponse.FileSizeInBytes;
-            tracingService.Trace(fileContinuationToken);
-            tracingService.Trace(fileSizeInBytes.ToString());
-
-            List<byte> fileBytes = new List<byte>((int)fileSizeInBytes);
-
-            long offset = 0;
-            // If chunking is not supported, chunk size will be full size of the file.
-            long blockSizeDownload = !initializeFileBlocksDownloadResponse.IsChunkingSupported ? fileSizeInBytes : 4 * 1024 * 1024;
-
-            // File size may be smaller than defined block size
-            if (fileSizeInBytes < blockSizeDownload)
-            {
-                blockSizeDownload = fileSizeInBytes;
-            }
-            tracingService.Trace(blockSizeDownload.ToString());
-            while (fileSizeInBytes > 0)
-            {
-                // Prepare the request
-                DownloadBlockRequest downLoadBlockRequest = new DownloadBlockRequest()
-                {
-                    BlockLength = blockSizeDownload,
-                    FileContinuationToken = fileContinuationToken,
-                    Offset = offset
-                };
-
-                // Send the request
-                var downloadBlockResponse =
-                         (DownloadBlockResponse)service.Execute(downLoadBlockRequest);
-
-                // Add the block returned to the list
-                fileBytes.AddRange(downloadBlockResponse.Data);
-
-                // Subtract the amount downloaded,
-                // which may make fileSizeInBytes < 0 and indicate
-                // no further blocks to download
-                fileSizeInBytes -= (int)blockSizeDownload;
-                // Increment the offset to start at the beginning of the next block.
-                offset += blockSizeDownload;
-            }
-            string base64String = Convert.ToBase64String(fileBytes.ToArray());
-            tracingService.Trace(base64String);
+            throw new InvalidPluginExecutionException(error);
         }
     }
 }

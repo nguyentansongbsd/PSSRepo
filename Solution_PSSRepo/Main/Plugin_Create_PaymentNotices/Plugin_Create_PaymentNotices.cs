@@ -68,7 +68,7 @@ namespace Plugin_Create_PaymentNotices
 
             #region Amount to transfer (Số tiền phải chuyển)=bsd_totaladvancepayment+Totalprepaymentamount+bsd_Shoftfall Installment -->Field tính toán
             enUpdate["bsd_amounttotransfer"] = new Money(
-                ((Money)enUpdate["bsd_totaladvancepayment"]).Value+
+                ((Money)enUpdate["bsd_amountofthisphase"]).Value-
                 ((Money)enUpdate["bsd_totalprepaymentamount"]).Value +
                 ((Money)enUpdate["bsd_shortfallinpreviousinstallment"]).Value
                 );

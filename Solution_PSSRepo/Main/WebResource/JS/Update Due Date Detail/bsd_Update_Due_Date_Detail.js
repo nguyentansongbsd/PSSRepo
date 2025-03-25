@@ -8,7 +8,7 @@ function onload(executionContextObj) {
         disableFormFields(true);
     }
     else {
-        disableFormFields(false);
+        //disableFormFields(false);
     }
     var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
     if (installmentnumber != null && statuscode == 1) {
@@ -68,9 +68,9 @@ function fillter_pro_unit() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -115,17 +115,16 @@ function fillter_ins() {
                 alert("No Installment" + installmentnumber + " in optionEntry");
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
 }
 function fillter_olddate() {
     var installment = Xrm.Page.getAttribute("bsd_installment").getValue();
     //var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
-    
-    
+
     if (installment != null) {
 
         var xml = [];
@@ -150,9 +149,9 @@ function fillter_olddate() {
                 Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 }
 function dislay_ins() {
@@ -205,9 +204,9 @@ function dislay_unit() {
                 units[0].name = rs[0].attributes.bsd_unitnumber.name;
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
     if (units != null) {
         var xml = [];
@@ -245,7 +244,7 @@ function FilterOE(executionContextObj) {
     formContext.getControl("bsd_optionentry").addCustomFilter(customerAccountFilter);
 }
 
-//region 
+//region
 function fillter_pro_unit_quote() {
     debugger;
     var bsd_quote = Xrm.Page.getAttribute("bsd_quote").getValue();
@@ -279,9 +278,9 @@ function fillter_pro_unit_quote() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -326,9 +325,9 @@ function fillter_ins_quote() {
                 alert("No Installment" + installmentnumber + " in optionEntry");
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
 }
@@ -382,9 +381,9 @@ function dislay_unit_quote() {
                 units[0].name = rs[0].attributes.bsd_unitno.name;
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
     if (units != null) {
         var xml = [];
@@ -415,13 +414,7 @@ function Filter_quote(executionContextObj) {
     //Filteroe += "<condition attribute='statuscode' operator='neq' value='100000006'/>";
     if (bsd_project != null) {
         Filteroe += "<condition attribute='bsd_projectid' operator='eq' value='" + bsd_project[0].id + "'/>";
-        Filteroe +=
-            "      <condition attribute='statuscode' operator='in'>" +
-            "        <value>"+ 100000004+ "</value>" +
-            "        <value>"+ 100000007+ "</value>" +
-            "        <value>"+ 100000000+ "</value>" +
-            "        <value>"+ 100000006+ "</value>" +
-            "      </condition>";
+        Filteroe += "      <condition attribute='statuscode' operator='in'>" + "        <value>" + 100000004 + "</value>" + "        <value>" + 100000007 + "</value>" + "        <value>" + 100000000 + "</value>" + "        <value>" + 100000006 + "</value>" + "      </condition>";
     }
     Filteroe += "</filter>";
     var customerAccountFilter = Filteroe;
@@ -464,9 +457,9 @@ function fillter_pro_unit_quotation() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -511,9 +504,9 @@ function fillter_ins_quotation() {
                 alert("No Installment" + installmentnumber + " in optionEntry");
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
 
 }
@@ -567,9 +560,9 @@ function dislay_unit_quotation() {
                 units[0].name = rs[0].attributes.bsd_units.name;
             }
         },
-            function (err) {
-                console.log(err);
-            });
+        function (err) {
+            console.log(err);
+        });
     }
     if (units != null) {
         var xml = [];
