@@ -588,7 +588,7 @@ namespace SaleDirectAction
               </entity>
             </fetch>";
             EntityCollection result = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            if (result == null && result.Entities.Count <= 0) return null;
+            if (result == null || result.Entities.Count <= 0) return null;
             return result.Entities[0].ToEntityReference();
         }
 

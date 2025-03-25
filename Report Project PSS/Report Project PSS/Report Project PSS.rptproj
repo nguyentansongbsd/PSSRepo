@@ -59,12 +59,17 @@
     <Report Include="rp52_SM_Purchaser Info_SALES_CCR_Final.rdl" />
     <Report Include="rpHWL_SPA_02_EN_Normal_PDF_11102022.rdl" />
     <Report Include="rpZEN_SPA_02_VN_PDF_new ver2024.rdl" />
+    <Report Include="SENIQUE I,II_Appendix_VN_13022025.rdl" />
     <Report Include="SENIQUE I,II_SPA_EN_032025.rdl" />
     <Report Include="SENIQUE I,II_SPA_VN_022025.rdl" />
     <Report Include="SENIQUE I,II_SPA_VN_POA_THUY.rdl" />
+    <Report Include="SENIQUE I_II_Appendix_VN_POA_THUY.rdl" />
     <Report Include="SENIQUE I_II_BG_VN_POA_THUY.rdl" />
+    <Report Include="SENIQUE PREMIER_Appendix_VN_13022025.rdl" />
+    <Report Include="SENIQUE PREMIER_APPENDIX_VN_POA_JAS.rdl" />
     <Report Include="SENIQUE PREMIER_EA_EN_03Feb2025.rdl" />
     <Report Include="SENIQUE PREMIER_EA_VN_03Feb2025.rdl" />
+    <Report Include="SENIQUE PREMIER_SPA_EN_032025.rdl" />
     <Report Include="SENIQUE PREMIER_SPA_VN_022025 (1).rdl" />
     <Report Include="SENIQUE PREMIER_SPA_VN_POA_JAS.rdl" />
     <Report Include="SENIQUE_APPENDIX_EN_032025.rdl" />
