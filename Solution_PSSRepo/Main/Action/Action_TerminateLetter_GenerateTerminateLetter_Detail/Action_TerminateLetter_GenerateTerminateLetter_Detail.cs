@@ -298,6 +298,12 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                                 //tính số ngày trễ hạn 
                                 lateDays = (int)(receiptdate - bsd_signeddadate).TotalDays;
                             }
+                            else
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
                             else result = false;
                         }
                     }
@@ -331,7 +337,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     else
                     {
                         //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                     }
                     break;
                 default:

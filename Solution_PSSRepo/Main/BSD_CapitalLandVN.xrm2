@@ -3,6 +3,128 @@
   "Organizations": [
     {
       "ConnectionProtocol": 3072,
+      "OrganizationDisplayName": "CapitaLand Limited",
+      "OrganizationName": "cl",
+      "OrganizationUrl": "https://pss-vn.crm5.dynamics.com",
+      "UserFriendlyName": "https://pss-vn.crm5.dynamics.com/",
+      "CurrentSolution": {
+        "Id": "fd140aaf-4df4-11dd-bd17-0019b9312238",
+        "Name": "Default Solution",
+        "UniqueName": "Default"
+      },
+      "Projects": [
+        {
+          "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_UpdateDueDateDetail.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "95137e56-9c0a-413d-915a-de1ba532d41a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateDueDateDetail.dll",
+                "SourceType": 0,
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 2,
+                    "Id": "61ebde31-4821-420c-b28f-b1b8791d8a9b",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Create - Update Due Date Detail - Post-operation",
+                    "PluginTypeId": "9a8469ea-38c7-4915-b135-5a9c1bc30661",
+                    "SdkMessageFilterId": "e1ee983f-4a41-e811-8135-3863bb360c48",
+                    "SdkMessageId": "9ebdbb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Updateduedate.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "210fcb6e-e3e6-4e7b-bda0-6a7eb9077a8c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Updateduedate.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        }
+      ],
+      "Settings": [
+        {
+          "CssMinification": 1,
+          "JavaScriptMinification": 1,
+          "SettingType": 6
+        },
+        {
+          "AddDebuggerNonUserCodeAttribute": true,
+          "AddExcludeFromCodeCoverageAttribute": true,
+          "AddStringLengthAttribute": false,
+          "BaseProxyClassFileName": "BaseProxyClass",
+          "CustomProxyNamingServiceDllPath": "",
+          "EnumsFileName": "OptionSetEnums",
+          "GeneratedCodeAttributeVersionPrecision": 4,
+          "GenerateProxyEnumsInSeparateClasses": true,
+          "MakeAllPropertiesEditable": false,
+          "ProxyEntityClassPath": "\\ProxyClasses",
+          "ProxyEntityNamingConvention": 1,
+          "ProxyEntityNamingPattern": "{0}",
+          "ProxyEnumPath": "\\ProxyClasses\\Enums",
+          "ProxyGenerationMethod": 1,
+          "ProxyMessagesPath": "\\ProxyClasses\\Messages",
+          "ProxyNamingMethod": 0,
+          "ProxyTypesThatShouldUseExistingNamesWhenRegenerating": 511,
+          "ServiceContextName": "CrmServiceContext",
+          "SettingType": 4,
+          "UseStronglyTypedNameForProxyRelatedEntities": true
+        },
+        {
+          "ChartPath": "\\Charts",
+          "CssPath": "\\Web",
+          "CustomAssemblyConfigPath": "\\AssemblyConfig",
+          "EmailTemplatePath": "\\EmailTemplates",
+          "EntityMetadataPath": "\\EntityMetadata",
+          "HtmlPath": "\\Web",
+          "ImagePath": "\\Web",
+          "JavaScriptPath": "\\Web",
+          "PluginConfigurationsPath": "\\PluginConfigurations",
+          "ProcessPath": "\\Processes",
+          "ResourcePath": "\\Web",
+          "SettingType": 5,
+          "SilverlightPath": "\\Xap",
+          "SitemapPath": "\\Sitemap",
+          "TypeScriptIntellisensePath": "\\Web\\IntellisenseFiles",
+          "TypeScriptPath": "\\Web",
+          "ViewPath": "\\Views",
+          "XmlPath": "\\Web",
+          "XslPath": "\\Web"
+        },
+        {
+          "PluginStepNameTemplate": "{messageDisplayName} - {primaryEntityDisplayName} - {pipelineStageDisplayName}",
+          "SettingType": 1
+        }
+      ]
+    },
+    {
+      "ConnectionProtocol": 3072,
       "OrganizationDisplayName": "CapitaLand Preview",
       "OrganizationName": "pssvn-preview",
       "OrganizationUrl": "https://pssvn-preview.crm5.dynamics.com",
@@ -350,6 +472,29 @@
           ]
         },
         {
+          "Name": "Plugin_AutoShareRecord_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_AutoShareRecord_V2.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "cdfd14f8-ae15-418b-ac06-c7ff417f642a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_AutoShareRecord.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_FUL.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -378,6 +523,75 @@
                     "PluginStepId": "e8563fbe-6e67-4710-9870-16fefc8a9577"
                   }
                 ]
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_OP_MapField.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_OP_MapField.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "afb6b7a6-1e51-4581-8710-c5632e6a41f7",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_OP_MapField.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_PaymentNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_PaymentNotices.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "f4536f3b-f174-4a2b-ba4c-dda4417ee79e",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_PaymentNotices.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_UpdateDueDateDetail.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "6cd6a1b7-f5d7-486e-864f-d33ff07847b4",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateDueDateDetail.dll",
+                "SourceType": 0
               }
             }
           ]
@@ -423,6 +637,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_CreatePriceListItem.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Update_Installment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Update_Installment.UpdatePaymentNotices.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "75d0235c-08b9-4d79-9333-28f033969580",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_Installment.dll",
                 "SourceType": 0
               }
             }
@@ -482,6 +719,11 @@
               "RelativeFilePath": "\\HTML\\report\\bsd_Simulation_Report_InOptionEntryForm.html"
             },
             {
+              "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_HandoverNotice.js"
+            },
+            {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
@@ -500,6 +742,11 @@
               "CrmId": "39e45875-2ef0-ef11-9341-000d3aa205ba",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
+            },
+            {
+              "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Handover Notice\\.js"
             },
             {
               "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",

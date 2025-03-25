@@ -20,7 +20,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
         public static StringBuilder strMess = new StringBuilder();
         private static Entity enInstallment;
         private static Entity enInstallmentroot;
-        bool isMap=false;
+        bool isMap = false;
         Entity enOptionEntry;
         public static Installment objIns = new Installment();
         bool resCheckCaseSign = false;
@@ -518,11 +518,17 @@ namespace Action_Calculate_Interest_SIMULATION_report
                             bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
                             if (bsd_duedate < bsd_duedateFlag)
                             {
-                               TracingSe.Trace("tính");
+                                TracingSe.Trace("tính");
                                 TracingSe.Trace($"name:{enInstallmentroot["bsd_name"]}");
                                 result = true;
                                 //tính số ngày trễ hạn 
                                 lateDays = (int)(receiptdate - bsd_signeddadate).TotalDays;
+                            }
+                            else
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                             }
                             else result = false;
                         }
@@ -540,7 +546,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
                             if (bsd_duedate >= bsd_duedateFlag)
                             {
                                 result = true;
-                                lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                             }
                             else result = false;
                         }
@@ -557,7 +563,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
                     else
                     {
                         //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                     }
                     break;
                 default:

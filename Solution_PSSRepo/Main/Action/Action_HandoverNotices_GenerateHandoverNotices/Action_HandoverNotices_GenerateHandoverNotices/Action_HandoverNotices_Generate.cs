@@ -487,6 +487,12 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                                 result = true;
                                 lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
                             }
+                            else
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
                             else result = false;
                         }
                     }
@@ -502,7 +508,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     else
                     {
                         //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                     }
                     break;
                 default:

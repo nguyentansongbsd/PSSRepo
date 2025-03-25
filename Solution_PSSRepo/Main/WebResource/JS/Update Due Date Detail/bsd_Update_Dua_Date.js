@@ -79,11 +79,11 @@ function RegisterModal() {
 }
 function onload() {
     var statuscode = Xrm.Page.getAttribute("statuscode").getValue();
-    if (statuscode == 100000000 || statuscode == 100000001) {
+    if (statuscode == 100000000 || statuscode == 100000001 ) {
         disableFormFields(true);
     }
     else {
-        disableFormFields(false);
+        //disableFormFields(false);
     }
     ready();
 }
@@ -106,7 +106,7 @@ function onFieldChange(executionContext) {
 
     // Nếu trường có giá trị, thực hiện lưu
     if (fieldValue !== null) {
-        formContext.data.entity.save(); // Lưu form
+        //formContext.data.entity.save(); // Lưu form
     }
 }
 function onSaveReload(executionContext) {

@@ -61,9 +61,10 @@ namespace Plugin_Updateduedate
             var query = new QueryExpression("bsd_updateduedatedetail");
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_updateduedate", ConditionOperator.Equal, en.Id.ToString());
-            query.Criteria.AddCondition("statuscode", ConditionOperator.NotEqual, 100000000);
-
+            query.Criteria.AddCondition("statuscode", ConditionOperator.Equal, 1);
+            tracingService.Trace($"{en.Id}");
             var rs = service.RetrieveMultiple(query);
+            tracingService.Trace($"count:{rs.Entities.Count}");
             if (rs.Entities.Count == 0)
             {
                 var mess = "The record does not have any details. Please check again.";
