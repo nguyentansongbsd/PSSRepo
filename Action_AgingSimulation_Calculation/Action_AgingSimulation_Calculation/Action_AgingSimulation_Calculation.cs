@@ -197,7 +197,7 @@ namespace Action_AgingSimulation_Calculation
                 #endregion
             }
             updateNewInterestAmount(enOptionEntry1, null, bsd_type1);
-            updateAdvantPayment(enOptionEntry1, "");
+            updateAdvantPayment(enOptionEntry1, aginginterestsimulationoptionid);
             #endregion
         }
         public static DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
