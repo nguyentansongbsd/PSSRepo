@@ -40,7 +40,7 @@ namespace Plugin_Updateduedate
                 enDetailUpdate["bsd_processing_pa"] = true; //Status Reason(entity Detail) = Approved
                 enDetailUpdate["bsd_error"] = false;
                 enDetailUpdate["bsd_errordetail"] = "";
-
+                enDetailUpdate["statuscode"] = new OptionSetValue(1);
                 enDetailUpdate["bsd_approvedrejecteddate"] = DateTime.UtcNow; ;
                 enDetailUpdate["bsd_approvedrejectedperson"] = new EntityReference("systemuser", context.UserId); ;
                 service.Update(enDetailUpdate);

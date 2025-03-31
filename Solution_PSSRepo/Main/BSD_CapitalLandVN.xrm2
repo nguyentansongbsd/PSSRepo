@@ -175,6 +175,22 @@
           ]
         },
         {
+          "Name": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "83d01245-bfd9-4c2c-8496-d70858074493",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_Approved_Updateestimatehandoverdate_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -742,11 +758,6 @@
               "CrmId": "39e45875-2ef0-ef11-9341-000d3aa205ba",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
-            },
-            {
-              "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
-              "FileType": 3,
-              "RelativeFilePath": "\\JS\\Handover Notice\\.js"
             },
             {
               "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",

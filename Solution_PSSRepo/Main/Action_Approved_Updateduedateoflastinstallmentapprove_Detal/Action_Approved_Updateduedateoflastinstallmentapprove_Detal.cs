@@ -169,15 +169,15 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
         /// </summary>
         public void CheckPaidDetail(ref bool result, Entity item, Entity enInstallment)
         {
-            tracingService.Trace($"bsd_depositamount {((Money)enInstallment["bsd_depositamount"]).Value}");
-            tracingService.Trace($"bsd_amountwaspaid {((Money)enInstallment["bsd_amountwaspaid"]).Value}");
-            if ((((Money)enInstallment["bsd_depositamount"]).Value != 0 || ((Money)enInstallment["bsd_amountwaspaid"]).Value != 0))
-            {
-                var mess = "There is a batch that has already been paid. Please check again.";
-                HandleError(item, mess);
+            //tracingService.Trace($"bsd_depositamount {((Money)enInstallment["bsd_depositamount"]).Value}");
+            //tracingService.Trace($"bsd_amountwaspaid {((Money)enInstallment["bsd_amountwaspaid"]).Value}");
+            //if ((((Money)enInstallment["bsd_depositamount"]).Value != 0 || ((Money)enInstallment["bsd_amountwaspaid"]).Value != 0))
+            //{
+            //    var mess = "There is a batch that has already been paid. Please check again.";
+            //    HandleError(item, mess);
 
-                result = false;
-            }
+            //    result = false;
+            //}
         }
         /// <summary>
         /// Kiểm tra ngày đến hạn mới trên entity detail 

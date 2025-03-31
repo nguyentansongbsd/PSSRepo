@@ -98,6 +98,9 @@ function fillter_ins() {
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
         xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionentry[0].id + "' />");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -169,6 +172,9 @@ function dislay_ins() {
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionEntry[0].id + "' />");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -306,6 +312,9 @@ function fillter_ins_quote() {
         xml.push("<attribute name='createdon' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
         xml.push("<condition attribute='bsd_reservation' operator='eq' uitype='quote' value='" + bsd_quote[0].id + "' />");
         xml.push("</filter>");
@@ -345,6 +354,9 @@ function dislay_ins_quote() {
         xml.push("<attribute name='createdon' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("<condition attribute='bsd_reservation' operator='eq' uitype='quote' value='" + bsd_quote[0].id + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
