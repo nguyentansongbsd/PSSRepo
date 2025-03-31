@@ -1,11 +1,26 @@
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.dll
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.pdb
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.dll
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.xml
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.AssemblyReference.cache
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.CoreCompileInputs.cache
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\obj\Debug\Action_A.43511E18.Up2Date
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.dll
-C:\Users\BSD\Desktop\Hai_Dev\work\New folder\CLVN Github\CLVN Github\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.pdb
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.dll
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.pdb
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Vse.Web.Serialization.dll
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\bin\Debug\Vse.Web.Serialization.pdb
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.AssemblyReference.cache
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.CoreCompileInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.CopyComplete
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.dll
+C:\Users\NgSong\Desktop\Disk_D\SOURCECODE\CLV\Plugin\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Action_ApplyDocument.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Vse.Web.Serialization.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\bin\Debug\Vse.Web.Serialization.pdb
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.AssemblyReference.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.CoreCompileInputs.cache
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.csproj.CopyComplete
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.dll
+C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_ApplyDocument\obj\Debug\Action_ApplyDocument.pdb

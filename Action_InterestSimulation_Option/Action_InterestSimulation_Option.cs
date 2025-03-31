@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -37,17 +36,9 @@ namespace Action_InterestSimulation_Option
                 traceService.Trace("Count Unit:" + listUnit.Entities.Count.ToString());
                 traceService.Trace("Count OptionEntry:" + optionEntrys.Entities.Count.ToString());
                 int count = 0;
-                var countrecord = optionEntrys.Entities.Count;
-                var multipleRequest = new ExecuteMultipleRequest()
-                {
-                    Settings = new ExecuteMultipleSettings()
-                    {
-                        ContinueOnError = false,
-                        ReturnResponses = true
-                    },
-                    Requests = new OrganizationRequestCollection()
-                };
-                CreateRequest createRequest = null;
+                //EntityCollection units = new EntityCollection();
+                
+                //throw new InvalidPluginExecutionException(optionEntrys.Entities.Count.ToString());
                 foreach (Entity optionEntry in optionEntrys.Entities)
                 {
                     //throw new Exception(enRef.Id.ToString() + "---"+ optionEntry.Id.ToString());
@@ -57,19 +48,12 @@ namespace Action_InterestSimulation_Option
                     EntityReference optionentry = new EntityReference(optionEntry.LogicalName, optionEntry.Id);
                     agInSimOption["bsd_aginginterestsimulation"] = aginginterestsimulation;
                     agInSimOption["bsd_optionentry"] = optionentry;
-                    //Guid createdId = service.Create(agInSimOption);
-                    //traceService.Trace("Item: " + count++);
-                    createRequest = new CreateRequest { Target = agInSimOption };
-                    multipleRequest.Requests.Add(createRequest);
-                    count += 1;
-                    countrecord -= 1;
-                    if ((count == 1000) || (count < 1000 && countrecord == 0))
-                    {
-                        ExecuteMultipleResponse multipleResponse = (ExecuteMultipleResponse)service.Execute(multipleRequest);
-                        multipleRequest.Requests.Clear();
-                        count = 0;
-                    }
+                    Guid createdId = service.Create(agInSimOption);
+                    traceService.Trace("Item: " + count++);
+                    
                 }
+                
+                
             }
         }
         private void clearAgingInterestSimulationOption(IOrganizationService crmservices, string agingInterestSimulationId)
@@ -85,38 +69,10 @@ namespace Action_InterestSimulation_Option
                   </entity>
                 </fetch>";
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
-            int count = 0;
-            var countrecord = entc.Entities.Count;
-
-            var multipleRequest = new ExecuteMultipleRequest()
+            foreach (Entity option in entc.Entities)
             {
-                Settings = new ExecuteMultipleSettings()
-                {
-                    ContinueOnError = false,
-                    ReturnResponses = true
-                },
-                Requests = new OrganizationRequestCollection()
-            };
-            DeleteRequest deleteRequest = null;
-
-            foreach (Entity entity in entc.Entities)
-            {
-                EntityReference entityRef = new EntityReference(entity.LogicalName, entity.Id);
-                deleteRequest = new DeleteRequest { Target = entityRef };
-                multipleRequest.Requests.Add(deleteRequest);
-                count += 1;
-                countrecord -= 1;
-                if ((count == 1000) || (count < 1000 && countrecord == 0))
-                {
-                    ExecuteMultipleResponse multipleResponse = (ExecuteMultipleResponse)service.Execute(multipleRequest);
-                    multipleRequest.Requests.Clear();
-                    count = 0;
-                }
+                crmservices.Delete(option.LogicalName, option.Id);
             }
-            //foreach (Entity option in entc.Entities)
-            //{
-            //    crmservices.Delete(option.LogicalName, option.Id);
-            //}
         }
         private EntityCollection getOptionEntrys(IOrganizationService crmservices, EntityCollection listUnit)
         {
