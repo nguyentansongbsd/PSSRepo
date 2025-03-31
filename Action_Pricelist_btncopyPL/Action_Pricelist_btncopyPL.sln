@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Pricelist_btncopyPL", "Action_Pricelist_btncopyPL\Action_Pricelist_btncopyPL.csproj", "{D01B8710-083C-4719-94C3-146B1025A0F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D01B8710-083C-4719-94C3-146B1025A0F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D01B8710-083C-4719-94C3-146B1025A0F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D01B8710-083C-4719-94C3-146B1025A0F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D01B8710-083C-4719-94C3-146B1025A0F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B598E896-9DFA-4FD4-9753-ECC7D20086F0}
+	EndGlobalSection
+EndGlobal

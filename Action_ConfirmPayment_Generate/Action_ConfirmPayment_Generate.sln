@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33027.164
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_ConfirmPayment_Generate", "Action_ConfirmPayment_Generate\Action_ConfirmPayment_Generate.csproj", "{3CC1A47D-6F23-4317-8FA9-666E0173BA03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CC1A47D-6F23-4317-8FA9-666E0173BA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CC1A47D-6F23-4317-8FA9-666E0173BA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CC1A47D-6F23-4317-8FA9-666E0173BA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CC1A47D-6F23-4317-8FA9-666E0173BA03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F233C084-8DEA-4CD0-A8FA-40802D08E468}
+	EndGlobalSection
+EndGlobal
