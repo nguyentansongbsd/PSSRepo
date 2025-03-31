@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PssFunctionApp.Reponsitory.Interfaces")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e985e3c403748e848d9550d3a7f350fa23e064c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("PssFunctionApp.Reponsitory.Interfaces")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PssFunctionApp.Reponsitory.Interfaces")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
