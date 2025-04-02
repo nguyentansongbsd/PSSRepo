@@ -29,6 +29,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            traceService.Trace("billdate " + context.InputParameters["billdate"].ToString());
             string pro = "";
             if (context.InputParameters["project"] != null)
             {
@@ -46,6 +47,14 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             else
             {
                 estimatehandover = null;
+            }
+            DateTime billdate=DateTime.Now;
+            bool isContainsBilldate=false;
+            if (context.InputParameters["billdate"] != null)
+            {
+                isContainsBilldate = true;
+                traceService.Trace("billdate " + context.InputParameters["billdate"].ToString());
+                billdate = Convert.ToDateTime(context.InputParameters["billdate"].ToString());
             }
             //LAY DANH SACH CAC UEHD DETAIL HOP LE
             QueryExpression query = new QueryExpression("bsd_updateestimatehandoverdatedetail");
@@ -299,6 +308,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     {
                         hn["bsd_isincludelastinstallment"] = false;
                     }
+                    if (isContainsBilldate)
+                        hn["bsd_billdate"] = billdate;
                     service.Create(hn);
 
                     //UPDATE UEHD
