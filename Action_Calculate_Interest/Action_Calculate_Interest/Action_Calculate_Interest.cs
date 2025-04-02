@@ -126,6 +126,7 @@ namespace Action_Calculate_Interest
                         traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
                         traceService.Trace("numberOfDays2 " + numberOfDays2);
                     }
+                    else numberOfDays2 = -100599;
                 }
                 if (objIns.Intereststartdatetype == 100000001)// Grace Period
                 {

@@ -702,6 +702,7 @@ namespace Action_AgingSimulation_Calculation
                         numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
                         traceService.Trace("bsd_signeddadate: " + numberOfDays2);
                     }
+                    else numberOfDays2 = -100599;
                 }
                 traceService.Trace("lateDays: " + lateDays);
                 traceService.Trace("Intereststartdatetype: " + objIns.Intereststartdatetype);

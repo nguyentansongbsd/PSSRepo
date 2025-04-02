@@ -200,6 +200,7 @@ namespace Plugin_Payment_Import
                                                     numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
                                                     traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
                                                 }
+                                                else numberOfDays2 = -100599;
                                             }
                                             if (numberOfDays2 != -100599 && numberOfDays2 < bsd_latedays) bsd_latedays = numberOfDays2;
                                             traceService.Trace("bsd_latedays " + bsd_latedays);
