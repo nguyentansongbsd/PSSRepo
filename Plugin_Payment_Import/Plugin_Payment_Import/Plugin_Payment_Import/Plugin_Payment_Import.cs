@@ -142,7 +142,7 @@ namespace Plugin_Payment_Import
                                             int bsd_ordernumber = rs.Entities[0].Contains("bsd_ordernumber") ? (int)rs.Entities[0]["bsd_ordernumber"] : 0;
                                             int bsd_gracedays = rs.Entities[0].Contains("bsd_gracedays") ? (int)rs.Entities[0]["bsd_gracedays"] : 0;
                                             decimal Termsinterest = rs[0].Contains("bsd_interestchargeper") ? (decimal)rs[0]["bsd_interestchargeper"] : 0;
-                                            Termsinterest = Math.Round(Termsinterest, 2);
+                                            Termsinterest = Math.Round(Termsinterest, 3);
                                             traceService.Trace("tien lãi111" + Termsinterest);
                                             traceService.Trace("vào else s");
                                             EntityReference paymentscheme = rs_oe.Entities[0].Contains("bsd_paymentscheme") ? (EntityReference)rs_oe.Entities[0]["bsd_paymentscheme"] : null;
@@ -204,34 +204,25 @@ namespace Plugin_Payment_Import
                                             }
                                             if (numberOfDays2 != -100599 && numberOfDays2 < bsd_latedays) bsd_latedays = numberOfDays2;
                                             traceService.Trace("bsd_latedays " + bsd_latedays);
-                                            if (oe.Contains("bsd_signeddadate") || oe.Contains("bsd_signedcontractdate"))
+                                            if (amount_pay > balane)
                                             {
-
-                                                if (amount_pay > balane)
-                                                {
-                                                    traceService.Trace("amount_pay > balane");
-                                                    target["bsd_latedays"] = bsd_latedays;
-                                                    decimal tienlai = Termsinterest / 100;
-                                                    traceService.Trace("Termsinterest" + Termsinterest);
-                                                    traceService.Trace("tien lãi" + tienlai);
-                                                    decimal total = bsd_latedays * tienlai * balane;
-                                                    target["bsd_interestcharge"] = new Money(total);
-                                                }
-                                                else
-                                                {
-                                                    traceService.Trace("amount_pay < balane");
-                                                    target["bsd_latedays"] = bsd_latedays;
-                                                    decimal tienlai = Termsinterest / 100;
-                                                    traceService.Trace("Termsinterest" + Termsinterest);
-                                                    traceService.Trace("tien lãi 2" + tienlai);
-                                                    decimal total = bsd_latedays * tienlai * amount_pay;
-                                                    target["bsd_interestcharge"] = new Money(total);
-                                                }
+                                                traceService.Trace("amount_pay > balane");
+                                                target["bsd_latedays"] = bsd_latedays;
+                                                decimal tienlai = Termsinterest / 100;
+                                                traceService.Trace("Termsinterest" + Termsinterest);
+                                                traceService.Trace("tien lãi" + tienlai);
+                                                decimal total = bsd_latedays * tienlai * balane;
+                                                target["bsd_interestcharge"] = new Money(total);
                                             }
                                             else
                                             {
-                                                target["bsd_latedays"] = 0;
-                                                target["bsd_interestcharge"] = new Money(0);
+                                                traceService.Trace("amount_pay < balane");
+                                                target["bsd_latedays"] = bsd_latedays;
+                                                decimal tienlai = Termsinterest / 100;
+                                                traceService.Trace("Termsinterest" + Termsinterest);
+                                                traceService.Trace("tien lãi 2" + tienlai);
+                                                decimal total = bsd_latedays * tienlai * amount_pay;
+                                                target["bsd_interestcharge"] = new Money(total);
                                             }
                                             traceService.Trace("hết instalment");
                                             service.Update(target);
