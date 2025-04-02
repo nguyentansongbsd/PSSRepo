@@ -1,0 +1,465 @@
+<html><head>
+    <title></title>
+    <!--<link rel="stylesheet" href="bootstrap_datetimepicker.css">-->
+    <!--<link rel="stylesheet" href="bootstrap.css">-->
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            padding: 0px;
+            margin: 0px;
+            font-family: Segoe UI, Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        #page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        .button {
+            display: block;
+            line-height: 25px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #B1D6F0;
+            border: 1px solid #0094ff;
+        }
+
+
+        .textArea {
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            margin: 5px 0 5px 0;
+        }
+
+        .noti {
+            font-size: 14px;
+            margin: 0 0 0 10px;
+        }
+
+        .container {
+            height: 369px;
+            padding: 0 10px 0 10px;
+            overflow: auto;
+        }
+
+        .lableradio {
+            display: block;
+            padding: 5px 0px 5px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /*table {
+            border-spacing: 10px;
+            border: 0px solid #cccccc;
+            border-collapse: collapse;
+            margin-top: 10px;
+            position: relative;
+            padding: 0;
+            width: 100%;
+            height: auto;
+            padding: 3px;
+            text-align: center;
+        }
+
+            table th {
+                border: 0px solid #cccccc;
+                padding: 3px;
+            }
+
+            table td {
+                border: 0px solid #cccccc;
+                padding: 3px;
+            }
+
+        .td_no {
+            text-align: center;
+        }
+
+        .td_amount {
+            text-align: right;
+        }*/
+
+        #div_advancePayment, #div_installment, #div_fee, #div_interest, #div_deposit {
+            display: none;
+        }
+
+        .title_amount {
+            font-weight: normal;
+            line-height: 40%;
+            font-size: 14px;
+            width: 60%;
+        }
+
+        .sp-project {
+            text-align: center;
+        }
+
+        .sp-block {
+            text-align: center;
+        }
+
+        .sp-floor {
+            text-align: center;
+        }
+
+        .amount {
+        }
+
+        .table, tr, th {
+            border: 0px solid black;
+            padding: 3px;
+            text-align: center;
+        }
+
+        .select, option {
+            border: 0px solid black;
+            padding: 3px;
+            text-align: center; 
+        }
+    </style>
+<meta><meta><meta></head>
+<body onfocusout="parent.setEmailRange();" style="overflow-wrap: break-word;">
+    <div id="page-title">
+        <span style="text-align:center;display:block;">HANDOVER NOTICES</span>
+    </div>
+    <div style="padding: 5px 20px 5px 20px;">
+        <table border="0" style="text-align:center;width: 95%;margin:auto;height: 71px;">
+            <tbody><tr>
+                <th style="text-align:left;font-size: 15px;">Project</th>
+                <th><select id="sp-project" style="width:250px;text-align:center;padding: 5px;" onclick="changeproject()"></select></th>
+            </tr>
+            <tr>
+                <th style="text-align:left;font-size: 15px;">Estimate handover date</th>
+                <th><select id="sp-block" style="width:250px;text-align:center;padding: 5px;"></select></th>
+            </tr>
+            <tr>
+                <th style="text-align:left">Date</th>
+                <th><input type="date" id="bill_date" name="bill_date" style="padding-left: 35px;"></th>
+            </tr>
+            <!--<tr>
+                <th style="text-align:left">Floor</th>
+                <th><select id="sp-floor" style="width:150px;text-align:center;" onchange="changefloor()"></select></th>
+            </tr>
+            <tr>
+                <th style="text-align:left">Units</th>
+                <th><select id="sp-units" style="width:150px;text-align:center;"></select></th>
+            </tr>-->
+        </tbody></table>
+    </div>
+    <div style="display: block; padding: 25px 20px 5px 30px; position: relative;">
+        <a id="btnNo" class="button" style="margin-left:20px;" onclick="apply()">Cancel</a>
+        <a id="btnYes" class="button" style="margin-left:20px;" onclick="apply1()">Generate</a>
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function (doc) {
+            appendProjectBox();
+            //appendBlockBox();
+            //appendFloorBox();
+        });
+        function appendProjectBox() {
+            addproject();
+            var xml = [];
+            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+            xml.push("<entity name='bsd_project'>");
+            xml.push("<attribute name='bsd_projectcode'/>");
+            xml.push("<attribute name='bsd_name'/>");
+            xml.push("<attribute name='bsd_projectid'/>");
+            xml.push("</entity>");
+            xml.push("</fetch>");
+            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+                if (rs.length > 0) {
+                    var select_project = document.getElementById("sp-project");
+                    for (i = 0; i < rs.length; i++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = rs[i].attributes.bsd_name.value;
+                        option.value = rs[i].attributes.bsd_projectid.value;
+                        select_project.appendChild(option);
+                    }
+                }
+            },
+function (er) {
+    console.log(er.message)
+});
+        }
+        function appendBlockBox() {
+            var xml = [];
+            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+            xml.push("<entity name='bsd_block'>");
+            xml.push("<attribute name='bsd_blockcode'/>");
+            xml.push("<attribute name='bsd_name'/>");
+            xml.push("<attribute name='bsd_blockid'/>");
+            xml.push("</entity>");
+            xml.push("</fetch>");
+            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+                if (rs.length > 0) {
+                    var select_project = document.getElementById("sp-block");
+                    for (i = 0; i < rs.length; i++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = rs[i].attributes.bsd_name.value;
+                        option.value = rs[i].attributes.bsd_blockid.value;
+                        select_project.appendChild(option);
+                    }
+                }
+            },
+function (er) {
+    console.log(er.message)
+});
+        }
+//        function appendFloorBox() {
+//            var xml = [];
+//            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+//            xml.push("<entity name='bsd_floor'>");
+//            xml.push("<attribute name='bsd_floor'/>");
+//            xml.push("<attribute name='bsd_floorid'/>");
+//            xml.push("<attribute name='bsd_name'/>");
+//            xml.push("</entity>");
+//            xml.push("</fetch>");
+//            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+//                if (rs.length > 0) {
+//                    var select_project = document.getElementById("sp-floor");
+//                    for (i = 0; i < rs.length; i++) {
+//                        var option = document.createElement('option');
+//                        option.innerHTML = rs[i].attributes.bsd_floor.value;
+//                        option.value = rs[i].attributes.bsd_floorid.value;
+//                        select_project.appendChild(option);
+//                    }
+//                }
+//            },
+//function (er) {
+//    console.log(er.message)
+//});
+//        }
+//        function appendUnitBox() {
+//            var xml = [];
+//            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+//            xml.push("<entity name='product'>");
+//            xml.push("<attribute name='productnumber'/>");
+//            xml.push("<attribute name='name'/>");
+//            xml.push("<attribute name='productid'/>");
+//            xml.push("</entity>");
+//            xml.push("</fetch>");
+//            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+//                if (rs.length > 0) {
+//                    var select_project = document.getElementById("sp-units");
+//                    for (i = 0; i < rs.length; i++) {
+//                        var option = document.createElement('option');
+//                        option.innerHTML = rs[i].attributes.name.value;
+//                        option.value = rs[i].attributes.productid.value;
+//                        select_project.appendChild(option);
+//                    }
+//                }
+//            },
+//function (er) {
+//    console.log(er.message)
+//});
+//        }
+        function changeproject() {
+            debugger;
+            $('#sp-block')
+            .find('option')
+            .remove()
+            .end();
+            addblock();
+            var a = document.getElementById("sp-project").value;
+            var xml = [];
+            xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+            xml.push("<entity name='bsd_updateestimatehandoverdate'>");
+            xml.push("<attribute name='bsd_name'/>");
+            xml.push("<attribute name='bsd_updateestimatehandoverdateid'/>");
+            xml.push("<filter type='and'>");
+            xml.push("<condition attribute='bsd_project' operator='eq' value='" + a + "'/>");
+            xml.push("<condition attribute='statuscode' operator='eq' value='100000001'/>");
+            xml.push("<condition attribute='bsd_generated' operator='eq' value='0'/>");
+            xml.push("</filter>");
+            xml.push("</entity>");
+            xml.push("</fetch>");
+            CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+                console.log(rs.length);
+                if (rs.length > 0) {
+                    var select = document.getElementById("sp-block");
+                    for (i = 0; i < rs.length; i++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = rs[i].attributes.bsd_name.value;
+                        option.value = rs[i].attributes.bsd_updateestimatehandoverdateid.value;
+                        select.appendChild(option);
+                    }
+                }
+            });
+        }
+        //function changeblock() {
+        //    $('#sp-floor')
+        //  .find('option')
+        //  .remove()
+        //  .end();
+        //    addfloor();
+        //    var a = document.getElementById("sp-project").value;
+        //    var b = document.getElementById("sp-block").value;
+        //    var xml = [];
+        //    xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+        //    xml.push("<entity name='bsd_floor'>");
+        //    xml.push("<attribute name='bsd_name'/>");
+        //    xml.push("<attribute name='bsd_floorid'/>");
+        //    xml.push("<link-entity name='bsd_block' from='bsd_blockid' to='bsd_block'>");
+        //    xml.push("<filter type='and'>");
+        //    xml.push("<condition attribute='bsd_blockid' operator='eq' value='" + b + "'/>");
+        //    xml.push("</filter>");
+        //    xml.push("</link-entity>");
+        //    xml.push("<link-entity name='bsd_project' from='bsd_projectid' to='bsd_project'>");
+        //    xml.push("<filter type='and'>");
+        //    xml.push("<condition attribute='bsd_projectid' operator='eq' value='" + a + "'/>");
+        //    xml.push("</filter>");
+        //    xml.push("</link-entity>");
+        //    xml.push("</entity>");
+        //    xml.push("</fetch>");
+        //    CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+        //        if (rs.length > 0) {
+        //            var select = document.getElementById("sp-floor");
+        //            for (i = 0; i < rs.length; i++) {
+        //                var option = document.createElement('option');
+        //                option.innerHTML = rs[i].attributes.bsd_name.value;
+        //                option.value = rs[i].attributes.bsd_floorid.value;
+        //                select.appendChild(option);
+        //            }
+        //        }
+        //    });
+        //}
+        //function changefloor() {
+        //    $('#sp-units')
+        //  .find('option')
+        //  .remove()
+        //  .end();
+        //    addunits();
+        //    var a = document.getElementById("sp-project").value;
+        //    var b = document.getElementById("sp-block").value;
+        //    var c = document.getElementById("sp-floor").value;
+        //    var xml = [];
+        //    xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+        //    xml.push("<entity name='product'>");
+        //    xml.push("<attribute name='name'/>");
+        //    xml.push("<attribute name='productid'/>");
+        //    xml.push("<link-entity name='bsd_project' from='bsd_projectid' to='bsd_projectcode'>");
+        //    xml.push("<filter type='and'>");
+        //    xml.push("<condition attribute='bsd_projectid' operator='eq' value='" + a + "'/>");
+        //    xml.push("</filter>");
+        //    xml.push("</link-entity>");
+        //    xml.push("<link-entity name='bsd_block' from='bsd_blockid' to='bsd_blocknumber'>");
+        //    xml.push("<filter type='and'>");
+        //    xml.push("<condition attribute='bsd_blockid' operator='eq' value='" + b + "'/>");
+        //    xml.push("</filter>");
+        //    xml.push("</link-entity>");
+        //    xml.push("<link-entity name='bsd_floor' from='bsd_floorid' to='bsd_floor'>");
+        //    xml.push("<filter type='and'>");
+        //    xml.push("<condition attribute='bsd_floorid' operator='eq' value='" + c + "'/>");
+        //    xml.push("</filter>");
+        //    xml.push("</link-entity>");
+        //    xml.push("</entity>");
+        //    xml.push("</fetch>");
+        //    CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+        //        if (rs.length > 0) {
+        //            var select = document.getElementById("sp-units");
+        //            for (i = 0; i < rs.length; i++) {
+        //                var option = document.createElement('option');
+        //                option.innerHTML = rs[i].attributes.name.value;
+        //                option.value = rs[i].attributes.productid.value;
+        //                select.appendChild(option);
+        //            }
+        //        }
+        //    });
+        //}
+        function addblock() {
+            var select = document.getElementById("sp-block");
+            var option = document.createElement('option');
+            option.innerHTML = null;
+            select.appendChild(option);
+        }
+        //function addfloor() {
+        //    var select = document.getElementById("sp-floor");
+        //    var option = document.createElement('option');
+        //    option.innerHTML = null;
+        //    select.appendChild(option);
+        //}
+        //function addunits() {
+        //    var select = document.getElementById("sp-units");
+        //    var option = document.createElement('option');
+        //    option.innerHTML = null;
+        //    select.appendChild(option);
+        //}
+        function addproject() {
+            var select = document.getElementById("sp-project");
+            var option = document.createElement('option');
+            option.innerHTML = null;
+            select.appendChild(option);
+        }
+        function apply() {
+            window.parent.$('button[data-id="dialogCloseIconButton"]').click();
+        }
+        function apply1() {
+            debugger;
+            var project = document.getElementById("sp-project").value;
+            var block = document.getElementById("sp-block").value;
+            var bill_date = document.getElementById("bill_date").value;
+            window.top.Handovernotice(project != "" ? project : -1, block != "" ? block : -1, bill_date != null ? bill_date : null);
+            closeWindow();
+        }
+
+    </script>
+
+</body></html>
