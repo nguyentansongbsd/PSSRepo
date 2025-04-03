@@ -264,9 +264,8 @@ namespace Action_AgingSimulation_Calculation
                     Installment objIns = new Installment();
                     //Gọi tính trễ
 
-                    Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), objIns, ref lateDays);
+                    Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), objIns, ref lateDays, ref interestMasterPercent);
                     intereststartdatetype = objIns.Intereststartdatetype;
-                    interestMasterPercent = objIns.InterestPercent;
                     InterestStarDate = objIns.InterestStarDate;
                     traceService.Trace("ra Calculate_Interest: " + lateDays);
                     decInterestCharge = objIns.InterestCharge;
@@ -694,13 +693,16 @@ namespace Action_AgingSimulation_Calculation
                     {
                         numberOfDays2 = -100599;
                     }
-                    else if (orderNumberSightContract > bsd_ordernumber && oe.Contains("bsd_signeddadate"))
+                    else if (orderNumberSightContract > bsd_ordernumber)
                     {
-                        DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
-                        TimeSpan difference2 = dateCalculate - bsd_signeddadate;
-                        numberOfDays2 = difference2.Days;
-                        numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
-                        traceService.Trace("bsd_signeddadate: " + numberOfDays2);
+                        if (oe.Contains("bsd_signeddadate"))
+                        {
+                            DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
+                            TimeSpan difference2 = dateCalculate - bsd_signeddadate;
+                            numberOfDays2 = difference2.Days;
+                            numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
+                            traceService.Trace("bsd_signeddadate: " + numberOfDays2);
+                        }
                     }
                     else numberOfDays2 = -100599;
                 }
@@ -753,7 +755,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return location;
         }
-        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns)
+        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns, ref decimal interestMasterPercent)
         {
             try
             {
@@ -768,115 +770,112 @@ namespace Action_AgingSimulation_Calculation
                 {
                     decimal interestcharge_amount = 0;
                     Entity OE = service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true));
-                    if (OE.Contains("bsd_signeddadate") || OE.Contains("bsd_signedcontractdate"))
+                    Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
+                    bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
+                    decimal d_dailyinterest = 0;
+                    if (bsd_dailyinterestchargebank)
                     {
-                        Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
-                        bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
-                        decimal d_dailyinterest = 0;
-                        if (bsd_dailyinterestchargebank)
-                        {
-                            #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
-                            EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
-                            Entity ent = entc.Entities[0];
-                            ent.Id = entc.Entities[0].Id;
-                            if (!ent.Contains("bsd_interestrate"))
-                                throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
-                            d_dailyinterest = (decimal)ent["bsd_interestrate"];
-                            #endregion
-                        }
-                        objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
-                        decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
-                        interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
-                        decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
-                        decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay, enInstallment, objIns) - sum_bsd_waiverinterest;
-                        decimal sum_temp = sum_Inr_AM + interestcharge_amount;
-                        #region --- @. Throw theo điều kiện: Hân note ---
-                        // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
-                        decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
-                        if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
-
-                        // Han_28072018 - Update field tính Interest Charge = field Total Amount
-                        decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
-                        if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
-                        #endregion
-
-                        #region --- #. Tính số tiền CAP ---
-                        decimal range_enOptionEntryAM = 0;
-                        decimal cap = 0;
-                        /* ------------------------------------------------------------------------
-                         * Lưu ý: 
-                         * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
-                         * - Nếu range nào chạm mức trước thì tính range đó
-                         *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
-                         *      + Maxamount  ->  Cài đặt trước số tiền
-                         --------------------------------------------------------------------------*/
-                        if (objIns.MaxPercent > 0)
-                        {
-                            //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
-                            range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
-                            if (objIns.MaxAmount > 0)
-                            {
-                                if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
-                                else cap = range_enOptionEntryAM;
-                            }
-                            else cap = range_enOptionEntryAM;
-                        }
-                        else
-                        {
-                            cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
-                        }
-                        #endregion
-
-                        #region --- @@ Nghiệp vụ tính tiền lãi ---
-                        /* ------------------------------------------------------------------------------------------
-                         * Khái niệm: 
-                         * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
-                         * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
-                         * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
-                         * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
-                         --------------------------------------------------------------------------------------------*/
-                        if (cap <= 0)
-                        {
-                            var rs = check_Data_Setup(enInstallment);
-                            if (rs)
-                            {
-                                result = interestcharge_amount;
-                            }
-                            else
-                            {
-                                result = 0m;
-                            }
-                        }
-                        else if (sum_temp > cap)
-                        {
-                            if (cap > sum_Inr_AM)
-                            {
-                                result = cap - sum_Inr_AM;
-                            }
-                            else
-                            {
-                                result = 0m;
-                            }
-
-                        }
-                        else if (sum_temp == cap)
-                        {
-                            if (sum_Inr_AM < cap)
-                                result = cap - sum_Inr_AM;
-                            else
-                                result = 0m;
-                        }
-                        else if (sum_temp < cap)
-                        {
-                            result = interestcharge_amount;
-                        }
-                        else
-                        {
-                            result = interestcharge_amount;
-                        }
+                        #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
+                        EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
+                        Entity ent = entc.Entities[0];
+                        ent.Id = entc.Entities[0].Id;
+                        if (!ent.Contains("bsd_interestrate"))
+                            throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
+                        d_dailyinterest = (decimal)ent["bsd_interestrate"];
                         #endregion
                     }
-                    else result = 0;
+                    objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
+                    interestMasterPercent = objIns.InterestPercent;
+                    decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
+                    interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
+                    decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
+                    decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay, enInstallment, objIns) - sum_bsd_waiverinterest;
+                    decimal sum_temp = sum_Inr_AM + interestcharge_amount;
+                    #region --- @. Throw theo điều kiện: Hân note ---
+                    // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
+                    decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
+                    if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
+
+                    // Han_28072018 - Update field tính Interest Charge = field Total Amount
+                    decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
+                    if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
+                    #endregion
+
+                    #region --- #. Tính số tiền CAP ---
+                    decimal range_enOptionEntryAM = 0;
+                    decimal cap = 0;
+                    /* ------------------------------------------------------------------------
+                     * Lưu ý: 
+                     * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
+                     * - Nếu range nào chạm mức trước thì tính range đó
+                     *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
+                     *      + Maxamount  ->  Cài đặt trước số tiền
+                     --------------------------------------------------------------------------*/
+                    if (objIns.MaxPercent > 0)
+                    {
+                        //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
+                        range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
+                        if (objIns.MaxAmount > 0)
+                        {
+                            if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
+                            else cap = range_enOptionEntryAM;
+                        }
+                        else cap = range_enOptionEntryAM;
+                    }
+                    else
+                    {
+                        cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
+                    }
+                    #endregion
+
+                    #region --- @@ Nghiệp vụ tính tiền lãi ---
+                    /* ------------------------------------------------------------------------------------------
+                     * Khái niệm: 
+                     * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
+                     * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
+                     * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
+                     * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
+                     --------------------------------------------------------------------------------------------*/
+                    if (cap <= 0)
+                    {
+                        var rs = check_Data_Setup(enInstallment);
+                        if (rs)
+                        {
+                            result = interestcharge_amount;
+                        }
+                        else
+                        {
+                            result = 0m;
+                        }
+                    }
+                    else if (sum_temp > cap)
+                    {
+                        if (cap > sum_Inr_AM)
+                        {
+                            result = cap - sum_Inr_AM;
+                        }
+                        else
+                        {
+                            result = 0m;
+                        }
+
+                    }
+                    else if (sum_temp == cap)
+                    {
+                        if (sum_Inr_AM < cap)
+                            result = cap - sum_Inr_AM;
+                        else
+                            result = 0m;
+                    }
+                    else if (sum_temp < cap)
+                    {
+                        result = interestcharge_amount;
+                    }
+                    else
+                    {
+                        result = interestcharge_amount;
+                    }
+                    #endregion
                 }
                 #endregion
                 return result;
@@ -1020,7 +1019,7 @@ namespace Action_AgingSimulation_Calculation
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-        private static void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays)
+        private static void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays, ref decimal interestMasterPercent)
         {
             decimal amountpay = Convert.ToDecimal(stramountpay);
 
@@ -1032,7 +1031,7 @@ namespace Action_AgingSimulation_Calculation
             objIns.LateDays = getLateDays(receiptdate, objIns);
             lateDays = objIns.LateDays;
             traceService.Trace("Calculate_Interest lateDays: " + objIns.LateDays);
-            objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay, enInstallment, objIns);
+            objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay, enInstallment, objIns, ref interestMasterPercent);
         }
     }
     public class Installment
