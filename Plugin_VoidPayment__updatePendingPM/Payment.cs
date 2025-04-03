@@ -212,20 +212,10 @@ namespace Plugin_VoidPayment_updatePendingPM
                             }
                             else
                             {
-                                if (i_PmsDtlStatuscode == 100000000) // not paid
-                                {
-                                    strMess.AppendLine("case i_PmsDtlStatuscode not paid");
-                                    f_check_1st = false;
-                                    sttOE = 100000000; // option
-                                    sttUnit = 100000003; // deposit
-                                }
-                                else // paid
-                                {
-                                    strMess.AppendLine("case i_PmsDtlStatuscode paid");
-                                    f_check_1st = true;
-                                    sttOE = 100000001;//1st
-                                    sttUnit = 100000001; // 1st
-                                }
+                                strMess.AppendLine("case i_PmsDtlStatuscode not paid");
+                                f_check_1st = false;
+                                sttOE = 100000000; // option
+                                sttUnit = 100000003; // deposit
                             }
                         }
                         else
