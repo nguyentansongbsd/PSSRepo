@@ -185,7 +185,9 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
         /// </summary>
         public void CheckDueDate(ref bool result, Entity item, Entity enInstallment, Entity enHD)
         {
+            if (!item.Contains("bsd_duedate")) return;
             var newDate = (DateTime)item["bsd_duedate"];
+            tracingService.Trace("step 1");
             var query = new QueryExpression(enInstallment.LogicalName);
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enHD.Id.ToString());
@@ -195,7 +197,9 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
                 if (JItem.Id != enInstallment.Id)
                 {
 
+                    //if (!JItem.Contains("bsd_duedate")) continue;
                     tracingService.Trace($"{(DateTime)JItem["bsd_duedate"]}");
+
                     if (newDate <= ((DateTime)JItem["bsd_duedate"]))
                     {
                         var mess = "The new due date is invalid. Please check again.";
@@ -255,6 +259,7 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
 
             enMaster["statuscode"] = new OptionSetValue(1);
             service.Update(enMaster);
+            tracingService.Trace("error nè");
         }
         public bool CheckConditionRun(Entity item)
         {
@@ -263,10 +268,12 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
             tracingService.Trace("CheckConditionRun");
             if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
             {
+                tracingService.Trace("error: " + (bool)enMaster["bsd_error"]);
                 return false;
             }
             else
             {
+                
                 return true;
             }
         }

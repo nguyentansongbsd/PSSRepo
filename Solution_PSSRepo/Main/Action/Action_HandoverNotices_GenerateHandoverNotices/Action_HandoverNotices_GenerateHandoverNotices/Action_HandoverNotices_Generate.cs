@@ -410,6 +410,10 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                                 bsd_signeddadate = (DateTime)oe["bsd_signeddadate"];
                                 caseSign = 1;
                             }
+                            else
+                            {
+                                caseSign = 4;
+                            }    
                         }
                         var latedays2 = lateDays;
 
@@ -520,6 +524,25 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     {
                         //tính số ngày trễ hạn 
                         lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                    }
+                    break;
+                case 4:
+
+                    if (rs.Entities.Count > 0)
+                    {
+                        if (isContainDueDate == false)
+                            result = false;
+                        else
+                        {
+                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
+                            traceService.Trace("bsd_duedate >= bsd_duedateFlag: " + (bsd_duedate >= bsd_duedateFlag).ToString());
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
+                            else result = false;
+                        }
                     }
                     break;
                 default:

@@ -14,6 +14,22 @@
       },
       "Projects": [
         {
+          "Name": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "83d01245-bfd9-4c2c-8496-d70858074493",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -750,6 +766,11 @@
               "CrmId": "5d3d8873-c888-e811-8153-3863bb367d20",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Due_Date_Detail.js"
+            },
+            {
+              "CrmId": "933098c2-578b-e911-a98f-000d3aa00fc2",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Duedate Of Last Installment\\bsd_updateduedateoflastinstallmentapprove_form.js"
             },
             {
               "CrmId": "d4015a18-5b8b-e911-a98f-000d3aa00fc2",
