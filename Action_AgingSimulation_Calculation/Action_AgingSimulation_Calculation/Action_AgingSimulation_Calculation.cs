@@ -264,9 +264,8 @@ namespace Action_AgingSimulation_Calculation
                     Installment objIns = new Installment();
                     //Gọi tính trễ
 
-                    Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), objIns, ref lateDays);
+                    Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), objIns, ref lateDays, ref interestMasterPercent);
                     intereststartdatetype = objIns.Intereststartdatetype;
-                    interestMasterPercent = objIns.InterestPercent;
                     InterestStarDate = objIns.InterestStarDate;
                     traceService.Trace("ra Calculate_Interest: " + lateDays);
                     decInterestCharge = objIns.InterestCharge;
@@ -756,7 +755,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return location;
         }
-        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns)
+        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns, ref decimal interestMasterPercent)
         {
             try
             {
@@ -786,6 +785,7 @@ namespace Action_AgingSimulation_Calculation
                         #endregion
                     }
                     objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
+                    interestMasterPercent = objIns.InterestPercent;
                     decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
                     interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
                     decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
@@ -1019,7 +1019,7 @@ namespace Action_AgingSimulation_Calculation
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-        private static void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays)
+        private static void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays, ref decimal interestMasterPercent)
         {
             decimal amountpay = Convert.ToDecimal(stramountpay);
 
@@ -1031,7 +1031,7 @@ namespace Action_AgingSimulation_Calculation
             objIns.LateDays = getLateDays(receiptdate, objIns);
             lateDays = objIns.LateDays;
             traceService.Trace("Calculate_Interest lateDays: " + objIns.LateDays);
-            objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay, enInstallment, objIns);
+            objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay, enInstallment, objIns, ref interestMasterPercent);
         }
     }
     public class Installment

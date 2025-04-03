@@ -1882,46 +1882,42 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine("CheckInterestCharge");
             strMess.AppendLine("Input d_inter: " + d_inter);
             strMess.AppendLine("Input i_late: " + i_late);
-
-            if (optionentryEn.Contains("bsd_signeddadate") || optionentryEn.Contains("bsd_signedcontractdate"))
+            if (!PaymentDetailEn.Contains("bsd_duedate"))  // if pmsdtl not contain duedate( last or ES installment )
             {
-                if (!PaymentDetailEn.Contains("bsd_duedate"))  // if pmsdtl not contain duedate( last or ES installment )
+                d_inter = 0;
+                i_late = 0;
+            }
+            else
+            {
+                DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
+                DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
+                strMess.AppendLine("d_duedate: " + d_duedate);
+                strMess.AppendLine("d_receiptz: " + d_receipt);
+                OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
+                //parameter:
+                req["installmentid"] = PaymentDetailEn.Id.ToString();
+                req["amountpay"] = pm_amountpay.ToString();
+                req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
+                //execute the request
+                OrganizationResponse response = service.Execute(req);
+                foreach (var item in response.Results)
                 {
-                    d_inter = 0;
-                    i_late = 0;
-                }
-                else
-                {
-                    DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
-                    DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
-                    strMess.AppendLine("d_duedate: " + d_duedate);
-                    strMess.AppendLine("d_receiptz: " + d_receipt);
-                    OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
-                    //parameter:
-                    req["installmentid"] = PaymentDetailEn.Id.ToString();
-                    req["amountpay"] = pm_amountpay.ToString();
-                    req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
-                    //execute the request
-                    OrganizationResponse response = service.Execute(req);
-                    foreach (var item in response.Results)
+                    var serializer = new JavaScriptSerializer();
+                    var result = serializer.Deserialize<Installment>(item.Value.ToString());
+                    i_late = result.LateDays;
+                    i_intereststartdate = result.InterestStarDate;
+                    if (i_late < 0) i_late = 0;
+                    if (i_late > 0)
                     {
-                        var serializer = new JavaScriptSerializer();
-                        var result = serializer.Deserialize<Installment>(item.Value.ToString());
-                        i_late = result.LateDays;
-                        i_intereststartdate = result.InterestStarDate;
-                        if (i_late < 0) i_late = 0;
                         if (i_late > 0)
                         {
-                            if (i_late > 0)
-                            {
-                                decimal d_percent = result.InterestPercent;
-                                strMess.AppendLine("d_percent: " + d_percent.ToString());
-                                decimal rangeAmount = result.MaxAmount;
-                                strMess.AppendLine("rangeAmount: " + rangeAmount.ToString());
-                                decimal rangePercent = result.MaxPercent;
-                                d_inter = result.InterestCharge;
-                                strMess.AppendLine("installment.calc_InterestCharge: " + d_inter);
-                            }
+                            decimal d_percent = result.InterestPercent;
+                            strMess.AppendLine("d_percent: " + d_percent.ToString());
+                            decimal rangeAmount = result.MaxAmount;
+                            strMess.AppendLine("rangeAmount: " + rangeAmount.ToString());
+                            decimal rangePercent = result.MaxPercent;
+                            d_inter = result.InterestCharge;
+                            strMess.AppendLine("installment.calc_InterestCharge: " + d_inter);
                         }
                     }
                 }
@@ -1938,64 +1934,55 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine(string.Format("+ Input i_late: {0}", i_late));
             try
             {
-                if (optionentryEn.Contains("bsd_signeddadate") || optionentryEn.Contains("bsd_signedcontractdate"))
+                strMess.AppendLine("có bsd_signeddadate || bsd_signedcontractdate ");
+                if (!PaymentDetailEn.Contains("bsd_duedate"))
                 {
-                    strMess.AppendLine("có bsd_signeddadate || bsd_signedcontractdate ");
-                    if (!PaymentDetailEn.Contains("bsd_duedate"))
-                    {
-                        strMess.AppendLine("#. Không có bsd_duedate");
-                        d_inter = 0;
-                        i_late = 0;
-                    }
-                    else
-                    {
-                        strMess.AppendLine("#. Có bsd_duedate");
-                        DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
-                        DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
+                    strMess.AppendLine("#. Không có bsd_duedate");
+                    d_inter = 0;
+                    i_late = 0;
+                }
+                else
+                {
+                    strMess.AppendLine("#. Có bsd_duedate");
+                    DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
+                    DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
 
-                        //>>> Trace
-                        strMess.AppendLine(string.Format("+ d_duedate: {0}", d_duedate));
-                        strMess.AppendLine(string.Format("+ d_receiptz: {0}", d_receipt));
-                        OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
-                        //parameter:
-                        req["installmentid"] = PaymentDetailEn.Id.ToString();
-                        req["amountpay"] = pm_amountpay.ToString();
-                        req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
-                        //execute the request
-                        OrganizationResponse response = service.Execute(req);
-                        foreach (var item in response.Results)
+                    //>>> Trace
+                    strMess.AppendLine(string.Format("+ d_duedate: {0}", d_duedate));
+                    strMess.AppendLine(string.Format("+ d_receiptz: {0}", d_receipt));
+                    OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
+                    //parameter:
+                    req["installmentid"] = PaymentDetailEn.Id.ToString();
+                    req["amountpay"] = pm_amountpay.ToString();
+                    req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
+                    //execute the request
+                    OrganizationResponse response = service.Execute(req);
+                    foreach (var item in response.Results)
+                    {
+                        var serializer = new JavaScriptSerializer();
+                        var result = serializer.Deserialize<Installment>(item.Value.ToString());
+                        i_late = result.LateDays;
+                        i_intereststartdate = result.InterestStarDate;
+                        strMess.AppendLine(string.Format("+ i_intereststartdate: {0}", i_intereststartdate));
+                        strMess.AppendLine(string.Format("@. i_late: {0}", i_late));
+
+                        if (i_late < 0) i_late = 0;
+                        if (i_late > 0)
                         {
-                            var serializer = new JavaScriptSerializer();
-                            var result = serializer.Deserialize<Installment>(item.Value.ToString());
-                            i_late = result.LateDays;
-                            i_intereststartdate = result.InterestStarDate;
-                            strMess.AppendLine(string.Format("+ i_intereststartdate: {0}", i_intereststartdate));
-                            strMess.AppendLine(string.Format("@. i_late: {0}", i_late));
-
-                            if (i_late < 0) i_late = 0;
                             if (i_late > 0)
                             {
-                                if (i_late > 0)
-                                {
-                                    decimal d_percent = result.InterestPercent;
-                                    decimal rangeAmount = result.MaxAmount;
-                                    decimal rangePercent = result.MaxPercent;
-                                    d_inter = result.InterestCharge;
+                                decimal d_percent = result.InterestPercent;
+                                decimal rangeAmount = result.MaxAmount;
+                                decimal rangePercent = result.MaxPercent;
+                                d_inter = result.InterestCharge;
 
-                                    //>>> Trace
-                                    strMess.AppendLine(string.Format("------------------------------"));
-                                    strMess.AppendLine(string.Format("+ d_percent: {0}", d_percent.ToString()));
-                                    strMess.AppendLine(string.Format("+ rangeAmount: {0}", rangeAmount.ToString()));
-                                    strMess.AppendLine(string.Format("+ installment.calc_InterestCharge: {0}", d_inter.ToString()));
-                                }
+                                //>>> Trace
+                                strMess.AppendLine(string.Format("------------------------------"));
+                                strMess.AppendLine(string.Format("+ d_percent: {0}", d_percent.ToString()));
+                                strMess.AppendLine(string.Format("+ rangeAmount: {0}", rangeAmount.ToString()));
+                                strMess.AppendLine(string.Format("+ installment.calc_InterestCharge: {0}", d_inter.ToString()));
                             }
                         }
-                        //    Installment installment = new Installment(serviceProvider, PaymentDetailEn);
-                        //i_intereststartdate = installment.InterestStarDate;
-                        //i_late = installment.getLateDays(d_receipt);
-
-                        //>>> Trace
-
                     }
                 }
             }
