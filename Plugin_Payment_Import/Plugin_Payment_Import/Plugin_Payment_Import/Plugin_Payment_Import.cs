@@ -192,13 +192,16 @@ namespace Plugin_Payment_Import
                                                 {
                                                     numberOfDays2 = -100599;
                                                 }
-                                                else if (orderNumberSightContract > bsd_ordernumber && oe.Contains("bsd_signeddadate"))
+                                                else if (orderNumberSightContract > bsd_ordernumber)
                                                 {
-                                                    DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
-                                                    TimeSpan difference2 = Receipt_date - bsd_signeddadate;
-                                                    numberOfDays2 = difference2.Days;
-                                                    numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
-                                                    traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
+                                                    if (oe.Contains("bsd_signeddadate"))
+                                                    {
+                                                        DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
+                                                        TimeSpan difference2 = Receipt_date - bsd_signeddadate;
+                                                        numberOfDays2 = difference2.Days;
+                                                        numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
+                                                        traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
+                                                    }
                                                 }
                                                 else numberOfDays2 = -100599;
                                             }

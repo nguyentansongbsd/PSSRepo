@@ -117,14 +117,17 @@ namespace Action_Calculate_Interest
                     {
                         numberOfDays2 = -100599;
                     }
-                    else if (orderNumberSightContract > bsd_ordernumber && oe.Contains("bsd_signeddadate"))
+                    else if (orderNumberSightContract > bsd_ordernumber)
                     {
-                        DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
-                        TimeSpan difference2 = dateCalculate - bsd_signeddadate;
-                        numberOfDays2 = difference2.Days;
-                        numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
-                        traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
-                        traceService.Trace("numberOfDays2 " + numberOfDays2);
+                        if (oe.Contains("bsd_signeddadate"))
+                        {
+                            DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
+                            TimeSpan difference2 = dateCalculate - bsd_signeddadate;
+                            numberOfDays2 = difference2.Days;
+                            numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
+                            traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
+                            traceService.Trace("numberOfDays2 " + numberOfDays2);
+                        }
                     }
                     else numberOfDays2 = -100599;
                 }
