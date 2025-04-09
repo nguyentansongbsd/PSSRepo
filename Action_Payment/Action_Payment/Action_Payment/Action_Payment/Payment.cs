@@ -664,7 +664,7 @@ namespace Action_Payment
 
             }
         }
-        public void intallment(Entity paymentEn)
+        public void intallment(Entity paymentEn, ref decimal pm_balancemaster, ref decimal d_bsd_assignamountmaster, ref decimal pm_differentamountmaster)
         {
             info_Error info = new info_Error();
             info.index = 1;
@@ -680,7 +680,7 @@ namespace Action_Payment
             bool f_bsd_latepayment = paymentEn.Contains("bsd_latepayment") ? (bool)paymentEn["bsd_latepayment"] : false;
             DateTime pm_ReceiptDate = paymentEn.Contains("bsd_paymentactualtime") ? RetrieveLocalTimeFromUTCTime((DateTime)paymentEn["bsd_paymentactualtime"]) : d_now;
             decimal d_bsd_totalapplyamount = paymentEn.Contains("bsd_totalapplyamount") ? ((Money)paymentEn["bsd_totalapplyamount"]).Value : 0;
-            decimal d_bsd_assignamount = paymentEn.Contains("bsd_assignamount") ? ((Money)paymentEn["bsd_assignamount"]).Value : 0;
+            d_bsd_assignamountmaster = paymentEn.Contains("bsd_assignamount") ? ((Money)paymentEn["bsd_assignamount"]).Value : 0;
             string s_bsd_arraypsdid = paymentEn.Contains("bsd_arraypsdid") ? (string)paymentEn["bsd_arraypsdid"] : "";
             string s_bsd_arrayamountpay = paymentEn.Contains("bsd_arrayamountpay") ? (string)paymentEn["bsd_arrayamountpay"] : "";
             string s_bsd_arrayinstallmentinterest = paymentEn.Contains("bsd_arrayinstallmentinterest") ? (string)paymentEn["bsd_arrayinstallmentinterest"] : "";
@@ -743,7 +743,14 @@ namespace Action_Payment
                 pm_balance = psd_amountPhase - psd_amountPaid - psd_waiverIns; // = psd_balance
             }
             pm_differentamount = pm_amountpay - pm_balance;
-
+            pm_balancemaster = pm_balance;
+            pm_differentamountmaster = pm_differentamount;
+            d_bsd_assignamountmaster = pm_differentamount - d_bsd_totalapplyamount;
+            if (d_bsd_assignamountmaster < 0)
+            {
+                ;
+                throw new InvalidPluginExecutionException("The amount you pay exceeds the amount paid. Please choose another Advance Payment or other Payment Phase!");
+            }
             if (psd_statuscode == 100000001)
                 throw new InvalidPluginExecutionException((string)PaymentDetailEn["bsd_name"] + " has been Paid!");
             if (pm_differentamount <= 0 && f_bsd_latepayment == true)
@@ -961,9 +968,9 @@ namespace Action_Payment
                             {
                                 //throw new InvalidPluginExecutionException("ADV case 4");
                                 //create_AdvPM(optionentryEn, customerRef, paymentEn, tiendu, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
-                                if (d_bsd_assignamount > 0)
+                                if (d_bsd_assignamountmaster > 0)
                                 {
-                                    create_AdvPM(optionentryEn, customerRef, paymentEn, d_bsd_assignamount, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
+                                    create_AdvPM(optionentryEn, customerRef, paymentEn, d_bsd_assignamountmaster, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
                                 }
 
                             }
@@ -1020,9 +1027,9 @@ namespace Action_Payment
                         {
                             //throw new InvalidPluginExecutionException("ADV case 5");
                             //create_AdvPM(optionentryEn, customerRef, paymentEn, tiendu, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
-                            if (d_bsd_assignamount > 0)
+                            if (d_bsd_assignamountmaster > 0)
                             {
-                                create_AdvPM(optionentryEn, customerRef, paymentEn, d_bsd_assignamount, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
+                                create_AdvPM(optionentryEn, customerRef, paymentEn, d_bsd_assignamountmaster, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
                             }
 
                         }
@@ -1172,23 +1179,26 @@ namespace Action_Payment
 
             //up_InterestAM_Ins(service, PaymentDetailEn, psd_bsd_interestwaspaid, psd_bsd_interestchargestatus, d_now);
         }
-        public void update(Entity paymentEn, decimal pm_amountpay, decimal pm_sotiendot, decimal pm_sotiendatra, DateTime d_now, decimal pm_balance, decimal pm_differentamount, decimal d_inter, int i_lateday)
+        public void update(Entity paymentEn, decimal pm_amountpay, decimal pm_sotiendot, decimal pm_sotiendatra, DateTime d_now, decimal pm_balance, decimal pm_differentamount, decimal d_inter, int i_lateday, int type, decimal d_bsd_assignamountmaster)
         {
             info_Error info = new info_Error();
             strMess.AppendLine("16 Update payment");
-            paymentEn["bsd_amountpay"] = new Money(pm_amountpay);
-            paymentEn["bsd_totalamountpayablephase"] = new Money(pm_sotiendot);
-            paymentEn["bsd_totalamountpaidphase"] = new Money(pm_sotiendatra);
-            paymentEn["statuscode"] = new OptionSetValue(100000000);
-            paymentEn["bsd_confirmeddate"] = d_now;
-            paymentEn["bsd_confirmperson"] = new EntityReference("systemuser", context.UserId);
+            Entity enUpPay = new Entity(paymentEn.LogicalName, paymentEn.Id);
+            enUpPay["bsd_amountpay"] = new Money(pm_amountpay);
+            enUpPay["bsd_totalamountpayablephase"] = new Money(pm_sotiendot);
+            enUpPay["bsd_totalamountpaidphase"] = new Money(pm_sotiendatra);
+            enUpPay["statuscode"] = new OptionSetValue(100000000);
+            enUpPay["bsd_confirmeddate"] = d_now;
+            enUpPay["bsd_confirmperson"] = new EntityReference("systemuser", context.UserId);
             strMess.AppendLine("17");
-            paymentEn["bsd_balance"] = new Money(pm_balance);
-            paymentEn["bsd_differentamount"] = new Money(pm_differentamount);
-            //paymentEn["bsd_interestcharge"] = new Money(d_inter);
-            //paymentEn["bsd_latedays"] = i_lateday;
+            enUpPay["bsd_balance"] = new Money(pm_balance);
+            enUpPay["bsd_differentamount"] = new Money(pm_differentamount);
+            if (type == 100000002)
+            {
+                enUpPay["bsd_assignamount"] = new Money(d_bsd_assignamountmaster);
+            }
             strMess.AppendLine("18");
-            service.Update(paymentEn);
+            service.Update(enUpPay);
             strMess.AppendLine("19 End Update payment");
         }
         public EntityCollection Get1st_Resv(string resvID)

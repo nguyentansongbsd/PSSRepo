@@ -9,3 +9,36 @@ D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\P
 D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CopyComplete
 D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.dll
 D:\A_capital\CLVN Github\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.pdb
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.dll
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.pdb
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.dll
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.xml
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.AssemblyReference.cache
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CoreCompileInputs.cache
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CopyComplete
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.dll
+D:\A_capital\plugin_moi\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.pdb
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.dll
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.pdb
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.AssemblyReference.cache
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CoreCompileInputs.cache
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_P.AB87D5B2.Up2Date
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.dll
+C:\Users\BSD\Desktop\Hai_Dev\work\Cap dev\Cap dev\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.pdb
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.dll
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Plugin_Payment_Import.pdb
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.AssemblyReference.cache
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.csproj.CoreCompileInputs.cache
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_P.AB87D5B2.Up2Date
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.dll
+C:\Users\BSD\source\repos\CAP\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\obj\Debug\Plugin_Payment_Import.pdb

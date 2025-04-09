@@ -9,7 +9,7 @@
       <am:Name>SSDTRS</am:Name>
       <am:Version>17.6.33723.286</am:Version>
     </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2025-03-19T12:04:25.3989985Z</am:LastModifiedTimestamp>
+    <am:LastModifiedTimestamp>2025-03-27T08:57:27.9833209Z</am:LastModifiedTimestamp>
   </am:AuthoringMetadata>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -4405,7 +4405,7 @@ IsNothing(First(Fields!new_ccontnameSys.Value, "dsCoowner"))=true, true, false)<
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox11</rd:DefaultName>
-            <Top>12.55474cm</Top>
+            <Top>12.52829cm</Top>
             <Left>0.20385cm</Left>
             <Height>0.6cm</Height>
             <Width>18.57755cm</Width>
@@ -6274,7 +6274,19 @@ Fields!currentccont_id.Value)</Value>
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!currentccont_dategrant.Value)=true,
 "",
-" cấp ngày: " &amp; CDate(Fields!currentccont_dategrant.Value))</Value>
+" cấp ngày: ")</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <Format>dd/MM/yy</Format>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=CDate(Fields!currentccont_dategrant.Value)</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>

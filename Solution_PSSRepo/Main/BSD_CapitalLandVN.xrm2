@@ -14,6 +14,22 @@
       },
       "Projects": [
         {
+          "Name": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "83d01245-bfd9-4c2c-8496-d70858074493",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -169,6 +185,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_Approved_Updateduedate_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "83d01245-bfd9-4c2c-8496-d70858074493",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedateoflastinstallmentapprove_Detal.dll",
                 "SourceType": 0
               }
             }
@@ -347,65 +379,6 @@
                   "Name": "System.Xml.Linq"
                 }
               ]
-            }
-          ]
-        },
-        {
-          "Name": "Action_Resv_GenPMS.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "849830ac-0dd5-41af-bb76-e4d7f3b3d5a6",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "SourceType": 0
-              }
-            }
-          ]
-        },
-        {
-          "Name": "Action_SignedContract_1.0.0.0.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Files": [
-            {
-              "CrmId": "00000000-0000-0000-0000-000000000000",
-              "FileType": 26,
-              "RelativeFilePath": "\\Action_SignedContract\\Action_SignedContract.cs"
-            }
-          ],
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "86beed2c-6f02-4d72-9ccb-c620eeb30bac",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Action_SignedContract.dll",
-                "SourceType": 0,
-                "PluginTypeConfigs": [
-                  {
-                    "Id": "7eae0af2-4ae3-4a84-98f1-9613e5a85d30",
-                    "TypeName": "BSDLibrary.Action_SignedContract"
-                  }
-                ],
-                "StepConfigs": [
-                  {
-                    "DeleteAsyncOperationAfterCompletion": false,
-                    "DeploymentType": 0,
-                    "ExecutionOrder": 1,
-                    "Id": "2a7a82bd-9904-45b4-97dd-3a1fcaa8b601",
-                    "IsDisabled": false,
-                    "Mode": 0,
-                    "Name": "Action_SignedContract - Option Entry - Post-operation",
-                    "PluginTypeId": "7eae0af2-4ae3-4a84-98f1-9613e5a85d30",
-                    "SdkMessageFilterId": "90fdedf2-678b-e911-a98a-000d3aa04914",
-                    "SdkMessageId": "7ddd2b16-568b-e911-a98f-000d3aa00fc2",
-                    "Stage": 40
-                  }
-                ]
-              }
             }
           ]
         },
@@ -682,6 +655,22 @@
           ]
         },
         {
+          "Name": "Plugin_Updateduedateoflastinstallmentapprove.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a15e4023-dd5b-4d8a-9d50-d0fc77051890",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Updateduedateoflastinstallmentapprove.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -714,9 +703,19 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
             },
             {
+              "CrmId": "58fe8065-a539-ea11-a813-000d3a085b2b",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_Handover_Notice_SelectProject.html"
+            },
+            {
               "CrmId": "aa1dc0ee-32d9-ef11-8ee9-000d3ac84358",
               "FileType": 1,
               "RelativeFilePath": "\\HTML\\report\\bsd_Simulation_Report_InOptionEntryForm.html"
+            },
+            {
+              "CrmId": "e20a49b4-5238-e611-80e7-3863bb36bc80",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnHandoverNoticeView.js"
             },
             {
               "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
@@ -744,11 +743,6 @@
               "RelativeFilePath": "\\JS\\Follow up list\\bsd_followuplist_formnew.js"
             },
             {
-              "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
-              "FileType": 3,
-              "RelativeFilePath": "\\JS\\Handover Notice\\.js"
-            },
-            {
               "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Option Entry\\bsd_btnOptionEntryForm.js"
@@ -772,6 +766,11 @@
               "CrmId": "5d3d8873-c888-e811-8153-3863bb367d20",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Due_Date_Detail.js"
+            },
+            {
+              "CrmId": "933098c2-578b-e911-a98f-000d3aa00fc2",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Duedate Of Last Installment\\bsd_updateduedateoflastinstallmentapprove_form.js"
             },
             {
               "CrmId": "d4015a18-5b8b-e911-a98f-000d3aa00fc2",

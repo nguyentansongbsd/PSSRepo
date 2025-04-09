@@ -106,7 +106,7 @@ namespace Action_SignedContract
                     this.service.Update(new Entity(entity5.LogicalName)
                     {
                         Id = entity5.Id,
-                        ["bsd_managementamount"] = (object)new Money(num9)
+                        ["bsd_managementamount"] = (object)new Money(num7)
                     });
                 }
             }

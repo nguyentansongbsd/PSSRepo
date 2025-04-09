@@ -224,6 +224,10 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                             bsd_signeddadate = (DateTime)entity1["bsd_signeddadate"];
                             caseSign = 1;
                         }
+                        else
+                        {
+                            caseSign = 4;
+                        }    
                     }
                     
                     var lateDays = ((int)((DateTime.UtcNow.AddHours(7) - bsd_duedate).TotalDays) - bsd_gracedays);
@@ -338,6 +342,25 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     {
                         //tính số ngày trễ hạn 
                         lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                    }
+                    break;
+                case 4:
+
+                    if (rs.Entities.Count > 0)
+                    {
+                        if (isContainDueDate == false)
+                            result = false;
+                        else
+                        {
+                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
+                            tracingService.Trace("bsd_duedate >= bsd_duedateFlag: " + (bsd_duedate >= bsd_duedateFlag).ToString());
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
+                            else result = false;
+                        }
                     }
                     break;
                 default:

@@ -49,6 +49,7 @@
     <Reports>@(Report)</Reports>
   </PropertyGroup>
   <ItemGroup>
+    <Report Include="LUMI_Assignment confirmation_Lan1_23022025_contact (1).rdl" />
     <Report Include="LUMI_Assignment confirmation_Lan1_23022025_contact.rdl" />
     <Report Include="LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />
     <Report Include="Lumi_Xac Nhan CDT(contact)_Lan 2_VN_29112024.rdl" />

@@ -39,6 +39,7 @@ namespace Plugin_Update_Installment
             tracingService.Trace("start id:" + entity.Id);
             #region tìm đến PaymentNotices được map
             // lấy Option Entry
+            if (!enTarget.Contains("bsd_optionentry")) return;
             EntityReference enOPRef = (EntityReference)enTarget["bsd_optionentry"];
             Entity EnOP = service.Retrieve(enOPRef.LogicalName, enOPRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
            

@@ -19,6 +19,8 @@ namespace Plugin_Create_UpdateDueDateDetail
         Entity en = new Entity();
         string enHD_name = "";
         string enIntalments_fieldNameHD = "";
+        Entity enHD=new Entity();
+        Entity enMaster = new Entity();
         public void Execute(IServiceProvider serviceProvider)
         {
 
@@ -35,6 +37,8 @@ namespace Plugin_Create_UpdateDueDateDetail
             var item = en;
 
             var status = ((OptionSetValue)en["statuscode"]).Value;
+            tracingService.Trace(status.ToString());
+            if (status != 1|| status != 100000003) return;
             tracingService.Trace("start :" + status);
             tracingService.Trace("enDetailid :" + enDetailid);
             //check status
@@ -77,7 +81,7 @@ namespace Plugin_Create_UpdateDueDateDetail
                 }
                 #endregion
                 var enHDRef = (EntityReference)enInstallment[enIntalments_fieldNameHD];
-                var enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
+                 enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
                 tracingService.Trace("CheckExistParentInDetail");
                 CheckExistParentInDetail(ref result, item);
                 tracingService.Trace("CheckIsLast");
@@ -116,7 +120,7 @@ namespace Plugin_Create_UpdateDueDateDetail
         {
             var enMasterRef = (EntityReference)item["bsd_updateduedate"];
 
-            var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
+            enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
             if (((EntityReference)enMaster["bsd_project"]).Id != ((EntityReference)item["bsd_project"]).Id)
             {
                 var mess = "The project in the Master and Detail entities does not match. Please check again.";
@@ -247,6 +251,16 @@ namespace Plugin_Create_UpdateDueDateDetail
 
                         }
                     }
+
+                    #region check thêm xem trong update duedate detail có đợt này cùng HD.
+
+                    //var query2 = new QueryExpression("bsd_updateduedatedetail");
+                    //query2.ColumnSet.AllColumns = true;
+                    //query2.Criteria.AddCondition("bsd_paymentschemedetailid", ConditionOperator.NotEqual, enInstallment.Id.ToString());
+                    //query2.Criteria.AddCondition("bsd_updateduedate", ConditionOperator.NotEqual, enMaster.Id.ToString());
+                    //var rs2_ = service.RetrieveMultiple(query2);
+
+                    #endregion
                 }
             }
         }
