@@ -95,13 +95,23 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                         warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
                                                 }
 
-                                                service.Create(warningNotices);
+                                                var id =service.Create(warningNotices);
+                                                var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
                                                 dem++;
 
                                                 Entity ins = new Entity(PSD.LogicalName);
                                                 ins.Id = PSD.Id;
                                                 string field = "bsd_warningnotices" + (numberofWarning + 1);
                                                 ins[field] = true;
+                                                traceService.Trace("step1");
+                                                string field2 = "bsd_warningdate" + (numberofWarning + 1);
+                                                ins[field] = enWRN["bsd_date"];
+                                                traceService.Trace("step2");
+
+                                                string field3 = "bsd_w_noticesnumber" + (numberofWarning + 1);
+                                                ins[field] = enWRN["bsd_noticesnumber"];
+                                                traceService.Trace("step3");
+
                                                 service.Update(ins);
                                             }
                                         }

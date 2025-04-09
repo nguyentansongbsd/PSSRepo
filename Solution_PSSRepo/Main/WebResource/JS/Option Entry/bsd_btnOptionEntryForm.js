@@ -544,7 +544,9 @@ function btn_PrintDepositAgreement() {
                     // default is px. can be specified in % as well.
                     height: 400,
                     // default is px. can be specified in % as well.
-                    position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+                    position: 1,
+                    // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+                    title: "Print D.A"
                 };
                 Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
 
@@ -592,7 +594,7 @@ function btnVis_PrintDepositAgreement() {
 
 function btn_SignDepositAgreement() {
     var daSignedDate = Xrm.Page.getAttribute("bsd_signeddadate").getValue();
-    var daPrintedDate = Xrm.Page.getAttribute("bsd_signedcontractdate").getValue();
+    var daPrintedDate = Xrm.Page.getAttribute("bsd_agreementdate").getValue();
     if (daSignedDate == null && daPrintedDate != null) {
         var pageInput = {
             pageType: "webresource",
@@ -621,7 +623,7 @@ function btn_SignDepositAgreement() {
     //        var date = new Date();
     //        date = new Date(date.toDateString());
     //        Xrm.Page.getAttribute("bsd_signeddadate").setValue(date);
-    //        Xrm.Page.getControl("bsd_signedcontractdate").setDisabled(true);
+    //        Xrm.Page.getControl("bsd_agreementdate").setDisabled(true);
     //        Xrm.Page.getControl("bsd_signeddadate").setDisabled(true);
     //        Xrm.Page.data.save();
     //        window.top.$ui.Dialog("Message", "Successful.", null);
@@ -636,7 +638,7 @@ window.top.applySignda = function (ngay) {
         if (daSignedDate == null) {
             var date = new Date(ngay);
             Xrm.Page.getAttribute("bsd_signeddadate").setValue(date);
-            Xrm.Page.getControl("bsd_signedcontractdate").setDisabled(true);
+            Xrm.Page.getControl("bsd_agreementdate").setDisabled(true);
             Xrm.Page.getControl("bsd_signeddadate").setDisabled(true);
             Xrm.Page.data.save();
             crmcontrol.alertdialogConfirm("Successful.")
@@ -688,14 +690,14 @@ function btnVis_SignDepositAgreement() {
     //var checkpermission = flagFin && statuscode == 100000001; //1st installment
     var checkpermission = flagFin
     var daSignedDate = crmcontrol.getValue("bsd_signeddadate");
-    var daPrintedDate = crmcontrol.getValue("bsd_signedcontractdate");
+    var daPrintedDate = crmcontrol.getValue("bsd_agreementdate");
     if ((checkshortfallamount || checkpermission) && daSignedDate == null && daPrintedDate != null) {
         return true;
     }
     //Hô update 03-06-2019
     //var status = Xrm.Page.getAttribute("statuscode").getValue(); // 1st installment
     //var daSignedDate = Xrm.Page.getAttribute("bsd_signeddadate").getValue();
-    //var daPrintedDate = Xrm.Page.getAttribute("bsd_signedcontractdate").getValue();
+    //var daPrintedDate = Xrm.Page.getAttribute("bsd_agreementdate").getValue();
     ////Thạnh Đỗ Update Role chỉ được hiện khi
     //var flagFin = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Head of Section"])
     //    || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Manager"])
@@ -757,7 +759,9 @@ function ord_btnPrintContract() {
         // default is px. can be specified in % as well.
         height: 400,
         // default is px. can be specified in % as well.
-        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+        position: 1,
+        // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+        title: "Print contract"
     };
     Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
 
@@ -875,55 +879,81 @@ function CallActionSubSale() {
 }
 
 function btn_SubSale() {
+    if (checkExistSubSale()) {
+        window.top.$ui.Dialog("Message", "There is an active transfer request associated with this contract.");
+    }
+    else if (checkAdvancePayment()) {
+        window.top.$ui.Dialog("Message", "The contract has advance payment in 'Active' or 'Pending Revert' status, so the transfer cannot be performed.");
+    }
+    else {
+        var isCheckCongNo = checkCongNo();
+        var isCheckBankLoan = checkBankLoan();
+        if (isCheckCongNo && isCheckBankLoan) {
+            window.top.$ui.Dialog("Message", "The contract has overdue payments, unpaid management or maintenance fees, outstanding interest that have not been settled, and the product is currently mortgaged and cannot be transferred.");
+        } else if (isCheckBankLoan) {
+            window.top.$ui.Dialog("Message", "This unit is in bank loan status, transaction cannot be proceeded.");
+        } else if (isCheckCongNo) {
+            window.top.$ui.Confirm('Confirm', "The contract has overdue payments, unpaid management or maintenance fees, and outstanding interest that have not been settled. Do you want to proceed?", function () { //OK
+                open_SubSale();
+            },
+            function () { //Cancel
+            });
+        } else {
+            open_SubSale();
+        }
+    }
+}
+
+function open_SubSale() {
     var optionID = Xrm.Page.data.entity.getId();
     if (optionID) {
-        var xml = [];
-        xml.push("<fetch version='1.0' output-format='xml-platform'  aggregate='true' mapping='logical' distinct='true'>");
-        xml.push("<entity name='product'>");
-        xml.push("<attribute name='name' alias='count' aggregate= 'countcolumn' />");
-        xml.push("<filter type='and'>");
-        xml.push("<condition attribute='bsd_bankloan' operator='eq' value='1' />");
-        //xml.push("<condition attribute='bsd_submitpinkbookdate' operator='not-null' />");
-        xml.push("</filter>");
-        xml.push("<link-entity name='salesorderdetail' from='productid' to='productid' alias='ak'>");
-        xml.push("<link-entity name='salesorder' from='salesorderid' to='salesorderid' alias='al'>");
-        xml.push("<filter type='and'>");
-        xml.push("<condition attribute='salesorderid' operator='eq' value='" + optionID + "' />");
-        xml.push("</filter>");
-        xml.push("</link-entity>");
-        xml.push("</link-entity>");
-        xml.push("</entity>");
-        xml.push("</fetch>");
-        var rs = CrmFetchKitNew.FetchSync(xml.join(""));
-        //        CrmFetchKit.Fetch(xml.join(""), true).then(function (rs) {
-        if (rs.length > 0 && rs[0].attributes.count.value == 0) {
-            var xml1 = [];
-            xml1.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>");
-            xml1.push("<entity name='product'>");
-            xml1.push("<attribute name='bsd_submitpinkbookdate' />");
-            xml1.push("<link-entity name='salesorderdetail' from='productid' to='productid' alias='ab'>");
-            xml1.push("<filter type='and'>");
-            xml1.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + optionID + "' />");
-            xml1.push("</filter>");
-            xml1.push("</link-entity>");
-            xml1.push("</entity>");
-            xml1.push("</fetch>");
-            var rs1 = CrmFetchKitNew.FetchSync(xml1.join(""));
-            //                CrmFetchKit.Fetch(xml1.join(""), true).then(function (rs1) {
-            if (rs1.length > 0 && rs1[0].attributes.bsd_submitpinkbookdate == null) {
-                CallActionSubSale();
-            }
-            else window.top.$ui.Dialog("Warning", "Unit has submitted pink book. Can not Sub-sale.", null);
-            //                },
-            //                    function (er) {
-            //                        console.log(er.message)
-            //                    });
+        // var xml = [];
+        // xml.push("<fetch version='1.0' output-format='xml-platform'  aggregate='true' mapping='logical' distinct='true'>");
+        // xml.push("<entity name='product'>");
+        // xml.push("<attribute name='name' alias='count' aggregate= 'countcolumn' />");
+        // xml.push("<filter type='and'>");
+        // xml.push("<condition attribute='bsd_bankloan' operator='eq' value='1' />");
+        // //xml.push("<condition attribute='bsd_submitpinkbookdate' operator='not-null' />");
+        // xml.push("</filter>");
+        // xml.push("<link-entity name='salesorderdetail' from='productid' to='productid' alias='ak'>");
+        // xml.push("<link-entity name='salesorder' from='salesorderid' to='salesorderid' alias='al'>");
+        // xml.push("<filter type='and'>");
+        // xml.push("<condition attribute='salesorderid' operator='eq' value='" + optionID + "' />");
+        // xml.push("</filter>");
+        // xml.push("</link-entity>");
+        // xml.push("</link-entity>");
+        // xml.push("</entity>");
+        // xml.push("</fetch>");
+        // var rs = CrmFetchKitNew.FetchSync(xml.join(""));
+        // //        CrmFetchKit.Fetch(xml.join(""), true).then(function (rs) {
+        // if (rs.length > 0 && rs[0].attributes.count.value == 0) {
+        var xml1 = [];
+        xml1.push("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>");
+        xml1.push("<entity name='product'>");
+        xml1.push("<attribute name='bsd_submitpinkbookdate' />");
+        xml1.push("<link-entity name='salesorderdetail' from='productid' to='productid' alias='ab'>");
+        xml1.push("<filter type='and'>");
+        xml1.push("<condition attribute='salesorderid' operator='eq'  uitype='salesorder' value='" + optionID + "' />");
+        xml1.push("</filter>");
+        xml1.push("</link-entity>");
+        xml1.push("</entity>");
+        xml1.push("</fetch>");
+        var rs1 = CrmFetchKitNew.FetchSync(xml1.join(""));
+        //                CrmFetchKit.Fetch(xml1.join(""), true).then(function (rs1) {
+        if (rs1.length > 0 && rs1[0].attributes.bsd_submitpinkbookdate == null) {
+            CallActionSubSale();
         }
-        else window.top.$ui.Dialog("Warning", "This unit is in bank loan status, transaction cannot be proceeded.", null);
-        //        },
-        //            function (er) {
-        //                console.log(er.message)
-        //            });
+        else window.top.$ui.Dialog("Warning", "Unit has submitted pink book. Can not Sub-sale.", null);
+        //     //                },
+        //     //                    function (er) {
+        //     //                        console.log(er.message)
+        //     //                    });
+        // }
+        // else window.top.$ui.Dialog("Warning", "This unit is in bank loan status, transaction cannot be proceeded.", null);
+        // //        },
+        // //            function (er) {
+        // //                console.log(er.message)
+        // //            });
     }
 }
 
@@ -1504,8 +1534,11 @@ function btnVis_SpecialSPAApproval() {
     var formtype = Xrm.Page.ui.getFormType();
     var special = Xrm.Page.getAttribute("bsd_specialcontractprintingapproval").getValue();
     var flag = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Manager"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Head of Section"]));
-    var status = Xrm.Page.getAttribute("statuscode").getValue()
-    if (formtype != 1 && status == 100000000 && flag == true && special != 1) return true;
+    var status = Xrm.Page.getAttribute("statuscode").getValue();
+    var shortFallAmount = getShortFallAmount();
+    var installment1 = getInstall1();
+    var checkInstallment = shortFallAmount != null && installment1 != null && installment1.bsd_balance.value <= shortFallAmount ? true : false;
+    if (formtype != 1 && status == 100000000 && flag == true && special != 1 && checkInstallment == true) return true;
     return false;
 }
 //--- Han_25052018 > Print Actual Payment
@@ -2116,4 +2149,75 @@ async function getURLPA(name) {
         var url = result.entities[0].bsd_url;
         return url;
     }
+}
+
+function checkCongNo() {
+    var id = Xrm.Page.data.entity.getId();
+    var fetchXml = ["<fetch>", "  <entity name='bsd_paymentschemedetail'>", "    <attribute name='bsd_paymentschemedetailid'/>", "    <attribute name='bsd_name'/>", "    <attribute name='bsd_duedate'/>", "    <attribute name='statuscode'/>", "    <attribute name='bsd_maintenancefees'/>", "    <attribute name='bsd_maintenancefeeremaining'/>", "    <attribute name='bsd_managementfee'/>", "    <attribute name='bsd_managementfeeremaining'/>", "    <attribute name='bsd_interestchargeremaining'/>", "    <filter>", "      <condition attribute='bsd_optionentry' operator='eq' value='", id, "'/>", "      <condition attribute='statecode' operator='eq' value='0'/>", "    </filter>", "    <order attribute='bsd_ordernumber'/>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) {
+        for (
+        const ins of rs) {
+            var bsd_duedate = ins.attributes.bsd_duedate;
+            if (bsd_duedate && dateWithoutTime(bsd_duedate.value) < dateWithoutTime(new Date())) {
+                var statuscode = ins.attributes.statuscode;
+                var bsd_maintenancefees = ins.attributes.bsd_maintenancefees;
+                var bsd_maintenancefeeremaining = ins.attributes.bsd_maintenancefeeremaining;
+                var bsd_managementfee = ins.attributes.bsd_managementfee;
+                var bsd_managementfeeremaining = ins.attributes.bsd_managementfeeremaining;
+                if ((statuscode && statuscode.value == 100000000) || (bsd_maintenancefees && bsd_maintenancefees.value && bsd_maintenancefeeremaining && bsd_maintenancefeeremaining.value > 0) || (bsd_managementfee && bsd_managementfee.value && bsd_managementfeeremaining && bsd_managementfeeremaining.value > 0)) return true;
+            }
+
+            var bsd_interestchargeremaining = ins.attributes.bsd_interestchargeremaining;
+            if (bsd_interestchargeremaining && bsd_interestchargeremaining.value > 0) return true;
+        }
+    }
+    return false;
+}
+
+function checkExistSubSale() {
+    var bsd_unitnumber = crmcontrol.getValue("bsd_unitnumber");
+
+    var fetchXml = ["<fetch>", "  <entity name='bsd_assign'>", "    <attribute name='bsd_assignid'/>", "    <attribute name='bsd_name'/>", "    <filter>", "      <condition attribute='statuscode' operator='in'>", "        <value>1</value>", "        <value>100000000</value>", "      </condition>", "      <condition attribute='bsd_unit' operator='eq' value='", bsd_unitnumber ? bsd_unitnumber[0].id : "", "'/>", "      <condition attribute='statecode' operator='eq' value='0'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) {
+        return true;
+    }
+    return false;
+}
+function checkAdvancePayment() {
+    var fetchXml = ["<fetch>", "  <entity name='bsd_advancepayment'>", "    <attribute name='bsd_advancepaymentid'/>", "    <attribute name='bsd_name'/>", "    <filter>", "      <condition attribute='statuscode' operator='in'>", "        <value>1</value>", "        <value>100000003</value>", "      </condition>", "      <condition attribute='bsd_optionentry' operator='eq' value='", crmcontrol.getId(), "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) {
+        return true;
+    }
+    return false;
+}
+function checkBankLoan() {
+    var bsd_unitnumber = crmcontrol.getValue("bsd_unitnumber");
+
+    var fetchXml = ["<fetch>", "  <entity name='product'>", "    <attribute name='name'/>", "    <attribute name='bsd_bankloan'/>", "    <filter>", "      <condition attribute='productid' operator='eq' value='", bsd_unitnumber ? bsd_unitnumber[0].id : "", "'/>", "      <condition attribute='bsd_bankloan' operator='eq' value='1'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) {
+        return true;
+    }
+    return false;
+}
+
+function dateWithoutTime(value) {
+    return new Date(value).setHours(0, 0, 0, 0);
+}
+function getShortFallAmount() {
+    var project = crmcontrol.getValue("bsd_project");
+    var fetchXml = ["<fetch>", "  <entity name='bsd_project'>", "    <attribute name='bsd_shortfallamount'/>", "    <filter>", "      <condition attribute='bsd_projectid' operator='eq' value='", project[0].id, "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) return rs[0].attributes.bsd_shortfallamount.value;
+    else return null;
+}
+function getInstall1() {
+    var OEId = crmcontrol.getId();
+    var fetchXml = ["<fetch>", "  <entity name='bsd_paymentschemedetail'>", "    <attribute name='bsd_amountofthisphase'/>", "    <attribute name='bsd_amountwaspaid'/>", "    <attribute name='bsd_depositamount'/>", "    <attribute name='bsd_balance'/>", "    <filter>", "      <condition attribute='bsd_optionentry' operator='eq' value='", OEId, "'/>", "      <condition attribute='bsd_ordernumber' operator='eq' value='1'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+    var rs = CrmFetchKitNew.FetchSync(fetchXml);
+    if (rs.length > 0) return rs[0].attributes;
+    else return null;
 }

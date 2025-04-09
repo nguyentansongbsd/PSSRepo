@@ -53,3 +53,14 @@ C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_WarningNotices_Gene
 C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.csproj.CopyComplete
 C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.dll
 C:\Users\NgSong\Desktop\Disk_D\Công việc\ActionPSS\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.pdb
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.dll
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.pdb
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Action_WarningNotices_GenerateWarningNotices.dll
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Action_WarningNotices_GenerateWarningNotices.pdb
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.csproj.AssemblyReference.cache
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.csproj.CoreCompileInputs.cache
+C:\Users\ngoct\source\repos\BSD\DevTu\CLVN\PSSRepo\Action_WarningNotices_GenerateWarningNotices\obj\Debug\Action_WarningNotices_GenerateWarningNotices.csproj.CopyComplete
