@@ -37,10 +37,10 @@ namespace Plugin_InValidAmountPersent_Installment
 
                     EntityReference enrfPaymentScheme = enInstallment.Contains("bsd_paymentscheme") ? ((EntityReference)enInstallment["bsd_paymentscheme"]) : null;
                     EntityCollection enclInstallment = getAllInstallment(enInstallment, enrfPaymentScheme);
-                    EntityCollection enclInstallmentSign = getAllInstallmentSign(enInstallment, enrfPaymentScheme);
+                    //EntityCollection enclInstallmentSign = getAllInstallmentSign(enInstallment, enrfPaymentScheme);
                     //throw new InvalidPluginExecutionException("enclInstallmentSign:" + enclInstallmentSign.Entities.Count);
                     decimal sum = 0;
-                    if (!enInstallment.Contains("bsd_reservation")&& !enInstallment.Contains("bsd_quotation") && !enInstallment.Contains("bsd_optionentry") && !enInstallment.Contains("bsd_conversioncontractapproval") && !enInstallment.Contains("bsd_appendixcontract") && !enInstallment.Contains("bsd_changeinformation"))
+                    if (!enInstallment.Contains("bsd_reservation") && !enInstallment.Contains("bsd_quotation") && !enInstallment.Contains("bsd_optionentry") && !enInstallment.Contains("bsd_conversioncontractapproval") && !enInstallment.Contains("bsd_appendixcontract") && !enInstallment.Contains("bsd_changeinformation"))
                     {
                         if (enclInstallment.Entities.Count > 0)
                         {
@@ -51,6 +51,7 @@ namespace Plugin_InValidAmountPersent_Installment
                                 int bsd_number = en.Contains("bsd_number") ? (int)en["bsd_number"] : 0;
                                 if (bsd_typepayment != 0 && bsd_number > 0)
                                 {
+                                    traceService.Trace("bsd_number " + bsd_number);
                                     if (bsd_typepayment == 2 && bsd_number > 0)
                                     {
                                         int numberTemp = bsd_number * (int)amountPercent;
@@ -64,6 +65,7 @@ namespace Plugin_InValidAmountPersent_Installment
                             }
                             if (bsd_typepaymentCur != 0 && bsd_numberCur > 0)
                             {
+                                traceService.Trace("bsd_numberCur " + bsd_numberCur);
                                 sum += (bsd_amountpercent * bsd_numberCur);
                             }
                             else
@@ -72,23 +74,26 @@ namespace Plugin_InValidAmountPersent_Installment
                             }
                             if (sum > 100)
                             {
-                                throw new InvalidPluginExecutionException("Tổng các đợt thanh toán phải bằng 100%!");
+                                traceService.Trace("sum > 100 " + sum);
+                                traceService.Trace("bsd_paymentscheme " + enrfPaymentScheme.Id);
+                                throw new InvalidPluginExecutionException("Amount Percent is over 100%!");
                             }
-                            if (bsd_lastinstallment == true && sum < 100)
-                            {
-                                throw new InvalidPluginExecutionException("Tổng các đợt thanh toán phải bằng 100%!");
-                            }
+                            //if (bsd_lastinstallment == true && sum < 100)
+                            //{
+                            //    traceService.Trace("bsd_lastinstallment == true && sum < 100");
+                            //    throw new InvalidPluginExecutionException("Tổng các đợt thanh toán phải bằng 100%!");
+                            //}
                         }
-                        if (enclInstallmentSign.Entities.Count == 1 && bsd_signcontractinstallment == true)
-                        {
-                            foreach (Entity item in enclInstallmentSign.Entities)
-                            {
-                                int bsd_ordernumber = item.Contains("bsd_ordernumber") ? (int)item["bsd_ordernumber"] : 0;
-                                throw new InvalidPluginExecutionException("Đã có đợt thanh toán đủ điều kiện ký hợp đồng: Đợt số " + bsd_ordernumber.ToString() + "");
-                            }
-                        }
+                        //if (enclInstallmentSign.Entities.Count == 1 && bsd_signcontractinstallment == true)
+                        //{
+                        //    foreach (Entity item in enclInstallmentSign.Entities)
+                        //    {
+                        //        int bsd_ordernumber = item.Contains("bsd_ordernumber") ? (int)item["bsd_ordernumber"] : 0;
+                        //        throw new InvalidPluginExecutionException("Đã có đợt thanh toán đủ điều kiện ký hợp đồng: Đợt số " + bsd_ordernumber.ToString() + "");
+                        //    }
+                        //}
                     }
-                   
+
 
                     break;
             }
