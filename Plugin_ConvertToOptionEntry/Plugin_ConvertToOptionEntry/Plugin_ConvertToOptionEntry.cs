@@ -21,68 +21,68 @@ namespace Plugin_ConvertToOptionEntry
             if (!(inputParameter.LogicalName == "salesorderdetail") || !(((IExecutionContext)service).MessageName == "Create") || !inputParameter.Contains("salesorderid"))
                 return;
             this.service = ((IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory))).CreateOrganizationService(new Guid?(((IExecutionContext)service).UserId));
-            EntityReference entityReference = (EntityReference)inputParameter["salesorderid"];
-            Entity entity1 = this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(new string[1]
+            EntityReference enfOE = (EntityReference)inputParameter["salesorderid"];
+            Entity enOE = this.service.Retrieve(enfOE.LogicalName, enfOE.Id, new ColumnSet(new string[]
             {
-        "quoteid"
+                "quoteid"
             }));
-            if (!entity1.Contains("quoteid"))
+            if (!enOE.Contains("quoteid"))
                 return;
-            EntityReference quote = (EntityReference)entity1["quoteid"];
-            Entity entity2 = this.service.Retrieve(quote.LogicalName, quote.Id, new ColumnSet(new string[14]
+            EntityReference quote = (EntityReference)enOE["quoteid"];
+            Entity enQuote = this.service.Retrieve(quote.LogicalName, quote.Id, new ColumnSet(new string[14]
             {
-        "bsd_unitno",
-        "bsd_unitstatus",
-        "bsd_netusablearea",
-        "bsd_constructionarea",
-        "bsd_salessgentcompany",
-        "bsd_taxcode",
-        "bsd_numberofmonthspaidmf",
-        "bsd_managementfee",
-        "bsd_totalamountpaid",
-        "bsd_rfsigneddate",
-        "bsd_nameofstaffagent",
-        "bsd_actualarea",
-        "bsd_bookingfee",
-        "bsd_depositfee"
+                "bsd_unitno",
+                "bsd_unitstatus",
+                "bsd_netusablearea",
+                "bsd_constructionarea",
+                "bsd_salessgentcompany",
+                "bsd_taxcode",
+                "bsd_numberofmonthspaidmf",
+                "bsd_managementfee",
+                "bsd_totalamountpaid",
+                "bsd_rfsigneddate",
+                "bsd_nameofstaffagent",
+                "bsd_actualarea",
+                "bsd_bookingfee",
+                "bsd_depositfee"
             }));
-            if (!entity2.Contains("bsd_rfsigneddate"))
+            if (!enQuote.Contains("bsd_rfsigneddate"))
                 throw new InvalidPluginExecutionException("Reservation had not signed. Can not execute this action!");
-            Entity entity3 = new Entity(entityReference.LogicalName, entityReference.Id);
-            entity3["bsd_unitnumber"] = entity2.Contains("bsd_unitno") ? entity2["bsd_unitno"] : (object)null;
-            entity3["bsd_unitstatus"] = entity2.Contains("bsd_unitstatus") ? entity2["bsd_unitstatus"] : (object)null;
-            entity3["bsd_constructionarea"] = entity2.Contains("bsd_constructionarea") ? entity2["bsd_constructionarea"] : (object)null;
-            entity3["bsd_netusablearea"] = entity2.Contains("bsd_netusablearea") ? entity2["bsd_netusablearea"] : (object)null;
-            entity3["bsd_salesagentcompany"] = entity2.Contains("bsd_salessgentcompany") ? entity2["bsd_salessgentcompany"] : (object)null;
-            entity3["bsd_queuingfee"] = entity2.Contains("bsd_bookingfee") ? entity2["bsd_bookingfee"] : (object)null;
-            entity3["bsd_depositamount"] = entity2.Contains("bsd_depositfee") ? entity2["bsd_depositfee"] : (object)null;
-            entity3["bsd_contractdate"] = (object)this.RetrieveLocalTimeFromUTCTime(DateTime.Now, this.service);
-            entity3["bsd_actualarea"] = entity2.Contains("bsd_actualarea") ? entity2["bsd_actualarea"] : (object)null;
-            entity3["bsd_nameofstaffagent"] = entity2.Contains("bsd_nameofstaffagent") ? entity2["bsd_nameofstaffagent"] : (object)null;
-            entity3["bsd_taxcode"] = entity2.Contains("bsd_taxcode") ? entity2["bsd_taxcode"] : (object)null;
-            entity3["bsd_numberofmonthspaidmf"] = entity2.Contains("bsd_numberofmonthspaidmf") ? entity2["bsd_numberofmonthspaidmf"] : (object)null;
-            entity3["bsd_managementfee"] = entity2.Contains("bsd_managementfee") ? entity2["bsd_managementfee"] : (object)null;
-            entity3["bsd_totalamountpaid"] = entity2.Contains("bsd_totalamountpaid") ? entity2["bsd_totalamountpaid"] : (object)null;
-            if (entity2.Contains("bsd_unitno"))
+            Entity enOENew = new Entity(enfOE.LogicalName, enfOE.Id);
+            enOENew["bsd_unitnumber"] = enQuote.Contains("bsd_unitno") ? enQuote["bsd_unitno"] : (object)null;
+            enOENew["bsd_unitstatus"] = enQuote.Contains("bsd_unitstatus") ? enQuote["bsd_unitstatus"] : (object)null;
+            enOENew["bsd_constructionarea"] = enQuote.Contains("bsd_constructionarea") ? enQuote["bsd_constructionarea"] : (object)null;
+            enOENew["bsd_netusablearea"] = enQuote.Contains("bsd_netusablearea") ? enQuote["bsd_netusablearea"] : (object)null;
+            enOENew["bsd_salesagentcompany"] = enQuote.Contains("bsd_salessgentcompany") ? enQuote["bsd_salessgentcompany"] : (object)null;
+            enOENew["bsd_queuingfee"] = enQuote.Contains("bsd_bookingfee") ? enQuote["bsd_bookingfee"] : (object)null;
+            enOENew["bsd_depositamount"] = enQuote.Contains("bsd_depositfee") ? enQuote["bsd_depositfee"] : (object)null;
+            enOENew["bsd_contractdate"] = (object)this.RetrieveLocalTimeFromUTCTime(DateTime.Now, this.service);
+            enOENew["bsd_actualarea"] = enQuote.Contains("bsd_actualarea") ? enQuote["bsd_actualarea"] : (object)null;
+            enOENew["bsd_nameofstaffagent"] = enQuote.Contains("bsd_nameofstaffagent") ? enQuote["bsd_nameofstaffagent"] : (object)null;
+            enOENew["bsd_taxcode"] = enQuote.Contains("bsd_taxcode") ? enQuote["bsd_taxcode"] : (object)null;
+            enOENew["bsd_numberofmonthspaidmf"] = enQuote.Contains("bsd_numberofmonthspaidmf") ? enQuote["bsd_numberofmonthspaidmf"] : (object)null;
+            enOENew["bsd_managementfee"] = enQuote.Contains("bsd_managementfee") ? enQuote["bsd_managementfee"] : (object)null;
+            enOENew["bsd_totalamountpaid"] = enQuote.Contains("bsd_totalamountpaid") ? enQuote["bsd_totalamountpaid"] : (object)null;
+            if (enQuote.Contains("bsd_unitno"))
             {
                 //EntityCollection unitsSpec = this.findUnitsSpec(this.service, (EntityReference)entity2["bsd_unitno"]);
                 //if (((Collection<Entity>)unitsSpec.Entities).Count > 0)
                 //    entity3["bsd_unitsspecification"] = (object)((Collection<Entity>)unitsSpec.Entities)[0].ToEntityReference();
-                Entity entity4 = this.service.Retrieve(((EntityReference)entity2["bsd_unitno"]).LogicalName, ((EntityReference)entity2["bsd_unitno"]).Id, new ColumnSet(new string[1]
+                Entity entity4 = this.service.Retrieve(((EntityReference)enQuote["bsd_unitno"]).LogicalName, ((EntityReference)enQuote["bsd_unitno"]).Id, new ColumnSet(new string[1]
                 {
           "bsd_estimatehandoverdate"
                 }));
                 if (entity4.Contains("bsd_estimatehandoverdate"))
-                    entity3["bsd_estimatehandoverdatecontract"] = entity4["bsd_estimatehandoverdate"];
+                    enOENew["bsd_estimatehandoverdatecontract"] = entity4["bsd_estimatehandoverdate"];
             }
             foreach (Entity entity5 in (Collection<Entity>)this.findFirstInstallment(this.service, quote).Entities)
             {
                 if (entity5.Contains("statuscode") && ((OptionSetValue)entity5["statuscode"]).Value == 100000001)
-                    entity3["statuscode"] = (object)new OptionSetValue(100000001);
+                    enOENew["statuscode"] = (object)new OptionSetValue(100000001);
             }
             foreach (Entity entity6 in (Collection<Entity>)this.findExchangeRate(this.service).Entities)
-                entity3["bsd_applyingexchangerate"] = (object)entity6.ToEntityReference();
-            this.service.Update(entity3);
+                enOENew["bsd_applyingexchangerate"] = (object)entity6.ToEntityReference();
+            this.service.Update(enOENew);
             EntityReferenceCollection referenceCollection = new EntityReferenceCollection();
             QueryExpression queryExpression1 = new QueryExpression("bsd_quote_bsd_promotion");
             queryExpression1.ColumnSet = new ColumnSet(new string[1]
@@ -94,7 +94,7 @@ namespace Plugin_ConvertToOptionEntry
             foreach (Entity entity7 in (Collection<Entity>)this.service.RetrieveMultiple((QueryBase)queryExpression1).Entities)
                 ((Collection<EntityReference>)referenceCollection).Add(new EntityReference("bsd_promotion", (Guid)entity7["bsd_promotionid"]));
             if (((Collection<EntityReference>)referenceCollection).Count > 0)
-                this.service.Associate(entityReference.LogicalName, entityReference.Id, new Relationship("bsd_salesorder_bsd_promotion"), referenceCollection);
+                this.service.Associate(enfOE.LogicalName, enfOE.Id, new Relationship("bsd_salesorder_bsd_promotion"), referenceCollection);
             QueryExpression queryExpression2 = new QueryExpression("bsd_discountspecial");
             queryExpression2.ColumnSet = new ColumnSet(new string[1]
             {
@@ -105,7 +105,7 @@ namespace Plugin_ConvertToOptionEntry
             foreach (Entity entity8 in (Collection<Entity>)this.service.RetrieveMultiple((QueryBase)queryExpression2).Entities)
                 this.service.Update(new Entity(entity8.LogicalName, entity8.Id)
                 {
-                    ["bsd_optionentry"] = (object)entityReference
+                    ["bsd_optionentry"] = (object)enfOE
                 });
         }
 

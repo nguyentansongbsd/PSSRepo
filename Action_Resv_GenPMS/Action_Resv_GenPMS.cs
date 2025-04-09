@@ -1785,7 +1785,7 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_texten9"] = item.Contains("bsd_text9") ? item["bsd_text9"] : null;
                 tmp["bsd_texten10"] = item.Contains("bsd_text10") ? item["bsd_text10"] : null;
             }
-
+            traceService.Trace("1");
         }
 
         private string GetTienBangChu_ENG(decimal tien)
