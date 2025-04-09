@@ -422,6 +422,21 @@
           ]
         },
         {
+          "Name": "Action_WarningNotices_GenerateWarningNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "e8fed5d6-267a-4f2d-bcd9-fc209f152b3c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Approve.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [

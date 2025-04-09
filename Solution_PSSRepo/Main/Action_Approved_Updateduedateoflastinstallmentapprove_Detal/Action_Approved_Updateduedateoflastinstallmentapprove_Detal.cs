@@ -197,7 +197,7 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
                 if (JItem.Id != enInstallment.Id)
                 {
 
-                    //if (!JItem.Contains("bsd_duedate")) continue;
+                    if (!JItem.Contains("bsd_duedate")) continue;
                     tracingService.Trace($"{(DateTime)JItem["bsd_duedate"]}");
 
                     if (newDate <= ((DateTime)JItem["bsd_duedate"]))
