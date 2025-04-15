@@ -239,6 +239,52 @@
           ]
         },
         {
+          "Name": "Action_ConvertWordToPDF.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_ConvertWordToPDF.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "eb3df9dc-5727-43ed-a1b3-11055dc9dfbe",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_ConvertWordToPDF.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetMailFromAndTo.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetMailFromAndTo.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "e55eae90-d316-4ea3-b3e6-1bd505759fa0",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetMailFromAndTo.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -250,6 +296,87 @@
                 "IsRegisteredInCrm": true,
                 "SourceType": 0
               }
+            }
+          ]
+        },
+        {
+          "Name": "Action_MappingParamToWord.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_MappingParamToWord.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "ee677466-b002-48ee-8119-eea7d6bf68e5",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_MappingParamToWord.dll",
+                "SourceType": 0
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml.Framework"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Newtonsoft.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
             }
           ]
         },
@@ -379,6 +506,44 @@
                   "Name": "System.Xml.Linq"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "Name": "Action_SearchCustomer.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_SearchCustomer.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "1723e76c-09d7-47fe-876b-931c6b2c46ed",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_SearchCustomer.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_ShareCustomerToTeam.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "d277078e-4bc3-45f4-be42-3071dc22c51a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
             }
           ]
         },
@@ -631,6 +796,29 @@
           ]
         },
         {
+          "Name": "Plugin_Update_Email_MapInforToPayment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Update_Email_MapInforToPayment.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "3768cb7d-008f-4d5b-b276-5200819b42f8",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_Email_MapInforToPayment.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Update_Installment.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -712,6 +900,11 @@
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
+            {
+              "CrmId": "de85a477-5a42-ee11-bdf3-6045bd1f9d3d",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\bsd_searchcustomer.html"
+            },
             {
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
