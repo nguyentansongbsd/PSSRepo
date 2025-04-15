@@ -33657,7 +33657,7 @@ Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Diện tích đất sử dụng chung: 7,856 m2 (với thông tin chi tiết và điều kiện sử dụng theo Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất số DB525784 do Sở Tài nguyên và Môi trường Thành phố Hà Nội cấp lần đầu ngày 09/04/2021).</Value>
+                                  <Value>Diện tích đất sử dụng chung: 7.856 m2 (với thông tin chi tiết và điều kiện sử dụng theo Giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất số DB525784 do Sở Tài nguyên và Môi trường Thành phố Hà Nội cấp lần đầu ngày 09/04/2021).</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -59119,7 +59119,7 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>Họ Tên: WAN YOKE YEE</Value>
+                        <Value>Họ Tên: </Value>
                         <Style>
                           <FontStyle>Normal</FontStyle>
                           <FontFamily>Times New Roman</FontFamily>
@@ -59127,6 +59127,16 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
                           <FontWeight>Bold</FontWeight>
                           <TextDecoration>None</TextDecoration>
                           <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>NGUYỄN THỊ THỦY</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>times New Roman</FontFamily>
+                          <FontSize>12pt</FontSize>
+                          <FontWeight>Bold</FontWeight>
+                          <TextDecoration>None</TextDecoration>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -59707,7 +59717,7 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>784.05735cm</Top>
+            <Top>783.10485cm</Top>
             <Left>0.53907cm</Left>
             <Height>8.76854cm</Height>
             <Width>17.53566cm</Width>
@@ -60779,7 +60789,7 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>793.10292cm</Top>
+            <Top>792.15042cm</Top>
             <Left>0.53907cm</Left>
             <Height>15.26198cm</Height>
             <Width>17.5cm</Width>
@@ -61074,7 +61084,7 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>808.61795cm</Top>
+            <Top>807.66545cm</Top>
             <Left>0.53907cm</Left>
             <Height>4.36383cm</Height>
             <Width>17.5cm</Width>
@@ -69859,7 +69869,7 @@ First(Fields!opt_TotalTax_VN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>813.0904cm</Top>
+            <Top>812.1379cm</Top>
             <Left>0.53907cm</Left>
             <Height>60.76925cm</Height>
             <Width>17.5cm</Width>
@@ -77946,7 +77956,7 @@ CDate(Fields!con_dategrant.Value))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Người đại diện theo pháp luật: </Value>
+                                  <Value>Người đại diện theo pháp luật: Bà </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -77957,27 +77967,18 @@ CDate(Fields!con_dategrant.Value))</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>Bà </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>WAN YOKE YEE</Value>
+                                  <Value>NGUYỄN THỊ THỦY</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value xml:space="preserve"> </Value>
+                                  <Value> Chức vụ: Đại diện Ủy quyền theo Giấy ủy quyền (Văn bản ủy quyền) số BM/POA-2025/002 ngày 25/01/2025.</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -77985,16 +77986,6 @@ CDate(Fields!con_dategrant.Value))</Value>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>Chức vụ: Đại diện Ủy quyền theo Giấy ủy quyền (Văn bản ủy quyền) số BM/POA-2025/001 ngày 25/01/2025.</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -79713,7 +79704,7 @@ CDate(Fields!con_dategrant.Value))</Value>
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>874.00802cm</Top>
+            <Top>873.05552cm</Top>
             <Left>0.53907cm</Left>
             <Height>7.59855cm</Height>
             <Width>17.5cm</Width>
@@ -80396,7 +80387,6 @@ IIF(
 )
 )</Value>
                 <Sizing>Fit</Sizing>
-                <Left>0cm</Left>
                 <Height>24.56677cm</Height>
                 <Width>18.60753cm</Width>
                 <Style>
@@ -80408,7 +80398,6 @@ IIF(
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>652.67699cm</Top>
-            <Left>0cm</Left>
             <Height>24.8242cm</Height>
             <Width>18.635cm</Width>
             <ZIndex>45</ZIndex>
@@ -80437,12 +80426,11 @@ IIF(
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>677.67758cm</Top>
-            <Left>0cm</Left>
             <Height>25.19932cm</Height>
             <Width>18.635cm</Width>
             <ZIndex>46</ZIndex>
             <Visibility>
-              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0, False, True)</Hidden>
+              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0 Or First(Fields!unittype_code.Value, "dsUnitInfo") = "SP-PH1" Or First(Fields!unittype_code.Value, "dsUnitInfo") = "SP-PH1M" , False, True)</Hidden>
             </Visibility>
             <Style>
               <Border>
@@ -80469,7 +80457,6 @@ IIF(
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>706.70518cm</Top>
-            <Left>0cm</Left>
             <Height>23.92038cm</Height>
             <Width>18.635cm</Width>
             <ZIndex>47</ZIndex>
@@ -80486,7 +80473,6 @@ IIF(
                 <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo") &amp; "&amp;stt=2"</Value>
                 <Sizing>Fit</Sizing>
                 <Top>0.31508cm</Top>
-                <Left>0cm</Left>
                 <Height>24.4916cm</Height>
                 <Width>18.60753cm</Width>
                 <Style>
@@ -80498,12 +80484,11 @@ IIF(
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>730.80195cm</Top>
-            <Left>0cm</Left>
             <Height>24.95607cm</Height>
             <Width>18.635cm</Width>
             <ZIndex>48</ZIndex>
             <Visibility>
-              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0, False, True)</Hidden>
+              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0 Or First(Fields!unittype_code.Value, "dsUnitInfo") = "SP-PH1" Or First(Fields!unittype_code.Value, "dsUnitInfo") = "SP-PH1M" , False, True)</Hidden>
             </Visibility>
             <Style>
               <Border>
@@ -80511,16 +80496,14 @@ IIF(
               </Border>
             </Style>
           </Rectangle>
-          <Rectangle Name="Rectangle7">
+          <Rectangle Name="Rectangle9">
             <ReportItems>
-              <Image Name="Image5">
+              <Image Name="Image6">
                 <Source>External</Source>
                 <Value>=First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=block&amp;id=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
                 <Sizing>Fit</Sizing>
-                <Top>0.24991cm</Top>
-                <Left>0.02747cm</Left>
-                <Height>24.42317cm</Height>
-                <Width>18.58006cm</Width>
+                <Height>23.65786cm</Height>
+                <Width>17.11781cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -80528,11 +80511,14 @@ IIF(
                 </Style>
               </Image>
             </ReportItems>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>759.18859cm</Top>
-            <Left>0cm</Left>
-            <Height>24.72117cm</Height>
-            <Width>18.60753cm</Width>
+            <Top>759.11803cm</Top>
+            <Left>0.54812cm</Left>
+            <Height>23.65786cm</Height>
+            <Width>17.53876cm</Width>
             <ZIndex>49</ZIndex>
             <Style>
               <Border>
@@ -80541,7 +80527,7 @@ IIF(
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>881.60657cm</Height>
+        <Height>880.90811cm</Height>
         <Style>
           <Border>
             <Style>None</Style>

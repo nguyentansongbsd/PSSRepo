@@ -50,7 +50,6 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
                 if (this.target.Contains("bsd_unittype")) return;
                 Entity enOption = new Entity(this.target.LogicalName, this.target.Id);
                 enOption["bsd_unittype"] = getUnitType();
-                enOption["bsd_unitsspecification"] = null;
                 this.service.Update(enOption);
             }
             catch (InvalidPluginExecutionException ex)

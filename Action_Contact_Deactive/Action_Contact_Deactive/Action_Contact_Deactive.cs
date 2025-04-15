@@ -20,7 +20,7 @@ namespace Action_Contact_Deactive
         {
             this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             this.factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-            this.service = factory.CreateOrganizationService(this.context.UserId);
+            this.service = factory.CreateOrganizationService(Guid.Parse("d90ce220-655a-e811-812e-3863bb36dc00")); //this.context.UserId
             this.tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
 
             Init();

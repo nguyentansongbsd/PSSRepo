@@ -30,7 +30,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             if (string.IsNullOrWhiteSpace(OEId)) return;
             Entity OE = this.service.Retrieve("salesorder", Guid.Parse(OEId), new ColumnSet(new string[] { "salesorderid", "bsd_paymentscheme",
                 "bsd_project","name","customerid"}));
-
+            
             EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
             int PN_Date;
             if (l_PS.Entities.Count > 0)//bsd_paymentnoticesdate đã khác null

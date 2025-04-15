@@ -175,7 +175,10 @@ namespace Action_Resv_GenPMS
                     decimal depositfee = item.Contains("quote.bsd_depositfee") ? ((Money)((AliasedValue)item["quote.bsd_depositfee"]).Value).Value : 0;
                     decimal bsd_amountofthisphase = item.Contains("bsd_amountofthisphase") ? ((Money)item["bsd_amountofthisphase"]).Value : 0;
                     if (depositfee > bsd_amountofthisphase)
-                        throw new InvalidPluginExecutionException("Payment scheme is not valid. Please check again.");
+                    {
+                        traceService.Trace("bsd_amountofthisphase " + bsd_amountofthisphase);
+                        throw new InvalidPluginExecutionException("The deposit amount must be less than the first installment amount.");
+                    }
                 }
                 #endregion
 
@@ -1785,7 +1788,7 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_texten9"] = item.Contains("bsd_text9") ? item["bsd_text9"] : null;
                 tmp["bsd_texten10"] = item.Contains("bsd_text10") ? item["bsd_text10"] : null;
             }
-
+            traceService.Trace("1");
         }
 
         private string GetTienBangChu_ENG(decimal tien)

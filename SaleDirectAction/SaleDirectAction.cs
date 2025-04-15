@@ -335,7 +335,12 @@ namespace SaleDirectAction
                                 }));
                                 EntityReference entityReference2 = entity4.Contains("customerid") ? (EntityReference)entity4["customerid"] : (EntityReference)null;
                                 if (entityReference2 != null)
+                                {
                                     entity2["customerid"] = (object)entityReference2;
+                                    EntityReference enfBA = getBankAccount(entityReference2.Id);
+                                    if(enfBA != null)
+                                        entity2["bsd_bankaccount"] = enfBA;
+                                }
                                 if (entity4.Contains("bsd_queuingfee"))
                                     entity2["bsd_bookingfee"] = entity4["bsd_queuingfee"];
                                 if (entity4.Contains("bsd_nameofstaffagent"))
@@ -567,6 +572,23 @@ namespace SaleDirectAction
 
             var rs = service.RetrieveMultiple(new FetchExpression(fetchXml.ToString()));
             return rs;
+        }
+
+        private static EntityReference getBankAccount(Guid customerId)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_bankaccount"">
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_customer"" operator=""eq"" value=""{customerId}"" />
+                  <condition attribute=""bsd_default"" operator=""eq"" value=""1"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result == null && result.Entities.Count <= 0) return null;
+            return result.Entities[0].ToEntityReference();
         }
 
         [DataContract]

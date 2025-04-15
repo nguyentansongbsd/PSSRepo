@@ -7254,8 +7254,8 @@
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!coo_con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!coo_con_passportdategrant.Value) = True, "", 
-Fields!coo_con_passportdategrant.Value), 
-Fields!coo_con_dategrant.Value)</Value>
+Format(CDate(Fields!coo_con_passportdategrant.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!coo_con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -9919,7 +9919,7 @@ Fields!primary_dategrant.Value)</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsCustomerInfo</DataSetName>
-            <Top>9.69946cm</Top>
+            <Top>9.72592cm</Top>
             <Left>0.26297cm</Left>
             <Height>4.89606cm</Height>
             <Width>18.25398cm</Width>
