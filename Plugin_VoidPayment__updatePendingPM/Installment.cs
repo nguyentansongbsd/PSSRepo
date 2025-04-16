@@ -11,11 +11,10 @@ namespace Plugin_VoidPayment_updatePendingPM
         IOrganizationService service = null;
         IPluginExecutionContext context;
         StringBuilder strMess = new StringBuilder();
-        public Installment(IOrganizationService service , IPluginExecutionContext context, StringBuilder strMess1)
+        public Installment(IOrganizationService service , IPluginExecutionContext context )
         {
             this.service = service;
             this.context = context;
-            strMess = strMess1;
         }
 
         public bool check_Ins_Paid(IOrganizationService crmservices, Guid oeID, int i_ordernumber)

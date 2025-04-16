@@ -11,11 +11,10 @@ namespace Plugin_VoidPayment_updatePendingPM
         IOrganizationService service = null;
         IPluginExecutionContext context;
         StringBuilder strMess = new StringBuilder();
-        public AdvancePayment(IOrganizationService service, IPluginExecutionContext context, StringBuilder strMess1)
+        public AdvancePayment(IOrganizationService service, IPluginExecutionContext context)
         {
             this.service = service;
             this.context = context;
-            strMess = strMess1;
         }
         public EntityCollection get_AdvPM(Guid pmID)
         {

@@ -29,3 +29,5 @@ C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\obj\Debug\Plug
 C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\obj\Debug\Plugin_V.02C23395.Up2Date
 C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\obj\Debug\Plugin_VoidPayment__updatePendingPM.dll
 C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\obj\Debug\Plugin_VoidPayment__updatePendingPM.pdb
+C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\BSD\source\repos\PSS\Plugin_VoidPayment__updatePendingPM\bin\Debug\Microsoft.Xrm.Sdk.dll

@@ -18,15 +18,14 @@ namespace Plugin_VoidPayment_updatePendingPM
         Miscellaneous miscellaneous;
         StringBuilder strMess = new StringBuilder();
 
-        public Payment(IOrganizationService service, IPluginExecutionContext context, StringBuilder strMess1)
+        public Payment(IOrganizationService service, IPluginExecutionContext context )
         {
             this.service = service;
             this.context = context;
-            advancePayment = new AdvancePayment(service, context, strMess);
-            transactionPayment = new TransactionPayment(service, context, strMess);
-            installment = new Installment(service, context, strMess);
-            miscellaneous = new Miscellaneous(service, context, strMess);
-            strMess = strMess1;
+            advancePayment = new AdvancePayment(service, context);
+            transactionPayment = new TransactionPayment(service, context);
+            installment = new Installment(service, context);
+            miscellaneous = new Miscellaneous(service, context);
         }
         public void voidPaymentAproval(Entity enVoidPayment)
         {
