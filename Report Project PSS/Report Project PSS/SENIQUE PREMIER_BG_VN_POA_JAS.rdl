@@ -6011,7 +6011,7 @@
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
                                         <FontSize>12pt</FontSize>
-                                        <FontWeight>Bold</FontWeight>
+                                        <FontWeight>Normal</FontWeight>
                                         <Color>#000000</Color>
                                       </Style>
                                     </TextRun>

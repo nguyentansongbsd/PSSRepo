@@ -30,7 +30,7 @@ namespace Plugin_BankLoan_Import
             {
                 if (this.context.MessageName != "Create") return;
                 this.en = (Entity)this.context.InputParameters["Target"];
-                if ((((OptionSetValue)this.en["statuscode"]).Value != 100000000 && ((OptionSetValue)this.en["statuscode"]).Value != 1) && (bool)this.en["bsd_import"] == true) throw new InvalidPluginExecutionException("The status of the bank loan isn't \"Active\" or \"Mortgage\", so it cannot be processed.");
+                if ((((OptionSetValue)this.en["statuscode"]).Value != 1) && (bool)this.en["bsd_import"] == true) throw new InvalidPluginExecutionException("The status of the bank loan isn't \"Active\", so it cannot be processed."); //((OptionSetValue)this.en["statuscode"]).Value != 100000000 &&
                 if (!this.en.Contains("bsd_optionentry")) throw new InvalidPluginExecutionException("Record don't have Contract.");
                 Entity enOE = getOE((EntityReference)this.en["bsd_optionentry"]);
                 if (((EntityReference)this.en["bsd_project"]).Id != ((EntityReference)enOE["bsd_project"]).Id) throw new InvalidPluginExecutionException("The contract doesn't belong to the entered Project. Please check the information again.");

@@ -6587,8 +6587,8 @@
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!cont_passportissuedon.Value) = True, "", 
-CDate(Fields!cont_passportissuedon.Value)), 
-CDate(Fields!con_dategrant.Value))</Value>
+Format(CDate(Fields!cont_passportissuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -7422,8 +7422,8 @@ CDate(Fields!con_dategrant.Value))</Value>
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!coo_con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!coo_con_passportdategrant.Value) = True, "", 
-CDate(Fields!coo_con_passportdategrant.Value)), 
-CDate(Fields!coo_con_dategrant.Value))</Value>
+Format(CDate(Fields!coo_con_passportdategrant.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!coo_con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -8229,7 +8229,7 @@ CDate(Fields!coo_con_dategrant.Value))</Value>
                               <TextRuns>
                                 <TextRun>
                                   <Value>=IIF(ISNothing(Fields!acc_RegIssuedon.Value) = True, Today.Date, 
-CDate(Fields!acc_RegIssuedon.Value))</Value>
+Format(CDate(Fields!acc_RegIssuedon.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -8718,8 +8718,8 @@ CDate(Fields!acc_RegIssuedon.Value))</Value>
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!primary_dategrant.Value) = True, 
 IIF(IsNothing(Fields!primary_issuedon.Value) = True, "", 
-CDate(Fields!primary_issuedon.Value)), 
-CDate(Fields!primary_dategrant.Value))</Value>
+Format(CDate(Fields!primary_issuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!primary_dategrant.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -9441,8 +9441,8 @@ CDate(Fields!primary_dategrant.Value))</Value>
                                 <TextRun>
                                   <Value>=IIF(IsNothing(Fields!con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!cont_passportissuedon.Value) = True, "", 
-CDate(Fields!cont_passportissuedon.Value)), 
-CDate(Fields!con_dategrant.Value))</Value>
+Format(CDate(Fields!cont_passportissuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -10083,8 +10083,8 @@ CDate(Fields!con_dategrant.Value))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsCustomerInfo</DataSetName>
-            <Top>9.59362cm</Top>
-            <Left>0.25276cm</Left>
+            <Top>9.62008cm</Top>
+            <Left>0.26297cm</Left>
             <Height>4.89606cm</Height>
             <Width>18.25398cm</Width>
             <ZIndex>9</ZIndex>

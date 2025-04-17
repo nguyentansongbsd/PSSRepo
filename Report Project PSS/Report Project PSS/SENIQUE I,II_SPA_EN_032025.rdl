@@ -3505,7 +3505,7 @@ False, True)</Hidden>
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=IIF(First(Fields!A2_location.Value, "dsCustomerInfo") = "Foreigner",
-"", Fields!ContractDate.Value)</Value>
+"",Format(CDate(Fields!ContractDate.Value), "dd/MM/yyyy"))</Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -3747,7 +3747,7 @@ False, True)</Hidden>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
             <Top>0.1cm</Top>
-            <Left>0.20373cm</Left>
+            <Left>0.31364cm</Left>
             <Height>24.92211cm</Height>
             <Width>18cm</Width>
             <Style>
@@ -4377,7 +4377,7 @@ False, True)</Hidden>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>25.21384cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>7.25356cm</Height>
             <Width>17cm</Width>
             <ZIndex>1</ZIndex>
@@ -4403,7 +4403,7 @@ False, True)</Hidden>
                   <Width>1cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>13cm</Width>
+                  <Width>13.02117cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -5014,7 +5014,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67938cm</Height>
+                  <Height>1.08156cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5155,7 +5155,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.13985cm</Height>
+                  <Height>2.54203cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5394,10 +5394,10 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsDepositAgreement</DataSetName>
-            <Top>203.42692cm</Top>
-            <Left>0.6729cm</Left>
-            <Height>11.05481cm</Height>
-            <Width>17cm</Width>
+            <Top>241.18112cm</Top>
+            <Left>0.65197cm</Left>
+            <Height>11.85917cm</Height>
+            <Width>17.02117cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -5412,21 +5412,21 @@ False, True)</Hidden>
                   <Width>1cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.98692cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.98692cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.98692cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>13cm</Width>
+                  <Width>13.07383cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.6786cm</Height>
+                  <Height>0.67904cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5546,7 +5546,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67938cm</Height>
+                  <Height>0.67982cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5654,7 +5654,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.63888cm</Height>
+                  <Height>2.63932cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5796,7 +5796,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.18209cm</Height>
+                  <Height>1.18253cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5938,7 +5938,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.16621cm</Height>
+                  <Height>1.16665cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6080,7 +6080,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.62903cm</Height>
+                  <Height>2.62947cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6222,7 +6222,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.06579cm</Height>
+                  <Height>2.06623cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6364,7 +6364,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.58815cm</Height>
+                  <Height>3.58859cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6528,7 +6528,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.78521cm</Height>
+                  <Height>0.78565cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6670,7 +6670,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.54192cm</Height>
+                  <Height>1.54236cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6812,7 +6812,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.18737cm</Height>
+                  <Height>1.18781cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -6954,7 +6954,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.11342cm</Height>
+                  <Height>2.49485cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7096,7 +7096,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.18029cm</Height>
+                  <Height>3.03256cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7260,7 +7260,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.54734cm</Height>
+                  <Height>2.54778cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7402,7 +7402,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.12882cm</Height>
+                  <Height>2.12926cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7544,7 +7544,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.70265cm</Height>
+                  <Height>2.9571cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7686,7 +7686,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.11976cm</Height>
+                  <Height>1.56472cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7828,7 +7828,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.65292cm</Height>
+                  <Height>0.65336cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -7970,7 +7970,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.10326cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8134,7 +8134,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.15076cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8276,7 +8276,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.12961cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8418,7 +8418,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.01861cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8560,7 +8560,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.12445cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8702,7 +8702,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.12964cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8844,7 +8844,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.60044cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -8986,7 +8986,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67938cm</Height>
+                  <Height>0.67982cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9094,7 +9094,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.63467cm</Height>
+                  <Height>3.48694cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9236,7 +9236,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.57367cm</Height>
+                  <Height>2.06094cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9378,7 +9378,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.15034cm</Height>
+                  <Height>1.57411cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9520,7 +9520,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.12917cm</Height>
+                  <Height>1.59525cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9662,7 +9662,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.12917cm</Height>
+                  <Height>1.12961cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9804,7 +9804,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.18208cm</Height>
+                  <Height>1.18252cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -9946,7 +9946,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.12917cm</Height>
+                  <Height>1.12961cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10088,7 +10088,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.02348cm</Height>
+                  <Height>2.02392cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10226,7 +10226,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.52088cm</Height>
+                  <Height>2.52132cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10364,7 +10364,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.59483cm</Height>
+                  <Height>1.99742cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10506,7 +10506,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.11857cm</Height>
+                  <Height>1.11901cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10644,7 +10644,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.6213cm</Height>
+                  <Height>1.62174cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10782,7 +10782,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.14762cm</Height>
+                  <Height>3.42322cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -10920,7 +10920,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.13467cm</Height>
+                  <Height>4.00812cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11062,7 +11062,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.775cm</Height>
+                  <Height>5.38413cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11204,7 +11204,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.54732cm</Height>
+                  <Height>3.50026cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11346,7 +11346,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.57367cm</Height>
+                  <Height>1.57411cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11488,7 +11488,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.46782cm</Height>
+                  <Height>1.46826cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11630,7 +11630,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.60044cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11772,7 +11772,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>4.91845cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -11947,7 +11947,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>4.83377cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -12122,7 +12122,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.06611cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -12327,10 +12327,10 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>214.62653cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>76.32064cm</Height>
-            <Width>17cm</Width>
+            <Top>253.14275cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>96.68295cm</Height>
+            <Width>17.03459cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -12729,7 +12729,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.11977cm</Height>
+                  <Height>4.41612cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -12889,7 +12889,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.64135cm</Height>
+                  <Height>2.02234cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -13457,7 +13457,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.61363cm</Height>
+                  <Height>3.46546cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -13762,7 +13762,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.14024cm</Height>
+                  <Height>1.54242cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -13904,7 +13904,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.20752cm</Height>
+                  <Height>1.56736cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -14384,7 +14384,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.12483cm</Height>
+                  <Height>1.56932cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -14734,7 +14734,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.69688cm</Height>
+                  <Height>1.56473cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -14876,7 +14876,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.05535cm</Height>
+                  <Height>4.83336cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -15836,7 +15836,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.53431cm</Height>
+                  <Height>2.04232cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -16120,7 +16120,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.15563cm</Height>
+                  <Height>1.60012cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -16688,7 +16688,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.10396cm</Height>
+                  <Height>1.61197cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -16830,7 +16830,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.82844cm</Height>
+                  <Height>4.4211cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -17106,7 +17106,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.6587cm</Height>
+                  <Height>4.91267cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -17386,7 +17386,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6.87593cm</Height>
+                  <Height>7.68026cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -17524,7 +17524,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>8.1942cm</Height>
+                  <Height>7.68622cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -17662,7 +17662,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6.13741cm</Height>
+                  <Height>5.79876cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -17768,7 +17768,7 @@ False, True)</Hidden>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>) In case the Buyer wants to make minor repairs inside the apartment (without affecting the main structure of the apartment, design, layout, size and area of ​​the apartment and rooms in the apartment), the Buyer must serve a written advance notice (enclosed with the repair plan), at least 05 (five) days before the expected time to start performing repairs to the Apartment Building Manager and Operator or the Building Owners Committee. In the case of violation, the Buyer must repair and restore to the original state of the works. If the Buyer fails to take remedial measures within 30 (thirty) days from the date of request by the Seller or the Apartment Building Manager and Operator, the Buyer must reimburse the actual remedial costs to the Seller or the Building Owners Committee or the Apartment Building Manager and Operator, as the case may be, within 45 (forty five) days from the date of completion of the repair according to the notice;</Value>
+                                  <Value>In case the Buyer wants to make minor repairs inside the apartment (without affecting the main structure of the apartment, design, layout, size and area of ​​the apartment and rooms in the apartment), the Buyer must serve a written advance notice (enclosed with the repair plan), at least 05 (five) days before the expected time to start performing repairs to the Apartment Building Manager and Operator or the Building Owners Committee. In the case of violation, the Buyer must repair and restore to the original state of the works. If the Buyer fails to take remedial measures within 30 (thirty) days from the date of request by the Seller or the Apartment Building Manager and Operator, the Buyer must reimburse the actual remedial costs to the Seller or the Building Owners Committee or the Apartment Building Manager and Operator, as the case may be, within 45 (forty five) days from the date of completion of the repair according to the notice;</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -17800,7 +17800,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.71671cm</Height>
+                  <Height>3.4627cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -18139,9 +18139,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>291.12479cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>85.74351cm</Height>
+            <Top>349.93987cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>92.13588cm</Height>
             <Width>17cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
@@ -18285,7 +18285,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.02778cm</Height>
+                  <Height>2.53572cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -18394,7 +18394,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.18208cm</Height>
+                  <Height>1.64772cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -18612,7 +18612,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6.59015cm</Height>
+                  <Height>7.20393cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -18824,7 +18824,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.15032cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -18956,9 +18956,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>377.06679cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>15.61595cm</Height>
+            <Top>442.12604cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>17.75363cm</Height>
             <Width>17cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
@@ -19206,7 +19206,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67962cm</Height>
+                  <Height>1.10295cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -19314,7 +19314,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>5.47539cm</Height>
+                  <Height>7.2111cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -19452,7 +19452,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.53007cm</Height>
+                  <Height>4.37674cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -19850,7 +19850,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.51019cm</Height>
+                  <Height>2.08166cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20063,7 +20063,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.0958cm</Height>
+                  <Height>6.66779cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20276,7 +20276,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.83864cm</Height>
+                  <Height>5.76999cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20381,7 +20381,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>7.79673cm</Height>
+                  <Height>9.02436cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20517,9 +20517,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsDepositAgreement</DataSetName>
-            <Top>392.82775cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>34.14158cm</Height>
+            <Top>460.02482cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>44.44973cm</Height>
             <Width>17cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
@@ -20659,7 +20659,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.68479cm</Height>
+                  <Height>2.04463cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20768,7 +20768,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.62126cm</Height>
+                  <Height>2.06575cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -20877,7 +20877,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.49013cm</Height>
+                  <Height>4.40029cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -21028,7 +21028,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.08876cm</Height>
+                  <Height>2.04642cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -21137,7 +21137,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.43018cm</Height>
+                  <Height>2.92217cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -21246,7 +21246,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.40706cm</Height>
+                  <Height>4.31725cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -21355,7 +21355,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.73229cm</Height>
+                  <Height>1.07094cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -22322,7 +22322,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.54605cm</Height>
+                  <Height>2.15986cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -22534,7 +22534,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.31057cm</Height>
+                  <Height>4.07262cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -22697,9 +22697,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsDepositAgreement</DataSetName>
-            <Top>427.09444cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>30.99371cm</Height>
+            <Top>504.55734cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>34.78255cm</Height>
             <Width>17cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
@@ -22947,7 +22947,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.61862cm</Height>
+                  <Height>3.04195cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -23327,7 +23327,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.60043cm</Height>
+                  <Height>2.46825cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -23753,7 +23753,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.57365cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -23895,7 +23895,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.19269cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -24037,7 +24037,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.71641cm</Height>
+                  <Height>1.6266cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -24361,7 +24361,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>5.38372cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -24504,11 +24504,11 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.61596cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox207">
+                        <Textbox Name="Textbox1521">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24522,7 +24522,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox207</rd:DefaultName>
+                          <rd:DefaultName>Textbox1521</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24537,7 +24537,7 @@ False, True)</Hidden>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox209">
+                        <Textbox Name="Textbox1522">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24557,7 +24557,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox209</rd:DefaultName>
+                          <rd:DefaultName>Textbox1522</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24572,7 +24572,43 @@ False, True)</Hidden>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox219">
+                        <Textbox Name="Textbox1524">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1524</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1525">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24593,7 +24629,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox219</rd:DefaultName>
+                          <rd:DefaultName>Textbox1525</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24604,19 +24640,18 @@ False, True)</Hidden>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell />
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.31965cm</Height>
+                  <Height>3.90198cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox225">
+                        <Textbox Name="Textbox1527">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24630,7 +24665,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox225</rd:DefaultName>
+                          <rd:DefaultName>Textbox1527</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24645,7 +24680,7 @@ False, True)</Hidden>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox293">
+                        <Textbox Name="Textbox1529">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24665,7 +24700,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox293</rd:DefaultName>
+                          <rd:DefaultName>Textbox1529</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24680,7 +24715,43 @@ False, True)</Hidden>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox304">
+                        <Textbox Name="Textbox1530">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1530</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1531">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -24701,7 +24772,7 @@ False, True)</Hidden>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox304</rd:DefaultName>
+                          <rd:DefaultName>Textbox1531</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -24712,15 +24783,14 @@ False, True)</Hidden>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell />
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.17147cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -24863,7 +24933,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.19269cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -25006,7 +25076,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.59481cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -25327,9 +25397,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>458.24239cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>21.49103cm</Height>
+            <Top>539.43068cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>35.79969cm</Height>
             <Width>17.01894cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
@@ -25491,7 +25561,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.12917cm</Height>
+                  <Height>2.08167cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -25600,7 +25670,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.33679cm</Height>
+                  <Height>4.99294cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -25783,7 +25853,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>5.77525cm</Height>
+                  <Height>6.72775cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26074,7 +26144,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.96367cm</Height>
+                  <Height>5.83156cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26235,7 +26305,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6.22092cm</Height>
+                  <Height>6.68656cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26416,7 +26486,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>5.28055cm</Height>
+                  <Height>5.74619cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26555,7 +26625,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.67433cm</Height>
+                  <Height>4.89683cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26698,7 +26768,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.36091cm</Height>
+                  <Height>3.91123cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -26864,9 +26934,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsArticle</DataSetName>
-            <Top>500.40516cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>35.49721cm</Height>
+            <Top>615.54462cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>42.63035cm</Height>
             <Width>17.05101cm</Width>
             <ZIndex>9</ZIndex>
             <Style>
@@ -27006,7 +27076,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.12844cm</Height>
+                  <Height>2.99626cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27244,7 +27314,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.1745cm</Height>
+                  <Height>1.59783cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27374,7 +27444,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.08167cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27516,7 +27586,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>3.92314cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27658,7 +27728,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.08167cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27800,7 +27870,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.06051cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -27942,7 +28012,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.57365cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -28084,7 +28154,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.19269cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -28226,7 +28296,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.57372cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -28368,7 +28438,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.61489cm</Height>
+                  <Height>2.52502cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -28606,7 +28676,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.57897cm</Height>
+                  <Height>6.25679cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -28744,7 +28814,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.64245cm</Height>
+                  <Height>2.06578cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29028,7 +29098,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.10282cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29136,7 +29206,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.48384cm</Height>
+                  <Height>2.99178cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29277,9 +29347,9 @@ False, True)</Hidden>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>479.84735cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>20.49113cm</Height>
+            <Top>575.34412cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>40.09137cm</Height>
             <Width>17.03497cm</Width>
             <ZIndex>10</ZIndex>
             <Style>
@@ -29292,24 +29362,24 @@ False, True)</Hidden>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.98646cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.9988cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.9988cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>0.9988cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>13cm</Width>
+                  <Width>13.0623cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.6759cm</Height>
+                  <Height>0.67721cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29419,7 +29489,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.75528cm</Height>
+                  <Height>1.07223cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29493,7 +29563,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.60131cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29601,7 +29671,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.11858cm</Height>
+                  <Height>1.68953cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -29755,6 +29825,60 @@ False, True)</Hidden>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
+                                  <Value>, </Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>legal code: </Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "P1", 
+    "L30.1." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+    IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "P2", 
+        "L30M.1." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+        IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "E1", 
+            "Z29M.1." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+            IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "E2", 
+                "Z29.1." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+				IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "S1", 
+                "U38A." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+				IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "S2", 
+                "U37A." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+				IIF(Left(First(Fields!prod_name.Value, "dsUnitInfo"), 2) = "SP", 
+                "U37." &amp; Right(First(Fields!prod_name.Value, "dsUnitInfo"), 5),
+                    "null"
+                )
+				)
+				)
+				)
+            )
+    )
+)</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
                                   <Value>) at </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
@@ -29872,7 +29996,7 @@ False, True)</Hidden>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.0552cm</Height>
+                  <Height>2.05651cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30083,7 +30207,7 @@ Replace(Format(First(Fields!prod_netsaleableareaValue.Value, "dsUnitInfo"),"#,##
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.01763cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30225,7 +30349,7 @@ Replace(Format(First(Fields!prod_netsaleableareaValue.Value, "dsUnitInfo"),"#,##
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.84391cm</Height>
+                  <Height>4.4007cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30363,7 +30487,7 @@ Replace(Format(First(Fields!prod_netsaleableareaValue.Value, "dsUnitInfo"),"#,##
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.03932cm</Height>
+                  <Height>2.03877cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30501,7 +30625,7 @@ Replace(Format(First(Fields!prod_netsaleableareaValue.Value, "dsUnitInfo"),"#,##
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.38871cm</Height>
+                  <Height>3.89801cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30661,7 +30785,7 @@ Replace(Format(First(Fields!prod_netsaleableareaValue.Value, "dsUnitInfo"),"#,##
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.1715cm</Height>
+                  <Height>1.17095cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -30829,29 +30953,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>. (a)</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>12pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value xml:space="preserve">   </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Times New Roman</FontFamily>
-                                    <FontSize>7pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>This area is determined in accordance with clause 6 of Article 1 of the Contract;</Value>
+                                  <Value>. This area is determined in accordance with clause 6 of Article 1 of the Contract;</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -30883,7 +30985,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.70583cm</Height>
+                  <Height>0.70714cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31025,7 +31127,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.68996cm</Height>
+                  <Height>0.68941cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31189,7 +31291,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.15562cm</Height>
+                  <Height>1.15693cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31331,7 +31433,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.65292cm</Height>
+                  <Height>1.11805cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31439,7 +31541,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67938cm</Height>
+                  <Height>0.68069cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31624,7 +31726,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.65304cm</Height>
+                  <Height>2.49916cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31788,7 +31890,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.73229cm</Height>
+                  <Height>2.02477cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -31899,7 +32001,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Common use land area: 14,066 square meters (with detailed information and usage conditions as per the Certificate of land use rights, ownership of houses and other land-attached assets No. DB525784 firstly issued by Department of Natural Resources and Environment of Hanoi on 9 April 2021.</Value>
+                                  <Value>Common use land area: 14,066 square meters (with detailed information and usage conditions as per the Certificate of land use rights, ownership of houses and other land-attached assets No. DB525784 firstly issued by Department of Natural Resources and Environment of Hanoi on 9 April 2021).</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -31931,7 +32033,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.15034cm</Height>
+                  <Height>1.14979cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32039,7 +32141,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.59483cm</Height>
+                  <Height>1.59614cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32223,7 +32325,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.10271cm</Height>
+                  <Height>1.10216cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32334,7 +32436,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Construction dossiers and documents: Construction permit No. 23/GPXD issued by the Department of Construction of Hanoi on 12 August 202418 April 2019; Construction permit No. 43/GPXD issued by the Department of Construction of Hanoi on 20 June 2019; Appendix No. 962/SXD-CP issued by the Department of Construction of Hanoi on 05 February 2024 amending Construction permit No. 27/GPXD and Construction permit No. 43/GPXD;</Value>
+                                  <Value>Construction dossiers and documents: Construction permit No. 23/GPXD issued by the Department of Construction of Hanoi on 12 August 2024;</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -32365,7 +32467,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.52074cm</Height>
+                  <Height>1.52205cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32507,7 +32609,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.65779cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32661,7 +32763,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.108cm</Height>
+                  <Height>1.10931cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32769,7 +32871,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.08683cm</Height>
+                  <Height>1.08628cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -32877,7 +32979,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.85399cm</Height>
+                  <Height>2.01946cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -33020,7 +33122,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.93867cm</Height>
+                  <Height>1.12862cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -33184,7 +33286,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.60131cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -33334,10 +33436,10 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>116.884cm</Top>
-            <Left>0.6196cm</Left>
-            <Height>34.07355cm</Height>
-            <Width>17cm</Width>
+            <Top>132.33942cm</Top>
+            <Left>0.68882cm</Left>
+            <Height>41.47191cm</Height>
+            <Width>17.04516cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
               <Border>
@@ -33976,7 +34078,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.73229cm</Height>
+                  <Height>1.17678cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -34394,7 +34496,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.11731cm</Height>
+                  <Height>1.58295cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -34536,7 +34638,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.62488cm</Height>
+                  <Height>3.91084cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -34678,7 +34780,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.61596cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -34820,7 +34922,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.65833cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -34984,7 +35086,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>4.85449cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -35181,7 +35283,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>3.49981cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -35356,7 +35458,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.06051cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -35531,7 +35633,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.63718cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -35706,7 +35808,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.1875cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -35870,7 +35972,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>7.18289cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36045,7 +36147,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>7.71199cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36241,7 +36343,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.61596cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36416,7 +36518,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.61596cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36558,7 +36660,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.70532cm</Height>
+                  <Height>1.12865cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36666,7 +36768,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.59154cm</Height>
+                  <Height>2.99372cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36882,7 +36984,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.06051cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -36994,7 +37096,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1581">
+                        <Textbox Name="Textbox291">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37008,7 +37110,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1581</rd:DefaultName>
+                          <rd:DefaultName>Textbox291</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37023,7 +37125,42 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1582">
+                        <Textbox Name="Textbox311">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox311</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox312">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37043,7 +37180,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1582</rd:DefaultName>
+                          <rd:DefaultName>Textbox312</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37058,7 +37195,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1583">
+                        <Textbox Name="Textbox533">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37079,7 +37216,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1583</rd:DefaultName>
+                          <rd:DefaultName>Textbox533</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37090,19 +37227,18 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell />
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.235cm</Height>
+                  <Height>1.99702cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1586">
+                        <Textbox Name="Textbox1243">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37116,7 +37252,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1586</rd:DefaultName>
+                          <rd:DefaultName>Textbox1243</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37131,7 +37267,42 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1587">
+                        <Textbox Name="Textbox1244">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1244</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1245">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37151,7 +37322,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1587</rd:DefaultName>
+                          <rd:DefaultName>Textbox1245</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37166,7 +37337,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox1588">
+                        <Textbox Name="Textbox1519">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -37187,7 +37358,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox1588</rd:DefaultName>
+                          <rd:DefaultName>Textbox1519</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -37198,10 +37369,9 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell />
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
@@ -37248,9 +37418,9 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>536.04111cm</Top>
-            <Left>0.56914cm</Left>
-            <Height>26.912cm</Height>
+            <Top>658.2291cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>62.19671cm</Height>
             <Width>17.03459cm</Width>
             <ZIndex>12</ZIndex>
             <Style>
@@ -37622,7 +37792,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.25679cm</Height>
+                  <Height>4.79679cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -37752,7 +37922,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.44603cm</Height>
+                  <Height>3.95403cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38285,7 +38455,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.59613cm</Height>
+                  <Height>2.54863cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38412,7 +38582,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6.2152cm</Height>
+                  <Height>7.25236cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38559,7 +38729,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.00859cm</Height>
+                  <Height>2.55893cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38686,7 +38856,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.94674cm</Height>
+                  <Height>3.43357cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38813,7 +38983,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.98281cm</Height>
+                  <Height>3.53315cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -38943,7 +39113,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.14123cm</Height>
+                  <Height>3.13606cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -39117,7 +39287,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.14634cm</Height>
+                  <Height>1.612cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -39247,7 +39417,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.5233cm</Height>
+                  <Height>2.98897cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -39377,7 +39547,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.58555cm</Height>
+                  <Height>2.09356cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -39637,7 +39807,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.58555cm</Height>
+                  <Height>3.00372cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -39918,7 +40088,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.71771cm</Height>
+                  <Height>1.56438cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -40200,7 +40370,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.28406cm</Height>
+                  <Height>2.96139cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -40504,7 +40674,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.02476cm</Height>
+                  <Height>2.5116cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -40786,7 +40956,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.61696cm</Height>
+                  <Height>1.06146cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -41198,7 +41368,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.10801cm</Height>
+                  <Height>1.57367cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -41447,7 +41617,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.51017cm</Height>
+                  <Height>1.59483cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -41566,7 +41736,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.235cm</Height>
+                  <Height>1.67949cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -41696,7 +41866,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.124cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -42150,8 +42320,8 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>54.70205cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>62.04459cm</Height>
+            <Left>0.71364cm</Left>
+            <Height>77.49625cm</Height>
             <Width>17cm</Width>
             <ZIndex>13</ZIndex>
             <Style>
@@ -42409,7 +42579,7 @@ Replace(Format(Sum(Fields!prod_contructionareaValue.Value, "dsUnitInfo"),"#,###0
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.3043cm</Height>
+                  <Height>2.53714cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -42874,7 +43044,7 @@ Replace(Format(Fields!order_totalpriceofunitValue.Value/Sum(Fields!prod_netsalea
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.20709cm</Height>
+                  <Height>1.60925cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -43667,7 +43837,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.17541cm</Height>
+                  <Height>2.04323cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -44487,7 +44657,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.06875cm</Height>
+                  <Height>2.53442cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -44861,7 +45031,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.12917cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45037,7 +45207,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.54926cm</Height>
+                  <Height>2.99375cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45176,7 +45346,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.8592cm</Height>
+                  <Height>6.7642cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45476,9 +45646,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>151.12632cm</Top>
-            <Left>0.63831cm</Left>
-            <Height>29.57942cm</Height>
+            <Top>173.89454cm</Top>
+            <Left>0.6828cm</Left>
+            <Height>34.42657cm</Height>
             <Width>17cm</Width>
             <ZIndex>14</ZIndex>
             <Style>
@@ -45491,7 +45661,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>1.0346cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1cm</Width>
@@ -45508,7 +45678,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>1.59811cm</Height>
+                  <Height>2.48712cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45690,7 +45860,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.57806cm</Height>
+                  <Height>1.5729cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45851,10 +46021,10 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>185.10912cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>2.78429cm</Height>
-            <Width>17cm</Width>
+            <Top>213.83255cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>4.66814cm</Height>
+            <Width>17.0346cm</Width>
             <ZIndex>15</ZIndex>
             <Style>
               <Border>
@@ -45883,7 +46053,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.12917cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -45991,7 +46161,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.65215cm</Height>
+                  <Height>1.13898cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -46134,7 +46304,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.00743cm</Height>
+                  <Height>1.55775cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -46277,7 +46447,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.505cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47001,7 +47171,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.63187cm</Height>
+                  <Height>2.0552cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47180,7 +47350,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.72698cm</Height>
+                  <Height>1.65829cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47392,7 +47562,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.58963cm</Height>
+                  <Height>3.58447cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47538,7 +47708,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.68493cm</Height>
+                  <Height>3.5316cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47681,7 +47851,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.06567cm</Height>
+                  <Height>1.59484cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -47851,9 +48021,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>189.35802cm</Top>
-            <Left>0.60975cm</Left>
-            <Height>13.95077cm</Height>
+            <Top>219.94197cm</Top>
+            <Left>0.65424cm</Left>
+            <Height>21.14741cm</Height>
             <Width>17.04596cm</Width>
             <ZIndex>16</ZIndex>
             <Style>
@@ -48697,7 +48867,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>2.54737cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -49098,7 +49268,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.76972cm</Height>
+                  <Height>3.97619cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -49368,9 +49538,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>563.08024cm</Top>
-            <Left>0.58654cm</Left>
-            <Height>12.1476cm</Height>
+            <Top>720.48961cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>15.30144cm</Height>
             <Width>17.10195cm</Width>
             <ZIndex>17</ZIndex>
             <Style>
@@ -49625,7 +49795,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.17147cm</Height>
+                  <Height>1.57365cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50209,7 +50379,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.46266cm</Height>
+                  <Height>2.99183cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50323,7 +50493,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>) In case the Party affected by the Force Majeure Event cannot remedy to continue performing his/her/its obligations within 180 (one hundred and eighty) days from the occurrence date of the Force Majeure Event and the Parties have no otherwise agreement, each of the Parties has the right to unilaterally terminate this Contract and such termination shall not be considered as a breach of the Contract;</Value>
+                                  <Value>In case the Party affected by the Force Majeure Event cannot remedy to continue performing his/her/its obligations within 180 (one hundred and eighty) days from the occurrence date of the Force Majeure Event and the Parties have no otherwise agreement, each of the Parties has the right to unilaterally terminate this Contract and such termination shall not be considered as a breach of the Contract;</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -50355,7 +50525,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.02333cm</Height>
+                  <Height>1.0657cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50501,7 +50671,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.55766cm</Height>
+                  <Height>1.1292cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50647,7 +50817,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>4.96527cm</Height>
+                  <Height>7.23014cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50777,7 +50947,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.68479cm</Height>
+                  <Height>2.12928cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -50915,9 +51085,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>575.39352cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>17.52161cm</Height>
+            <Top>735.89314cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>21.77623cm</Height>
             <Width>17.06736cm</Width>
             <ZIndex>18</ZIndex>
             <Style>
@@ -50947,7 +51117,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.60101cm</Height>
+                  <Height>0.66447cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -51057,7 +51227,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.62783cm</Height>
+                  <Height>1.07239cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -51182,9 +51352,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>593.01949cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>1.22884cm</Height>
+            <Top>757.79489cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>1.73686cm</Height>
             <Width>17.09078cm</Width>
             <ZIndex>19</ZIndex>
             <Style>
@@ -51288,7 +51458,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.19269cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -51499,7 +51669,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>1.15032cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -51658,7 +51828,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.3cm</Height>
+                  <Height>0.32122cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -52570,9 +52740,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsCustomerInfo</DataSetName>
-            <Top>594.29473cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>6.44697cm</Height>
+            <Top>759.70513cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>7.6112cm</Height>
             <Width>17cm</Width>
             <ZIndex>20</ZIndex>
             <Style>
@@ -53134,7 +53304,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.19891cm</Height>
+                  <Height>2.53763cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -53242,7 +53412,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.67077cm</Height>
+                  <Height>1.0941cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -53526,7 +53696,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>1.14241cm</Height>
+                  <Height>1.5869cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -53668,7 +53838,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.14365cm</Height>
+                  <Height>3.46115cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -53810,7 +53980,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.15784cm</Height>
+                  <Height>2.53887cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -53943,9 +54113,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>600.82272cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>13.66451cm</Height>
+            <Top>767.50312cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>15.56958cm</Height>
             <Width>17.03633cm</Width>
             <ZIndex>21</ZIndex>
             <Style>
@@ -54560,8 +54730,8 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>614.57809cm</Top>
-            <Left>0.60373cm</Left>
+            <Top>783.16349cm</Top>
+            <Left>0.64822cm</Left>
             <Height>14.32141cm</Height>
             <Width>17.01116cm</Width>
             <ZIndex>22</ZIndex>
@@ -54702,7 +54872,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.48916cm</Height>
+                  <Height>2.51031cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -54792,9 +54962,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>628.991cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>3.18595cm</Height>
+            <Top>797.5764cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>3.2071cm</Height>
             <Width>17.04448cm</Width>
             <ZIndex>23</ZIndex>
             <Style>
@@ -55043,7 +55213,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>3.05603cm</Height>
+                  <Height>4.41064cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -55116,7 +55286,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>The Contract includes 19 (nineteen) articles, with 33-34 pages subject to the Buyer’s information and payment scheme (excluding appendices attached to this Contract), and is made in 04 (four) copies in Vietnamese with equal legal validity. The Buyer shall keep 01 (one) copy and the Seller shall keep 03 (three) copies for filing, carrying out procedures for payment of taxes, fees and the issuance of the Certificate for the Buyer.</Value>
+                                  <Value>The Contract includes 19 (nineteen) articles, with 34-35 pages subject to the Buyer’s information and payment scheme (excluding appendices attached to this Contract), and is made in 04 (four) copies in Vietnamese with equal legal validity. The Buyer shall keep 01 (one) copy and the Seller shall keep 03 (three) copies for filing, carrying out procedures for payment of taxes, fees and the issuance of the Certificate for the Buyer.</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Times New Roman</FontFamily>
@@ -55165,7 +55335,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>2.13991cm</Height>
+                  <Height>4.42594cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -55382,9 +55552,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>632.27783cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>7.86323cm</Height>
+            <Top>800.90567cm</Top>
+            <Left>0.64822cm</Left>
+            <Height>11.50387cm</Height>
             <Width>17.04448cm</Width>
             <ZIndex>24</ZIndex>
             <Style>
@@ -56546,7 +56716,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>640.29025cm</Top>
+            <Top>812.49514cm</Top>
             <Left>0.56916cm</Left>
             <Height>15.04639cm</Height>
             <Width>17.5cm</Width>
@@ -57131,7 +57301,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>791.2457cm</Top>
+            <Top>963.13309cm</Top>
             <Left>0.64822cm</Left>
             <Height>8.76854cm</Height>
             <Width>17.53566cm</Width>
@@ -58248,7 +58418,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>800.18135cm</Top>
+            <Top>972.06874cm</Top>
             <Left>0.64822cm</Left>
             <Height>14.71719cm</Height>
             <Width>17.5cm</Width>
@@ -58579,7 +58749,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>815.03444cm</Top>
+            <Top>986.92183cm</Top>
             <Left>0.60375cm</Left>
             <Height>4.36383cm</Height>
             <Width>17.5cm</Width>
@@ -67653,7 +67823,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>819.53335cm</Top>
+            <Top>991.42074cm</Top>
             <Left>0.56915cm</Left>
             <Height>59.45811cm</Height>
             <Width>17.5cm</Width>
@@ -67682,7 +67852,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.67938cm</Height>
+                  <Height>1.10271cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -67830,7 +68000,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.75875cm</Height>
+                  <Height>1.13974cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -67979,7 +68149,7 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.74817cm</Height>
+                  <Height>1.15033cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -68653,9 +68823,9 @@ First(Fields!opt_TotalTax_EN.Value, "dsReadMoney"))</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
-            <Top>180.85297cm</Top>
-            <Left>0.60373cm</Left>
-            <Height>4.16974cm</Height>
+            <Top>208.36252cm</Top>
+            <Left>0.6828cm</Left>
+            <Height>5.37622cm</Height>
             <Width>16.96541cm</Width>
             <ZIndex>30</ZIndex>
             <Style>
@@ -70510,7 +70680,7 @@ Fields!coo_con_dategrant.Value)</Value>
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value>, issued by: </Value>
+                                      <Value>, issued on: </Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -70523,8 +70693,8 @@ Fields!coo_con_dategrant.Value)</Value>
                                     <TextRun>
                                       <Value>=IIF(IsNothing(Fields!con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!cont_passportissuedon.Value) = True, "", 
-Fields!cont_passportissuedon.Value), 
-Fields!con_dategrant.Value)</Value>
+Format(CDate(Fields!cont_passportissuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -70536,7 +70706,7 @@ Fields!con_dategrant.Value)</Value>
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value>, on </Value>
+                                      <Value>, by </Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -71529,7 +71699,7 @@ Fields!con_dategrant.Value)</Value>
               </Tablix>
             </ReportItems>
             <Top>42.97285cm</Top>
-            <Left>0.50233cm</Left>
+            <Left>0.70578cm</Left>
             <Height>11.565cm</Height>
             <Width>18.03598cm</Width>
             <ZIndex>31</ZIndex>
@@ -71808,7 +71978,7 @@ Fields!con_dategrant.Value)</Value>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>34cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>2.75235cm</Height>
             <Width>17cm</Width>
             <ZIndex>32</ZIndex>
@@ -71950,7 +72120,7 @@ Fields!con_dategrant.Value)</Value>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>36.82291cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>0.48833cm</Height>
             <Width>17cm</Width>
             <ZIndex>33</ZIndex>
@@ -72280,7 +72450,7 @@ Fields!con_dategrant.Value)</Value>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>37.34652cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>1.09511cm</Height>
             <Width>17cm</Width>
             <ZIndex>34</ZIndex>
@@ -72876,7 +73046,7 @@ Fields!con_dategrant.Value)</Value>
             </TablixRowHierarchy>
             <DataSetName>dsContract</DataSetName>
             <Top>38.54041cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>4.29227cm</Height>
             <Width>17cm</Width>
             <ZIndex>35</ZIndex>
@@ -73626,7 +73796,7 @@ Fields!con_dategrant.Value)</Value>
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>879.21737cm</Top>
+            <Top>1051.10476cm</Top>
             <Left>0.56916cm</Left>
             <Height>6.85721cm</Height>
             <Width>17.5cm</Width>
@@ -73715,7 +73885,7 @@ Fields!con_dategrant.Value)</Value>
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Right("0" &amp; First(Fields!ContractDate.Value, "dsContract"), 2)</Value>
+                    <Value>=Right("0" &amp; Month(First(Fields!ContractDate.Value, "dsContract")), 2)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Times New Roman</FontFamily>
@@ -73791,7 +73961,7 @@ Fields!con_dategrant.Value)</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox65</rd:DefaultName>
             <Top>32.58087cm</Top>
-            <Left>0.60373cm</Left>
+            <Left>0.71364cm</Left>
             <Height>0.60747cm</Height>
             <Width>17cm</Width>
             <ZIndex>37</ZIndex>
@@ -73851,7 +74021,7 @@ Fields!con_dategrant.Value)</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox678</rd:DefaultName>
             <Top>33.25889cm</Top>
-            <Left>0.63831cm</Left>
+            <Left>0.74822cm</Left>
             <Height>0.6cm</Height>
             <Width>17cm</Width>
             <ZIndex>38</ZIndex>
@@ -74029,7 +74199,7 @@ Fields!con_dategrant.Value)</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>655.55237cm</Top>
+            <Top>827.75726cm</Top>
             <Left>0.56915cm</Left>
             <Height>3.13554cm</Height>
             <Width>17.5cm</Width>
@@ -74201,7 +74371,7 @@ Fields!con_dategrant.Value)</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>710.02161cm</Top>
+            <Top>882.2265cm</Top>
             <Left>0.60375cm</Left>
             <Height>3.13554cm</Height>
             <Width>17.5cm</Width>
@@ -74392,7 +74562,7 @@ Fields!con_dategrant.Value)</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>763.68908cm</Top>
+            <Top>935.89397cm</Top>
             <Left>0.56916cm</Left>
             <Height>3.13554cm</Height>
             <Width>17.5cm</Width>
@@ -74454,8 +74624,7 @@ IIF(
               </Image>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>658.82902cm</Top>
-            <Left>0cm</Left>
+            <Top>831.03391cm</Top>
             <Height>24.76321cm</Height>
             <Width>18.49999cm</Width>
             <ZIndex>42</ZIndex>
@@ -74482,7 +74651,7 @@ IIF(
               </Image>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>683.89135cm</Top>
+            <Top>856.09624cm</Top>
             <Left>0.03458cm</Left>
             <Height>25.95387cm</Height>
             <Width>18.46541cm</Width>
@@ -74502,8 +74671,6 @@ IIF(
                 <Source>External</Source>
                 <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo") &amp; "&amp;stt=1"</Value>
                 <Sizing>Fit</Sizing>
-                <Top>0cm</Top>
-                <Left>0cm</Left>
                 <Height>24.68831cm</Height>
                 <Width>18.46541cm</Width>
                 <Style>
@@ -74514,7 +74681,7 @@ IIF(
               </Image>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>713.33354cm</Top>
+            <Top>885.53843cm</Top>
             <Left>0.03458cm</Left>
             <Height>24.83678cm</Height>
             <Width>18.46541cm</Width>
@@ -74531,40 +74698,6 @@ IIF(
                 <Source>External</Source>
                 <Value>= First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=floor&amp;id=" &amp; First(Fields!prod_floorid.Value, "dsUnitInfo") &amp; "&amp;stt=2"</Value>
                 <Sizing>Fit</Sizing>
-                <Top>0cm</Top>
-                <Left>0cm</Left>
-                <Height>24.86536cm</Height>
-                <Width>18.46541cm</Width>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                </Style>
-              </Image>
-            </ReportItems>
-            <KeepTogether>true</KeepTogether>
-            <Top>738.34671cm</Top>
-            <Left>0cm</Left>
-            <Height>25.16598cm</Height>
-            <Width>18.49999cm</Width>
-            <ZIndex>45</ZIndex>
-            <Visibility>
-              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0, False, True)</Hidden>
-            </Visibility>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
-          <Rectangle Name="Rectangle7">
-            <ReportItems>
-              <Image Name="Image5">
-                <Source>External</Source>
-                <Value>=First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=block&amp;id=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
-                <Sizing>Fit</Sizing>
-                <Top>0cm</Top>
-                <Left>0cm</Left>
                 <Height>23.82799cm</Height>
                 <Width>18.46541cm</Width>
                 <Style>
@@ -74575,11 +74708,13 @@ IIF(
               </Image>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>767.00101cm</Top>
-            <Left>0cm</Left>
-            <Height>24.0683cm</Height>
-            <Width>18.46541cm</Width>
-            <ZIndex>46</ZIndex>
+            <Top>910.5516cm</Top>
+            <Height>25.16598cm</Height>
+            <Width>18.49999cm</Width>
+            <ZIndex>45</ZIndex>
+            <Visibility>
+              <Hidden>=IIF(InStr(1, LCase(First(Fields!unittype_code.Value, "dsUnitInfo")), "dup") &gt; 0, False, True)</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -74821,7 +74956,7 @@ IIF(
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value> firstly issued by </Value>
+                                      <Value> firstly issued on </Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -74845,7 +74980,7 @@ CDate(Fields!acc_RegIssuedon.Value))</Value>
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value> on</Value>
+                                      <Value> by</Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -75685,8 +75820,8 @@ CDate(Fields!acc_RegIssuedon.Value))</Value>
                                     <TextRun>
                                       <Value>=IIF(IsNothing(Fields!primary_dategrant.Value) = True, 
 IIF(IsNothing(Fields!primary_issuedon.Value) = True, "", 
-Fields!primary_issuedon.Value), 
-Fields!primary_dategrant.Value)</Value>
+Format(CDate(Fields!primary_issuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!primary_dategrant.Value), "dd/MM/yyyy"))</Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -76638,10 +76773,10 @@ Fields!primary_dategrant.Value)</Value>
               </Tablix>
             </ReportItems>
             <Top>42.97285cm</Top>
-            <Left>0.53831cm</Left>
+            <Left>0.6828cm</Left>
             <Height>9.3938cm</Height>
             <Width>17.3cm</Width>
-            <ZIndex>47</ZIndex>
+            <ZIndex>46</ZIndex>
             <Visibility>
               <Hidden>=IIF(IsNothing(First(Fields!acc_name.Value, "dsCustomerInfo")) = False Or IsNothing(First(Fields!acc_nameSys.Value, "dsCustomerInfo")) = False, False, True)</Hidden>
             </Visibility>
@@ -76953,7 +77088,7 @@ Fields!primary_dategrant.Value)</Value>
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value>, issued by: </Value>
+                                      <Value>, issued on: </Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -76966,8 +77101,8 @@ Fields!primary_dategrant.Value)</Value>
                                     <TextRun>
                                       <Value>=IIF(IsNothing(Fields!con_dategrant.Value) = True, 
 IIF(IsNothing(Fields!cont_passportissuedon.Value) = True, "", 
-Fields!cont_passportissuedon.Value), 
-Fields!con_dategrant.Value)</Value>
+Format(CDate(Fields!cont_passportissuedon.Value), "dd/MM/yyyy")), 
+Format(CDate(Fields!con_dategrant.Value), "dd/MM/yyyy"))</Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -76981,7 +77116,30 @@ Fields!con_dategrant.Value)</Value>
                                       </Style>
                                     </TextRun>
                                     <TextRun>
-                                      <Value> on </Value>
+                                      <Value xml:space="preserve"> </Value>
+                                      <Style>
+                                        <FontStyle>Normal</FontStyle>
+                                        <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                        <FontWeight>Normal</FontWeight>
+                                        <Format>dd/MM/yyyy</Format>
+                                        <TextDecoration>None</TextDecoration>
+                                        <Color>#000000</Color>
+                                      </Style>
+                                    </TextRun>
+                                    <TextRun>
+                                      <Value>by</Value>
+                                      <Style>
+                                        <FontStyle>Normal</FontStyle>
+                                        <FontFamily>Times New Roman</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                        <FontWeight>Normal</FontWeight>
+                                        <TextDecoration>None</TextDecoration>
+                                        <Color>#000000</Color>
+                                      </Style>
+                                    </TextRun>
+                                    <TextRun>
+                                      <Value xml:space="preserve"> </Value>
                                       <Style>
                                         <FontStyle>Normal</FontStyle>
                                         <FontFamily>Times New Roman</FontFamily>
@@ -78054,10 +78212,10 @@ Fields!con_dategrant.Value)</Value>
               </Tablix>
             </ReportItems>
             <Top>42.97285cm</Top>
-            <Left>0.53831cm</Left>
+            <Left>0.64822cm</Left>
             <Height>6.1cm</Height>
             <Width>17.6cm</Width>
-            <ZIndex>48</ZIndex>
+            <ZIndex>47</ZIndex>
             <Visibility>
               <Hidden>=IIF(IsNothing(First(Fields!coo_cont_name.Value, "dsCustomerInfo")) = False Or IsNothing(First(Fields!coo_cont_nameSys.Value, "dsCustomerInfo")) = False Or IsNothing(First(Fields!acc_name.Value, "dsCustomerInfo")) = False Or IsNothing(First(Fields!acc_nameSys.Value, "dsCustomerInfo")) = False, True, False)</Hidden>
             </Visibility>
@@ -78071,7 +78229,7 @@ Fields!con_dategrant.Value)</Value>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1cm</Width>
+                  <Width>1.03458cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1cm</Width>
@@ -78489,26 +78647,56 @@ Format(CDate(Fields!psduedate.Value), "dd/MM/yyyy"), "")</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>dsInstallmentOther</DataSetName>
-            <Top>187.98729cm</Top>
-            <Left>0.60373cm</Left>
+            <Top>218.57124cm</Top>
+            <Left>0.64822cm</Left>
             <Height>1.17258cm</Height>
-            <Width>17cm</Width>
-            <ZIndex>49</ZIndex>
+            <Width>17.03458cm</Width>
+            <ZIndex>48</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Rectangle Name="Rectangle9">
+            <ReportItems>
+              <Image Name="Image6">
+                <Source>External</Source>
+                <Value>=First(Fields!urlPa.Value, "GetUrlPA") &amp; "&amp;entity=block&amp;id=" &amp; First(Fields!blockid.Value, "dsUnitInfo")</Value>
+                <Sizing>Fit</Sizing>
+                <Height>23.65786cm</Height>
+                <Width>17.11781cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Image>
+            </ReportItems>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>939.13534cm</Top>
+            <Left>0.56499cm</Left>
+            <Height>23.65786cm</Height>
+            <Width>17.53876cm</Width>
+            <ZIndex>49</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
         </ReportItems>
-        <Height>886.07458cm</Height>
+        <Height>1058.15958cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>18.53831cm</Width>
+      <Width>18.74176cm</Width>
       <Page>
         <PageFooter>
           <Height>1.00542cm</Height>
@@ -78535,7 +78723,7 @@ Format(CDate(Fields!psduedate.Value), "dd/MM/yyyy"), "")</Value>
               </Paragraphs>
               <rd:DefaultName>Textbox22</rd:DefaultName>
               <Top>0.20271cm</Top>
-              <Left>14.07727cm</Left>
+              <Left>14.18718cm</Left>
               <Height>0.6cm</Height>
               <Width>4.06104cm</Width>
               <Style>
@@ -78571,7 +78759,7 @@ Format(CDate(Fields!psduedate.Value), "dd/MM/yyyy"), "")</Value>
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes/&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
+          <Value>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false"&gt;&lt;entity name="salesorder"&gt;&lt;all-attributes /&gt;&lt;/entity&gt;&lt;/fetch&gt;</Value>
         </Values>
       </DefaultValue>
       <Prompt>CRM_salesorder</Prompt>
