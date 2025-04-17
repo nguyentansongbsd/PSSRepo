@@ -16,66 +16,48 @@ namespace Plugin_VoidPayment_updatePendingPM
         Miscellaneous miscellaneous;
         int i_Ustatus;
         int i_oeStatus;
-        StringBuilder strMess = new StringBuilder();
-        public ApplyDocument(IOrganizationService service, IPluginExecutionContext context, StringBuilder strMess1)
+        public ApplyDocument(IOrganizationService service, IPluginExecutionContext context)
         {
             this.service = service;
             this.context = context;
-            advancePayment = new AdvancePayment(service, context, strMess);
-            transactionPayment = new TransactionPayment(service, context, strMess);
-            installment = new Installment(service, context, strMess);
-            miscellaneous = new Miscellaneous(service, context, strMess);
-            strMess = strMess1;
+            advancePayment = new AdvancePayment(service, context);
+            transactionPayment = new TransactionPayment(service, context);
+            installment = new Installment(service, context);
+            miscellaneous = new Miscellaneous(service, context);
         }
         public void voidApplyDocument(Entity en_voidPM, Entity en_app)
         {
             DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
-            // bsd_transactiontype : 1: deposit // 2: installment
             int i_bsd_transactiontype = ((OptionSetValue)en_app["bsd_transactiontype"]).Value;
             checkInput(en_app);
             string s_bsd_arraypsdid = en_app.Contains("bsd_arraypsdid") ? (string)en_app["bsd_arraypsdid"] : "";
             string s_bsd_arrayamountpay = en_app.Contains("bsd_arrayamountpay") ? (string)en_app["bsd_arrayamountpay"] : "";
-            // --------------------- transaction type = 1 - deposit ------------------
-            if (i_bsd_transactiontype == 1)
+            if (i_bsd_transactiontype == 1)//deposit
             {
                 string[] s_psd = s_bsd_arraypsdid.Split(',');
                 string[] s_Amp = s_bsd_arrayamountpay.Split(',');
                 int i_psd = s_psd.Length;
 
-                // update deposit ( Quote)
                 for (int m = 0; m < i_psd; m++)
                 {
                     voidDeposit(Guid.Parse(s_psd[m]), decimal.Parse(s_Amp[m]), d_now, en_app);
                 }
 
-            } // end of transaction type = deposit
-
-
-            // ---------------- transaction type = 2 - installment -----------------
-            if (i_bsd_transactiontype == 2)
+            }
+            else if (i_bsd_transactiontype == 2)//installment
             {
                 voidInstallment(en_voidPM, en_app);
             }
-            strMess.AppendLine("Void Apply Document");
-
-
-
             // ---------------  update advance payment list -------------------
-            strMess.AppendLine("update advance payment list");
             decimal d_bsd_totalapplyamount = en_app.Contains("bsd_totalapplyamount") ? ((Money)en_app["bsd_totalapplyamount"]).Value : 0;
             decimal d_tmp = d_bsd_totalapplyamount;
             string s_bsd_arrayadvancepayment = (string)en_app["bsd_arrayadvancepayment"];
-            strMess.AppendLine("s_bsd_arrayadvancepayment: " + s_bsd_arrayadvancepayment);
             string s_bsd_arrayamountadvance = (string)en_app["bsd_arrayamountadvance"];
-            strMess.AppendLine("s_bsd_arrayamountadvance: " + s_bsd_arrayamountadvance);
             string[] s_eachAdv = s_bsd_arrayadvancepayment.Split(',');
             string[] s_amAdv = s_bsd_arrayamountadvance.Split(',');
             int i_adv = s_eachAdv.Length;
             for (int n = 0; n < i_adv; n++)
             {
-                strMess.AppendLine("Begin loop " + n.ToString());
-                strMess.AppendLine(d_tmp.ToString() + " - " + s_amAdv[n].ToString() + " = " + (d_tmp - decimal.Parse(s_amAdv[n])).ToString());
-
                 if (d_tmp == 0) break;
                 // so tien can tra cho applydoc = so tien cua adv check dau tien - k can update nua - chi update cho adv nay thoi
                 if (d_tmp == decimal.Parse(s_amAdv[n]))
@@ -95,17 +77,12 @@ namespace Plugin_VoidPayment_updatePendingPM
                     revert_Up_adv(Guid.Parse(s_eachAdv[n]), decimal.Parse(s_amAdv[n])); // payoff
                     d_tmp -= decimal.Parse(s_amAdv[n]);
                 }
-                strMess.AppendLine("End loop " + n.ToString());
-                strMess.AppendLine(d_tmp.ToString());
             }
             //--------------- end update adv ----------------
-            strMess.AppendLine("update apply document");
             Entity en_appUp = new Entity(en_app.LogicalName);
             en_appUp.Id = en_app.Id;
             en_appUp["statuscode"] = new OptionSetValue(100000004);
             service.Update(en_appUp);
-            strMess.AppendLine("update apply document done");
-            strMess.AppendLine("update apply document detail");
             EntityCollection ec_appDtl = Get_appDtl(en_app.Id);
             if (ec_appDtl.Entities.Count > 0)
             {
@@ -117,58 +94,15 @@ namespace Plugin_VoidPayment_updatePendingPM
                     service.Update(en_dtl);
                 }
             }
-            strMess.AppendLine("update apply document detail done");
 
         }
         public void checkInput(Entity en_app)
         {
             if (((OptionSetValue)en_app["statuscode"]).Value == 100000004)
                 throw new InvalidPluginExecutionException("Apply document '" + (string)en_app["bsd_name"] + "' has been revert!");
-
             if (!en_app.Contains("bsd_transactiontype"))
                 throw new InvalidPluginExecutionException("Please choose 'Type of payment'!");
-            // apply document - input advance payment
-            int i_bsd_transactiontype = ((OptionSetValue)en_app["bsd_transactiontype"]).Value;
-            decimal d_bsd_amountadvancepayment = en_app.Contains("bsd_amountadvancepayment") ? ((Money)en_app["bsd_amountadvancepayment"]).Value : 0;
-            if (d_bsd_amountadvancepayment == 0) throw new InvalidPluginExecutionException("Cannot find 'Amount Advance Payment' of " + (string)en_app["bsd_name"] + "!");
-            if (!en_app.Contains("bsd_arrayadvancepayment")) throw new InvalidPluginExecutionException("Cannot find any advance payment data of " + (string)en_app["bsd_name"] + "!");
-            if (!en_app.Contains("bsd_arrayamountadvance")) throw new InvalidPluginExecutionException("Cannot find any amount of advance payment list of " + (string)en_app["bsd_name"] + "!");
-
-            string s_bsd_arrayadvancepayment = (string)en_app["bsd_arrayadvancepayment"];
-            string s_bsd_arrayamountadvance = (string)en_app["bsd_arrayamountadvance"];
-            string[] s_eachAdv = s_bsd_arrayadvancepayment.Split(',');
-            string[] s_amAdv = s_bsd_arrayamountadvance.Split(',');
-            int i_adv = s_eachAdv.Length;
-
-            // installment & deposit list
-            decimal d_bsd_totalapplyamount = en_app.Contains("bsd_totalapplyamount") ? ((Money)en_app["bsd_totalapplyamount"]).Value : 0;
-            if (d_bsd_totalapplyamount == 0) throw new InvalidPluginExecutionException("Cannot find total apply amount of " + (string)en_app["bsd_name"] + "!");
-
-            // Check Array ID
-            if (!en_app.Contains("bsd_arraypsdid") && !en_app.Contains("bsd_arrayinstallmentinterest") && !en_app.Contains("bsd_arrayfeesid") && !en_app.Contains("bsd_arraymicellaneousid"))
-                throw new InvalidPluginExecutionException("Please choose at least one row of " + ((i_bsd_transactiontype == 1) ? " Deposit list!" : " Installment or Interest or Fees or Misc List!"));
-
-            //Check Array Amount
-            if (!en_app.Contains("bsd_arrayamountpay") && !en_app.Contains("bsd_arrayinterestamount") && !en_app.Contains("bsd_arrayfeesamount") && !en_app.Contains("bsd_arraymicellaneousamount"))
-                throw new InvalidPluginExecutionException("Cannot find any amount of " + ((i_bsd_transactiontype == 1) ? " Deposit list!" : " Installment or Interest or Fees or Misc List!"));
-
-            if (d_bsd_totalapplyamount > d_bsd_amountadvancepayment) throw new InvalidPluginExecutionException("The amout you pay exceeds the amount paid. Please choose another Advance Payment or other Payment Phase!");
-
-            string s_bsd_arraypsdid = en_app.Contains("bsd_arraypsdid") ? (string)en_app["bsd_arraypsdid"] : "";
-            string s_bsd_arrayamountpay = en_app.Contains("bsd_arrayamountpay") ? (string)en_app["bsd_arrayamountpay"] : "";
-
-            string s_bsd_arrayinstallmentinterest = en_app.Contains("bsd_arrayinstallmentinterest") ? (string)en_app["bsd_arrayinstallmentinterest"] : "";
-            string s_bsd_arrayinterestamount = en_app.Contains("bsd_arrayinterestamount") ? (string)en_app["bsd_arrayinterestamount"] : "";
-
-            string s_fees = en_app.Contains("bsd_arrayfeesid") ? (string)en_app["bsd_arrayfeesid"] : "";
-            string s_feesAM = en_app.Contains("bsd_arrayfeesamount") ? (string)en_app["bsd_arrayfeesamount"] : "";
-            string s_bsd_arraymicellaneousid = en_app.Contains("bsd_arraymicellaneousid") ? (string)en_app["bsd_arraymicellaneousid"] : "";
-            string s_bsd_arraymicellaneousamount = en_app.Contains("bsd_arraymicellaneousamount") ? (string)en_app["bsd_arraymicellaneousamount"] : "";
-
-            decimal d_tienconlai = d_bsd_amountadvancepayment - d_bsd_totalapplyamount;
-
         }
-
         public void voidDeposit(Guid quoteId, decimal d_amp, DateTime d_now, Entity en_app)
         {
             Entity en_Resv = service.Retrieve("quote", quoteId, new ColumnSet(new string[] {
@@ -303,13 +237,11 @@ namespace Plugin_VoidPayment_updatePendingPM
             voidPayFees(en_voidPM, en_app, en_OE);
             // ----------------------------MISS---------------------------
             voidPayMisc(en_voidPM, en_app, en_OE);
-            strMess.AppendLine("end MISS");
 
             //----------------------- end MISS ---------------------
 
 
         }
-
         private void checkPaidInstalment(string[] s_psd, Guid oe)
         {
             int bsd_ordernumber = getNumberMax(s_psd);
@@ -782,16 +714,11 @@ namespace Plugin_VoidPayment_updatePendingPM
         }
         private void voidPayMisc(Entity en_voidPM, Entity en_app, Entity en_OE)
         {
-            strMess.AppendLine("s_bsd_arraymicellaneousid installment");
             string s_bsd_arraymicellaneousid = en_app.Contains("bsd_arraymicellaneousid") ? (string)en_app["bsd_arraymicellaneousid"] : "";
             string s_bsd_arraymicellaneousamount = en_app.Contains("bsd_arraymicellaneousamount") ? (string)en_app["bsd_arraymicellaneousamount"] : "";
-            strMess.AppendLine("s_bsd_arraymicellaneousid: " + s_bsd_arraymicellaneousid);
             if (s_bsd_arraymicellaneousid != "")
             {
-                //string[] s_MissID = s_bsd_arraymicellaneousid.Split(',');
-                //string[] s_MissAM = s_bsd_arraymicellaneousamount.Split(',');
                 decimal d_ampay = 0;
-                strMess.AppendLine("Void mis s_bsd_arraymicellaneousid != ''");
                 EntityCollection ec_appDtl_Mis = get_app_MISS(service, en_app.Id);
                 if (ec_appDtl_Mis.Entities.Count > 0)
                 {
@@ -891,10 +818,8 @@ namespace Plugin_VoidPayment_updatePendingPM
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-
         private void revert_Up_adv(Guid advID, decimal trans_am)
         {
-            strMess.AppendLine("advID: " + advID.ToString() + " trans_am: " + trans_am.ToString());
             Entity en_up = service.Retrieve("bsd_advancepayment", advID, new ColumnSet(new string[] {
                "bsd_name",
                         "bsd_remainingamount",
@@ -909,9 +834,6 @@ namespace Plugin_VoidPayment_updatePendingPM
             decimal d_bsd_paidamount = en_up.Contains("bsd_paidamount") ? ((Money)en_up["bsd_paidamount"]).Value : 0;
             decimal d_bsd_remainingamount = en_up.Contains("bsd_remainingamount") ? ((Money)en_up["bsd_remainingamount"]).Value : 0;
             decimal d_bsd_amount = en_up.Contains("bsd_amount") ? ((Money)en_up["bsd_amount"]).Value : 0;
-            strMess.AppendLine("d_bsd_paidamount: " + d_bsd_paidamount.ToString());
-            strMess.AppendLine("d_bsd_remainingamount: " + d_bsd_remainingamount.ToString());
-            strMess.AppendLine("d_bsd_amount: " + d_bsd_amount.ToString());
             if (d_bsd_amount == 0) throw new InvalidPluginExecutionException("Cannot find Advance payment amount of " + (string)en_up["bsd_name"] + "!");
             if (d_bsd_amount < trans_am) throw new InvalidPluginExecutionException("Transaction amount is larger than Advance payment amount!");
 
@@ -921,13 +843,11 @@ namespace Plugin_VoidPayment_updatePendingPM
             if (i_status == 100000001) // revert
                 i_status = 100000000;
             Entity en_adv = new Entity("bsd_advancepayment");
-            strMess.AppendLine("Begin update Adv");
             en_adv.Id = advID;
             en_adv["bsd_remainingamount"] = new Money(d_bsd_remainingamount);
             en_adv["bsd_paidamount"] = new Money(d_bsd_paidamount);
             en_adv["statuscode"] = new OptionSetValue(i_status);
             service.Update(en_adv);
-            strMess.AppendLine("Update Adv done");
         }
         public EntityCollection Get_appDtl(Guid appID)
         {
@@ -954,7 +874,6 @@ namespace Plugin_VoidPayment_updatePendingPM
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-
         public EntityCollection get_appDtl_Ins(Guid appID, Guid InsID)
         {
             string fetchXml =

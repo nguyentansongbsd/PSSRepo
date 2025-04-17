@@ -105,11 +105,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 ins[field] = true;
                                                 traceService.Trace("step1");
                                                 string field2 = "bsd_warningdate" + (numberofWarning + 1);
-                                                ins[field] = enWRN["bsd_date"];
+                                                ins[field2] =((DateTime)enWRN["bsd_date"]).AddHours(7);
                                                 traceService.Trace("step2");
 
                                                 string field3 = "bsd_w_noticesnumber" + (numberofWarning + 1);
-                                                ins[field] = enWRN["bsd_noticesnumber"];
+                                                ins[field3] = enWRN["bsd_noticesnumber"];
                                                 traceService.Trace("step3");
 
                                                 service.Update(ins);
@@ -152,13 +152,21 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                             if (graceday != -1)
                                                 warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
                                         }
-                                        service.Create(warningNotices);
-                                        dem++;
+                                        var id = service.Create(warningNotices);
+                                        var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
 
                                         Entity ins = new Entity(PSD.LogicalName);
                                         ins.Id = PSD.Id;
                                         string field = "bsd_warningnotices1";
                                         ins[field] = true;
+                                        traceService.Trace("step1z");
+                                        string field2 = "bsd_warningdate" + (1);
+                                        ins[field2] = ((DateTime)enWRN["bsd_date"]).AddHours(7);
+                                        traceService.Trace("step2z");
+
+                                        string field3 = "bsd_w_noticesnumber" + (1);
+                                        ins[field3] = enWRN["bsd_noticesnumber"];
+                                        traceService.Trace("step3z");
                                         service.Update(ins);
                                     }
                                 }

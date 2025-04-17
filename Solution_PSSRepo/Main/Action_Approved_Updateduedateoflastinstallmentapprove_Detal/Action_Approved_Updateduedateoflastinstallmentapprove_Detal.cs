@@ -258,6 +258,8 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
             enMaster["bsd_processing_pa"] = false;
 
             enMaster["statuscode"] = new OptionSetValue(1);
+            enMaster["bsd_approvedrejectedperson"] = null;
+            enMaster["bsd_approvedrejecteddate"] = null;
             service.Update(enMaster);
             tracingService.Trace("error nè");
         }

@@ -175,7 +175,10 @@ namespace Action_Resv_GenPMS
                     decimal depositfee = item.Contains("quote.bsd_depositfee") ? ((Money)((AliasedValue)item["quote.bsd_depositfee"]).Value).Value : 0;
                     decimal bsd_amountofthisphase = item.Contains("bsd_amountofthisphase") ? ((Money)item["bsd_amountofthisphase"]).Value : 0;
                     if (depositfee > bsd_amountofthisphase)
-                        throw new InvalidPluginExecutionException("Payment scheme is not valid. Please check again.");
+                    {
+                        traceService.Trace("bsd_amountofthisphase " + bsd_amountofthisphase);
+                        throw new InvalidPluginExecutionException("The deposit amount must be less than the first installment amount.");
+                    }
                 }
                 #endregion
 

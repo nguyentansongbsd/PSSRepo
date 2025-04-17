@@ -19,14 +19,65 @@ function onload(executionContextObj) {
     }
 }
 function lock_ins() {
+    var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
+
     var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
-    if (installmentnumber != null) {
-        Xrm.Page.getControl("bsd_installment").setDisabled(true);
+    if (optionentry != null) {
+        if (installmentnumber != null) {
+            Xrm.Page.getControl("bsd_installment").setDisabled(true);
+            fillter_ins();
+        }
+        else {
+            Xrm.Page.getControl("bsd_installment").setDisabled(false);
+            Xrm.Page.getAttribute("bsd_installment").setValue(null);
+            Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
+        }
     }
     else {
-        Xrm.Page.getControl("bsd_installment").setDisabled(false);
-        Xrm.Page.getAttribute("bsd_installment").setValue(null);
+        if (installmentnumber != null) {
+            Xrm.Page.getControl("bsd_installment").setDisabled(true);
+            fillter_ins_quote();
+        }
+        else {
+            Xrm.Page.getControl("bsd_installment").setDisabled(false);
+            Xrm.Page.getAttribute("bsd_installment").setValue(null);
+            Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
+        }
     }
+
+}
+function mapInstallment() {
+
+    var bsd_installment = Xrm.Page.getAttribute("bsd_installment").getValue();
+    if (bsd_installment == null) return;
+    var xml = [];
+    xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+    xml.push("<entity name='bsd_paymentschemedetail'>");
+    xml.push("<attribute name='bsd_paymentschemedetailid' />");
+    xml.push("<attribute name='bsd_name' />");
+    xml.push("<attribute name='createdon' />");
+    xml.push("<attribute name='bsd_ordernumber' />");
+    xml.push("<order attribute='bsd_name' descending='false' />");
+    xml.push("<filter type='and'>");
+    xml.push("<condition attribute='bsd_paymentschemedetailid' operator='eq' value='" + bsd_installment[0].id + "'/>");
+    xml.push("</filter>");
+    xml.push("</entity>");
+    xml.push("</fetch>");
+    CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+        debugger;
+        if (rs.length > 0) {
+           
+            var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
+            if (installmentnumber == null || installmentnumber != rs[0].attributes.bsd_ordernumber.value) {
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(rs[0].attributes.bsd_ordernumber.value);
+            }
+        }
+        else {
+        }
+    },
+        function (err) {
+            console.log(err);
+        });
 }
 function onchange_Project() {
     Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
@@ -68,9 +119,9 @@ function fillter_pro_unit() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -112,15 +163,18 @@ function fillter_ins() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+               
                 fillter_olddate();
             }
             else {
                 alert("No Installment" + installmentnumber + " in optionEntry");
+
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
 }
@@ -152,9 +206,9 @@ function fillter_olddate() {
                 Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 }
 function dislay_ins() {
@@ -210,9 +264,9 @@ function dislay_unit() {
                 units[0].name = rs[0].attributes.bsd_unitnumber.name;
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
     if (units != null) {
         var xml = [];
@@ -284,9 +338,9 @@ function fillter_pro_unit_quote() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -328,15 +382,17 @@ function fillter_ins_quote() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+               
                 fillter_olddate();
             }
             else {
                 alert("No Installment" + installmentnumber + " in optionEntry");
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
 }
@@ -393,9 +449,9 @@ function dislay_unit_quote() {
                 units[0].name = rs[0].attributes.bsd_unitno.name;
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
     if (units != null) {
         var xml = [];
@@ -469,9 +525,9 @@ function fillter_pro_unit_quotation() {
                 Xrm.Page.getAttribute("bsd_units").setValue(units);
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
     //Xrm.Page.getAttribute("bsd_project").setValue(project);
@@ -495,6 +551,8 @@ function fillter_ins_quotation() {
         xml.push("<attribute name='bsd_paymentschemedetailid' />");
         xml.push("<attribute name='bsd_name' />");
         xml.push("<attribute name='createdon' />");
+
+        xml.push("<attribute name='bsd_ordernumber' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
@@ -510,15 +568,19 @@ function fillter_ins_quotation() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+                var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
+                if (installmentnumber == null || installmentnumber != rs[0].attributes.bsd_ordernumber.value) {
+                    Xrm.Page.getAttribute("bsd_installmentnumber").setValue(rs[0].attributes.bsd_ordernumber.value);
+                }
                 fillter_olddate();
             }
             else {
-                alert("No Installment" + installmentnumber + " in optionEntry");
+                alert("No Installment" + installmentnumber + " in Quote");
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
 
 }
@@ -572,9 +634,9 @@ function dislay_unit_quotation() {
                 units[0].name = rs[0].attributes.bsd_units.name;
             }
         },
-        function (err) {
-            console.log(err);
-        });
+            function (err) {
+                console.log(err);
+            });
     }
     if (units != null) {
         var xml = [];
