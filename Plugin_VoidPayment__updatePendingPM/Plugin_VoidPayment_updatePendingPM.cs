@@ -70,7 +70,6 @@ namespace Plugin_VoidPayment_updatePendingPM
         Installment installment;
         Miscellaneous miscellaneous;
         ApplyDocument applyDocument;
-        StringBuilder strMess = new StringBuilder();
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -98,7 +97,6 @@ namespace Plugin_VoidPayment_updatePendingPM
                     {
                         if (en_voidPM.Contains("bsd_payment"))
                         {
-                            strMess.AppendLine("payment.voidPaymentAproval(en_voidPM)");
                             payment.voidPaymentAproval(en_voidPM);
                         }
                         //  ------------------- update void pm for applydocument -------------------------------------
@@ -112,7 +110,7 @@ namespace Plugin_VoidPayment_updatePendingPM
                     }
                     // ------------ end approve ---------------------
                     //  -------------------------------Reject ------------------------------------------
-                    if (((OptionSetValue)target["statuscode"]).Value == 100000001)   // = reject
+                    else if (((OptionSetValue)target["statuscode"]).Value == 100000001)   // = reject
                     {
                         Entity en_tmp = new Entity(en_voidPM.Contains("bsd_payment") ? ((EntityReference)en_voidPM["bsd_payment"]).LogicalName : ((EntityReference)en_voidPM["bsd_applydocument"]).LogicalName);
                         en_tmp.Id = en_voidPM.Contains("bsd_payment") ? ((EntityReference)en_voidPM["bsd_payment"]).Id : ((EntityReference)en_voidPM["bsd_applydocument"]).Id;
@@ -142,27 +140,22 @@ namespace Plugin_VoidPayment_updatePendingPM
                 } // END OF CONTEXT = UPDATE
                 // ------- create New VoidPM -------------
                 // create new record - update statuscode of payment to pending revert
-                if (context.MessageName == "Create")
+                else if (context.MessageName == "Create")
                 {
                     // khi create cho payment thi change status cua payment thanh pending revert - tuong tu cho apply document
                     // ------ void for payment  -----------------
                     if (en_voidPM.Contains("bsd_payment"))
                     {
-                        strMess.AppendLine("a");
                         Entity en_PM = service.Retrieve(((EntityReference)en_voidPM["bsd_payment"]).LogicalName, ((EntityReference)en_voidPM["bsd_payment"]).Id,
                             new ColumnSet(true));
                         Entity en_Unit = service.Retrieve(((EntityReference)en_PM["bsd_units"]).LogicalName, ((EntityReference)en_PM["bsd_units"]).Id,
                             new ColumnSet(true));
-                        strMess.AppendLine("b");
                         //  ----------- check status of unit when revert payment --------------------
                         if (en_PM.Contains("bsd_reservation"))
                         {
-                            strMess.AppendLine("c");
                             Entity en_quote = service.Retrieve(((EntityReference)en_PM["bsd_reservation"]).LogicalName,
                                               ((EntityReference)en_PM["bsd_reservation"]).Id, new ColumnSet(true));
-                            strMess.AppendLine("iii");
                             int i_ResvStatus = ((OptionSetValue)en_quote["statuscode"]).Value;
-                            strMess.AppendLine("d");
                             switch (i_ResvStatus)
                             {
                                 case 4:
@@ -176,9 +169,7 @@ namespace Plugin_VoidPayment_updatePendingPM
                                 case 100000002:
                                     throw new InvalidPluginExecutionException("Reservation " + (string)en_quote["name"] + " has been Pending Cancel Deposit. Can not create void payment!");
                             }
-                            strMess.AppendLine("e");
                         }
-                        strMess.AppendLine("h");
                         Entity en_tmp = new Entity(en_PM.LogicalName);
                         en_tmp.Id = en_PM.Id;
                         en_tmp["statuscode"] = new OptionSetValue(100000001); // pending revert

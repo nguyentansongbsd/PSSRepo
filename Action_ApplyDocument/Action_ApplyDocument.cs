@@ -60,11 +60,12 @@ namespace Action_ApplyDocument
                 {
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Miscellaneous", ref strRong1, ref strRong2);
                 }
-                if (i_bsd_transactiontype != 1 && totalapplyamout != 0)
+                if (i_bsd_transactiontype != 1)
                 {
                     if (totalapplyamout != 0) totalapplyamout = bsd_advancepaymentamount - totalapplyamout;
                     else totalapplyamout = bsd_advancepaymentamount;
                 }
+                
                 // Create Applydocument Remaining COA By Thạnh Đỗ
                 applyDocument.createCOA(en_app, totalapplyamout, s_eachAdv, s_amAdv);
                 //Tạo Applydocument Remaining COA

@@ -265,6 +265,7 @@ namespace Action_ApplyDocument
             ArrayList listAmount = new ArrayList();
             for (int i = 0; i < ec_ins.Entities.Count; i++)
             {
+                if (totalapplyamout == 0) break;
                 Entity en_pms = ec_ins.Entities[i];
                 en_pms.Id = ec_ins.Entities[i].Id;
                 int psd_statuscode = ((OptionSetValue)ec_ins.Entities[i]["statuscode"]).Value;
@@ -376,6 +377,7 @@ namespace Action_ApplyDocument
             {
                 Entity en_interIns = ec_PMSDTL.Entities[j];
                 en_interIns.Id = ec_PMSDTL.Entities[j].Id;
+                if (totalapplyamout == 0) break;
                 if (!en_interIns.Contains("bsd_duedate"))
                 {
                     throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + en_interIns["bsd_name"].ToString());
@@ -427,6 +429,7 @@ namespace Action_ApplyDocument
             ArrayList listAmount = new ArrayList();
             foreach (Entity enInstallment in ecFee_Main.Entities)
             {
+                if (totalapplyamout == 0) break;
                 if (!enInstallment.Contains("bsd_duedate"))
                 {
                     throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + enInstallment["bsd_name"].ToString());
@@ -474,6 +477,7 @@ namespace Action_ApplyDocument
             }
             foreach (Entity enInstallment in ecFee_Mana.Entities)
             {
+                if (totalapplyamout == 0) break;
                 if (!enInstallment.Contains("bsd_duedate"))
                 {
                     throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + enInstallment["bsd_name"].ToString());
@@ -527,6 +531,7 @@ namespace Action_ApplyDocument
             if (ec_MIS.Entities.Count <= 0) throw new InvalidPluginExecutionException("There's not any Miscellaneous found!");
             for (int i = 0; i < ec_MIS.Entities.Count; i++)
             {
+                if (totalapplyamout == 0) break;
                 Entity en_Ins_MIS = service.Retrieve(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).LogicalName, ((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).Id,
                         new ColumnSet(new string[] { "bsd_paymentschemedetailid", "bsd_name", "statuscode" }));
                 int i_INS_statuscode = en_Ins_MIS.Contains("statuscode") ? ((OptionSetValue)en_Ins_MIS["statuscode"]).Value : 100000000;
@@ -597,6 +602,7 @@ namespace Action_ApplyDocument
                 <attribute name=""bsd_paidamount"" />
                 <attribute name=""bsd_refundamount"" />
                 <attribute name=""bsd_remainingamount"" />
+                <attribute name=""bsd_name"" />
                 <filter>
                   <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_customer"" operator=""eq"" value=""{idCus}"" />
