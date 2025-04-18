@@ -1126,17 +1126,8 @@ namespace Action_ApplyDocument
             if (i_pmtype == 100000001 || i_pmtype == 100000003) // installment or interest charge
             {
                 en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
-                if (en_OE.Contains("bsd_signeddadate") || en_OE.Contains("bsd_signedcontractdate"))// OE
-                {
-                    en_Up["bsd_actualgracedays"] = i_outstanding_AppDtl;
-                    en_Up["bsd_interestchargeamount"] = new Money(d_bsd_interestchargeamount);
-                }
-                else
-                {
-                    decimal gt = 0;
-                    en_Up["bsd_actualgracedays"] = gt;
-                    en_Up["bsd_interestchargeamount"] = new Money(gt);
-                }
+                en_Up["bsd_actualgracedays"] = i_outstanding_AppDtl;
+                en_Up["bsd_interestchargeamount"] = new Money(d_bsd_interestchargeamount);
             }
             service.Create(en_Up);
         }
