@@ -51,7 +51,7 @@ namespace Action_ApplyDocument
                     enUp["bsd_units"] = (EntityReference)enQO["bsd_unitno"];
                     service.Update(enUp);
                 }
-                checkAmountAdvance(((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, bsd_advancepaymentamount);
+                checkAmountAdvance(((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, bsd_advancepaymentamount);
 
             }
             else if (bsd_transactiontype != 0)
@@ -72,11 +72,11 @@ namespace Action_ApplyDocument
                     enUp["bsd_units"] = (EntityReference)enOE["bsd_unitnumber"];
                     service.Update(enUp);
                 }
-                checkAmountAdvance(((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, bsd_advancepaymentamount);
+                checkAmountAdvance(((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, bsd_advancepaymentamount);
 
             }
         }
-        private void checkAmountAdvance(Guid KH, Guid DA, decimal AmountAdvance)
+        private void checkAmountAdvance(Guid KH, Guid DA, Guid OE, decimal AmountAdvance)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                                 <fetch>
@@ -85,6 +85,7 @@ namespace Action_ApplyDocument
                                     <filter>
                                       <condition attribute=""bsd_customer"" operator=""eq"" value=""{KH}"" />
                                       <condition attribute=""bsd_project"" operator=""eq"" value=""{DA}"" />
+                                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{OE}"" />
                                       <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
                                       <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                                     </filter>
@@ -181,7 +182,7 @@ namespace Action_ApplyDocument
         }
         public void createCOA(Entity en_app, decimal totalapplyamout, ArrayList s_eachAdv, ArrayList s_amAdv)
         {
-            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id);
+            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, ((EntityReference)en_app["bsd_project"]).Id);
             foreach (Entity en_Adv in ecAdvance.Entities)
             {
                 decimal totalavancedamount = en_Adv.Contains("bsd_amount") ? ((Money)en_Adv["bsd_amount"]).Value : 0;
@@ -592,7 +593,7 @@ namespace Action_ApplyDocument
             EntityCollection psdFirst = service.RetrieveMultiple(query);
             return psdFirst;
         }
-        private EntityCollection get_ecAdvance(IOrganizationService crmservices, Guid idCus, Guid Proj)
+        private EntityCollection get_ecAdvance(IOrganizationService crmservices, Guid idCus, Guid Proj, Guid OE)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
@@ -607,6 +608,7 @@ namespace Action_ApplyDocument
                   <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_customer"" operator=""eq"" value=""{idCus}"" />
                   <condition attribute=""bsd_project"" operator=""eq"" value=""{Proj}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{OE}"" />
                   <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                 </filter>
                 <order attribute=""bsd_remainingamount"" />

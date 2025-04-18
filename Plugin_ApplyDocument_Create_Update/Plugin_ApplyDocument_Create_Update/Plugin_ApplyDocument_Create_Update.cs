@@ -47,7 +47,7 @@ namespace Plugin_ApplyDocument_Create_Update
                         enUp["bsd_units"] = (EntityReference)enQO["bsd_unitno"];
                         service.Update(enUp);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, bsd_advancepaymentamount);
+                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_quote"]).Id, bsd_advancepaymentamount);
 
                 }
                 else if (bsd_transactiontype != 0)
@@ -68,7 +68,7 @@ namespace Plugin_ApplyDocument_Create_Update
                         enUp["bsd_units"] = (EntityReference)enOE["bsd_unitnumber"];
                         service.Update(enUp);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, bsd_advancepaymentamount);
+                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
 
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");
@@ -99,7 +99,7 @@ namespace Plugin_ApplyDocument_Create_Update
                         enUp["bsd_units"] = (EntityReference)enQO["bsd_unitno"];
                         service.Update(enUp);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, bsd_advancepaymentamount);
+                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_quote"]).Id, bsd_advancepaymentamount);
 
                 }
                 else if (bsd_transactiontype != 0)
@@ -120,13 +120,13 @@ namespace Plugin_ApplyDocument_Create_Update
                         enUp["bsd_units"] = (EntityReference)enOE["bsd_unitnumber"];
                         service.Update(enUp);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, bsd_advancepaymentamount);
+                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
 
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");
             }
         }
-        private void checkAmountAdvance(Guid KH, Guid DA, decimal AmountAdvance)
+        private void checkAmountAdvance(Guid KH, Guid DA, Guid OE, decimal AmountAdvance)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                                 <fetch>
@@ -135,6 +135,7 @@ namespace Plugin_ApplyDocument_Create_Update
                                     <filter>
                                       <condition attribute=""bsd_customer"" operator=""eq"" value=""{KH}"" />
                                       <condition attribute=""bsd_project"" operator=""eq"" value=""{DA}"" />
+                                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{OE}"" />
                                       <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
                                       <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                                     </filter>
