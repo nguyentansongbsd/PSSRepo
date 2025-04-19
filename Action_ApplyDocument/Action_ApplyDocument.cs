@@ -31,6 +31,7 @@ namespace Action_ApplyDocument
                 decimal totalapplyamout = bsd_advancepaymentamount;
                 ArrayList s_eachAdv = new ArrayList();
                 ArrayList s_amAdv = new ArrayList();
+                ArrayList listCheckFee = new ArrayList();
                 string str1 = "";
                 string str2 = "";
                 string str3 = "";
@@ -39,35 +40,35 @@ namespace Action_ApplyDocument
                 string strRong2 = "";
                 if (i_bsd_transactiontype == 2)//Installments
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2);
-                    processApplyDocument(en_app, str1, str2, str3, str4);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2, listCheckFee);
+                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 3)//Interest
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Interest", ref strRong1, ref strRong2);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Interest", ref strRong1, ref strRong2, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 4)//Fees
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4);
-                    processApplyDocument(en_app, str1, str2, str3, str4);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4, listCheckFee);
+                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 5)//Miscellaneous
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Miscellaneous", ref strRong1, ref strRong2);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Miscellaneous", ref strRong1, ref strRong2, listCheckFee);
                 }
                 if (i_bsd_transactiontype != 1)
                 {
                     if (totalapplyamout != 0) totalapplyamout = bsd_advancepaymentamount - totalapplyamout;
                     else totalapplyamout = bsd_advancepaymentamount;
                 }
-                
+
                 // Create Applydocument Remaining COA By Thạnh Đỗ
                 applyDocument.createCOA(en_app, totalapplyamout, s_eachAdv, s_amAdv);
                 //Tạo Applydocument Remaining COA
                 applyDocument.updateApplyDocument(en_app, totalapplyamout, s_eachAdv, s_amAdv);
             }
         }
-        public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4)
+        public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4, ArrayList listCheckFee)
         {
             bool flag1 = false;
             JavaScriptSerializer scriptSerializer = new JavaScriptSerializer();
@@ -393,9 +394,8 @@ namespace Action_ApplyDocument
                 bool flag6 = false;
                 for (int index = 0; index < strArray3.Length; ++index)
                 {
-                    string[] strArray4 = strArray3[index].Split('_');
-                    string g = strArray4[0];
-                    string str11 = strArray4[1];
+                    string g = strArray3[index];
+                    string str11 = (string)listCheckFee[index];
                     Entity entity22 = this.service.Retrieve("bsd_paymentschemedetail", new Guid(g), new ColumnSet(true));
                     bool flag7 = entity22.Contains("bsd_ordernumber") && entity22["bsd_ordernumber"].ToString() == "1";
                     if (((!entity22.Contains("bsd_maintenancefeesstatus") ? 0 : ((bool)entity22["bsd_maintenancefeesstatus"] ? 1 : 0)) & (flag7 ? 1 : 0)) != 0)
@@ -509,9 +509,8 @@ namespace Action_ApplyDocument
             bool flag10 = false;
             for (int index = 0; index < strArray5.Length; ++index)
             {
-                string[] strArray6 = strArray5[index].Split('_');
-                string g = strArray6[0];
-                string str15 = strArray6[1];
+                string g = strArray5[index];
+                string str15 = (string)listCheckFee[index];
                 Entity entity27 = this.service.Retrieve("bsd_paymentschemedetail", new Guid(g), new ColumnSet(true));
                 bool flag11 = entity27.Contains("bsd_ordernumber") && entity27["bsd_ordernumber"].ToString() == "1";
                 if (((!entity27.Contains("bsd_managementfeesstatus") ? 0 : ((bool)entity27["bsd_managementfeesstatus"] ? 1 : 0)) & (flag11 ? 1 : 0)) != 0)

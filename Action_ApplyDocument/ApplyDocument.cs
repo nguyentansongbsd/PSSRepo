@@ -69,7 +69,7 @@ namespace Action_ApplyDocument
                 throw new InvalidPluginExecutionException("Advance payment is excess amount remaining. Please check again.");
             }
         }
-        public void paymentInstallment(Entity en_app, ref decimal totalapplyamout, string type, ref string str0, ref string str00)
+        public void paymentInstallment(Entity en_app, ref decimal totalapplyamout, string type, ref string str0, ref string str00, ArrayList listCheckFee)
         {
             Entity en_OE = service.Retrieve("salesorder", ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
             string optionentryID = en_OE.Id.ToString();
@@ -87,7 +87,7 @@ namespace Action_ApplyDocument
             }
             else if (type == "Fees")
             {
-                applyFees(en_app, en_OE, ref totalapplyamout, ref str0, ref str00);
+                applyFees(en_app, en_OE, ref totalapplyamout, ref str0, ref str00, listCheckFee);
             }
             else if (type == "Miscellaneous")
             {
@@ -334,7 +334,7 @@ namespace Action_ApplyDocument
                 }
             }// end for int j = 0 ; j < ec_PMSDTL.count
         }
-        private void applyFees(Entity en_app, Entity en_OE, ref decimal totalapplyamout, ref string str3, ref string str4)
+        private void applyFees(Entity en_app, Entity en_OE, ref decimal totalapplyamout, ref string str3, ref string str4, ArrayList listCheckFee)
         {
             if (!en_app.Contains("bsd_units"))
                 throw new InvalidPluginExecutionException("Please check Units of Apply Document!");
@@ -391,6 +391,7 @@ namespace Action_ApplyDocument
                 en_INS_update["bsd_maintenancefeesstatus"] = f_main;
                 en_INS_update["bsd_maintenancefeepaid"] = new Money(d_bsd_maintenancefeepaid);
                 service.Update(en_INS_update);
+                listCheckFee.Add("main");
             }
             foreach (Entity enInstallment in ecFee_Mana.Entities)
             {
@@ -435,6 +436,7 @@ namespace Action_ApplyDocument
                 en_INS_update["bsd_managementfeesstatus"] = f_mana;
                 en_INS_update["bsd_managementfeepaid"] = new Money(d_bsd_managementfeepaid);
                 service.Update(en_INS_update);
+                listCheckFee.Add("mana");
             }
             if (listID.Count > 0)
             {

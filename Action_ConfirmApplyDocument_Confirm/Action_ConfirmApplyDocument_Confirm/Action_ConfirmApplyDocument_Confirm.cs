@@ -83,6 +83,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                 decimal totalapplyamout = bsd_advancepaymentamount;
                 ArrayList s_eachAdv = new ArrayList();
                 ArrayList s_amAdv = new ArrayList();
+                ArrayList listCheckFee = new ArrayList();
                 string str1 = "";
                 string str2 = "";
                 string str3 = "";
@@ -91,24 +92,24 @@ namespace Action_ConfirmApplyDocument_Confirm
                 string strRong2 = "";
                 if (i_bsd_transactiontype == 2)//Installments
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2);
-                    processApplyDocument(en_app, str1, str2, str3, str4);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2, listCheckFee);
+                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 3)//Interest
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Interest", ref strRong1, ref strRong2);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Interest", ref strRong1, ref strRong2, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 4)//Fees
                 {
                     TracingSe.Trace("Fees");
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4, listCheckFee);
                     TracingSe.Trace("ra Fees");
-                    processApplyDocument(en_app, str1, str2, str3, str4);
+                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                     TracingSe.Trace("processApplyDocument");
                 }
                 else if (i_bsd_transactiontype == 5)//Miscellaneous
                 {
-                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Miscellaneous", ref strRong1, ref strRong2);
+                    applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Miscellaneous", ref strRong1, ref strRong2, listCheckFee);
                 }
                 if (i_bsd_transactiontype != 1)
                 {
@@ -143,14 +144,10 @@ namespace Action_ConfirmApplyDocument_Confirm
 
             return entc;
         }
-        public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4)
+        public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4, ArrayList listCheckFee)
         {
             bool flag1 = false;
             JavaScriptSerializer scriptSerializer = new JavaScriptSerializer();
-            //string str1 = EnCallFrom.Contains("bsd_arraypsdid") ? (string)EnCallFrom["bsd_arraypsdid"] : "";
-            //string str2 = EnCallFrom.Contains("bsd_arrayamountpay") ? (string)EnCallFrom["bsd_arrayamountpay"] : "";
-            //string str3 = EnCallFrom.Contains("bsd_arrayfeesid") ? (string)EnCallFrom["bsd_arrayfeesid"] : "";
-            //string str4 = EnCallFrom.Contains("bsd_arrayfeesamount") ? (string)EnCallFrom["bsd_arrayfeesamount"] : "";
             Guid guid2 = new Guid();
             EntityCollection entityCollection1 = this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("\r\n                <fetch>\r\n                  <entity name='bsd_taxcode'>\r\n                    <attribute name='bsd_name' />\r\n                    <attribute name='bsd_value' />\r\n                    <filter type='or'>\r\n                      <condition attribute='bsd_name' operator='eq' value='{0}'/>\r\n                      <condition attribute='bsd_name' operator='eq' value='{1}'/>\r\n                    </filter>\r\n                    <order attribute='createdon' descending='true' />\r\n                  </entity>\r\n                </fetch>", (object)10, (object)-1).ToString()));
             Entity entity2 = (Entity)null;
@@ -162,6 +159,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                 else if (entity4.Contains("bsd_name") && entity4["bsd_name"].ToString() == "10" && entity3 == null)
                     entity3 = entity4;
             }
+            TracingSe.Trace("processApplyDocument B1");
             DateTime utcTime;
             EntityReference entityReference2;
             utcTime = EnCallFrom.Contains("bsd_receiptdate") ? (DateTime)EnCallFrom["bsd_receiptdate"] : new DateTime();
@@ -199,6 +197,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                 guid4 = new Guid();
                 Guid guid5 = guid4;
                 entity6.Id = guid5;
+                TracingSe.Trace("processApplyDocument B2");
                 foreach (Entity entity7 in (Collection<Entity>)ecIns.Entities)
                 {
                     int num5 = entity7.Contains("bsd_ordernumber") ? (int)entity7["bsd_ordernumber"] : 0;
@@ -240,6 +239,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                         }
                     }
                 }
+                TracingSe.Trace("processApplyDocument B3");
                 Entity entity9 = this.service.Retrieve(entityReference3.LogicalName, entityReference3.Id, new ColumnSet(new string[1]
                 {
           "name"
@@ -300,6 +300,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                 {
                     this.service.Create(entity5);
                 }
+                TracingSe.Trace("processApplyDocument B4");
                 if (guid2 != new Guid())
                 {
                     Entity entity11 = new Entity();
@@ -322,6 +323,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                     entity12["bsd_taxcodevalue"] = (object)(Decimal)entity3["bsd_value"];
                     this.service.Create(entity12);
                 }
+                TracingSe.Trace("processApplyDocument B5");
                 if (guid3 != new Guid() && num2 != 0M)
                 {
                     Entity entity13 = EnCallFrom.Contains("bsd_optionentry") ? this.service.Retrieve("salesorder", ((EntityReference)EnCallFrom["bsd_optionentry"]).Id, new ColumnSet(true)) : (Entity)null;
@@ -451,6 +453,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocumentB6");
             if (str3 != "")
             {
                 string[] strArray3 = str3.Split(',');
@@ -467,11 +470,11 @@ namespace Action_ConfirmApplyDocument_Confirm
                 string str10 = "";
                 EntityReference entityReference4 = EnCallFrom.Contains("bsd_units") ? (EntityReference)EnCallFrom["bsd_units"] : (EntityReference)null;
                 bool flag6 = false;
+                TracingSe.Trace("processApplyDocumentB7");
                 for (int index = 0; index < strArray3.Length; ++index)
                 {
-                    string[] strArray4 = strArray3[index].Split('_');
-                    string g = strArray4[0];
-                    string str11 = strArray4[1];
+                    string g = strArray3[index];
+                    string str11 = (string)listCheckFee[index];
                     Entity entity22 = this.service.Retrieve("bsd_paymentschemedetail", new Guid(g), new ColumnSet(true));
                     bool flag7 = entity22.Contains("bsd_ordernumber") && entity22["bsd_ordernumber"].ToString() == "1";
                     if (((!entity22.Contains("bsd_maintenancefeesstatus") ? 0 : ((bool)entity22["bsd_maintenancefeesstatus"] ? 1 : 0)) & (flag7 ? 1 : 0)) != 0)
@@ -503,6 +506,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                         }
                     }
                 }
+                TracingSe.Trace("processApplyDocument B8");
                 if (str10 != "")
                 {
                     if (entityReference4 != null)
@@ -566,6 +570,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocumentB9");
             if (!(str3 != ""))
                 return;
             string[] strArray5 = str3.Split(',');
@@ -583,11 +588,11 @@ namespace Action_ConfirmApplyDocument_Confirm
             string str14 = "";
             EntityReference entityReference5 = (EntityReference)EnCallFrom["bsd_units"];
             bool flag10 = false;
+            TracingSe.Trace("processApplyDocument B10");
             for (int index = 0; index < strArray5.Length; ++index)
             {
-                string[] strArray6 = strArray5[index].Split('_');
-                string g = strArray6[0];
-                string str15 = strArray6[1];
+                string g = strArray5[index];
+                string str15 = (string)listCheckFee[index];
                 Entity entity27 = this.service.Retrieve("bsd_paymentschemedetail", new Guid(g), new ColumnSet(true));
                 bool flag11 = entity27.Contains("bsd_ordernumber") && entity27["bsd_ordernumber"].ToString() == "1";
                 if (((!entity27.Contains("bsd_managementfeesstatus") ? 0 : ((bool)entity27["bsd_managementfeesstatus"] ? 1 : 0)) & (flag11 ? 1 : 0)) != 0)
@@ -622,6 +627,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocument B11");
             if (str14 != "")
             {
                 if (entityReference5 != null)
