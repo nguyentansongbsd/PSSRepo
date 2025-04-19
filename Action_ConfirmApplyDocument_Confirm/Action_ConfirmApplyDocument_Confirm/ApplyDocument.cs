@@ -10,13 +10,14 @@ using System.Web.Script.Serialization;
 using System.Diagnostics;
 using System.Collections;
 
-namespace Action_ApplyDocument
+namespace Action_ConfirmApplyDocument_Confirm
 {
     class ApplyDocument
     {
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
+        ITracingService TracingSe = null;
         StringBuilder strMess = new StringBuilder();
         StringBuilder strMess1 = new StringBuilder();
         IServiceProvider serviceProvider;
@@ -27,6 +28,7 @@ namespace Action_ApplyDocument
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
         }
 
         public void checkInput(Entity en_app)
@@ -77,6 +79,7 @@ namespace Action_ApplyDocument
             d_oe_bsd_totalamountpaid = en_OE.Contains("bsd_totalamountpaid") ? ((Money)en_OE["bsd_totalamountpaid"]).Value : 0;
             decimal d_oe_bsd_totalamountlessfreight = en_OE.Contains("bsd_totalamountlessfreight") ? ((Money)en_OE["bsd_totalamountlessfreight"]).Value : 0;
             if (d_oe_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' must be larger than 0");
+            TracingSe.Trace("trước if type");
             if (type == "Installments")
             {
                 applyIntallment(en_app, en_OE, ref totalapplyamout, ref str0, ref str00);
@@ -338,9 +341,10 @@ namespace Action_ApplyDocument
         {
             if (!en_app.Contains("bsd_units"))
                 throw new InvalidPluginExecutionException("Please check Units of Apply Document!");
-            Entity en_product = service.Retrieve(((EntityReference)en_app["bsd_units"]).LogicalName, ((EntityReference)en_app["bsd_units"]).Id, new ColumnSet(new string[] { "bsd_handovercondition", "name", "bsd_opdate" }));
+            //Entity en_product = service.Retrieve(((EntityReference)en_app["bsd_units"]).LogicalName, ((EntityReference)en_app["bsd_units"]).Id, new ColumnSet(new string[] { "bsd_handovercondition", "name", "bsd_opdate" }));
             EntityCollection ecFee_Main = get_ecFee_Main(service, en_OE.Id);
             EntityCollection ecFee_Mana = get_ecFee_Mana(service, en_OE.Id);
+            TracingSe.Trace("trước ecFee_Main");
             if (ecFee_Main.Entities.Count == 0 && ecFee_Mana.Entities.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
             ArrayList listID = new ArrayList();
             ArrayList listAmount = new ArrayList();
@@ -392,6 +396,7 @@ namespace Action_ApplyDocument
                 en_INS_update["bsd_maintenancefeepaid"] = new Money(d_bsd_maintenancefeepaid);
                 service.Update(en_INS_update);
             }
+            TracingSe.Trace("trước ecFee_Mana");
             foreach (Entity enInstallment in ecFee_Mana.Entities)
             {
                 if (totalapplyamout == 0) break;
@@ -495,20 +500,6 @@ namespace Action_ApplyDocument
                 create_app_detail_MISS(service, en_app, en_Ins_MIS, en_OE, 100000004, d_amp, 0, 0, 0, ec_MIS.Entities[i]);
             }// end for
         }
-        private EntityCollection Get1st_Resv(string resvID)
-        {
-            QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-
-            query.ColumnSet = new ColumnSet(new string[] { "bsd_name", "bsd_depositamount", "bsd_ordernumber", "bsd_paymentschemedetailid", "statuscode", "bsd_amountwaspaid", "bsd_balance", "bsd_amountofthisphase" });
-            query.Distinct = true;
-            query.Criteria = new FilterExpression();
-            query.Criteria.AddCondition("bsd_reservation", ConditionOperator.Equal, resvID);
-            query.AddOrder("bsd_ordernumber", OrderType.Ascending);
-            query.TopCount = 1;
-
-            EntityCollection psdFirst = service.RetrieveMultiple(query);
-            return psdFirst;
-        }
         private EntityCollection get_ecAdvance(IOrganizationService crmservices, Guid idCus, Guid Proj, Guid OE)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -599,8 +590,8 @@ namespace Action_ApplyDocument
                 <attribute name=""bsd_maintenanceamount"" />
                 <attribute name=""bsd_maintenancefeepaid"" />
                 <attribute name=""bsd_maintenancefeewaiver"" />
-                <attribute name=""bsd_duedate"" />
                 <attribute name=""bsd_name"" />
+                <attribute name=""bsd_duedate"" />
                 <filter>
                   <condition attribute=""bsd_maintenanceamount"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
@@ -620,8 +611,8 @@ namespace Action_ApplyDocument
                 <attribute name=""bsd_managementamount"" />
                 <attribute name=""bsd_managementfeepaid"" />
                 <attribute name=""bsd_managementfeewaiver"" />
-                <attribute name=""bsd_duedate"" />
                 <attribute name=""bsd_name"" />
+                <attribute name=""bsd_duedate"" />
                 <filter>
                   <condition attribute=""bsd_managementamount"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
@@ -663,46 +654,6 @@ namespace Action_ApplyDocument
             en_adv["statuscode"] = new OptionSetValue(i_status);
             service.Update(en_adv);
         }
-        private EntityCollection Get_ec_Ins_Resv(string resvID)
-        {
-            string fetchXml =
-                              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
-                  <entity name='bsd_paymentschemedetail' >
-                    <attribute name='bsd_typeofstartdate' />
-                    <attribute name='bsd_duedate' />
-                    <attribute name='bsd_nextdaysofendphase' />
-                    <attribute name='bsd_duedatecalculatingmethod' />
-                    <attribute name='bsd_estimateamount' />
-                    <attribute name='bsd_depositamount' />
-                    <attribute name='bsd_nextperiodtype' />
-                    <attribute name='statuscode' />
-                    <attribute name='bsd_ordernumber' />
-                    <attribute name='bsd_fixeddate' />
-                    <attribute name='bsd_datepaymentofmonthly' />
-                    <attribute name='bsd_paymentschemedetailid' />
-                    <attribute name='bsd_amountpay' />
-                    <attribute name='bsd_withindate' />
-                    <attribute name='bsd_amountofthisphase' />
-                    <attribute name='bsd_numberofnextmonth' />
-                    <attribute name='bsd_emailreminderforeigner' />
-                    <attribute name='bsd_numberofnextdays' />
-                    <attribute name='bsd_balance' />
-                    <attribute name='bsd_amountpercent' />
-                    <attribute name='bsd_amountwaspaid' />
-                    <attribute name='bsd_reservation' />
-                    <attribute name='bsd_typepayment' />
-                    <filter type='and' >
-                      <condition attribute='bsd_reservation' operator='eq' value='{0}' />
-                      <condition attribute='bsd_optionentry' operator='null' />
-                    </filter>
-                    <order attribute='bsd_ordernumber' />
-                  </entity>
-            </fetch>";
-
-            fetchXml = string.Format(fetchXml, resvID);
-            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            return entc;
-        }
         private EntityCollection get_ecMIS(IOrganizationService crmservices, Guid idOE)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -726,110 +677,6 @@ namespace Action_ApplyDocument
             </fetch>";
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
-        }
-        private void reGenerate(IOrganizationService serv, Entity enQuote, DateTime dt_date, EntityCollection ec_pms)
-        {
-            EntityReference paymentScheme = (EntityReference)enQuote["bsd_paymentscheme"];
-            QueryExpression q = new QueryExpression("bsd_paymentschemedetail");
-
-            q.ColumnSet = new ColumnSet(new string[] {
-                "bsd_name",
-                "bsd_paymentscheme",
-                "bsd_withindate",
-                "bsd_emailreminderforeigner",
-                "bsd_nextperiodtype",
-                "bsd_numberofnextmonth",
-                "bsd_numberofnextdays",
-                "bsd_datepaymentofmonthly",
-                "bsd_typepayment",
-                "bsd_number",
-                "bsd_nextdaysofendphase",
-                "bsd_duedatecalculatingmethod",
-                "bsd_lastinstallment",
-                "bsd_fixeddate",
-                "bsd_method",
-                "bsd_percent"
-
-           });
-
-            q.Criteria = new FilterExpression(LogicalOperator.And);
-            q.Criteria.AddCondition(new ConditionExpression("bsd_paymentscheme", ConditionOperator.Equal, paymentScheme.Id));
-            q.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Null));
-            q.Criteria.AddCondition(new ConditionExpression("bsd_reservation", ConditionOperator.Null));
-            q.Criteria.AddCondition(new ConditionExpression("bsd_quotation", ConditionOperator.Null));
-            q.AddOrder("bsd_ordernumber", OrderType.Ascending);
-            EntityCollection ec_ins = service.RetrieveMultiple(q);
-
-            Entity pms = service.Retrieve(paymentScheme.LogicalName, paymentScheme.Id,
-                 new ColumnSet(new string[] { "bsd_paymentschemecode", "bsd_startdate", "bsd_name", "bsd_paymentschemeid" }));
-            int i_dueCalMethod = -1;
-            int orderNumber = 0;
-            int i_nextMonth = 1;
-            for (int i = 0; i < ec_ins.Entities.Count; i++)
-            {
-                if (ec_ins.Entities[i].Contains("bsd_duedatecalculatingmethod"))
-                {
-                    i_dueCalMethod = ((OptionSetValue)ec_ins.Entities[i]["bsd_duedatecalculatingmethod"]).Value;
-                    if (i == 0 && i_dueCalMethod != 100000001)
-                        break;
-                    if (i_dueCalMethod == 100000002 || i_dueCalMethod == 100000000)
-                        break;
-                    if (i_dueCalMethod == 100000001)
-                    {
-                        int i_bsd_nextperiodtype = (int)((OptionSetValue)ec_ins.Entities[i]["bsd_nextperiodtype"]).Value;
-                        int i_paymentdatemonthly = 0;
-                        if (ec_ins.Entities[i].Contains("bsd_datepaymentofmonthly"))
-                            i_paymentdatemonthly = (int)ec_ins.Entities[i]["bsd_datepaymentofmonthly"];
-                        //default or null
-                        int? payment_type = ec_ins.Entities[i].Contains("bsd_typepayment") ? (int?)((OptionSetValue)ec_ins.Entities[i]["bsd_typepayment"]).Value : null;
-
-                        if (i_paymentdatemonthly != 0)
-                            dt_date = new DateTime(dt_date.Year, dt_date.Month, i_paymentdatemonthly);
-                        Entity en_up = new Entity();
-                        if (payment_type == null || payment_type == 1)//default or month
-                        {
-                            double extraDay = 0;
-                            int type = ((OptionSetValue)ec_ins.Entities[i]["bsd_nextperiodtype"]).Value;
-
-                            if (type == 1)//month
-                            {
-                                i_nextMonth = ((int)ec_ins.Entities[i]["bsd_numberofnextmonth"]);
-                                dt_date = dt_date.AddMonths(i_nextMonth);
-                            }
-                            else if (type == 2)//day
-                            {
-                                extraDay = double.Parse(ec_ins.Entities[i]["bsd_numberofnextdays"].ToString());
-                                dt_date = dt_date.AddDays(extraDay);
-                            }
-                            en_up.LogicalName = ec_pms.Entities[orderNumber].LogicalName;
-                            en_up.Id = ec_pms.Entities[orderNumber].Id;
-                            en_up["bsd_duedate"] = dt_date;
-                            service.Update(en_up);
-
-                            orderNumber++;
-                        }
-                        else if (payment_type == 2)//times
-                        {
-                            int number = (int)ec_ins.Entities[i]["bsd_number"];
-                            int i_bsd_nextdaysofendphase = 0;
-                            if (ec_ins.Entities[i].Contains("bsd_nextdaysofendphase"))
-                            {
-                                i_bsd_nextdaysofendphase = (int)ec_ins.Entities[i]["bsd_nextdaysofendphase"];
-                            }
-                            for (int j = 0; j < number; j++)
-                            {
-                                if (j == number - 1)
-                                    dt_date = dt_date.AddDays(i_bsd_nextdaysofendphase);
-                                en_up.LogicalName = ec_pms.Entities[orderNumber].LogicalName;
-                                en_up.Id = ec_pms.Entities[orderNumber].Id;
-                                en_up["bsd_duedate"] = dt_date;
-                                service.Update(en_up);
-                                orderNumber++;
-                            }
-                        }
-                    }
-                }
-            }
         }
         // installment func
         private EntityCollection GetPSD(string OptionEntryID)
