@@ -31,7 +31,7 @@ namespace Plugin_ApplyDocument_Create_Update
                 decimal bsd_advancepaymentamount = enTarget.Contains("bsd_advancepaymentamount") ? ((Money)enTarget["bsd_advancepaymentamount"]).Value : 0;
                 if (bsd_transactiontype != 0)
                 {
-                    if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
+                    if (!enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
                     {
                         throw new InvalidPluginExecutionException("Missing information. Please check again.");
                     }
@@ -41,14 +41,14 @@ namespace Plugin_ApplyDocument_Create_Update
                     {
                         throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                     }
-                    if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber"))
+                    if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber") && !enTarget.Contains("bsd_customer") && enOE.Contains("customerid"))
                     {
                         Entity enUp = new Entity(enTarget.LogicalName, enTarget.Id);
                         enUp["bsd_units"] = (EntityReference)enOE["bsd_unitnumber"];
+                        enUp["bsd_customer"] = (EntityReference)enOE["customerid"];
                         service.Update(enUp);
+                        checkAmountAdvance(((EntityReference)enOE["customerid"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
-
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");
             }
@@ -62,7 +62,7 @@ namespace Plugin_ApplyDocument_Create_Update
                 decimal bsd_advancepaymentamount = enTarget.Contains("bsd_advancepaymentamount") ? ((Money)enTarget["bsd_advancepaymentamount"]).Value : 0;
                 if (bsd_transactiontype != 0)
                 {
-                    if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
+                    if (!enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
                     {
                         throw new InvalidPluginExecutionException("Missing information. Please check again.");
                     }
@@ -72,14 +72,14 @@ namespace Plugin_ApplyDocument_Create_Update
                     {
                         throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                     }
-                    if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber"))
+                    if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber") && !enTarget.Contains("bsd_customer") && enOE.Contains("customerid"))
                     {
                         Entity enUp = new Entity(enTarget.LogicalName, enTarget.Id);
                         enUp["bsd_units"] = (EntityReference)enOE["bsd_unitnumber"];
+                        enUp["bsd_customer"] = (EntityReference)enOE["customerid"];
                         service.Update(enUp);
+                        checkAmountAdvance(((EntityReference)enOE["customerid"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
                     }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
-
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");
             }
