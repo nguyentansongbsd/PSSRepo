@@ -37,13 +37,13 @@ namespace Action_ApplyDocument
             {
                 if (!en_app.Contains("bsd_customer") || !en_app.Contains("bsd_project") || !en_app.Contains("bsd_quote"))
                 {
-                    throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
+                    throw new InvalidPluginExecutionException("Missing information. Please check again.");
                 }
                 Entity enQO = service.Retrieve(((EntityReference)en_app["bsd_quote"]).LogicalName, ((EntityReference)en_app["bsd_quote"]).Id, new ColumnSet(true));
                 int statuscode = enQO.Contains("statuscode") ? ((OptionSetValue)enQO["statuscode"]).Value : 0;
                 if (statuscode != 100000006 && statuscode != 100000000)
                 {
-                    throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
+                    throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                 }
                 if (!en_app.Contains("bsd_units") && enQO.Contains("bsd_unitno"))
                 {
@@ -58,13 +58,13 @@ namespace Action_ApplyDocument
             {
                 if (!en_app.Contains("bsd_customer") || !en_app.Contains("bsd_project") || !en_app.Contains("bsd_optionentry"))
                 {
-                    throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
+                    throw new InvalidPluginExecutionException("Missing information. Please check again.");
                 }
                 Entity enOE = service.Retrieve(((EntityReference)en_app["bsd_optionentry"]).LogicalName, ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
                 int statuscode = enOE.Contains("statuscode") ? ((OptionSetValue)enOE["statuscode"]).Value : 0;
                 if (statuscode == 100000006)
                 {
-                    throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
+                    throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                 }
                 if (!en_app.Contains("bsd_units") && enOE.Contains("bsd_unitnumber"))
                 {
@@ -94,7 +94,7 @@ namespace Action_ApplyDocument
             EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
             if (rs.Entities.Count == 0 || rs.Entities.Sum(x => ((Money)x["bsd_remainingamount"]).Value) < AmountAdvance)
             {
-                throw new InvalidPluginExecutionException("The advance payment amount appears to be invalid. Kindly review and confirm.");
+                throw new InvalidPluginExecutionException("Advance payment is excess amount remaining. Please check again.");
             }
         }
         public void paymentDeposit(Guid quoteId, decimal d_amp, DateTime d_now, Entity en_app)
@@ -262,6 +262,7 @@ namespace Action_ApplyDocument
         private void applyIntallment(Entity en_app, Entity en_OE, ref decimal totalapplyamout, ref string str1, ref string str2)
         {
             EntityCollection ec_ins = get_ecIns(service, en_OE.Id);
+            if (ec_ins.Entities.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
             ArrayList listID = new ArrayList();
             ArrayList listAmount = new ArrayList();
             for (int i = 0; i < ec_ins.Entities.Count; i++)
@@ -373,7 +374,7 @@ namespace Action_ApplyDocument
         private void applyInterestcharge(Entity en_app, Entity en_OE, ref decimal totalapplyamout)
         {
             EntityCollection ec_PMSDTL = get_ecIns_Int(service, en_OE.Id);
-            if (ec_PMSDTL.Entities.Count < 0) throw new InvalidPluginExecutionException("Cannot find any Installment ID with Interest charge array!");
+            if (ec_PMSDTL.Entities.Count < 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
             for (int j = 0; j < ec_PMSDTL.Entities.Count; j++)
             {
                 Entity en_interIns = ec_PMSDTL.Entities[j];
@@ -426,6 +427,7 @@ namespace Action_ApplyDocument
             Entity en_product = service.Retrieve(((EntityReference)en_app["bsd_units"]).LogicalName, ((EntityReference)en_app["bsd_units"]).Id, new ColumnSet(new string[] { "bsd_handovercondition", "name", "bsd_opdate" }));
             EntityCollection ecFee_Main = get_ecFee_Main(service, en_OE.Id);
             EntityCollection ecFee_Mana = get_ecFee_Mana(service, en_OE.Id);
+            if (ecFee_Main.Entities.Count == 0 && ecFee_Mana.Entities.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
             ArrayList listID = new ArrayList();
             ArrayList listAmount = new ArrayList();
             foreach (Entity enInstallment in ecFee_Main.Entities)
@@ -529,7 +531,7 @@ namespace Action_ApplyDocument
         private void applyMicellaneous(Entity en_app, Entity en_OE, ref decimal totalapplyamout)
         {
             EntityCollection ec_MIS = get_ecMIS(service, en_OE.Id);
-            if (ec_MIS.Entities.Count <= 0) throw new InvalidPluginExecutionException("There's not any Miscellaneous found!");
+            if (ec_MIS.Entities.Count <= 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
             for (int i = 0; i < ec_MIS.Entities.Count; i++)
             {
                 if (totalapplyamout == 0) break;

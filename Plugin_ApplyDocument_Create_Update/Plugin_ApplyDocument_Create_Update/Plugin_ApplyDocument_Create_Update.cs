@@ -29,38 +29,17 @@ namespace Plugin_ApplyDocument_Create_Update
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
                 int bsd_transactiontype = enTarget.Contains("bsd_transactiontype") ? ((OptionSetValue)enTarget["bsd_transactiontype"]).Value : 0;
                 decimal bsd_advancepaymentamount = enTarget.Contains("bsd_advancepaymentamount") ? ((Money)enTarget["bsd_advancepaymentamount"]).Value : 0;
-                if (bsd_transactiontype == 1)
-                {
-                    if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_quote"))
-                    {
-                        throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
-                    }
-                    Entity enQO = service.Retrieve(((EntityReference)enTarget["bsd_quote"]).LogicalName, ((EntityReference)enTarget["bsd_quote"]).Id, new ColumnSet(true));
-                    int statuscode = enQO.Contains("statuscode") ? ((OptionSetValue)enQO["statuscode"]).Value : 0;
-                    if (statuscode != 100000006 && statuscode != 100000000)
-                    {
-                        throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
-                    }
-                    if (!enTarget.Contains("bsd_units") && enQO.Contains("bsd_unitno"))
-                    {
-                        Entity enUp = new Entity(enTarget.LogicalName, enTarget.Id);
-                        enUp["bsd_units"] = (EntityReference)enQO["bsd_unitno"];
-                        service.Update(enUp);
-                    }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_quote"]).Id, bsd_advancepaymentamount);
-
-                }
-                else if (bsd_transactiontype != 0)
+                if (bsd_transactiontype != 0)
                 {
                     if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
                     {
-                        throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
+                        throw new InvalidPluginExecutionException("Missing information. Please check again.");
                     }
                     Entity enOE = service.Retrieve(((EntityReference)enTarget["bsd_optionentry"]).LogicalName, ((EntityReference)enTarget["bsd_optionentry"]).Id, new ColumnSet(true));
                     int statuscode = enOE.Contains("statuscode") ? ((OptionSetValue)enOE["statuscode"]).Value : 0;
                     if (statuscode == 100000006)
                     {
-                        throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
+                        throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                     }
                     if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber"))
                     {
@@ -81,38 +60,17 @@ namespace Plugin_ApplyDocument_Create_Update
                 if ((enTarget.Contains("statuscode") ? ((OptionSetValue)enTarget["statuscode"]).Value : 0) != 1) return;
                 int bsd_transactiontype = enTarget.Contains("bsd_transactiontype") ? ((OptionSetValue)enTarget["bsd_transactiontype"]).Value : 0;
                 decimal bsd_advancepaymentamount = enTarget.Contains("bsd_advancepaymentamount") ? ((Money)enTarget["bsd_advancepaymentamount"]).Value : 0;
-                if (bsd_transactiontype == 1)
-                {
-                    if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_quote"))
-                    {
-                        throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
-                    }
-                    Entity enQO = service.Retrieve(((EntityReference)enTarget["bsd_quote"]).LogicalName, ((EntityReference)enTarget["bsd_quote"]).Id, new ColumnSet(true));
-                    int statuscode = enQO.Contains("statuscode") ? ((OptionSetValue)enQO["statuscode"]).Value : 0;
-                    if (statuscode != 100000006 && statuscode != 100000000)
-                    {
-                        throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
-                    }
-                    if (!enTarget.Contains("bsd_units") && enQO.Contains("bsd_unitno"))
-                    {
-                        Entity enUp = new Entity(enTarget.LogicalName, enTarget.Id);
-                        enUp["bsd_units"] = (EntityReference)enQO["bsd_unitno"];
-                        service.Update(enUp);
-                    }
-                    checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_quote"]).Id, bsd_advancepaymentamount);
-
-                }
-                else if (bsd_transactiontype != 0)
+                if (bsd_transactiontype != 0)
                 {
                     if (!enTarget.Contains("bsd_customer") || !enTarget.Contains("bsd_project") || !enTarget.Contains("bsd_optionentry"))
                     {
-                        throw new InvalidPluginExecutionException("Kindly provide the transaction information.");
+                        throw new InvalidPluginExecutionException("Missing information. Please check again.");
                     }
                     Entity enOE = service.Retrieve(((EntityReference)enTarget["bsd_optionentry"]).LogicalName, ((EntityReference)enTarget["bsd_optionentry"]).Id, new ColumnSet(true));
                     int statuscode = enOE.Contains("statuscode") ? ((OptionSetValue)enOE["statuscode"]).Value : 0;
                     if (statuscode == 100000006)
                     {
-                        throw new InvalidPluginExecutionException("The transaction status appears to be incorrect. Please verify it.");
+                        throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                     }
                     if (!enTarget.Contains("bsd_units") && enOE.Contains("bsd_unitnumber"))
                     {
@@ -144,7 +102,7 @@ namespace Plugin_ApplyDocument_Create_Update
             EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
             if (rs.Entities.Count == 0 || rs.Entities.Sum(x => ((Money)x["bsd_remainingamount"]).Value) < AmountAdvance)
             {
-                throw new InvalidPluginExecutionException("The advance payment amount appears to be invalid. Kindly review and confirm.");
+                throw new InvalidPluginExecutionException("Advance payment is excess amount remaining. Please check again.");
             }
         }
     }

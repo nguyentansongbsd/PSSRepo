@@ -68,10 +68,6 @@
   <ItemGroup>
     <Compile Include="Action_ApplyDocument.cs" />
     <Compile Include="ApplyDocument.cs" />
-    <Compile Include="Method\bsd_applydocument.cs" />
-    <Compile Include="Method\bsd_paymentschemedetail.cs" />
-    <Compile Include="Method\DAL.cs" />
-    <Compile Include="Method\info_Error.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
