@@ -1,31 +1,83 @@
-﻿using Microsoft.Xrm.Sdk;
-using System;
+﻿using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using System.Text;
+using System;
 using System.Collections;
-using Microsoft.Crm.Sdk.Messages;
 using System.Collections.ObjectModel;
 using System.Web.Script.Serialization;
 
-namespace Action_ApplyDocument
+namespace Action_ConfirmApplyDocument_Confirm
 {
-    public class Action_ApplyDocument : IPlugin
+    public class Action_ConfirmApplyDocument_Confirm : IPlugin
     {
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         ApplyDocument applyDocument;
+        ITracingService TracingSe = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            EntityReference target = (EntityReference)context.InputParameters["Target"];
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
-            applyDocument = new ApplyDocument(serviceProvider);
-            if (target.LogicalName == "bsd_applydocument")
+            string input01 = "";
+            if (!string.IsNullOrEmpty((string)context.InputParameters["input01"]))
             {
-                //  ------------------------------- retrieve apply document -------------------------------------
-                Entity en_app = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+                input01 = context.InputParameters["input01"].ToString();
+            }
+            string input02 = "";
+            if (!string.IsNullOrEmpty((string)context.InputParameters["input02"]))
+            {
+                input02 = context.InputParameters["input02"].ToString();
+            }
+            string input03 = "";
+            if (!string.IsNullOrEmpty((string)context.InputParameters["input03"]))
+            {
+                input03 = context.InputParameters["input03"].ToString();
+            }
+            string input04 = "";
+            if (!string.IsNullOrEmpty((string)context.InputParameters["input04"]))
+            {
+                input04 = context.InputParameters["input04"].ToString();
+            }
+            if (input01 == "Bước 01" && input02 != "")
+            {
+                TracingSe.Trace("Bước 01");
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch top=""1"">
+                  <entity name=""bsd_bsd_confirmapplydocument_bsd_applydocum"">
+                    <attribute name=""bsd_applydocumentid"" />
+                    <filter>
+                      <condition attribute=""bsd_confirmapplydocumentid"" operator=""eq"" value=""{input02}"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+                EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("The list of payments to be processed is currently empty. Please check again.");
+                Entity enTarget = new Entity("bsd_confirmapplydocument");
+                enTarget.Id = Guid.Parse(input02);
+                enTarget["bsd_powerautomate"] = true;
+                service.Update(enTarget);
+                context.OutputParameters["output01"] = context.UserId.ToString();
+                string url = "";
+                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Apply Document Confirm");
+                foreach (Entity item in configGolive.Entities)
+                {
+                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                }
+                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                context.OutputParameters["output02"] = url;
+            }
+            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            {
+                TracingSe.Trace("Bước 02");
+                service = factory.CreateOrganizationService(Guid.Parse(input04));
+                applyDocument = new ApplyDocument(serviceProvider);
+                Entity en_app = service.Retrieve("bsd_applydocument", Guid.Parse(input03), new ColumnSet(true));
+                TracingSe.Trace("checkInput");
                 applyDocument.checkInput(en_app);
+                TracingSe.Trace("ra checkInput");
                 int i_bsd_transactiontype = en_app.Contains("bsd_transactiontype") ? ((OptionSetValue)en_app["bsd_transactiontype"]).Value : 0;
                 decimal bsd_advancepaymentamount = en_app.Contains("bsd_advancepaymentamount") ? ((Money)en_app["bsd_advancepaymentamount"]).Value : 0;
                 decimal totalapplyamout = bsd_advancepaymentamount;
@@ -49,8 +101,11 @@ namespace Action_ApplyDocument
                 }
                 else if (i_bsd_transactiontype == 4)//Fees
                 {
+                    TracingSe.Trace("Fees");
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4, listCheckFee);
+                    TracingSe.Trace("ra Fees");
                     processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
+                    TracingSe.Trace("processApplyDocument");
                 }
                 else if (i_bsd_transactiontype == 5)//Miscellaneous
                 {
@@ -61,21 +116,38 @@ namespace Action_ApplyDocument
                     if (totalapplyamout != 0) totalapplyamout = bsd_advancepaymentamount - totalapplyamout;
                     else totalapplyamout = bsd_advancepaymentamount;
                 }
-
-                // Create Applydocument Remaining COA By Thạnh Đỗ
+                TracingSe.Trace("Create Applydocument Remaining COA");
                 applyDocument.createCOA(en_app, totalapplyamout, s_eachAdv, s_amAdv);
-                //Tạo Applydocument Remaining COA
+                TracingSe.Trace("Tạo Applydocument Remaining COA");
                 applyDocument.updateApplyDocument(en_app, totalapplyamout, s_eachAdv, s_amAdv);
+                TracingSe.Trace("Xong bước 02");
             }
+            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            {
+                TracingSe.Trace("Bước 03");
+                service = factory.CreateOrganizationService(Guid.Parse(input04));
+                Entity enTarget = new Entity("bsd_confirmapplydocument");
+                enTarget.Id = Guid.Parse(input02);
+                enTarget["bsd_powerautomate"] = false;
+                enTarget["statuscode"] = new OptionSetValue(100000000);
+                service.Update(enTarget);
+            }
+        }
+        EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
+        {
+            QueryExpression q = new QueryExpression(entity);
+            q.ColumnSet = column;
+            q.Criteria = new FilterExpression();
+            q.Criteria.AddCondition(new ConditionExpression(condition, ConditionOperator.Equal, value));
+            q.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, 0));
+            EntityCollection entc = service.RetrieveMultiple(q);
+
+            return entc;
         }
         public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4, ArrayList listCheckFee)
         {
             bool flag1 = false;
             JavaScriptSerializer scriptSerializer = new JavaScriptSerializer();
-            //string str1 = EnCallFrom.Contains("bsd_arraypsdid") ? (string)EnCallFrom["bsd_arraypsdid"] : "";
-            //string str2 = EnCallFrom.Contains("bsd_arrayamountpay") ? (string)EnCallFrom["bsd_arrayamountpay"] : "";
-            //string str3 = EnCallFrom.Contains("bsd_arrayfeesid") ? (string)EnCallFrom["bsd_arrayfeesid"] : "";
-            //string str4 = EnCallFrom.Contains("bsd_arrayfeesamount") ? (string)EnCallFrom["bsd_arrayfeesamount"] : "";
             Guid guid2 = new Guid();
             EntityCollection entityCollection1 = this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("\r\n                <fetch>\r\n                  <entity name='bsd_taxcode'>\r\n                    <attribute name='bsd_name' />\r\n                    <attribute name='bsd_value' />\r\n                    <filter type='or'>\r\n                      <condition attribute='bsd_name' operator='eq' value='{0}'/>\r\n                      <condition attribute='bsd_name' operator='eq' value='{1}'/>\r\n                    </filter>\r\n                    <order attribute='createdon' descending='true' />\r\n                  </entity>\r\n                </fetch>", (object)10, (object)-1).ToString()));
             Entity entity2 = (Entity)null;
@@ -87,6 +159,7 @@ namespace Action_ApplyDocument
                 else if (entity4.Contains("bsd_name") && entity4["bsd_name"].ToString() == "10" && entity3 == null)
                     entity3 = entity4;
             }
+            TracingSe.Trace("processApplyDocument B1");
             DateTime utcTime;
             EntityReference entityReference2;
             utcTime = EnCallFrom.Contains("bsd_receiptdate") ? (DateTime)EnCallFrom["bsd_receiptdate"] : new DateTime();
@@ -124,6 +197,7 @@ namespace Action_ApplyDocument
                 guid4 = new Guid();
                 Guid guid5 = guid4;
                 entity6.Id = guid5;
+                TracingSe.Trace("processApplyDocument B2");
                 foreach (Entity entity7 in (Collection<Entity>)ecIns.Entities)
                 {
                     int num5 = entity7.Contains("bsd_ordernumber") ? (int)entity7["bsd_ordernumber"] : 0;
@@ -165,6 +239,7 @@ namespace Action_ApplyDocument
                         }
                     }
                 }
+                TracingSe.Trace("processApplyDocument B3");
                 Entity entity9 = this.service.Retrieve(entityReference3.LogicalName, entityReference3.Id, new ColumnSet(new string[1]
                 {
           "name"
@@ -225,6 +300,7 @@ namespace Action_ApplyDocument
                 {
                     this.service.Create(entity5);
                 }
+                TracingSe.Trace("processApplyDocument B4");
                 if (guid2 != new Guid())
                 {
                     Entity entity11 = new Entity();
@@ -247,6 +323,7 @@ namespace Action_ApplyDocument
                     entity12["bsd_taxcodevalue"] = (object)(Decimal)entity3["bsd_value"];
                     this.service.Create(entity12);
                 }
+                TracingSe.Trace("processApplyDocument B5");
                 if (guid3 != new Guid() && num2 != 0M)
                 {
                     Entity entity13 = EnCallFrom.Contains("bsd_optionentry") ? this.service.Retrieve("salesorder", ((EntityReference)EnCallFrom["bsd_optionentry"]).Id, new ColumnSet(true)) : (Entity)null;
@@ -376,6 +453,7 @@ namespace Action_ApplyDocument
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocumentB6");
             if (str3 != "")
             {
                 string[] strArray3 = str3.Split(',');
@@ -392,6 +470,7 @@ namespace Action_ApplyDocument
                 string str10 = "";
                 EntityReference entityReference4 = EnCallFrom.Contains("bsd_units") ? (EntityReference)EnCallFrom["bsd_units"] : (EntityReference)null;
                 bool flag6 = false;
+                TracingSe.Trace("processApplyDocumentB7");
                 for (int index = 0; index < strArray3.Length; ++index)
                 {
                     string g = strArray3[index];
@@ -427,6 +506,7 @@ namespace Action_ApplyDocument
                         }
                     }
                 }
+                TracingSe.Trace("processApplyDocument B8");
                 if (str10 != "")
                 {
                     if (entityReference4 != null)
@@ -490,6 +570,7 @@ namespace Action_ApplyDocument
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocumentB9");
             if (!(str3 != ""))
                 return;
             string[] strArray5 = str3.Split(',');
@@ -507,6 +588,7 @@ namespace Action_ApplyDocument
             string str14 = "";
             EntityReference entityReference5 = (EntityReference)EnCallFrom["bsd_units"];
             bool flag10 = false;
+            TracingSe.Trace("processApplyDocument B10");
             for (int index = 0; index < strArray5.Length; ++index)
             {
                 string g = strArray5[index];
@@ -545,6 +627,7 @@ namespace Action_ApplyDocument
                     }
                 }
             }
+            TracingSe.Trace("processApplyDocument B11");
             if (str14 != "")
             {
                 if (entityReference5 != null)

@@ -40,7 +40,7 @@ namespace SaleDirectAction
             {
                 throw ex;
             }
-            
+
         }
         public static void Main(string str1, EntityReference entityReference1, IPluginExecutionContext context)
         {
@@ -95,7 +95,7 @@ namespace SaleDirectAction
                     if (pricelist_id != null)
                     {
                         var rplCopy = getListByIDCopy(service, pricelist_id.Id);
-                      
+
                         if (rplCopy == null || rplCopy.Entities.Count == 0)
                         {
                         }
@@ -104,7 +104,7 @@ namespace SaleDirectAction
                             var copy = rplCopy[0];
                             pricelist_ref = new EntityReference(copy.LogicalName, copy.Id);
                         }
-                      //  entity2["bsd_pricelistapply"] = pricelist_ref;
+                        //  entity2["bsd_pricelistapply"] = pricelist_ref;
                     }
                     Guid guid = service.Create(entity2);
                     Entity entity4 = new Entity("opportunityproduct");
@@ -134,21 +134,21 @@ namespace SaleDirectAction
                         EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
                         if (list.Entities.Count > 0)
                         {
-                             amount = list.Entities[0].Contains("amount") ? ((Money)list.Entities[0]["amount"]).Value : 0;
+                            amount = list.Entities[0].Contains("amount") ? ((Money)list.Entities[0]["amount"]).Value : 0;
                             if (amount > 0)
                             {
                                 entity4["isproductoverridden"] = true;
                                 entity4["ispriceoverridden"] = true;
                                 entity4["priceperunit"] = new Money(amount);
                                 entity4["extendedamount"] = new Money(amount);
-                                
+
                                 entity4["bsd_pricelist"] = pricelist_ref;
                             }
-                           
+
                         }
-                        
-                       
-                        
+
+
+
                     }
                     else
                     {
@@ -159,19 +159,19 @@ namespace SaleDirectAction
                             entity4["bsd_pricelist"] = entity2["pricelevelid"];
 
                     }
-                   
-                   
+
+
                     entity4["quantity"] = (object)Decimal.One;
-                   
+
                     if (entity1.Contains("bsd_phaseslaunchid"))
                     {
                         entity4["bsd_status"] = true;
                         entity4["bsd_phaseslaunch"] = entity1["bsd_phaseslaunchid"];
                     }
                     //throw new InvalidPluginExecutionException("nghiax tesst ");
-                  Guid idopppro =  service.Create(entity4);
-                 
-                   
+                    Guid idopppro = service.Create(entity4);
+
+
 
                     string str2 = "tmp={type:'Success',content:'" + guid.ToString() + "'}";
                     context.OutputParameters["Result"] = str2;
@@ -233,21 +233,21 @@ namespace SaleDirectAction
                         managementamount = ((Money)enUnit["bsd_managementamountmonth"]).Value;
                     if (numberofmonthspaidmf > -1)
                     {
-                        Decimal num5 = actualarea != Decimal.Zero ? actualarea : netsaleablearea;
+                        Decimal num5 = netsaleablearea;
                         Decimal num6 = new Decimal(1.1);
-                        Guid idpro = ((EntityReference)enUnit["bsd_projectcode"]).Id;
-                        Guid check = new Guid("{30B83A61-4FB3-ED11-83FF-002248593808}");
-                        Guid check1 = new Guid("{1D561ECF-5221-EE11-9966-000D3AA0853D}");
-                        Guid check2 = new Guid("{A1403588-5021-EE11-9CBE-000D3AA14FB9}");
-                        Decimal num7 = 0;
-                        if (idpro == check || idpro == check1 || idpro == check2)
-                        {
-                            num7 = (Decimal)numberofmonthspaidmf * num5 * managementamount;
-                        }
-                        else
-                        {
-                            num7 = (Decimal)numberofmonthspaidmf * num5 * managementamount * num6;
-                        }
+                        //Guid idpro = ((EntityReference)enUnit["bsd_projectcode"]).Id;
+                        //Guid check = new Guid("{30B83A61-4FB3-ED11-83FF-002248593808}");
+                        //Guid check1 = new Guid("{1D561ECF-5221-EE11-9966-000D3AA0853D}");
+                        //Guid check2 = new Guid("{A1403588-5021-EE11-9CBE-000D3AA14FB9}");
+                        Decimal num7 = (Decimal)numberofmonthspaidmf * num5 * managementamount;
+                        //if (idpro == check || idpro == check1 || idpro == check2)
+                        //{
+                        //    num7 = (Decimal)numberofmonthspaidmf * num5 * managementamount;
+                        //}
+                        //else
+                        //{
+                        //    num7 = (Decimal)numberofmonthspaidmf * num5 * managementamount * num6;
+                        //}
 
                         entity2["bsd_managementfee"] = (object)new Money(num7);
                     }
@@ -292,7 +292,7 @@ namespace SaleDirectAction
                             pricelist_ref = new EntityReference(copy.LogicalName, copy.Id);
                         }
                         strbuil.AppendLine("fffffffff");
-                        entity2["pricelevelid"] = pricelist_ref; 
+                        entity2["pricelevelid"] = pricelist_ref;
                     }
                     #endregion
                     strbuil.AppendLine("7777777");
@@ -313,7 +313,7 @@ namespace SaleDirectAction
                     //    entity2["bsd_pricelistphaselaunch"] = pricelist_ref;
                     //}
                     //#endregion
-                    
+
                     if (context.InputParameters.Contains("Parameters") && context.InputParameters["Parameters"] != null)
                     {
                         strbuil.AppendLine("88888888");
@@ -338,7 +338,7 @@ namespace SaleDirectAction
                                 {
                                     entity2["customerid"] = (object)entityReference2;
                                     EntityReference enfBA = getBankAccount(entityReference2.Id);
-                                    if(enfBA != null)
+                                    if (enfBA != null)
                                         entity2["bsd_bankaccount"] = enfBA;
                                 }
                                 if (entity4.Contains("bsd_queuingfee"))
@@ -353,7 +353,7 @@ namespace SaleDirectAction
                         }
 
                     }
-                    
+
                     strbuil.AppendLine("aaaaa");
                     Guid guid = service.Create(entity2);
                     Entity entity5 = new Entity("quotedetail");

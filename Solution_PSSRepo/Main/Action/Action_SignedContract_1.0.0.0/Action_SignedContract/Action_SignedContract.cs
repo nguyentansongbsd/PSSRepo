@@ -76,7 +76,7 @@ namespace Action_SignedContract
           "bsd_netsaleablearea",
           "bsd_optionnumber"
                 }));
-                Decimal num4 = !entity3.Contains("bsd_actualarea") ? (entity3.Contains("bsd_netsaleablearea") ? (Decimal)entity3["bsd_netsaleablearea"] : 0M) : (Decimal)entity3["bsd_actualarea"];
+                Decimal num4 = entity3.Contains("bsd_netsaleablearea") ? (Decimal)entity3["bsd_netsaleablearea"] : 0M;
                 Entity entity4 = this.service.Retrieve(((EntityReference)enOptionEntry["customerid"]).LogicalName, ((EntityReference)enOptionEntry["customerid"]).Id, new ColumnSet(new string[1]
                 {
           "bsd_totaltransaction"
@@ -101,8 +101,6 @@ namespace Action_SignedContract
                     entity5.Id = instFee.Entities[0].Id;
                     Decimal num6 = instFee.Entities[0].Contains("bsd_managementamount") ? ((Money)instFee.Entities[0]["bsd_managementamount"]).Value : 0M;
                     Decimal num7 = num3 * (Decimal)num2 * num4;
-                    Decimal num8 = num7 * 10M / 100M;
-                    Decimal num9 = num7 + num8;
                     this.service.Update(new Entity(entity5.LogicalName)
                     {
                         Id = entity5.Id,
@@ -117,19 +115,19 @@ namespace Action_SignedContract
             var query = new QueryExpression("bsd_paymentschemedetail");
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry);
-            var rs=service.RetrieveMultiple(query);
-            if(rs.Entities.Count > 0)
+            var rs = service.RetrieveMultiple(query);
+            if (rs.Entities.Count > 0)
             {
-                foreach(var item in  rs.Entities)
+                foreach (var item in rs.Entities)
                 {
-                    if (((OptionSetValue)item["statuscode"]).Value== 100000001)
+                    if (((OptionSetValue)item["statuscode"]).Value == 100000001)
                     {
                         var itemEnUpdate = new Entity(item.LogicalName, item.Id);
                         itemEnUpdate["bsd_duedatewordtemplate"] = null;
                         service.Update(itemEnUpdate);
-                    }    
-                }    
-            }    
+                    }
+                }
+            }
             #endregion
             this.context.OutputParameters["output"] = (object)"done";
         }
