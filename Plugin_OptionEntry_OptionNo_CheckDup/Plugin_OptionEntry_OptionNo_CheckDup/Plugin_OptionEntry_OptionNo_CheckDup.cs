@@ -46,16 +46,22 @@ namespace Plugin_OptionEntry_OptionNo_CheckDup
                 tracingService.Trace(((OptionSetValue)targetEntity["statuscode"]).Value.ToString());
                 if (((OptionSetValue)targetEntity["statuscode"]).Value != 100000000) return;
 
-                string optionNo = getOptionNo(targetEntity["bsd_optionno"].ToString(), (EntityReference)targetEntity["bsd_project"]);
-                bool isDub = checkDupOptionNo(optionNo, ((EntityReference)targetEntity["bsd_project"]).Id, targetEntity.Id);
+                await Task.Delay(3000);
+                Entity enAutoNumProject = getAutoNumberProject((EntityReference)targetEntity["bsd_project"]);
+                string optionNo = targetEntity["bsd_optionno"].ToString();
+                string sufix = enAutoNumProject.Contains("bsd_sufix") && (bool)enAutoNumProject["bsd_usecustom"] == true ? enAutoNumProject["bsd_sufix"].ToString() : null;
+                if (!string.IsNullOrWhiteSpace(sufix)) optionNo = optionNo.Substring(0, optionNo.Length - sufix.Length);
+
+                string currentNumOfOptionNo = getOptionNo(optionNo, (EntityReference)targetEntity["bsd_project"]);
+                bool isDub = checkDupOptionNo(currentNumOfOptionNo, ((EntityReference)targetEntity["bsd_project"]).Id, targetEntity.Id);
                 tracingService.Trace("is dup: " + isDub);
                 if (isDub == true)
                 {
-                    Entity enAutoNumProject = getAutoNumberProject((EntityReference)targetEntity["bsd_project"]);
                     int currentNum = (int)enAutoNumProject["bsd_currentnumber"];
                     currentNum++;
                     int numLength = currentNum.ToString().Length;
-                    string optionNo_new = targetEntity["bsd_optionno"].ToString().Substring(0, targetEntity["bsd_optionno"].ToString().Length - numLength) + currentNum;
+                    
+                    string optionNo_new = optionNo.Substring(0, optionNo.Length - numLength) + currentNum + sufix;
                     await Task.WhenAll(updateAutoNumberProject(currentNum, enAutoNumProject), updateOE(targetEntity, optionNo_new));
                 }
             }
@@ -102,6 +108,7 @@ namespace Plugin_OptionEntry_OptionNo_CheckDup
                 <fetch>
                   <entity name=""bsd_autonumberproject"">
                     <attribute name=""bsd_sufix"" />
+                    <attribute name=""bsd_usecustom"" />
                     <attribute name=""bsd_currentnumber"" />
                     <attribute name=""bsd_autonumberprojectid"" />
                     <filter>
