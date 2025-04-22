@@ -36,15 +36,15 @@ namespace Plugin_Create_PaymentNotices
             Entity EnOP = service.Retrieve(enOPRef.LogicalName, enOPRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
 
             #region Amount in EDA (bsd_amountofthisphase) mapping từ Instalment của đợt làm payment notices
-            enUpdate["bsd_amountofthisphase"] = enInsDetail["bsd_amountofthisphase"];
+            enUpdate["bsd_amountofthisphase"] = enInsDetail.Contains("bsd_amountofthisphase")?enInsDetail["bsd_amountofthisphase"]:0;
             #endregion
 
             #region bsd_totaladvancepayment (Số tiền thanh toán trước)-->Field tính toán (Mapping từ option entry)-->Field tính toán
-            enUpdate["bsd_totaladvancepayment"] = EnOP["bsd_totaladvancepayment"];
+            enUpdate["bsd_totaladvancepayment"] = EnOP.Contains("bsd_totaladvancepayment")? EnOP["bsd_totaladvancepayment"]:0;
             #endregion
 
             #region (Tổng số tiền thanh toán trước)-->bsd_totalprepaymentamount=bsd_totaladvancepayment+ bsd_amountwaspaid (của đợt paymnent notices)-->Hiển thị số âm (Field tính toán)
-            enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)EnOP["bsd_totaladvancepayment"]).Value+ ((Money)enInsDetail["bsd_amountwaspaid"]).Value);
+            enUpdate["bsd_totalprepaymentamount"] = new Money(((Money)enUpdate["bsd_totaladvancepayment"]).Value+ (enInsDetail.Contains("bsd_amountwaspaid")?((Money)enInsDetail["bsd_amountwaspaid"]).Value:0));
             #endregion
 
             #region Shortfall in previous Installment (Số tiền chưa thanh toán các đợt trước) (bsd_Shoftfall Installment= Sum(bsd_balance) Tổng số tiền chưa thanh toán của các đợt trước đợt làm payment notice -->Field tính toán
@@ -60,7 +60,7 @@ namespace Plugin_Create_PaymentNotices
             {
                 foreach(var item in insDetailList.Entities)
                 {
-                    sum_bsd_balance += ((Money)item["bsd_balance"]).Value;
+                    sum_bsd_balance += item.Contains("bsd_balance")?((Money)item["bsd_balance"]).Value:0;
                 }
             }
             enUpdate["bsd_shortfallinpreviousinstallment"] = new Money(sum_bsd_balance);
@@ -72,6 +72,8 @@ namespace Plugin_Create_PaymentNotices
                 ((Money)enUpdate["bsd_totalprepaymentamount"]).Value +
                 ((Money)enUpdate["bsd_shortfallinpreviousinstallment"]).Value
                 );
+          
+
             #endregion
             service.Update(enUpdate);
         }

@@ -35,10 +35,11 @@ namespace Plugin_Create_UpdateDueDateDetail
             string enDetailid = entity.Id.ToString();
             en = service.Retrieve("bsd_updateduedatedetail", new Guid(enDetailid), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             var item = en;
+            
 
             var status = ((OptionSetValue)en["statuscode"]).Value;
             tracingService.Trace(status.ToString());
-            if (status != 1|| status != 100000003) return;
+            if (status != 1&& status != 100000003) return;
             tracingService.Trace("start :" + status);
             tracingService.Trace("enDetailid :" + enDetailid);
             //check status
@@ -46,8 +47,6 @@ namespace Plugin_Create_UpdateDueDateDetail
             try
             {
                 tracingService.Trace("start foreach");
-                var enInstallmentRef = (EntityReference)item["bsd_installment"];
-                var enInstallment = service.Retrieve(enInstallmentRef.LogicalName, enInstallmentRef.Id, new ColumnSet(true));
                 #region check giao dịch
                 if (item.Contains("bsd_optionentry"))
                 {
@@ -80,8 +79,42 @@ namespace Plugin_Create_UpdateDueDateDetail
 
                 }
                 #endregion
+                if (en.Contains("bsd_installment") == false)
+                {
+                    var query = new QueryExpression("bsd_paymentschemedetail");
+                    query.ColumnSet.AllColumns = true;
+                    query.Criteria.AddCondition("bsd_ordernumber", ConditionOperator.Equal, en["bsd_installmentnumber"].ToString());
+                    query.Criteria.AddCondition(enIntalments_fieldNameHD, ConditionOperator.Equal, (en.Contains("bsd_quote")? ((EntityReference)en["bsd_quote"]).Id.ToString(): ((EntityReference)en["bsd_optionentry"]).Id.ToString()));
+                    tracingService.Trace("@@!");
+
+                    var rs_ = service.RetrieveMultiple(query);
+                    if (rs_.Entities.Count > 0)
+                    {
+                        en["bsd_installment"] = new EntityReference("bsd_paymentschemedetail", rs_.Entities[0].Id);
+                        item["bsd_installment"] = en["bsd_installment"];
+                        var enTempUpdate = new Entity("bsd_updateduedatedetail", en.Id);
+
+                        var enHDref =(EntityReference) rs_.Entities[0][enIntalments_fieldNameHD];
+                        var endHD = service.Retrieve(enHDref.LogicalName, enHDref.Id, new ColumnSet(true));
+                        var enUnitRef = enHD_name== "salesorder"? (EntityReference)endHD["bsd_unitnumber"] : (EntityReference)endHD["bsd_unitno"];
+                        
+                        enTempUpdate["bsd_units"] = enUnitRef;
+                        enTempUpdate["bsd_duedateold"] =((DateTime) rs_.Entities[0]["bsd_duedate"]).AddHours(7);
+                        enTempUpdate["bsd_installment"] = new EntityReference("bsd_paymentschemedetail", rs_.Entities[0].Id);
+                        service.Update(enTempUpdate);
+                    }
+                    else
+                    {
+                        throw new InvalidPluginExecutionException("order number - InvalidPluginExecutionException ");
+                    }
+                }
+                var enInstallmentRef = (EntityReference)item["bsd_installment"];
+                var enInstallment = service.Retrieve(enInstallmentRef.LogicalName, enInstallmentRef.Id, new ColumnSet(true));
+                tracingService.Trace("@@");
                 var enHDRef = (EntityReference)enInstallment[enIntalments_fieldNameHD];
                  enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
+                tracingService.Trace("@@@");
+
                 tracingService.Trace("CheckExistParentInDetail");
                 CheckExistParentInDetail(ref result, item);
                 tracingService.Trace("CheckIsLast");

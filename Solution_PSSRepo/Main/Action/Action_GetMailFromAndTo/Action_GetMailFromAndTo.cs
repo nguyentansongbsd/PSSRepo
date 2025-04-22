@@ -28,10 +28,15 @@ namespace Action_GetMailFromAndTo
             string idTo = context.InputParameters["idTo"].ToString();
             string entityName = context.InputParameters["entityName"].ToString();
             string entityId = context.InputParameters["entityId"].ToString();
-            en= new Entity(entityName,new Guid(entityId));
-            cusType = context.InputParameters["cusType"].ToString();
+            en = service.Retrieve(entityName,new Guid(entityId),new ColumnSet(true));
+            var cus = service.Retrieve("contact", new Guid(idTo), new ColumnSet(true));
+            if (cus.Contains("bsd_fullname"))
+                cusType = "contact";
+            else cusType = "account";
+            tracingService.Trace("start");
             string message = "";
             string fieldProject = "";
+            tracingService.Trace(entityName);
             switch(entityName)
             {
                 case "bsd_payment":
@@ -39,8 +44,8 @@ namespace Action_GetMailFromAndTo
                     break;
                 default:break;
             }    
-
-            if(CheckMailIsContain(idTo, ((EntityReference)en[fieldProject]).Id.ToString(), ref idFrom,ref message))
+            tracingService.Trace(((EntityReference)en[fieldProject]).Id.ToString());
+            if (CheckMailIsContain(idTo, ((EntityReference)en[fieldProject]).Id.ToString(), ref idFrom,ref message))
             {
                 context.OutputParameters["res"] = 1;  
             }    
@@ -51,12 +56,13 @@ namespace Action_GetMailFromAndTo
         }
         public bool CheckMailIsContain( string idTo,string idProject,ref string  idFrom,ref string mess)
         {
+            tracingService.Trace("00");
             //check mail dự án
             var query = new QueryExpression("bsd_project");
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_projectid", ConditionOperator.Equal, idProject);
             var rs = service.RetrieveMultiple(query);
-            if (rs.Entities[0].Contains("bsd_sendermail"))
+            if (rs.Entities[0].Contains("bsd_sendermail")==false)
             {
 
                 mess = "not found mail project";
@@ -64,13 +70,16 @@ namespace Action_GetMailFromAndTo
             }
             else
             {
+                tracingService.Trace("@");
                 context.OutputParameters["idQueueFrom"] =((EntityReference) rs.Entities[0]["bsd_sendermail"]).Id.ToString();
-            }    
+            }
+            tracingService.Trace("0");
             //check mail khách hàng
             query = new QueryExpression(cusType);
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition(cusType + "id", ConditionOperator.Equal, idTo);
             rs = service.RetrieveMultiple(query);
+            tracingService.Trace("1");
             if (cusType == "account")
             {
                 if (rs.Entities[0].Contains("emailaddress1"))
@@ -80,6 +89,8 @@ namespace Action_GetMailFromAndTo
                     return false;
                 }
             }
+            tracingService.Trace("2");
+
             if (cusType == "contact")
             {
                 if (rs.Entities[0].Contains("emailaddress1"))
@@ -89,6 +100,8 @@ namespace Action_GetMailFromAndTo
                     return false;
                 }
             }
+            tracingService.Trace("3");
+
             return true;
         }
         public bool CreateRecordError(string message)

@@ -54,15 +54,31 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml">
+      <Version>3.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="ILMerge">
+      <Version>3.0.41</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies">
       <Version>9.0.2.59</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Office.Interop.Word">
-      <Version>15.0.4797.1004</Version>
+    <PackageReference Include="PDFsharp">
+      <Version>1.50.5147</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Fonts\ARIAL.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALBD.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALBI.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALI.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALN.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALNB.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALNBI.TTF" />
+    <EmbeddedResource Include="Fonts\ARIALNI.TTF" />
+    <EmbeddedResource Include="Fonts\ARIBLK.TTF" />
     <None Include="key.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

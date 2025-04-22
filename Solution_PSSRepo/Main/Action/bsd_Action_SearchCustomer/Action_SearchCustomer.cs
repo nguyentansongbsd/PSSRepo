@@ -31,17 +31,20 @@ namespace Action_SearchCustomer
                 string email = (string)context.InputParameters["email"];
 
                 var queryKHCN = new QueryExpression("contact");
+                traceService.Trace(cmnd);
                 queryKHCN.ColumnSet.AllColumns = true;
                 if (cmnd != "") queryKHCN.Criteria.AddCondition("bsd_identitycardnumber", ConditionOperator.Equal,cmnd);
-                if (cccd != "") queryKHCN.Criteria.AddCondition("bsd_identitycard", ConditionOperator.Equal,cccd);
-                if (passport != "") queryKHCN.Criteria.AddCondition("bsd_passport", ConditionOperator.Like,passport);
-                if (otherCode != "") queryKHCN.Criteria.AddCondition("bsd_othercode", ConditionOperator.Like,otherCode);
-                if (fullName != "") queryKHCN.Criteria.AddCondition("fullname", ConditionOperator.Like,fullName);
-                if (telephone != "") queryKHCN.Criteria.AddCondition("mobilephone", ConditionOperator.Like,telephone);
-                if (email != "") queryKHCN.Criteria.AddCondition("emailaddress1", ConditionOperator.Like,email);
+                if (cmnd == "") return;
+                //if (cccd != "") queryKHCN.Criteria.AddCondition("bsd_identitycard", ConditionOperator.Equal,cccd);
+                if (passport != "") queryKHCN.Criteria.AddCondition("bsd_passport", ConditionOperator.Equal, passport);
+                //if (otherCode != "") queryKHCN.Criteria.AddCondition("bsd_othercode", ConditionOperator.Equal, otherCode);
+                //if (fullName != "") queryKHCN.Criteria.AddCondition("fullname", ConditionOperator.Equal, fullName);
+                //if (telephone != "") queryKHCN.Criteria.AddCondition("mobilephone", ConditionOperator.Equal, telephone);
+                //if (email != "") queryKHCN.Criteria.AddCondition("emailaddress1", ConditionOperator.Equal, email);
                 queryKHCN.Criteria.AddCondition("statecode", ConditionOperator.Equal, 0);
 
                 EntityCollection result = service.RetrieveMultiple(queryKHCN);
+                traceService.Trace(result.Entities.Count.ToString());
                 if (result != null && result.Entities != null && result.Entities.Count > 0)
                 {
                     for (int i = 0; i < result.Entities.Count; i++)
@@ -70,10 +73,11 @@ namespace Action_SearchCustomer
 
                 var queryKHDN = new QueryExpression("account");
                 queryKHDN.ColumnSet.AllColumns = true;
-                if (nameCompany != "") queryKHDN.Criteria.AddCondition("bsd_name", ConditionOperator.Like, "%" + nameCompany + "%");
-                if (registrationCode != "") queryKHDN.Criteria.AddCondition("bsd_registrationcode", ConditionOperator.Like, "%" + registrationCode + "%");
-                if (telephone != "") queryKHDN.Criteria.AddCondition("telephone1", ConditionOperator.Like, "%" + telephone + "%");
-                if (email != "") queryKHDN.Criteria.AddCondition("emailaddress1", ConditionOperator.Like, "%" + email + "%");
+                if (nameCompany != "") queryKHDN.Criteria.AddCondition("bsd_name", ConditionOperator.Equal,""+ nameCompany + "");
+                if (registrationCode != "") queryKHDN.Criteria.AddCondition("bsd_registrationcode", ConditionOperator.Equal,""+ registrationCode + "");
+                if (registrationCode == "") return;
+                if (telephone != "") queryKHDN.Criteria.AddCondition("telephone1", ConditionOperator.Equal,""+ telephone + "");
+                if (email != "") queryKHDN.Criteria.AddCondition("emailaddress1", ConditionOperator.Equal,""+ email + "");
                 queryKHDN.Criteria.AddCondition("statecode", ConditionOperator.Equal, 0);
 
                 //throw new InvalidPluginExecutionException(nameCompany + "||" + registrationCode + "||" + telephone  + "||" + email);
