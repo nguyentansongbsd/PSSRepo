@@ -587,7 +587,7 @@ namespace Action_InterestSimulation_CalculateSimulation
         }
         private static decimal getInterestCap(Entity enOptionEntry)
         {
-            decimal lim = 0;
+            decimal lim = -100599;
             decimal totalamount = enOptionEntry.Contains("totalamount") ? ((Money)enOptionEntry["totalamount"]).Value : 0;
             strMess.AppendLine("totalamount: " + totalamount.ToString());
             EntityReference enrefPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
@@ -604,17 +604,17 @@ namespace Action_InterestSimulation_CalculateSimulation
                     strMess.AppendLine("bsd_toleranceinterestamount: " + bsd_toleranceinterestamount.ToString());
                     strMess.AppendLine("bsd_toleranceinterestpercentage: " + bsd_toleranceinterestpercentage.ToString());
                     strMess.AppendLine("amountcalbypercent: " + bsd_toleranceinterestamount.ToString());
-                    if (bsd_toleranceinterestamount > 0 && amountcalbypercent > 0)
+                    if (bsd_toleranceinterestamount > 0 && amountcalbypercent > 0 && enInterestRateMaster.Contains("bsd_toleranceinterestamount") && enInterestRateMaster.Contains("bsd_toleranceinterestpercentage"))
                     {
                         lim = Math.Min(bsd_toleranceinterestamount, amountcalbypercent);
                     }
                     else
                     {
-                        if (bsd_toleranceinterestamount > 0)
+                        if (bsd_toleranceinterestamount > 0 && enInterestRateMaster.Contains("bsd_toleranceinterestamount"))
                         {
                             lim = bsd_toleranceinterestamount;
                         }
-                        if (amountcalbypercent > 0)
+                        if (amountcalbypercent > 0 && enInterestRateMaster.Contains("bsd_toleranceinterestpercentage"))
                         {
                             lim = amountcalbypercent;
                         }
@@ -628,8 +628,6 @@ namespace Action_InterestSimulation_CalculateSimulation
         private static void updateNewInterestAmount(Entity enOptionEntry, Entity enInterestSimulateOption, int reportype)
         {
             Entity optionEntry = service.Retrieve(enOptionEntry.LogicalName, enOptionEntry.Id, new ColumnSet(true));
-            decimal cap = getInterestCap(optionEntry);
-            strMess.AppendLine("Cap: " + cap.ToString());
             //Lấy list Interest Simulation Detail có New Interest Amount > 0 theo thứ tự
             string condition = "<condition attribute='bsd_interestsimulation' operator='null' />";
             if (enInterestSimulateOption != null)
@@ -657,47 +655,52 @@ namespace Action_InterestSimulation_CalculateSimulation
 	            </entity>
             </fetch>";
             EntityCollection encolInterestSimulationDetail = service.RetrieveMultiple(new FetchExpression(xml));
-            //Tính toán New Interest Amount sao cho tổng nhỏ hơn hoặc bằng cap
-            //Ưu tiên giảm các đợt cuối trở về trước
-            decimal sumInterestAmount = encolInterestSimulationDetail.Entities.AsEnumerable().Sum(x => x.Contains("bsd_interestamountinstallment") ? ((Money)x["bsd_interestamountinstallment"]).Value : 0);
-            strMess.AppendLine("sumInterestAmount: " + sumInterestAmount);
-            decimal[] arrNewInterestAmount = { };
-            for (int i = 0; i < encolInterestSimulationDetail.Entities.Count; i++)
+            decimal cap = getInterestCap(optionEntry);
+            strMess.AppendLine("Cap: " + cap.ToString());
+            if (cap != -100599)
             {
-                Entity enInterestSimulationDetail = encolInterestSimulationDetail.Entities[i];
-                strMess.AppendLine("sumInterestAmount < cap: " + (sumInterestAmount < cap).ToString());
-                decimal bsd_newinterestamount = enInterestSimulationDetail.Contains("bsd_newinterestamount") ? ((Money)enInterestSimulationDetail["bsd_newinterestamount"]).Value : 0;
-                decimal bsd_interestamountinstallment = enInterestSimulationDetail.Contains("bsd_interestamountinstallment") ? ((Money)enInterestSimulationDetail["bsd_interestamountinstallment"]).Value : 0;
-                if (sumInterestAmount < cap)
+                //Tính toán New Interest Amount sao cho tổng nhỏ hơn hoặc bằng cap
+                //Ưu tiên giảm các đợt cuối trở về trước
+                decimal sumInterestAmount = encolInterestSimulationDetail.Entities.AsEnumerable().Sum(x => x.Contains("bsd_interestamountinstallment") ? ((Money)x["bsd_interestamountinstallment"]).Value : 0);
+                strMess.AppendLine("sumInterestAmount: " + sumInterestAmount);
+                decimal[] arrNewInterestAmount = { };
+                for (int i = 0; i < encolInterestSimulationDetail.Entities.Count; i++)
                 {
-                    strMess.AppendLine("bsd_newinterestamount: " + bsd_newinterestamount.ToString());
-                    decimal total = sumInterestAmount + bsd_newinterestamount;
-                    strMess.AppendLine("total: " + total.ToString());
-                    if (total > cap && bsd_newinterestamount != 0)
+                    Entity enInterestSimulationDetail = encolInterestSimulationDetail.Entities[i];
+                    strMess.AppendLine("sumInterestAmount < cap: " + (sumInterestAmount < cap).ToString());
+                    decimal bsd_newinterestamount = enInterestSimulationDetail.Contains("bsd_newinterestamount") ? ((Money)enInterestSimulationDetail["bsd_newinterestamount"]).Value : 0;
+                    decimal bsd_interestamountinstallment = enInterestSimulationDetail.Contains("bsd_interestamountinstallment") ? ((Money)enInterestSimulationDetail["bsd_interestamountinstallment"]).Value : 0;
+                    if (sumInterestAmount < cap)
                     {
-                        decimal denta = cap - sumInterestAmount;
-                        strMess.AppendLine("denta:" + denta.ToString());
-                        //Set New Interest Amount = denta
-                        Entity en = new Entity(enInterestSimulationDetail.LogicalName, enInterestSimulationDetail.Id);
-                        en["bsd_newinterestamount"] = new Money(denta);
-                        en["bsd_interestchargeamount"] = new Money(denta + bsd_interestamountinstallment);
-                        service.Update(en);
-                        sumInterestAmount += denta;
+                        strMess.AppendLine("bsd_newinterestamount: " + bsd_newinterestamount.ToString());
+                        decimal total = sumInterestAmount + bsd_newinterestamount;
+                        strMess.AppendLine("total: " + total.ToString());
+                        if (total > cap && bsd_newinterestamount != 0)
+                        {
+                            decimal denta = cap - sumInterestAmount;
+                            strMess.AppendLine("denta:" + denta.ToString());
+                            //Set New Interest Amount = denta
+                            Entity en = new Entity(enInterestSimulationDetail.LogicalName, enInterestSimulationDetail.Id);
+                            en["bsd_newinterestamount"] = new Money(denta);
+                            en["bsd_interestchargeamount"] = new Money(denta + bsd_interestamountinstallment);
+                            service.Update(en);
+                            sumInterestAmount += denta;
+                        }
+                        else
+                        {
+                            sumInterestAmount += bsd_newinterestamount;
+                        }
                     }
                     else
                     {
-                        sumInterestAmount += bsd_newinterestamount;
+                        //Set New Interest Amount = 0
+                        Entity en = new Entity(enInterestSimulationDetail.LogicalName, enInterestSimulationDetail.Id);
+                        en["bsd_newinterestamount"] = new Money(0);
+                        en["bsd_interestchargeamount"] = new Money(bsd_interestamountinstallment);
+                        service.Update(en);
                     }
-                }
-                else
-                {
-                    //Set New Interest Amount = 0
-                    Entity en = new Entity(enInterestSimulationDetail.LogicalName, enInterestSimulationDetail.Id);
-                    en["bsd_newinterestamount"] = new Money(0);
-                    en["bsd_interestchargeamount"] = new Money(bsd_interestamountinstallment);
-                    service.Update(en);
-                }
 
+                }
             }
             //Với Type = Aging report(100000000) --> Chỉ lấy Installment có Interest
             if (reportype == 100000000)
