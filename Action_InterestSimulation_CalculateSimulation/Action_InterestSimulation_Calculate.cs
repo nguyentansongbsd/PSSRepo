@@ -394,7 +394,7 @@ namespace Action_InterestSimulation_CalculateSimulation
             try
             {
                 intCount += 1;
-                strMess.AppendLine("dòng thứ " + intCount);
+                strMess.AppendLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ dòng thứ " + intCount);
                 if (ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry") || (!ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry")))
                 {
                     // GET INTEREST CHARGE MASTER
@@ -573,7 +573,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                             strMess.AppendLine("2.3");
                         }
                     }
-                    strMess.AppendLine("5");
+                    strMess.AppendLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 5");
                     service.Create(ISDetail);
                 }
                 //throw new InvalidPluginExecutionException(strMess.ToString());
@@ -959,7 +959,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                     objIns.Intereststartdatetype = ((OptionSetValue)enInterestrateMaster["bsd_intereststartdatetype"]).Value;//100000000: Due date;100000001: Grace period
                                                                                                                              //throw new InvalidPluginExecutionException(((DateTime)enInstallment["bsd_duedate"]).ToString());
                     objIns.Duedate = enInstallment.Contains("bsd_duedate") ? RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"]) : DateTime.Now;
-                    
+
                     objIns.MaxPercent = enInterestrateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestrateMaster["bsd_toleranceinterestpercentage"] : 100;
                     objIns.MaxAmount = enInterestrateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestrateMaster["bsd_toleranceinterestamount"]).Value : 0;
                     objIns.InterestPercent = enInterestrateMaster.Contains("bsd_termsinterestpercentage") ? (decimal)enInterestrateMaster["bsd_termsinterestpercentage"] : 0;
@@ -1076,161 +1076,158 @@ namespace Action_InterestSimulation_CalculateSimulation
                     strMess.AppendLine(string.Format("ID record [bsd_optionentry]: {0}", OE_ref.Id));
                     decimal interestcharge_amount = 0;
                     Entity OE = service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true));
-                    if (OE.Contains("bsd_signeddadate") || OE.Contains("bsd_signedcontractdate"))
+                    Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
+                    bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
+                    decimal d_dailyinterest = 0;
+
+                    strMess.AppendLine(string.Format("- bsd_dailyinterestchargebank: {0}", bsd_dailyinterestchargebank));
+                    if (bsd_dailyinterestchargebank)
                     {
-                        Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
-                        bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
-                        decimal d_dailyinterest = 0;
-
-                        strMess.AppendLine(string.Format("- bsd_dailyinterestchargebank: {0}", bsd_dailyinterestchargebank));
-                        if (bsd_dailyinterestchargebank)
-                        {
-                            #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
-                            EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
-                            Entity ent = entc.Entities[0];
-                            ent.Id = entc.Entities[0].Id;
-                            if (!ent.Contains("bsd_interestrate"))
-                                throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
-                            d_dailyinterest = (decimal)ent["bsd_interestrate"];
-                            #endregion
-                        }
-                        strMess.AppendLine("InterestPercent" + objIns.InterestPercent);
-                        strMess.AppendLine("d_dailyinterest" + d_dailyinterest);
-
-                        objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
-                        interestMasterPercent = objIns.InterestPercent;
-                        decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
-                        interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
-                        strMess.AppendLine("LateDays" + objIns.LateDays);
-                        strMess.AppendLine("amountPay" + amountPay);
-                        #region --- Trace đợt đang xét ---
-                        strMess.AppendLine(string.Format("----------------------------------------------------"));
-                        strMess.AppendLine(string.Format("#. [Đợt đang xét] "));
-                        strMess.AppendLine(string.Format("- InterestPercent: {0}", format_Money(objIns.InterestPercent)));
-                        strMess.AppendLine(string.Format("- interestcharge_percent: {0}", format_Money(interestcharge_percent)));
-                        strMess.AppendLine(string.Format("- interestcharge_amount 'tiền lãi': {0}", format_Money(interestcharge_amount)));
-                        strMess.AppendLine(string.Format("----------------------------------------------------"));
-                        #endregion
-
-                        decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
-                        decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay) - sum_bsd_waiverinterest;
-                        decimal sum_temp = sum_Inr_AM + interestcharge_amount;
-
-                        #region --- Trace kết quả tổng đợt: tạm tính ---
-                        strMess.AppendLine(string.Format("----------------------------------------------------"));
-                        strMess.AppendLine(string.Format("##. Kết quả tổng đợt TẠM TÍNH: "));
-                        strMess.AppendLine(string.Format("- Số tiền trả trước [waiverinterest]: {0}", format_Money(sum_bsd_waiverinterest)));
-                        strMess.AppendLine(string.Format("- Tổng lãi phát sinh, không tính lãi đợt đang xét [sum_Inr_AM]: {0}", format_Money(sum_Inr_AM)));
-                        strMess.AppendLine(string.Format("- Tổng lãi phát sinh [sum_temp] (bao gồm đợt đang xét): {0}", format_Money(sum_temp)));
-                        strMess.AppendLine(string.Format("----------------------------------------------------"));
-                        #endregion
-
-                        #region --- @. Throw theo điều kiện: Hân note ---
-                        // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
-                        decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
-                        if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
-
-                        // Han_28072018 - Update field tính Interest Charge = field Total Amount
-                        decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
-                        if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
-                        #endregion
-
-                        #region --- #. Tính số tiền CAP ---
-                        decimal range_enOptionEntryAM = 0;
-                        decimal cap = 0;
-                        /* ------------------------------------------------------------------------
-                         * Lưu ý: 
-                         * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
-                         * - Nếu range nào chạm mức trước thì tính range đó
-                         *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
-                         *      + Maxamount  ->  Cài đặt trước số tiền
-                         --------------------------------------------------------------------------*/
-                        strMess.AppendLine("#. Tính số tiền CAP:");
-                        strMess.AppendLine(string.Format("- MaxPercent: {0}", format_Money(objIns.MaxPercent)));
-                        strMess.AppendLine(string.Format("- Maxamount: {0}", format_Money(objIns.MaxAmount)));
-
-                        if (objIns.MaxPercent > 0)
-                        {
-                            //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
-                            range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
-                            if (objIns.MaxAmount > 0)
-                            {
-                                if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
-                                else cap = range_enOptionEntryAM;
-                            }
-                            else cap = range_enOptionEntryAM;
-                        }
-                        else
-                        {
-                            cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
-                        }
-
-                        strMess.AppendLine(string.Format("- Calc Amout of MaxPercent: {0}", format_Money(range_enOptionEntryAM)));
-                        strMess.AppendLine(string.Format("@ CAP: {0}", format_Money(cap)));
-                        #endregion
-
-                        #region --- @@ Nghiệp vụ tính tiền lãi ---
-                        /* ------------------------------------------------------------------------------------------
-                         * Khái niệm: 
-                         * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
-                         * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
-                         * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
-                         * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
-                         --------------------------------------------------------------------------------------------*/
-                        strMess.AppendLine("222222222");
-                        if (cap <= 0)
-                        {
-                            var rs = check_Data_Setup();
-                            strMess.AppendLine(string.Format("Case: cap <= 0"));
-                            if (rs)
-                            {
-                                strMess.AppendLine("Không giới hạn tiền lãi");
-                                result = interestcharge_amount;
-                            }
-                            else
-                            {
-                                strMess.AppendLine("Cap thiết lặp chạm móc là 0. return 0");
-                                result = 0m;
-                            }
-                        }
-                        else if (sum_temp > cap)
-                        {
-                            strMess.AppendLine(string.Format("sum_temp " + sum_temp));
-                            strMess.AppendLine(string.Format("cap " + cap));
-                            strMess.AppendLine(string.Format("Case: sum_temp > cap"));
-                            if (cap > sum_Inr_AM)
-                            {
-                                strMess.AppendLine(string.Format("@ cap > sum_Inr_AM"));
-                                result = cap - sum_Inr_AM;
-                            }
-                            else
-                            {
-                                strMess.AppendLine(string.Format("@ cap <= sum_Inr_AM"));
-                                result = 0m;
-                            }
-
-                        }
-                        else if (sum_temp == cap)
-                        {
-                            strMess.AppendLine(string.Format("Case: sum_temp == cap"));
-                            if (sum_Inr_AM < cap)
-                                result = cap - sum_Inr_AM;
-                            else
-                                result = 0m;
-                        }
-                        else if (sum_temp < cap)
-                        {
-                            strMess.AppendLine(string.Format("Case: sum_temp < cap"));
-                            result = interestcharge_amount;
-                        }
-                        else
-                        {
-                            strMess.AppendLine(string.Format("Case: Chưa xác định, lấy nguyên lãi của đợt này"));
-                            result = interestcharge_amount;
-                        }
+                        #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
+                        EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
+                        Entity ent = entc.Entities[0];
+                        ent.Id = entc.Entities[0].Id;
+                        if (!ent.Contains("bsd_interestrate"))
+                            throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
+                        d_dailyinterest = (decimal)ent["bsd_interestrate"];
                         #endregion
                     }
-                    else result = 0;
+                    strMess.AppendLine("InterestPercent" + objIns.InterestPercent);
+                    strMess.AppendLine("d_dailyinterest" + d_dailyinterest);
+
+                    objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
+                    interestMasterPercent = objIns.InterestPercent;
+                    decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
+                    interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
+                    strMess.AppendLine("LateDays" + objIns.LateDays);
+                    strMess.AppendLine("amountPay" + amountPay);
+                    #region --- Trace đợt đang xét ---
+                    strMess.AppendLine(string.Format("----------------------------------------------------"));
+                    strMess.AppendLine(string.Format("#. [Đợt đang xét] "));
+                    strMess.AppendLine(string.Format("- InterestPercent: {0}", format_Money(objIns.InterestPercent)));
+                    strMess.AppendLine(string.Format("- interestcharge_percent: {0}", format_Money(interestcharge_percent)));
+                    strMess.AppendLine(string.Format("- interestcharge_amount 'tiền lãi': {0}", format_Money(interestcharge_amount)));
+                    strMess.AppendLine(string.Format("----------------------------------------------------"));
+                    #endregion
+
+                    decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
+                    decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay) - sum_bsd_waiverinterest;
+                    decimal sum_temp = sum_Inr_AM + interestcharge_amount;
+
+                    #region --- Trace kết quả tổng đợt: tạm tính ---
+                    strMess.AppendLine(string.Format("----------------------------------------------------"));
+                    strMess.AppendLine(string.Format("##. Kết quả tổng đợt TẠM TÍNH: "));
+                    strMess.AppendLine(string.Format("- Số tiền trả trước [waiverinterest]: {0}", format_Money(sum_bsd_waiverinterest)));
+                    strMess.AppendLine(string.Format("- Tổng lãi phát sinh, không tính lãi đợt đang xét [sum_Inr_AM]: {0}", format_Money(sum_Inr_AM)));
+                    strMess.AppendLine(string.Format("- Tổng lãi phát sinh [sum_temp] (bao gồm đợt đang xét): {0}", format_Money(sum_temp)));
+                    strMess.AppendLine(string.Format("----------------------------------------------------"));
+                    #endregion
+
+                    #region --- @. Throw theo điều kiện: Hân note ---
+                    // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
+                    decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
+                    if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
+
+                    // Han_28072018 - Update field tính Interest Charge = field Total Amount
+                    decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
+                    if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
+                    #endregion
+
+                    #region --- #. Tính số tiền CAP ---
+                    decimal range_enOptionEntryAM = 0;
+                    decimal cap = 0;
+                    /* ------------------------------------------------------------------------
+                     * Lưu ý: 
+                     * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
+                     * - Nếu range nào chạm mức trước thì tính range đó
+                     *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
+                     *      + Maxamount  ->  Cài đặt trước số tiền
+                     --------------------------------------------------------------------------*/
+                    strMess.AppendLine("#. Tính số tiền CAP:");
+                    strMess.AppendLine(string.Format("- MaxPercent: {0}", format_Money(objIns.MaxPercent)));
+                    strMess.AppendLine(string.Format("- Maxamount: {0}", format_Money(objIns.MaxAmount)));
+
+                    if (objIns.MaxPercent > 0)
+                    {
+                        //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
+                        range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
+                        if (objIns.MaxAmount > 0)
+                        {
+                            if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
+                            else cap = range_enOptionEntryAM;
+                        }
+                        else cap = range_enOptionEntryAM;
+                    }
+                    else
+                    {
+                        cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
+                    }
+
+                    strMess.AppendLine(string.Format("- Calc Amout of MaxPercent: {0}", format_Money(range_enOptionEntryAM)));
+                    strMess.AppendLine(string.Format("@ CAP: {0}", format_Money(cap)));
+                    #endregion
+
+                    #region --- @@ Nghiệp vụ tính tiền lãi ---
+                    /* ------------------------------------------------------------------------------------------
+                     * Khái niệm: 
+                     * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
+                     * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
+                     * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
+                     * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
+                     --------------------------------------------------------------------------------------------*/
+                    strMess.AppendLine("222222222");
+                    if (cap <= 0)
+                    {
+                        var rs = check_Data_Setup();
+                        strMess.AppendLine(string.Format("Case: cap <= 0"));
+                        if (rs)
+                        {
+                            strMess.AppendLine("Không giới hạn tiền lãi");
+                            result = interestcharge_amount;
+                        }
+                        else
+                        {
+                            strMess.AppendLine("Cap thiết lặp chạm móc là 0. return 0");
+                            result = 0m;
+                        }
+                    }
+                    else if (sum_temp > cap)
+                    {
+                        strMess.AppendLine(string.Format("sum_temp " + sum_temp));
+                        strMess.AppendLine(string.Format("cap " + cap));
+                        strMess.AppendLine(string.Format("Case: sum_temp > cap"));
+                        if (cap > sum_Inr_AM)
+                        {
+                            strMess.AppendLine(string.Format("@ cap > sum_Inr_AM"));
+                            result = cap - sum_Inr_AM;
+                        }
+                        else
+                        {
+                            strMess.AppendLine(string.Format("@ cap <= sum_Inr_AM"));
+                            result = 0m;
+                        }
+
+                    }
+                    else if (sum_temp == cap)
+                    {
+                        strMess.AppendLine(string.Format("Case: sum_temp == cap"));
+                        if (sum_Inr_AM < cap)
+                            result = cap - sum_Inr_AM;
+                        else
+                            result = 0m;
+                    }
+                    else if (sum_temp < cap)
+                    {
+                        strMess.AppendLine(string.Format("Case: sum_temp < cap"));
+                        result = interestcharge_amount;
+                    }
+                    else
+                    {
+                        strMess.AppendLine(string.Format("Case: Chưa xác định, lấy nguyên lãi của đợt này"));
+                        result = interestcharge_amount;
+                    }
+                    #endregion
+
                 }
                 #endregion
 
