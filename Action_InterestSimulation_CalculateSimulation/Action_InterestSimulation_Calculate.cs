@@ -965,7 +965,7 @@ namespace Action_InterestSimulation_CalculateSimulation
 
                     objIns.MaxPercent = enInterestrateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestrateMaster["bsd_toleranceinterestpercentage"] : 100;
                     objIns.MaxAmount = enInterestrateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestrateMaster["bsd_toleranceinterestamount"]).Value : 0;
-                    objIns.InterestPercent = enInterestrateMaster.Contains("bsd_termsinterestpercentage") ? (decimal)enInterestrateMaster["bsd_termsinterestpercentage"] : 0;
+                    objIns.InterestPercent = enInstallment.Contains("bsd_interestchargeper") ? (decimal)enInstallment["bsd_interestchargeper"] : 0;
                     objIns.InterestStarDate = objIns.Duedate.AddDays(objIns.Gracedays + 1);
                     strMess.AppendLine("InterestStarDate: " + objIns.InterestStarDate.ToString());
                 }
