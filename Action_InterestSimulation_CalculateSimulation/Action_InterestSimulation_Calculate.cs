@@ -427,7 +427,7 @@ namespace Action_InterestSimulation_CalculateSimulation
 
                     Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), ref lateDays, ref interestMasterPercent);
                     intereststartdatetype = objIns.Intereststartdatetype;
-                    interestMasterPercent = objIns.InterestPercent;
+                    decInterestCharge = objIns.InterestCharge;
                     InterestStarDate = objIns.InterestStarDate;
                     Entity interestMaster = service.Retrieve(((EntityReference)payScheme["bsd_interestratemaster"]).LogicalName, ((EntityReference)payScheme["bsd_interestratemaster"]).Id,
                         new ColumnSet(new string[]
@@ -783,11 +783,9 @@ namespace Action_InterestSimulation_CalculateSimulation
         }
         private static decimal CalculateInterestNotPaid(Entity ins)
         {
-            //decimal interestamount = ins.Contains("bsd_interestchargeamount") ? ((Money)ins["bsd_interestchargeamount"]).Value : decimal.Zero;
-            //decimal interestamountpaid = ins.Contains("bsd_interestwaspaid") ? ((Money)ins["bsd_interestwaspaid"]).Value : decimal.Zero;
             decimal interestamount = ins.Contains("bsd_amountofthisphase") ? ((Money)ins["bsd_amountofthisphase"]).Value : decimal.Zero;
             decimal interestamountpaid = ins.Contains("bsd_amountwaspaid") ? ((Money)ins["bsd_amountwaspaid"]).Value : decimal.Zero;
-            decimal waiverinterest = ins.Contains("waiverinstallment") ? ((Money)ins["waiverinstallment"]).Value : decimal.Zero;
+            decimal waiverinterest = ins.Contains("bsd_waiverinstallment") ? ((Money)ins["bsd_waiverinstallment"]).Value : decimal.Zero;
             return interestamount - interestamountpaid - waiverinterest;
         }
         private static decimal CalculateInterestAmount(Entity ins)
