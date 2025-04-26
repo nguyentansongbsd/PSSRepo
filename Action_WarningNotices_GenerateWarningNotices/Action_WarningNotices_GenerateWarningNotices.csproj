@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action_WarningNotices_GenerateWarningNotices.cs" />
+    <Compile Include="Action_WarningNotices_GenerateWarningNotices_BackUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

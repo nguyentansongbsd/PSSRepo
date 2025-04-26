@@ -19,10 +19,10 @@ namespace SaleDirectAction
 {
     public class SaleDirectAction : IPlugin
     {
-        public static IOrganizationService service;
-        private static IOrganizationServiceFactory factory;
-        private static StringBuilder strbuil = new StringBuilder();
-
+        public IOrganizationService service;
+        private IOrganizationServiceFactory factory;
+        private StringBuilder strbuil = new StringBuilder();
+        ITracingService tracingService = null;
         public void Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -30,6 +30,7 @@ namespace SaleDirectAction
             string str1 = context.InputParameters["Command"].ToString();
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             try
             {
                 strbuil.AppendLine("11111111");
@@ -42,7 +43,7 @@ namespace SaleDirectAction
             }
 
         }
-        public static void Main(string str1, EntityReference entityReference1, IPluginExecutionContext context)
+        public void Main(string str1, EntityReference entityReference1, IPluginExecutionContext context)
         {
             try
             {
@@ -180,6 +181,7 @@ namespace SaleDirectAction
                 {
                     //factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                     //service = factory.CreateOrganizationService(context.UserId);
+                    tracingService.Trace("2");
                     Entity enUnit = RetrieveValidUnit(entityReference1.Id);
                     if (enUnit == null)
                         throw new InvalidPluginExecutionException("Unit is not avaliable please check detail of unit!");
@@ -201,6 +203,7 @@ namespace SaleDirectAction
                         throw new InvalidPluginExecutionException("Please select default unit for this unit!");
                     if (!enUnit.Contains("bsd_depositamount"))
                         throw new InvalidPluginExecutionException("Please provide deposit for this unit!");
+                    tracingService.Trace("3");
                     Entity entity2 = new Entity("quote");
                     entity2["name"] = enUnit["name"];
                     entity2["bsd_projectid"] = enUnit["bsd_projectcode"];
@@ -226,6 +229,7 @@ namespace SaleDirectAction
                         entity2["bsd_numberofmonthspaidmf"] = entity3["bsd_numberofmonthspaidmf"];
                     }
                     strbuil.AppendLine("444444");
+                    tracingService.Trace("4");
                     Decimal managementamount = entity3.Contains("bsd_managementamount") ? ((Money)entity3["bsd_managementamount"]).Value : Decimal.Zero;
                     Decimal netsaleablearea = enUnit.Contains("bsd_netsaleablearea") ? (Decimal)enUnit["bsd_netsaleablearea"] : Decimal.Zero;
                     Decimal actualarea = enUnit.Contains("bsd_actualarea") ? (Decimal)enUnit["bsd_actualarea"] : Decimal.Zero;
@@ -252,6 +256,7 @@ namespace SaleDirectAction
                         entity2["bsd_managementfee"] = (object)new Money(num7);
                     }
                     strbuil.AppendLine("5555555555");
+                    tracingService.Trace("5");
                     EntityCollection taxCode = findTaxCode();
                     if (taxCode.Entities.Count > 0)
                     {
@@ -296,6 +301,7 @@ namespace SaleDirectAction
                     }
                     #endregion
                     strbuil.AppendLine("7777777");
+                    tracingService.Trace("6");
                     //#region Update pricelist mới nhất
                     //EntityReference pricelist_ref = null;
                     //pricelist_ref = (EntityReference)entity2["pricelevelid"];
@@ -313,10 +319,11 @@ namespace SaleDirectAction
                     //    entity2["bsd_pricelistphaselaunch"] = pricelist_ref;
                     //}
                     //#endregion
-
+                    tracingService.Trace("7");
                     if (context.InputParameters.Contains("Parameters") && context.InputParameters["Parameters"] != null)
                     {
                         strbuil.AppendLine("88888888");
+                        tracingService.Trace("8");
                         DataContractJsonSerializer contractJsonSerializer = new DataContractJsonSerializer(typeof(InputParameter[]));
                         MemoryStream ser = new MemoryStream(Encoding.UTF8.GetBytes((string)context.InputParameters["Parameters"]));
                         InputParameter[] inputParameter1 = (InputParameter[])contractJsonSerializer.ReadObject(ser);
@@ -325,6 +332,7 @@ namespace SaleDirectAction
                             if (inputParameter.action == str1)
                             {
                                 strbuil.AppendLine("9999999999");
+                                tracingService.Trace("9");
                                 Entity entity4 = service.Retrieve(inputParameter.name, Guid.Parse(inputParameter.value), new ColumnSet(new string[5]
                                 {
                   "bsd_nameofstaffagent",
@@ -336,8 +344,10 @@ namespace SaleDirectAction
                                 EntityReference entityReference2 = entity4.Contains("customerid") ? (EntityReference)entity4["customerid"] : (EntityReference)null;
                                 if (entityReference2 != null)
                                 {
+                                    tracingService.Trace("10");
                                     entity2["customerid"] = (object)entityReference2;
                                     EntityReference enfBA = getBankAccount(entityReference2.Id);
+                                    tracingService.Trace("11");
                                     if (enfBA != null)
                                         entity2["bsd_bankaccount"] = enfBA;
                                 }
@@ -354,6 +364,7 @@ namespace SaleDirectAction
 
                     }
 
+                    tracingService.Trace("12");
                     strbuil.AppendLine("aaaaa");
                     Guid guid = service.Create(entity2);
                     Entity entity5 = new Entity("quotedetail");
@@ -435,13 +446,13 @@ namespace SaleDirectAction
             }
         }
 
-        private static EntityCollection findTaxCode()
+        private EntityCollection findTaxCode()
         {
             string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n                      <entity name='bsd_taxcode'>\r\n                        <attribute name='bsd_taxcodeid' />\r\n                        <filter type='and'>\r\n                          <condition attribute='bsd_default' operator='eq' value='1' />\r\n                        </filter>\r\n                      </entity>\r\n                    </fetch>");
             return service.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
 
-        private static Entity RetrieveValidUnit(Guid unitId)
+        private Entity RetrieveValidUnit(Guid unitId)
         {
             QueryExpression q = new QueryExpression();
             q.EntityName = "product";
@@ -499,7 +510,7 @@ namespace SaleDirectAction
                 return entcs.Entities[0];
         }
 
-        private static EntityReference PhasesLaunchPriceList(EntityReference phaseLaunch)
+        private EntityReference PhasesLaunchPriceList(EntityReference phaseLaunch)
         {
             Entity en = service.Retrieve(phaseLaunch.LogicalName, phaseLaunch.Id, new ColumnSet(new string[] { "bsd_pricelistid" }));
             if (en.Attributes.Contains("bsd_pricelistid"))
@@ -508,7 +519,7 @@ namespace SaleDirectAction
                 return null;
         }
 
-        private static Money GetQueuefee(EntityReference phaseF)
+        private Money GetQueuefee(EntityReference phaseF)
         {
             Money m = new Money(0);
             if (phaseF != null)
@@ -522,7 +533,7 @@ namespace SaleDirectAction
             return m;
         }
 
-        private static Money GetQepositfee(EntityReference pmSchRef)
+        private Money GetQepositfee(EntityReference pmSchRef)
         {
             Money money = new Money(Decimal.Zero);
             if (pmSchRef != null)
@@ -536,7 +547,7 @@ namespace SaleDirectAction
             }
             return money;
         }
-        private static EntityCollection getListByIDCopy(IOrganizationService service, Guid idcopy)
+        private EntityCollection getListByIDCopy(IOrganizationService service, Guid idcopy)
         {
             #region --- Danh sách sắp xếp theo filter createdon mới nhất top 1 ---
 
@@ -574,7 +585,7 @@ namespace SaleDirectAction
             return rs;
         }
 
-        private static EntityReference getBankAccount(Guid customerId)
+        private EntityReference getBankAccount(Guid customerId)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch top=""1"">
@@ -587,7 +598,7 @@ namespace SaleDirectAction
               </entity>
             </fetch>";
             EntityCollection result = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            if (result == null && result.Entities.Count <= 0) return null;
+            if (result.Entities.Count <= 0) return null;
             return result.Entities[0].ToEntityReference();
         }
 
