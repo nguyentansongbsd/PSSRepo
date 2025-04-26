@@ -49,6 +49,10 @@ namespace Plugin_ApplyDocument_Create_Update
                         service.Update(enUp);
                         checkAmountAdvance(((EntityReference)enOE["customerid"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
                     }
+                    else if (enTarget.Contains("bsd_customer"))
+                    {
+                        checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
+                    }
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");
             }
@@ -79,6 +83,10 @@ namespace Plugin_ApplyDocument_Create_Update
                         enUp["bsd_customer"] = (EntityReference)enOE["customerid"];
                         service.Update(enUp);
                         checkAmountAdvance(((EntityReference)enOE["customerid"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
+                    }
+                    else if (enTarget.Contains("bsd_customer"))
+                    {
+                        checkAmountAdvance(((EntityReference)enTarget["bsd_customer"]).Id, ((EntityReference)enTarget["bsd_project"]).Id, ((EntityReference)enTarget["bsd_optionentry"]).Id, bsd_advancepaymentamount);
                     }
                 }
                 else throw new InvalidPluginExecutionException("Kindly complete the 'Types of payment' field.");

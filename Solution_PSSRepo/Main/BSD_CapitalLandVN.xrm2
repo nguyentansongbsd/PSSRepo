@@ -61,8 +61,42 @@
                     "SdkMessageFilterId": "e1ee983f-4a41-e811-8135-3863bb360c48",
                     "SdkMessageId": "9ebdbb1b-ea3e-db11-86a7-000a3a5473e8",
                     "Stage": 40
+                  },
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 1,
+                    "Id": "5d5e7aac-e684-4a6d-adf0-a3ff0c9bc53a",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Update - Update Due Date Detail - Post-operation",
+                    "PluginTypeId": "9a8469ea-38c7-4915-b135-5a9c1bc30661",
+                    "SdkMessageFilterId": "ebee983f-4a41-e811-8135-3863bb360c48",
+                    "SdkMessageId": "20bebb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40,
+                    "EventHandler": {
+                      "Id": "9a8469ea-38c7-4915-b135-5a9c1bc30661",
+                      "LogicalName": "plugintype",
+                      "Name": "Plugin_Create_UpdateDueDateDetail.Plugin_Create_UpdateDueDateDetail"
+                    }
                   }
                 ]
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Update_Installment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "75d0235c-08b9-4d79-9333-28f033969580",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_Installment.dll",
+                "SourceType": 0
               }
             }
           ]
@@ -80,6 +114,22 @@
                 "PathNameOnServer": "Plugin_Updateduedate.dll",
                 "SourceType": 0
               }
+            }
+          ]
+        },
+        {
+          "Name": "WebResource.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
             }
           ]
         }
@@ -258,6 +308,112 @@
                 "PathNameOnServer": "Action_ConvertWordToPDF.dll",
                 "SourceType": 0
               }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml.Framework"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.Bcl.AsyncInterfaces"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp.Charting"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Buffers"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Memory"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics.Vectors"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.CompilerServices.Unsafe"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Primitives"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Encodings.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Threading.Tasks.Extensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ValueTuple"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
             }
           ]
         },
@@ -704,6 +860,50 @@
           ]
         },
         {
+          "Name": "Plugin_Create_PaymentNotice_MapUpdateInstallment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_PaymentNotice_MapUpdateInstallment.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "5ead8fac-f895-4566-94cc-a88fbd28e5be",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": false,
+                "PathNameOnServer": "Plugin_Create_PaymentNotice_MapUpdateInstallment.dll",
+                "SourceType": 0,
+                "PluginTypeConfigs": [
+                  {
+                    "Id": "074cc212-e369-4d24-b1e6-bc8d8639ac05",
+                    "TypeName": "Plugin_Create_PaymentNotice_MapUpdateInstallment.Plugin_Create_PaymentNotice_MapUpdateInstallment"
+                  }
+                ],
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 4,
+                    "Id": "0537fdb0-51a7-4ebf-a1b0-ab78df8caf4a",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Create - Payment Notices - Post-operation",
+                    "PluginTypeId": "074cc212-e369-4d24-b1e6-bc8d8639ac05",
+                    "SdkMessageFilterId": "3ee4329c-e0b6-e611-80f1-3863bb367d68",
+                    "SdkMessageId": "9ebdbb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_PaymentNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -744,7 +944,28 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Create_UpdateDueDateDetail.dll",
-                "SourceType": 0
+                "SourceType": 0,
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 1,
+                    "FilteringAttributes": "createdby,createdonbehalfby,createdon,bsd_duedatenew,bsd_duedateold,importsequencenumber,modifiedby,modifiedonbehalfby,modifiedon,bsd_name,bsd_optionentry,ownerid,owningbusinessunit,owningteam,owninguser,bsd_project,bsd_quotation,bsd_quote,overriddencreatedon,statecode,timezoneruleversionnumber,bsd_units,bsd_updateduedate,utcconversiontimezonecode",
+                    "Id": "5d5e7aac-e684-4a6d-adf0-a3ff0c9bc53a",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Update - Update Due Date Detail - Post-operation",
+                    "PluginTypeId": "d7d8753d-5349-45fa-9cfe-4d087a32e747",
+                    "SdkMessageFilterId": "ebee983f-4a41-e811-8135-3863bb360c48",
+                    "SdkMessageId": "20bebb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40,
+                    "EventHandler": {
+                      "Id": "d7d8753d-5349-45fa-9cfe-4d087a32e747",
+                      "LogicalName": "plugintype",
+                      "Name": "Plugin_Create_UpdateDueDateDetail.Plugin_Create_UpdateDueDateDetail"
+                    }
+                  }
+                ]
               }
             }
           ]

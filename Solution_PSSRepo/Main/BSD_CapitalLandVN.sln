@@ -131,6 +131,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_ShareCustomerToTeam"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_MappingParamToWord", "Action\Action_MappingParamToWord\Action_MappingParamToWord.csproj", "{42E6A983-DA4B-4D71-B369-B290153AAE5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Documents_Approve", "..\..\Action_Documents_Approve\Action_Documents_Approve\Action_Documents_Approve.csproj", "{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_PaymentNotice_MapUpdateInstallment", "Plugin\Create Entity\Plugin_Create_PaymentNotice_MapUpdateInstallment\Plugin_Create_PaymentNotice_MapUpdateInstallment.csproj", "{CFBF373A-7DED-4D73-A515-CDA2383DDA07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -442,6 +446,18 @@ Global
 		{42E6A983-DA4B-4D71-B369-B290153AAE5F}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{42E6A983-DA4B-4D71-B369-B290153AAE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42E6A983-DA4B-4D71-B369-B290153AAE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -506,6 +522,8 @@ Global
 		{19796873-6394-4E8C-A219-4779401B12ED} = {9D9A632C-3372-4DAE-8275-FC4B481A7820}
 		{4486BF61-C9D2-4820-83C1-EE42AC81451B} = {9D9A632C-3372-4DAE-8275-FC4B481A7820}
 		{42E6A983-DA4B-4D71-B369-B290153AAE5F} = {9D9A632C-3372-4DAE-8275-FC4B481A7820}
+		{B4C6D60A-87C3-4C9F-B468-C6AB66436BDC} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
+		{CFBF373A-7DED-4D73-A515-CDA2383DDA07} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

@@ -1353,7 +1353,10 @@ function btn_ChangeDueDateInst() {
 
 function btnVis_ChangeDueDateInst() {
     console.log('btnVis_ChangeDueDateInst');
-    var flag = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Financal Controller"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Finance Manager"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Chief Accountant"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Accountant"]));
+    var flag = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Financal Controller"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Finance Manager"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Chief Accountant"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_FIN_Accountant"]));
     var status = Xrm.Page.getAttribute("statuscode").getValue();
     var formtype = Xrm.Page.ui.getFormType();
     if (formtype != 1 && status != 100000006 && status != 100000007 && flag) return true;
@@ -1544,6 +1547,7 @@ function btnVis_SpecialSPAApproval() {
 //--- Han_25052018 > Print Actual Payment
 
 function btn_PrintActualPayment() {
+    debugger;
     var idrecord = Xrm.Page.data.entity.getId().replace('{', '').replace('}', '');
     var nameReport = "ActualInterestReport";
     // var urlreport = getReportURL("run", "All_ActualInterestReport_Up_Chua.rdl", "7AE7C020-6EA7-E811-8159-3863BB367D20", idrecord, window.top.Mscrm.EntityPropUtil.EntityTypeName2CodeMap[Xrm.Page.data.entity.getEntityName()]);
@@ -2080,7 +2084,10 @@ window.top.applySignUpdateContractDate = function (ngay) {
 function vis_UpdateContractDate() {
     console.log('vis_UpdateContractDate');
     var statuscode = Xrm.Page.getAttribute("statuscode").getValue();
-    var flagFin = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Head of Section"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Manager"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Senior Staff"]) || CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR_SubSale"]));
+    var flagFin = (CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Head of Section"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Manager"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Senior Staff"]) ||
+        CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR_SubSale"]));
     var flagFin2 = CheckRole(Xrm.Page.context.getUserRoles(), ["CLVN_CCR Manager"]);
     if (((statuscode == 100000000 || statuscode == 100000001) && flagFin == true) || (statuscode == 100000002 && flagFin2 == true)) return true;
     return false;

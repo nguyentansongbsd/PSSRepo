@@ -53,7 +53,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                   </entity>
                 </fetch>";
                 EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("The list of payments to be processed is currently empty. Please check again.");
+                if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("The list of apply document to be processed is currently empty. Please check again.");
                 Entity enTarget = new Entity("bsd_confirmapplydocument");
                 enTarget.Id = Guid.Parse(input02);
                 enTarget["bsd_powerautomate"] = true;
