@@ -13,6 +13,8 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         ITracingService traceService = null;
+
+        private string owner = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -25,6 +27,10 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             if (context.InputParameters["Date"] != null)
             {
                 date = context.InputParameters["Date"].ToString();
+            }
+            if (context.InputParameters["Owner"] != null)
+            {
+                owner = context.InputParameters["Owner"].ToString().Replace("{", "").Replace("}", "");
             }
             string OEId = context.InputParameters["OptionEntryId"] != null ? context.InputParameters["OptionEntryId"].ToString() : null;
             if (string.IsNullOrWhiteSpace(OEId)) return;
@@ -67,6 +73,13 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                             customerNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service); //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
                             customerNotices["bsd_optionentry"] = OE.ToEntityReference();
                             customerNotices["bsd_paymentschemedetail"] = PSD.ToEntityReference();
+
+                            if (!string.IsNullOrWhiteSpace(owner))
+                            {
+                                traceService.Trace("owner: " + owner);
+                                customerNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                customerNotices["createdby"] = new EntityReference("systemuser", Guid.Parse(owner));
+                            }
 
                             EntityCollection list_orderproduct = RetrieveMultiRecord(service, "salesorderdetail", new ColumnSet(new string[] { "productid" }), "salesorderid", OE.Id);
                             if (list_orderproduct.Entities.Count > 0)
@@ -370,6 +383,12 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                             warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
                                             warningNotices["bsd_type"] = new OptionSetValue(100000000);
 
+                                            if (!string.IsNullOrWhiteSpace(owner))
+                                            {
+                                                traceService.Trace("owner: " + owner);
+                                                warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                            }
+
                                             if (PSD.Contains("bsd_balance"))
                                             {
                                                 decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
@@ -417,6 +436,13 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                         warningNotices["bsd_units"] = enOptionEntry["bsd_unitnumber"];
                                     warningNotices["bsd_numberofwarning"] = 1;
                                     warningNotices["bsd_type"] = new OptionSetValue(100000000);
+
+                                    if (!string.IsNullOrWhiteSpace(owner))
+                                    {
+                                        traceService.Trace("owner: " + owner);
+                                        warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                    }
+
                                     if (PSD.Contains("bsd_balance"))
                                     {
                                         decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
