@@ -14,6 +14,8 @@ namespace Action_WarningNotices_GenerateWarningNotices
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         ITracingService traceService = null;
+
+        private string owner = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
 
@@ -34,6 +36,10 @@ namespace Action_WarningNotices_GenerateWarningNotices
             if (context.InputParameters["Date"] != null)
             {
                 date = context.InputParameters["Date"].ToString();
+            }
+            if (context.InputParameters["Owner"] != null)
+            {
+                owner = context.InputParameters["Owner"].ToString().Replace("{", "").Replace("}", "");
             }
             //EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
             traceService.Trace("1");
@@ -157,6 +163,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                         int graceday = findGraceDays(service, PS.ToEntityReference());
                                         if (graceday != -1)
                                             warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(owner))
+                                    {
+                                        traceService.Trace("owner: " + owner);
+                                        warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                     }
                                     var id = service.Create(warningNotices);
                                     var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
