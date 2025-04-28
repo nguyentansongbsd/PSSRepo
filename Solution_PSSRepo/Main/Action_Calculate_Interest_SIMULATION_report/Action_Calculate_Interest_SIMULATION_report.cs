@@ -20,7 +20,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
         public static StringBuilder strMess = new StringBuilder();
         private static Entity enInstallment;
         private static Entity enInstallmentroot;
-        bool isMap=false;
+        bool isMap = false;
         Entity enOptionEntry;
         public static Installment objIns = new Installment();
         bool resCheckCaseSign = false;
@@ -128,6 +128,10 @@ namespace Action_Calculate_Interest_SIMULATION_report
                     bsd_signeddadate = (DateTime)enOptionEntry["bsd_signeddadate"];
                     caseSign = 1;
                 }
+                else
+                {
+                    caseSign = 4;
+                }    
             }
             var latedays2 = lateDays;
             resCheckCaseSign = checkCaseSignAndCalLateDays(bsd_signedcontractdate, bsd_signeddadate, receiptdate, ref latedays2);
@@ -152,6 +156,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
             var bsd_balance = enInstallment.Contains("bsd_balance") ? ((Money)enInstallment["bsd_balance"]).Value : 0;
             strMess.AppendLine($"Balance:{bsd_balance}");
             resultReport.Balance = bsd_balance;
+            resultReport.InterestCharge_MucLaiPhat = enInstallment.Contains("bsd_interestchargeper") ? ((decimal)enInstallment["bsd_interestchargeper"]) : 0;
             //Tiền lãi (VND)(Thực tế)
             TracingSe.Trace("step7");
             var bsd_interestchargeamount = enInstallment.Contains("bsd_interestchargeamount") ? ((Money)enInstallment["bsd_interestchargeamount"]).Value : 0;
@@ -500,16 +505,34 @@ namespace Action_Calculate_Interest_SIMULATION_report
             switch (caseSign)
             {
                 case 0:
-                    result = false;
-                    break;
-                case 1:
+                    result = false; break;
+                case 4:
+
                     if (rs.Entities.Count > 0)
                     {
-                        if (rs.Entities[0].Id == enInstallment.Id)
-                        {
+                        if (isContainDueDate == false)
                             result = false;
-                            break;
+                        else
+                        {
+                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
+                            TracingSe.Trace("bsd_duedate >= bsd_duedateFlag: "+(bsd_duedate >= bsd_duedateFlag).ToString());
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
+                            else result = false;
                         }
+                    }
+                    break;
+                case 1://có Sign DA
+                    if (rs.Entities.Count > 0)
+                    {
+                        //if (rs.Entities[0].Id == enInstallment.Id)
+                        //{
+                        //    result = false;
+                        //    break;
+                        //}
                         if (isContainDueDate == false)
                             result = false;
                         else
@@ -517,17 +540,23 @@ namespace Action_Calculate_Interest_SIMULATION_report
                             bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
                             if (bsd_duedate < bsd_duedateFlag)
                             {
-                               TracingSe.Trace("tính");
+                                TracingSe.Trace("tính");
                                 TracingSe.Trace($"name:{enInstallmentroot["bsd_name"]}");
                                 result = true;
                                 //tính số ngày trễ hạn 
                                 lateDays = (int)(receiptdate - bsd_signeddadate).TotalDays;
                             }
+                            else
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
                             else result = false;
                         }
                     }
                     break;
-                case 2:
+                case 2://không có sign DA
 
                     if (rs.Entities.Count > 0)
                     {
@@ -539,13 +568,13 @@ namespace Action_Calculate_Interest_SIMULATION_report
                             if (bsd_duedate >= bsd_duedateFlag)
                             {
                                 result = true;
-                                lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                             }
                             else result = false;
                         }
                     }
                     break;
-                case 3:
+                case 3://có Sign DA
                     result = true;
                     bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
                     if (bsd_duedate < bsd_duedateFlag)
@@ -556,7 +585,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
                     else
                     {
                         //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
                     }
                     break;
                 default:
@@ -589,8 +618,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
                     strMess.AppendLine(string.Format("ID record [bsd_optionentry]: {0}", OE_ref.Id));
                     decimal interestcharge_amount = 0;
                     Entity OE = service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true));
-                    if (OE.Contains("bsd_signeddadate") || OE.Contains("bsd_signedcontractdate"))
-                    {
+                   
                         if (!resCheckCaseSign) return 0;
                         Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
                         bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
@@ -744,8 +772,6 @@ namespace Action_Calculate_Interest_SIMULATION_report
                             result = interestcharge_amount;
                         }
                         #endregion
-                    }
-                    else result = 0;
                 }
                 #endregion
 
@@ -788,6 +814,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
         public decimal bsd_toleranceinterestamount { get; set; }
 
         public decimal InterestCharge { get; set; }
+        public decimal InterestCharge_MucLaiPhat { get; set; }
         public decimal Balance { get; set; }
         public decimal laiConLai { get; set; }
         public DateTime InterestStarDate { get; set; }

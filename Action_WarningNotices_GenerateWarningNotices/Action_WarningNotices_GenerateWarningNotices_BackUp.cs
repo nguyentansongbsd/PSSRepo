@@ -1,0 +1,426 @@
+﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Action_WarningNotices_GenerateWarningNotices
+{
+    public class Action_WarningNotices_GenerateWarningNotices_BackUp : IPlugin
+    {
+        IOrganizationService service = null;
+        IOrganizationServiceFactory factory = null;
+        ITracingService traceService = null;
+        void IPlugin.Execute(IServiceProvider serviceProvider)
+        {
+
+            IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
+            factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            service = factory.CreateOrganizationService(context.UserId);
+            traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+
+            traceService.Trace(string.Format("Context Depth {0}", context.Depth));
+            string pro = context.InputParameters["Project"].ToString();
+            string blo = context.InputParameters["Block"].ToString();
+            string flo = context.InputParameters["Floor"].ToString();
+            string units = context.InputParameters["Units"].ToString();
+            string date = "";
+            if (context.InputParameters["Date"] != null)
+            {
+                date = context.InputParameters["Date"].ToString();
+            }
+            EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
+            int dem = 0;
+            foreach (Entity OE in l_OptionEntry.Entities)
+            {
+                EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
+                int PN_Date = -1;
+                if (l_PS.Entities.Count > 0)
+                {
+                    Entity PS = l_PS[0];
+                    if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
+                    {
+                        #region INSTALLMENT
+                        EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
+                        foreach (Entity PSD in l_PSD.Entities)
+                        {
+                            int nday = (int)(DateTime.Now.AddHours(7).Date.Subtract(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date).TotalDays);
+                            if (nday > 0)
+                            {
+                                EntityCollection L_warning = findWarningNotices(service, PSD);
+                                #region Da Generate WN
+                                if (L_warning.Entities.Count > 0)
+                                {
+                                    Entity warning = L_warning[0];
+                                    int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
+                                    if (numberofWarning > 0 && numberofWarning < 4)
+                                    {
+                                        //numberofWarning == 1 ? "bsd_warningnotices2date" : (numberofWarning == 2 ? "bsd_warningnotices3date" : (numberofWarning == 3 ? "bsd_warningnotices4date" : null));
+                                        string warningdate = "bsd_warningnotices" + (numberofWarning + 1) + "date";
+                                        if (PS.Contains(warningdate) && nday >= (int)PS[warningdate])
+                                        {
+                                            EntityCollection l_war = findWarningNoticesByNumberOfWarning(service, PSD, (numberofWarning + 1));
+                                            if (l_war.Entities.Count == 0)
+                                            {
+                                                Entity warningNotices = new Entity("bsd_warningnotices");
+                                                if (OE.Contains("name"))
+                                                    warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
+                                                else warningNotices["bsd_name"] = "Warning Notices";
+                                                warningNotices["bsd_subject"] = "Warning Notices";
+                                                warningNotices["bsd_optionentry"] = OE.ToEntityReference();
+                                                if (OE.Contains("customerid"))
+                                                    warningNotices["bsd_customer"] = OE["customerid"];
+                                                if (OE.Contains("bsd_project"))
+                                                    warningNotices["bsd_project"] = OE["bsd_project"];
+                                                if (OE.Contains("bsd_unitnumber"))
+                                                    warningNotices["bsd_units"] = OE["bsd_unitnumber"];
+                                                warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
+                                                warningNotices["bsd_type"] = new OptionSetValue(100000000);
+
+                                                if (PSD.Contains("bsd_balance"))
+                                                {
+                                                    decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                                    warningNotices["bsd_amount"] = new Money(amount);
+                                                }
+                                                warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                                warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                                if (PSD.Contains("bsd_duedate"))
+                                                {
+                                                    warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                                    int graceday = findGraceDays(service, PS.ToEntityReference());
+                                                    if (graceday != -1)
+                                                        warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                                }
+
+                                                var id = service.Create(warningNotices);
+                                                var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
+                                                dem++;
+
+                                                Entity ins = new Entity(PSD.LogicalName);
+                                                ins.Id = PSD.Id;
+                                                string field = "bsd_warningnotices" + (numberofWarning + 1);
+                                                ins[field] = true;
+                                                traceService.Trace("step1");
+                                                string field2 = "bsd_warningdate" + (numberofWarning + 1);
+                                                ins[field2] = ((DateTime)enWRN["bsd_date"]).AddHours(7);
+                                                traceService.Trace("step2");
+
+                                                string field3 = "bsd_w_noticesnumber" + (numberofWarning + 1);
+                                                ins[field3] = enWRN["bsd_noticesnumber"];
+                                                traceService.Trace("step3");
+
+                                                service.Update(ins);
+                                            }
+                                        }
+                                    }
+                                }
+                                #endregion
+                                #region Chua Generate WN
+                                else
+                                {
+                                    PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
+                                    if (PN_Date >= 0 && nday >= PN_Date)
+                                    {
+                                        Entity warningNotices = new Entity("bsd_warningnotices");
+                                        if (OE.Contains("name"))
+                                            warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
+                                        else warningNotices["bsd_name"] = "Warning Notices";
+                                        warningNotices["bsd_subject"] = "Warning Notices";
+                                        warningNotices["bsd_optionentry"] = OE.ToEntityReference();
+                                        if (OE.Contains("customerid"))
+                                            warningNotices["bsd_customer"] = OE["customerid"];
+                                        if (OE.Contains("bsd_project"))
+                                            warningNotices["bsd_project"] = OE["bsd_project"];
+                                        if (OE.Contains("bsd_unitnumber"))
+                                            warningNotices["bsd_units"] = OE["bsd_unitnumber"];
+                                        warningNotices["bsd_numberofwarning"] = 1;
+                                        warningNotices["bsd_type"] = new OptionSetValue(100000000);
+                                        if (PSD.Contains("bsd_balance"))
+                                        {
+                                            decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                            warningNotices["bsd_amount"] = new Money(amount);
+                                        }
+                                        warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                        warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                        if (PSD.Contains("bsd_duedate"))
+                                        {
+                                            warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                            int graceday = findGraceDays(service, PS.ToEntityReference());
+                                            if (graceday != -1)
+                                                warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                        }
+                                        var id = service.Create(warningNotices);
+                                        var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
+
+                                        Entity ins = new Entity(PSD.LogicalName);
+                                        ins.Id = PSD.Id;
+                                        string field = "bsd_warningnotices1";
+                                        ins[field] = true;
+                                        traceService.Trace("step1z");
+                                        string field2 = "bsd_warningdate" + (1);
+                                        ins[field2] = ((DateTime)enWRN["bsd_date"]).AddHours(7);
+                                        traceService.Trace("step2z");
+
+                                        string field3 = "bsd_w_noticesnumber" + (1);
+                                        ins[field3] = enWRN["bsd_noticesnumber"];
+                                        traceService.Trace("step3z");
+                                        service.Update(ins);
+                                    }
+                                }
+                                #endregion
+                            }
+                        }
+                        #endregion
+                    }
+                }
+            }
+            context.OutputParameters["returnN"] = dem.ToString();
+        }
+        EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
+        {
+            QueryExpression q = new QueryExpression(entity);
+            q.ColumnSet = column;
+            q.Criteria = new FilterExpression();
+            q.Criteria.AddCondition(new ConditionExpression(condition, ConditionOperator.Equal, value));
+            EntityCollection entc = service.RetrieveMultiple(q);
+
+            return entc;
+        }
+        private EntityCollection findPaymentSchemeDetail(IOrganizationService crmservices, Entity oe)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+                  <entity name='bsd_paymentschemedetail'>
+                    <attribute name='bsd_paymentschemedetailid' />
+                    <attribute name='bsd_duedate' />
+                    <attribute name='bsd_balance' />
+                    <order attribute='bsd_duedate' descending='false' />
+                    <filter type='and'>
+                      <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
+                        <condition attribute='statuscode' operator='eq' value='100000000' />
+                      <condition attribute='bsd_duedate' operator='not-null' />
+                    </filter>
+                  </entity>
+                </fetch>";
+            fetchXml = string.Format(fetchXml, oe.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findunits(IOrganizationService crmservices, Entity oe)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>
+              <entity name='product'>
+                <attribute name='name' />
+                <attribute name='productid' />
+                <attribute name='productnumber' />
+                <attribute name='bsd_estimatehandoverdate' />
+                <order attribute='productnumber' descending='false' />
+                <filter type='and'>
+                  <condition attribute='bsd_estimatehandoverdate' operator='not-null' />
+                </filter>
+                <link-entity name='salesorderdetail' from='productid' to='productid' alias='ac'>
+                  <filter type='and'>
+                    <condition attribute='salesorderid' operator='eq' uitype='salesorder' value='{0}' />
+                  </filter>
+                </link-entity>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, oe.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findPaymentScheme(IOrganizationService crmservices, EntityReference ps)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>
+              <entity name='bsd_paymentscheme'>
+                <attribute name='bsd_paymentschemeid' />
+                <attribute name='bsd_warningnotices4date' />
+                <attribute name='bsd_warningnotices3date' />
+                <attribute name='bsd_warningnotices2date' />
+                <attribute name='bsd_warningnotices1date' />
+                <order attribute='bsd_warningnotices4date' descending='false' />
+                <filter type='and'>
+                  <condition attribute='bsd_paymentschemeid' operator='eq' uitype='bsd_paymentscheme' value='{0}' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, ps.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findOptionEntry(IOrganizationService crmservices, string project, string block, string floor, string units)
+        {
+            string condition = "";
+            traceService.Trace("project :" + project);
+            if (project != "")
+            {
+                condition += "<condition attribute='bsd_projectcode' operator='eq' value='" + project + @"' />";
+            }
+            traceService.Trace("condition :" + condition);
+            if (block != "")
+            {
+                condition += "<condition attribute='bsd_blocknumber' operator='eq' value='" + block + @"' />";
+            }
+            if (floor != "")
+            {
+                condition += "<condition attribute='bsd_floor' operator='eq' value='" + floor + @"' />";
+            }
+            if (units != "")
+            {
+                condition += "<condition attribute='productid' operator='eq' value='" + units + @"' />";
+            }
+
+            string fetchXMl = @"<fetch>
+              <entity name='salesorder' >
+                <all-attributes/>
+                <filter type='and' >
+                  <condition attribute='statuscode' operator='in' >
+                    <value>100000001</value>
+                    <value>100000003</value>
+                    <value>100000000</value>
+                    <value>100000002</value>
+                    <value>100000005</value>
+                  </condition>
+                  <condition attribute='bsd_paymentscheme' operator='not-null' />
+                  <condition attribute='customerid' operator='not-null' />
+                  <condition attribute='totalamount' operator='gt' value='0' />
+                  <condition attribute='bsd_terminationletter' operator='neq' value='1' />
+                </filter>
+                <link-entity name='product' from='productid' to='bsd_unitnumber' >
+                  <filter>
+                    '" + condition + @"'
+                  </filter>
+                </link-entity>
+              </entity>
+            </fetch>";
+            traceService.Trace("findOptionEntry :" + fetchXMl);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXMl));
+            return entc;
+        }
+        private EntityCollection findWarningNotices(IOrganizationService crmservices, Entity paymentDet)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+              <entity name='bsd_warningnotices'>
+                <attribute name='bsd_warningnoticesid' />
+                <attribute name='bsd_date' />
+                <attribute name='bsd_numberofwarning' />
+                <order attribute='bsd_numberofwarning' descending='true' />
+                <filter type='and'>
+                  <condition attribute='bsd_paymentschemedeitail' operator='eq' uitype='bsd_paymentschemedetail' value='{0}' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, paymentDet.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findWarningNoticesByNumberOfWarning(IOrganizationService crmservices, Entity paymentDet, int num)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+              <entity name='bsd_warningnotices'>
+                <attribute name='bsd_warningnoticesid' />
+                <attribute name='bsd_date' />
+                <attribute name='bsd_numberofwarning' />
+                <order attribute='bsd_numberofwarning' descending='true' />
+                <filter type='and'>
+                  <condition attribute='bsd_paymentschemedeitail' operator='eq' uitype='bsd_paymentschemedetail' value='{0}' />
+                  <condition attribute='bsd_numberofwarning' operator='eq'  value='{1}' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, paymentDet.Id, num);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findWarningNotices_Units(IOrganizationService crmservices, Entity units)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+              <entity name='bsd_warningnotices'>
+                <attribute name='bsd_warningnoticesid' />
+                <attribute name='bsd_date' />
+                <attribute name='bsd_numberofwarning' />
+                <order attribute='bsd_numberofwarning' descending='true' />
+                <filter type='and'>
+                  <condition attribute='bsd_units' operator='eq' uitype='product' value='{0}' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, units.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findWarningNotices_Units_ByNumberOfWarning(IOrganizationService crmservices, Entity units, int num)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+              <entity name='bsd_warningnotices'>
+                <attribute name='bsd_warningnoticesid' />
+                <attribute name='bsd_date' />
+                <attribute name='bsd_numberofwarning' />
+                <order attribute='bsd_numberofwarning' descending='true' />
+                <filter type='and'>
+                  <condition attribute='bsd_units' operator='eq' uitype='product' value='{0}' />
+                  <condition attribute='bsd_numberofwarning' operator='eq' value='{1}' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, units.Id, num);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection findWarningNotices_TODAY(IOrganizationService crmservices)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+              <entity name='bsd_warningnotices'>
+                <attribute name='bsd_warningnoticesid' />
+                <attribute name='createdon' />
+                <order attribute='createdon' descending='false' />
+                <filter type='and'>
+                  <condition attribute='createdon' operator='today' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private int findGraceDays(IOrganizationService crmservices, EntityReference ps)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true'>
+                  <entity name='bsd_interestratemaster'>
+                    <attribute name='bsd_interestratemasterid' />
+                    <attribute name='bsd_intereststartdatetype' />
+                    <attribute name='bsd_gracedays' />
+                    <link-entity name='bsd_paymentscheme' from='bsd_interestratemaster' to='bsd_interestratemasterid' alias='ab'>
+                      <filter type='and'>
+                        <condition attribute='bsd_paymentschemeid' operator='eq'  uitype='bsd_paymentscheme' value='{0}' />
+                      </filter>
+                    </link-entity>
+                  </entity>
+                </fetch>";
+            fetchXml = string.Format(fetchXml, ps.Id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (entc.Entities.Count > 0)
+            {
+                if (((OptionSetValue)(entc.Entities[0]["bsd_intereststartdatetype"])).Value == 100000001)//type == graceday
+                    return (int)entc.Entities[0]["bsd_gracedays"];
+                else return 0;
+            }
+            else return -1;
+        }
+    }
+}

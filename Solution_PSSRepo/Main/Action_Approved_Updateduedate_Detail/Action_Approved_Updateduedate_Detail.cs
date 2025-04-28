@@ -233,7 +233,7 @@ namespace Action_Approved_Updateduedate_Detail
                     {
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
                         {
-                            var mess = "The new due date is later than the previous batch. Please check again.";
+                            var mess = "The new due date is earlier than the next batch. Please check again.";
                             HandleError(item, mess);
 
                             result = false;
@@ -244,7 +244,7 @@ namespace Action_Approved_Updateduedate_Detail
                     {
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
                         {
-                            var mess = "The new due date is earlier than the next batch. Please check again."; 
+                            var mess = "The new due date is later than the previous batch. Please check again."; 
                             HandleError(item, mess);
                             result = false;
                             break;
@@ -252,6 +252,7 @@ namespace Action_Approved_Updateduedate_Detail
                         }
                     }
                 }
+
             }
         }
         /// <summary>
@@ -306,7 +307,12 @@ namespace Action_Approved_Updateduedate_Detail
 
             enMaster["bsd_approvedrejecteddate"] = null ;
             enMaster["bsd_approvedrejectedperson"] = null;
+
             service.Update(enMaster);
+            var enupdate= new Entity(en.LogicalName,en.Id);
+            enupdate["statuscode"] = new OptionSetValue(100000003);
+            enupdate["bsd_errordetail"] = error;
+            service.Update(enupdate);
         }
         public bool CheckConditionRun(Entity item)
         {
@@ -314,6 +320,9 @@ namespace Action_Approved_Updateduedate_Detail
             var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
             if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
             {
+                var enupdate = new Entity(en.LogicalName, en.Id);
+                enupdate["statuscode"] = new OptionSetValue(1);
+                service.Update(enupdate);
                 return false;
             }
             else

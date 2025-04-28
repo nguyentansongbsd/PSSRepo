@@ -13,6 +13,8 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         ITracingService traceService = null;
+
+        private string owner = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -20,126 +22,85 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             service = factory.CreateOrganizationService(context.UserId);
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             traceService.Trace(string.Format("Context Depth {0}", context.Depth));
-            string pro = "";
-            if (context.InputParameters["Project"] != null)
-            {
-                pro = context.InputParameters["Project"].ToString();
-            }
-            string blo = "";
-            if (context.InputParameters["Block"] != null)
-            {
-                blo = context.InputParameters["Block"].ToString();
-            }
-            string flo = "";
-            if (context.InputParameters["Floor"] != null)
-            {
-                flo = context.InputParameters["Floor"].ToString();
-            }
-            string units = "";
-            if (context.InputParameters["Units"] != null)
-            {
-                units = context.InputParameters["Units"].ToString();
-            }
+            
             string date = "";
             if (context.InputParameters["Date"] != null)
             {
                 date = context.InputParameters["Date"].ToString();
             }
-
-            //EntityCollection l_CustomerNotices = findCustomerNotices(service);
-            //if (l_CustomerNotices.Entities.Count > 0)
-            //    throw new InvalidPluginExecutionException("This action has been performed.");
-            EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
-            if (l_OptionEntry.Entities.Count >= 5000)
+            if (context.InputParameters["Owner"] != null)
             {
-                throw new InvalidPluginExecutionException("Please select add filter");
+                owner = context.InputParameters["Owner"].ToString().Replace("{", "").Replace("}", "");
             }
-            else
+            string OEId = context.InputParameters["OptionEntryId"] != null ? context.InputParameters["OptionEntryId"].ToString() : null;
+            if (string.IsNullOrWhiteSpace(OEId)) return;
+            Entity OE = this.service.Retrieve("salesorder", Guid.Parse(OEId), new ColumnSet(new string[] { "salesorderid", "bsd_paymentscheme",
+                "bsd_project","name","customerid"}));
+            
+            EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
+            int PN_Date;
+            if (l_PS.Entities.Count > 0)//bsd_paymentnoticesdate đã khác null
             {
-                int dem = 0;
-                ArrayList listid = new ArrayList();
-               // throw new InvalidPluginExecutionException(l_OptionEntry.Entities.Count.ToString());
-                foreach (Entity OE in l_OptionEntry.Entities)
+                PN_Date = (int)l_PS[0]["bsd_paymentnoticesdate"];
+                EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
+                #region Customernotices
+                foreach (Entity PSD in l_PSD.Entities)
                 {
-                    EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
-                    int PN_Date;
-                    if (l_PS.Entities.Count > 0)//bsd_paymentnoticesdate đã khác null
+                    Entity PSDetail = service.Retrieve(PSD.LogicalName, PSD.Id, new ColumnSet(true));
+
+                    decimal bsd_percentforcustomer = PSDetail.Contains("bsd_percentforcustomer") ? (decimal)PSDetail["bsd_percentforcustomer"] : 0;
+                    decimal bsd_percentforbank = PSDetail.Contains("bsd_percentforbank") ? (decimal)PSDetail["bsd_percentforbank"] : 0;
+                    decimal bsd_amountofthisphase = PSDetail.Contains("bsd_amountofthisphase") ? ((Money)PSDetail["bsd_amountofthisphase"]).Value : 0;
+                    decimal bsd_amountforcustomer = bsd_amountofthisphase * bsd_percentforcustomer / 100;
+                    decimal bsd_amountforbank = bsd_amountofthisphase * bsd_percentforbank / 100;
+                    int nday = (int)(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date.Subtract(DateTime.Now.AddHours(7).Date).TotalDays);
+                    #region Custom
+                    if (nday >= 0 && nday <= PN_Date)
                     {
-                        PN_Date = (int)l_PS[0]["bsd_paymentnoticesdate"];
-                        EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
-                        #region Customernotices
-                        foreach (Entity PSD in l_PSD.Entities)
+                        EntityCollection l_CustomerNotices_byIns = findCustomerNoticesByIntallment(service, PSD.ToEntityReference());
+                        if (l_CustomerNotices_byIns.Entities.Count == 0)
                         {
-                            Entity PSDetail = service.Retrieve(PSD.LogicalName, PSD.Id, new ColumnSet(true));
+                            Entity customerNotices = new Entity("bsd_customernotices");
+                            if (OE.Contains("name"))
+                                customerNotices["bsd_name"] = "Payment Notices of " + OE["name"];
+                            else
+                                customerNotices["bsd_name"] = "Payment Notices";
+                            customerNotices["bsd_subject"] = "Payment Notices";
 
-                            decimal bsd_percentforcustomer = PSDetail.Contains("bsd_percentforcustomer") ? (decimal)PSDetail["bsd_percentforcustomer"] : 0;
-                            decimal bsd_percentforbank = PSDetail.Contains("bsd_percentforbank") ? (decimal)PSDetail["bsd_percentforbank"] : 0;
-                            decimal bsd_amountofthisphase = PSDetail.Contains("bsd_amountofthisphase") ? ((Money)PSDetail["bsd_amountofthisphase"]).Value : 0;
-                            decimal bsd_amountforcustomer = bsd_amountofthisphase * bsd_percentforcustomer / 100;
-                            decimal bsd_amountforbank = bsd_amountofthisphase * bsd_percentforbank / 100;
-                            int nday = (int)(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date.Subtract(DateTime.Now.AddHours(7).Date).TotalDays);
-                            #region Custom
-                            if (nday >= 0 && nday <= PN_Date)
+                            if (OE.Contains("bsd_project"))
+                                customerNotices["bsd_project"] = OE["bsd_project"];
+                            customerNotices["bsd_customer"] = OE["customerid"];
+                            customerNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service); //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                            customerNotices["bsd_optionentry"] = OE.ToEntityReference();
+                            customerNotices["bsd_paymentschemedetail"] = PSD.ToEntityReference();
+
+                            if (!string.IsNullOrWhiteSpace(owner))
                             {
-                                EntityCollection l_CustomerNotices_byIns = findCustomerNoticesByIntallment(service, PSD.ToEntityReference());
-                                if (l_CustomerNotices_byIns.Entities.Count == 0)
-                                {
-                                    Entity customerNotices = new Entity("bsd_customernotices");
-                                    if (OE.Contains("name"))
-                                        customerNotices["bsd_name"] = "Payment Notices of " + OE["name"];
-                                    else
-                                        customerNotices["bsd_name"] = "Payment Notices";
-                                    customerNotices["bsd_subject"] = "Payment Notices";
-
-                                    if (OE.Contains("bsd_project"))
-                                        customerNotices["bsd_project"] = OE["bsd_project"];
-                                    customerNotices["bsd_customer"] = OE["customerid"];
-                                    customerNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service); //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
-                                    customerNotices["bsd_optionentry"] = OE.ToEntityReference();
-                                    customerNotices["bsd_paymentschemedetail"] = PSD.ToEntityReference();
-
-                                    // cmt 4 field vì thấy khác với bản decode trên dev và pro. trên entity payment notice cũng không có những field này => Song
-                                    //customerNotices["bsd_percentforcustomer"] = bsd_percentforcustomer;
-                                    //customerNotices["bsd_percentforbank"] = bsd_percentforbank;
-                                    //customerNotices["bsd_amountforcustomer"] = new Money(bsd_amountforcustomer);
-                                    //customerNotices["bsd_amountforbank"] = new Money(bsd_amountforbank);
-                                    EntityCollection list_orderproduct = RetrieveMultiRecord(service, "salesorderdetail", new ColumnSet(new string[] { "productid" }), "salesorderid", OE.Id);
-                                    if (list_orderproduct.Entities.Count > 0)
-                                    {
-                                        Entity orderPro = list_orderproduct.Entities[0];
-                                        customerNotices["bsd_units"] = orderPro["productid"];
-                                    }
-                                    traceService.Trace("Create");
-                                    Guid id = service.Create(customerNotices);
-                                    traceService.Trace("Create1");
-                                    listid.Add(id.ToString());
-                                    dem++;
-
-                                    Entity ins = new Entity(PSD.LogicalName);
-                                    ins.Id = PSD.Id;
-                                    ins["bsd_paymentnotices"] = true;
-                                    service.Update(ins);
-                                }
+                                traceService.Trace("owner: " + owner);
+                                customerNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                customerNotices["createdby"] = new EntityReference("systemuser", Guid.Parse(owner));
                             }
-                            #endregion
+
+                            EntityCollection list_orderproduct = RetrieveMultiRecord(service, "salesorderdetail", new ColumnSet(new string[] { "productid" }), "salesorderid", OE.Id);
+                            if (list_orderproduct.Entities.Count > 0)
+                            {
+                                Entity orderPro = list_orderproduct.Entities[0];
+                                customerNotices["bsd_units"] = orderPro["productid"];
+                            }
+                            Guid id = service.Create(customerNotices);
+
+                            Entity ins = new Entity(PSD.LogicalName);
+                            ins.Id = PSD.Id;
+                            ins["bsd_paymentnotices"] = true;
+                            service.Update(ins);
+
+                            generateWarningNoticesByPaymentNotices(id, date);
                         }
-                        #endregion
                     }
+                    #endregion
                 }
-                traceService.Trace("listid.Count" + listid.Count);
-               
-                if (listid.Count == 0)
-                {
-                    context.OutputParameters["ReturnId"] = "";
-                }
-                else
-                {
-                    context.OutputParameters["ReturnId"] = listid.Count;//String.Join(",", listid.ToArray());
-                }
-                // Tạo warning notices
-                generateWarningNoticesByPaymentNotices(listid, date);
+                #endregion
             }
-           // throw new InvalidPluginExecutionException("listid.Count");
         }
         private decimal CompareDate(DateTime date1, DateTime date2)
         {
@@ -364,144 +325,152 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             return (int?)currentUserSettings.Attributes["timezonecode"];
         }
 
-        private void generateWarningNoticesByPaymentNotices(ArrayList listid, string date)
+        private void generateWarningNoticesByPaymentNotices(Guid paymentNoticesId, string date)
         {
-            // listid : id Payment notices
-            foreach (string item in listid)
+            traceService.Trace("vào gen WN");
+            // Lấy lên tất cả payment notices
+            var QEbsd_customernotices = new QueryExpression("bsd_customernotices");
+            QEbsd_customernotices.ColumnSet.AllColumns = true;
+            QEbsd_customernotices.Criteria.AddCondition("bsd_customernoticesid", ConditionOperator.Equal, paymentNoticesId);
+            EntityCollection enPaymentNotices = service.RetrieveMultiple(QEbsd_customernotices);
+            // Lặp qua payment notices
+            foreach (Entity en in enPaymentNotices.Entities)
             {
-                traceService.Trace("vào gen WN");
-                // Lấy lên tất cả payment notices
-                var QEbsd_customernotices = new QueryExpression("bsd_customernotices");
-                QEbsd_customernotices.ColumnSet.AllColumns = true;
-                QEbsd_customernotices.Criteria.AddCondition("bsd_customernoticesid", ConditionOperator.Equal, item);
-                EntityCollection enPaymentNotices = service.RetrieveMultiple(QEbsd_customernotices);
-                // Lặp qua payment notices
-                foreach (Entity en in enPaymentNotices.Entities)
+                // lấy ra optionentry
+                EntityReference enrfOptionEntry = en.Contains("bsd_optionentry") ? (EntityReference)en["bsd_optionentry"] : null;
+                Entity enOptionEntry = service.Retrieve(enrfOptionEntry.LogicalName, enrfOptionEntry.Id, new ColumnSet(true));
+                EntityReference enrfPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
+                Entity enPaymentScheme = service.Retrieve(enrfPaymentScheme.LogicalName, enrfPaymentScheme.Id, new ColumnSet(true));
+                int PN_Date = -1;
+                Entity PS = enPaymentScheme;
+                if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
                 {
-                    // lấy ra optionentry
-                    EntityReference enrfOptionEntry = en.Contains("bsd_optionentry") ? (EntityReference)en["bsd_optionentry"] : null;
-                    Entity enOptionEntry = service.Retrieve(enrfOptionEntry.LogicalName, enrfOptionEntry.Id, new ColumnSet(true));
-                    EntityReference enrfPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
-                    Entity enPaymentScheme = service.Retrieve(enrfPaymentScheme.LogicalName, enrfPaymentScheme.Id, new ColumnSet(true));
-                    int PN_Date = -1;
-                    Entity PS = enPaymentScheme;
-                    if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
+                    // Lấy tất cả Installment thuộc optionentry
+                    EntityCollection enclInstallment = getAllInstallmentByOptionEntry(enOptionEntry);
+                    foreach (Entity PSD in enclInstallment.Entities)
                     {
-                        // Lấy tất cả Installment thuộc optionentry
-                        EntityCollection enclInstallment = getAllInstallmentByOptionEntry(enOptionEntry);
-                        foreach (Entity PSD in enclInstallment.Entities)
+                        int nday = (int)(DateTime.Now.AddHours(7).Date.Subtract(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date).TotalDays);
+                        if (nday > 0)
                         {
-                            int nday = (int)(DateTime.Now.AddHours(7).Date.Subtract(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date).TotalDays);
-                            if (nday > 0)
+                            EntityCollection L_warning = findWarningNotices(PSD);
+                            #region Da Generate WN
+                            if (L_warning.Entities.Count > 0)
                             {
-                                EntityCollection L_warning = findWarningNotices(PSD);
-                                #region Da Generate WN
-                                if (L_warning.Entities.Count > 0)
+                                Entity warning = L_warning[0];
+                                int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
+                                if (numberofWarning > 0 && numberofWarning < 4)
                                 {
-                                    Entity warning = L_warning[0];
-                                    int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
-                                    if (numberofWarning > 0 && numberofWarning < 4)
+                                    //numberofWarning == 1 ? "bsd_warningnotices2date" : (numberofWarning == 2 ? "bsd_warningnotices3date" : (numberofWarning == 3 ? "bsd_warningnotices4date" : null));
+                                    string warningdate = "bsd_warningnotices" + (numberofWarning + 1) + "date";
+                                    if (PS.Contains(warningdate) && nday >= (int)PS[warningdate])
                                     {
-                                        //numberofWarning == 1 ? "bsd_warningnotices2date" : (numberofWarning == 2 ? "bsd_warningnotices3date" : (numberofWarning == 3 ? "bsd_warningnotices4date" : null));
-                                        string warningdate = "bsd_warningnotices" + (numberofWarning + 1) + "date";
-                                        if (PS.Contains(warningdate) && nday >= (int)PS[warningdate])
+                                        EntityCollection l_war = findWarningNoticesByNumberOfWarning(PSD, enrfOptionEntry);//(numberofWarning + 1)
+                                        if (l_war.Entities.Count == 0)
                                         {
-                                            EntityCollection l_war = findWarningNoticesByNumberOfWarning(PSD, enrfOptionEntry);//(numberofWarning + 1)
-                                            if (l_war.Entities.Count == 0)
+                                            Entity warningNotices = new Entity("bsd_warningnotices");
+                                            if (enOptionEntry.Contains("name"))
+                                                warningNotices["bsd_name"] = "Warning Notices of " + enOptionEntry["name"];
+                                            else warningNotices["bsd_name"] = "Warning Notices";
+                                            warningNotices["bsd_subject"] = "Warning Notices";
+                                            //warningNotices["bsd_paymentnotice"] = en.ToEntityReference();
+                                            warningNotices["bsd_optionentry"] = new EntityReference(enOptionEntry.LogicalName, enOptionEntry.Id);
+                                            if (enOptionEntry.Contains("customerid"))
+                                                warningNotices["bsd_customer"] = enOptionEntry["customerid"];
+                                            if (enOptionEntry.Contains("bsd_project"))
+                                                warningNotices["bsd_project"] = enOptionEntry["bsd_project"];
+                                            if (enOptionEntry.Contains("bsd_unitnumber"))
+                                                warningNotices["bsd_units"] = enOptionEntry["bsd_unitnumber"];
+                                            warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
+                                            warningNotices["bsd_type"] = new OptionSetValue(100000000);
+
+                                            if (!string.IsNullOrWhiteSpace(owner))
                                             {
-                                                Entity warningNotices = new Entity("bsd_warningnotices");
-                                                if (enOptionEntry.Contains("name"))
-                                                    warningNotices["bsd_name"] = "Warning Notices of " + enOptionEntry["name"];
-                                                else warningNotices["bsd_name"] = "Warning Notices";
-                                                warningNotices["bsd_subject"] = "Warning Notices";
-                                                //warningNotices["bsd_paymentnotice"] = en.ToEntityReference();
-                                                warningNotices["bsd_optionentry"] = new EntityReference(enOptionEntry.LogicalName, enOptionEntry.Id);
-                                                if (enOptionEntry.Contains("customerid"))
-                                                    warningNotices["bsd_customer"] = enOptionEntry["customerid"];
-                                                if (enOptionEntry.Contains("bsd_project"))
-                                                    warningNotices["bsd_project"] = enOptionEntry["bsd_project"];
-                                                if (enOptionEntry.Contains("bsd_unitnumber"))
-                                                    warningNotices["bsd_units"] = enOptionEntry["bsd_unitnumber"];
-                                                warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
-                                                warningNotices["bsd_type"] = new OptionSetValue(100000000);
-
-                                                if (PSD.Contains("bsd_balance"))
-                                                {
-                                                    decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
-                                                    warningNotices["bsd_amount"] = new Money(amount);
-                                                }
-                                                warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
-                                                warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
-                                                if (PSD.Contains("bsd_duedate"))
-                                                {
-                                                    warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
-                                                    int graceday = findGraceDays(PS.ToEntityReference());
-                                                    if (graceday != -1)
-                                                        warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
-                                                }
-
-                                                service.Create(warningNotices);
-                                                Entity ins = new Entity(PSD.LogicalName);
-                                                ins.Id = PSD.Id;
-                                                string field = "bsd_warningnotices" + (numberofWarning + 1);
-                                                ins[field] = true;
-                                                service.Update(ins);
+                                                traceService.Trace("owner: " + owner);
+                                                warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                             }
-                                        }
-                                    }
-                                }
-                                #endregion
-                                #region Chua Generate WN
-                                else
-                                {
-                                    PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
-                                    if (PN_Date >= 0 && nday >= PN_Date)
-                                    {
-                                        Entity warningNotices = new Entity("bsd_warningnotices");
-                                        if (enOptionEntry.Contains("name"))
-                                            warningNotices["bsd_name"] = "Warning Notices of " + enOptionEntry["name"];
-                                        else warningNotices["bsd_name"] = "Warning Notices";
-                                        warningNotices["bsd_subject"] = "Warning Notices";
-                                        warningNotices["bsd_optionentry"] = enOptionEntry.ToEntityReference();
-                                        //warningNotices["bsd_paymentnotice"] = en.ToEntityReference();
-                                        if (enOptionEntry.Contains("customerid"))
-                                            warningNotices["bsd_customer"] = enOptionEntry["customerid"];
-                                        if (enOptionEntry.Contains("bsd_project"))
-                                            warningNotices["bsd_project"] = enOptionEntry["bsd_project"];
-                                        if (enOptionEntry.Contains("bsd_unitnumber"))
-                                            warningNotices["bsd_units"] = enOptionEntry["bsd_unitnumber"];
-                                        warningNotices["bsd_numberofwarning"] = 1;
-                                        warningNotices["bsd_type"] = new OptionSetValue(100000000);
-                                        if (PSD.Contains("bsd_balance"))
-                                        {
-                                            decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
-                                            warningNotices["bsd_amount"] = new Money(amount);
-                                        }
-                                        warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
-                                        warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
-                                        if (PSD.Contains("bsd_duedate"))
-                                        {
-                                            warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
-                                            int graceday = findGraceDays(PS.ToEntityReference());
-                                            if (graceday != -1)
-                                                warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
-                                        }
-                                        service.Create(warningNotices);
 
-                                        Entity ins = new Entity(PSD.LogicalName);
-                                        ins.Id = PSD.Id;
-                                        string field = "bsd_warningnotices1";
-                                        ins[field] = true;
-                                        service.Update(ins);
+                                            if (PSD.Contains("bsd_balance"))
+                                            {
+                                                decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                                warningNotices["bsd_amount"] = new Money(amount);
+                                            }
+                                            warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                            warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                            if (PSD.Contains("bsd_duedate"))
+                                            {
+                                                warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                                int graceday = findGraceDays(PS.ToEntityReference());
+                                                if (graceday != -1)
+                                                    warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                            }
+
+                                            service.Create(warningNotices);
+                                            Entity ins = new Entity(PSD.LogicalName);
+                                            ins.Id = PSD.Id;
+                                            string field = "bsd_warningnotices" + (numberofWarning + 1);
+                                            ins[field] = true;
+                                            service.Update(ins);
+                                        }
                                     }
                                 }
-                                #endregion
                             }
+                            #endregion
+                            #region Chua Generate WN
+                            else
+                            {
+                                PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
+                                if (PN_Date >= 0 && nday >= PN_Date)
+                                {
+                                    Entity warningNotices = new Entity("bsd_warningnotices");
+                                    if (enOptionEntry.Contains("name"))
+                                        warningNotices["bsd_name"] = "Warning Notices of " + enOptionEntry["name"];
+                                    else warningNotices["bsd_name"] = "Warning Notices";
+                                    warningNotices["bsd_subject"] = "Warning Notices";
+                                    warningNotices["bsd_optionentry"] = enOptionEntry.ToEntityReference();
+                                    //warningNotices["bsd_paymentnotice"] = en.ToEntityReference();
+                                    if (enOptionEntry.Contains("customerid"))
+                                        warningNotices["bsd_customer"] = enOptionEntry["customerid"];
+                                    if (enOptionEntry.Contains("bsd_project"))
+                                        warningNotices["bsd_project"] = enOptionEntry["bsd_project"];
+                                    if (enOptionEntry.Contains("bsd_unitnumber"))
+                                        warningNotices["bsd_units"] = enOptionEntry["bsd_unitnumber"];
+                                    warningNotices["bsd_numberofwarning"] = 1;
+                                    warningNotices["bsd_type"] = new OptionSetValue(100000000);
 
+                                    if (!string.IsNullOrWhiteSpace(owner))
+                                    {
+                                        traceService.Trace("owner: " + owner);
+                                        warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                    }
+
+                                    if (PSD.Contains("bsd_balance"))
+                                    {
+                                        decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                        warningNotices["bsd_amount"] = new Money(amount);
+                                    }
+                                    warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                    warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                    if (PSD.Contains("bsd_duedate"))
+                                    {
+                                        warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                        int graceday = findGraceDays(PS.ToEntityReference());
+                                        if (graceday != -1)
+                                            warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                    }
+                                    service.Create(warningNotices);
+
+                                    Entity ins = new Entity(PSD.LogicalName);
+                                    ins.Id = PSD.Id;
+                                    string field = "bsd_warningnotices1";
+                                    ins[field] = true;
+                                    service.Update(ins);
+                                }
+                            }
+                            #endregion
                         }
+
                     }
                 }
-                //throw new InvalidPluginExecutionException("enPaymentNotices");
             }
         }
         private EntityCollection getAllInstallmentByOptionEntry(Entity enOptionEntry)

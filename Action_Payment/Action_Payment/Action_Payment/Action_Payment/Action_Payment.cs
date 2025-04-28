@@ -70,6 +70,9 @@ namespace Action_Payment
 {
     public class Action_Payment : IPlugin
     {
+        decimal pm_balancemaster = 0;
+        decimal d_bsd_assignamountmaster = 0;
+        decimal pm_differentamountmaster = 0;
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
@@ -110,8 +113,8 @@ namespace Action_Payment
                     decimal pm_amountpay = paymentEn.Contains("bsd_amountpay") ? ((Money)paymentEn["bsd_amountpay"]).Value : 0;
                     decimal pm_sotiendot = paymentEn.Contains("bsd_totalamountpayablephase") ? ((Money)paymentEn["bsd_totalamountpayablephase"]).Value : 0;
                     decimal pm_sotiendatra = paymentEn.Contains("bsd_totalamountpaidphase") ? ((Money)paymentEn["bsd_totalamountpaidphase"]).Value : 0;
-                    decimal pm_balance = paymentEn.Contains("bsd_balance") ? ((Money)paymentEn["bsd_balance"]).Value : 0;
-                    decimal pm_differentamount = paymentEn.Contains("bsd_differentamount") ? ((Money)paymentEn["bsd_differentamount"]).Value : 0;
+                    pm_balancemaster = paymentEn.Contains("bsd_balance") ? ((Money)paymentEn["bsd_balance"]).Value : 0;
+                    pm_differentamountmaster = paymentEn.Contains("bsd_differentamount") ? ((Money)paymentEn["bsd_differentamount"]).Value : 0;
                     decimal pm_deposit = paymentEn.Contains("bsd_depositamount") ? ((Money)paymentEn["bsd_depositamount"]).Value : 0;
                     bool f_bsd_latepayment = paymentEn.Contains("bsd_latepayment") ? (bool)paymentEn["bsd_latepayment"] : false;
                     decimal pm_bsd_managementfee = paymentEn.Contains("bsd_managementfee") ? ((Money)paymentEn["bsd_managementfee"]).Value : 0;
@@ -131,19 +134,9 @@ namespace Action_Payment
                     string s_bsd_arraymicellaneousamount = paymentEn.Contains("bsd_arraymicellaneousamount") ? (string)paymentEn["bsd_arraymicellaneousamount"] : "";
 
                     decimal d_bsd_totalapplyamount = paymentEn.Contains("bsd_totalapplyamount") ? ((Money)paymentEn["bsd_totalapplyamount"]).Value : 0;
-                    decimal d_bsd_assignamount = paymentEn.Contains("bsd_assignamount") ? ((Money)paymentEn["bsd_assignamount"]).Value : 0;
+                    d_bsd_assignamountmaster = paymentEn.Contains("bsd_assignamount") ? ((Money)paymentEn["bsd_assignamount"]).Value : 0;
 
-                    //
-
-
-
-                    
                     if (pm_statuscode == 100000000) throw new InvalidPluginExecutionException("This payment has been paid!");
-                    //if (type == 100000003)
-                    //{
-                    //    interestProcess(paymentEn);
-                    //    return;
-                    //}
                     strMess.AppendLine("type: " + type.ToString());
                     if (pm_statuscode == 1)  // payment = active
                     {
@@ -151,7 +144,7 @@ namespace Action_Payment
                             if (pm_amountpay <= 0) throw new InvalidPluginExecutionException("Amount pay must larger than 0!");
                         if (type != 100000005)
                             if (pm_amountpay <= 0) throw new InvalidPluginExecutionException("Amount pay must larger than 0!");
-                        if (d_bsd_assignamount < 0)
+                        if (d_bsd_assignamountmaster < 0)
                         {
                             throw new InvalidPluginExecutionException("The amount you pay exceeds the amount paid. Please choose another Advance Payment or other Payment Phase!");
                         }
@@ -176,7 +169,7 @@ namespace Action_Payment
                                 strMess.AppendLine("Installment");
                                 checkPmsDtl(paymentEn); // check payment contain field fees
                                 strMess.AppendLine("checkPmsDtl complete");
-                                payment.intallment(paymentEn);
+                                payment.intallment(paymentEn, ref pm_balancemaster, ref d_bsd_assignamountmaster, ref pm_differentamountmaster);
                                 break;
                             case 100000003://Interest Charge
                                 strMess.AppendLine("Interest Charge");
@@ -195,7 +188,7 @@ namespace Action_Payment
                                 break;
                         }
                         strMess.AppendLine("16 Update payment");
-                        payment.update(paymentEn, pm_amountpay, pm_sotiendot, pm_sotiendatra, d_now, pm_balance, pm_differentamount, d_inter, i_lateday);
+                        payment.update(paymentEn, pm_amountpay, pm_sotiendot, pm_sotiendatra, d_now, pm_balancemaster, pm_differentamountmaster, d_inter, i_lateday, type, d_bsd_assignamountmaster);
                         strMess.AppendLine("18");
                         //service.Update(paymentEn);
                         strMess.AppendLine("19 End Update payment");
@@ -469,7 +462,7 @@ namespace Action_Payment
             catch (Exception ex)
             {
                 strMess.AppendLine(ex.Message);
-                throw new InvalidPluginExecutionException(ex.Message);
+                throw new InvalidPluginExecutionException(strMess.ToString());
             }
         }
         

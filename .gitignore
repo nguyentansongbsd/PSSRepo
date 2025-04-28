@@ -396,6 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Action_WarningNotices_GenerateWarningNotices/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 
-**/bin
-**/obj
+**/bin/
+**/obj/

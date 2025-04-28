@@ -3,8 +3,7 @@ function ready() {
     debugger;
     var timer = null;
     function wait() {
-        if (window.top.$ != null
-            && window.top.$.fn != null) {
+        if (window.top.$ != null && window.top.$.fn != null) {
             if (timer != null) {
                 clearTimeout(timer);
                 timer = null;
@@ -15,11 +14,14 @@ function ready() {
                 window.parent.processingDlg.show();
                 var intervalId = setInterval(function () {
                     checkPA();
-                }, 2000)
+                },
+                    2000)
             }
         }
-        else
-            timer = setTimeout(function () { wait() }, 1000);
+        else timer = setTimeout(function () {
+            wait()
+        },
+            1000);
     }
     wait();
 }
@@ -50,7 +52,6 @@ function RegisterModal() {
         script1.src = window.top.Xrm.Page.context.getClientUrl() + "/webresources/bsd_execute.services.ultilities.js";
         window.parent.document.head.appendChild(script1);
     }
-
 
     var script3 = window.parent.document.getElementById("ClientGlobalContext.js.aspx");
     if (script3 == null) {
@@ -84,28 +85,56 @@ function OnLoad() {
 function onSaveReload(executionContext) {
     var formContext = executionContext.getFormContext();
     var saveEventArgs = executionContext.getEventArgs();
-    formContext.data.entity.addOnPostSave(function () {
+    if (saveEventArgs.getSaveMode() != 1) return;
+    else {
+        formContext.data.entity.addOnPostSave(function () {
 
-        window.parent.processingDlg.show();
-        var intervalId = setInterval(function () {
-            checkPA();
-        }, 2000) });
+
+
+            window.parent.processingDlg.show();
+            var intervalId = setInterval(function () {
+                checkPA();
+            },
+                2000)
+        }
+
+        );
+    }
+    
+}
+function getCurrentViewFromUrl() {
+    // Lấy URL hiện tại
+    var url = window.location.href;
+
+    // Tìm kiếm viewId trong URL
+    var viewIdMatch = url.match(/viewid=([0-9a-fA-F-]+)/);
+    var viewId = viewIdMatch ? viewIdMatch[1] : null;
+
+    if (viewId) {
+        console.log("Current View ID: " + viewId);
+
+        // Gọi API để lấy tên view dựa trên viewId
+        var query = "/api/data/v9.0/savedqueries(" + viewId + ")?$select=name";
+
+        // Sử dụng Xrm.WebApi để thực hiện yêu cầu GET
+        Xrm.WebApi.retrieveRecord("savedquery", viewId, "?$select=name").then(
+            function success(result) {
+                console.log("Current View Name: " + result.name);
+                return 0;
+            },
+            function (error) {
+                console.log("Error: " + error.message);
+                return 0;
+            }
+        );
+    } else {
+        console.log("No current view found in URL.");
+        return 1;
+    }
 }
 
-function checkPA()
-{
-    var fetchXml = [
-        "<fetch top='50'>",
-        "  <entity name='bsd_updateduedateoflastinstallmentapprove'>",
-        "    <attribute name='bsd_error'/>",
-        "    <attribute name='bsd_errordetail'/>",
-        "    <attribute name='bsd_processing_pa'/>",
-        "    <filter>",
-        "      <condition attribute='bsd_updateduedateoflastinstallmentapproveid' operator='eq' value='", Xrm.Page.data.entity.getId(), "'/>",
-        "    </filter>",
-        "  </entity>",
-        "</fetch>"
-    ].join("");
+function checkPA() {
+    var fetchXml = ["<fetch top='50'>", "  <entity name='bsd_updateduedateoflastinstallmentapprove'>", "    <attribute name='bsd_error'/>", "    <attribute name='bsd_errordetail'/>", "    <attribute name='bsd_processing_pa'/>", "    <filter>", "      <condition attribute='bsd_updateduedateoflastinstallmentapproveid' operator='eq' value='", Xrm.Page.data.entity.getId(), "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
     window.top.CrmFetchKit.Fetch(fetchXml, false).then(function (rs) {
         if (rs.length > 0) {
             if (rs[0].attributes.bsd_processing_pa.value == false) {
@@ -116,7 +145,8 @@ function checkPA()
                         ishowErr = 1;
                         window.top.$ui.Confirm("Error", rs[0].attributes.bsd_errordetail.value, function () {
                             window.top.location.reload();
-                        }, null);
+                        },
+                            null);
                     }
                 }
             }

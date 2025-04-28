@@ -45,6 +45,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="HTML\bsd_searchcustomer.html" />
+    <Content Include="HTML\compoent\bsd_Entityview_SelectReport.html" />
+    <Content Include="HTML\compoent\bsd_Handover_Notice_SelectProject.html" />
     <Content Include="HTML\compoent\bsd_Payment_Notices.html" />
     <Content Include="HTML\compoent\bsd_terminateletter_option_filter_generate.html" />
     <Content Include="HTML\compoent\select_date.html" />
@@ -55,14 +58,19 @@
     <Content Include="HTML\report\bsd_SelectReport_SaleOrder.html" />
     <Content Include="HTML\report\bsd_Senique_Total_Payment_Confirmation_SPA.html" />
     <Content Include="HTML\report\bsd_Simulation_Report_InOptionEntryForm.html" />
+    <Content Include="JS\bsd_btnHandoverNoticeView.js" />
     <Content Include="JS\bsd_btnSaleOrderView.js" />
     <Content Include="JS\bsd_BulkPrint_SaleOrder.js" />
     <Content Include="JS\bsd_CrmFetchKit.js" />
+    <Content Include="JS\bsd_HandoverNotice.js" />
+    <Content Include="JS\button\bsd_btn_BulkEmail_WithWordTemplate.js" />
+    <Content Include="JS\button\bsd_btn_BulkPrint_WithWordTemplate.js" />
     <Content Include="JS\button\bsd_btn_EnableRule.js" />
     <Content Include="JS\button\bsd_button_action.js" />
     <Content Include="JS\Follow up list\bsd_followuplist_formnew.js" />
     <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
     <Content Include="HTML\report\bsd_Simulation.html" />
+    <Content Include="JS\Payments\Report\bsd_payment_report_05_08_2020.js" />
     <Content Include="JS\Quotation Reservation\bsd_quote_form.js" />
     <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Dua_Date.js" />
@@ -75,6 +83,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HTML\main\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HTML\compoent\.editorconfig" />
+    <None Include="RDL\LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />
+    <None Include="RDL\Lumi_Xac Nhan CDT%28account%29_Lan 2_VN_4112022.rdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms">
+      <Version>150.1652.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

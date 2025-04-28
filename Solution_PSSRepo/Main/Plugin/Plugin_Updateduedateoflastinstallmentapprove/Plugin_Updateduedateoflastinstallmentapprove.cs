@@ -34,7 +34,14 @@ namespace Plugin_Updateduedateoflastinstallmentapprove
             var status = ((OptionSetValue)en["statuscode"]).Value;
             tracingService.Trace("start :" + status);
             //check status
-            if (status == 100000001)
+            if(status == 100000002)
+            {
+                Entity enDetailUpdate = new Entity(entity.LogicalName, entity.Id);
+                enDetailUpdate["bsd_approvedrejectedperson"] = new EntityReference("systemuser", context.UserId); //Status Reason(entity Detail) = Approved
+                enDetailUpdate["bsd_approvedrejecteddate"] = DateTime.Now; //Status Reason(entity Detail) = Approved
+                service.Update(enDetailUpdate);
+            }
+            else if(status == 100000001)
             {
                 var result = true;
                 var rs = ExistDetail(ref result);
@@ -46,6 +53,8 @@ namespace Plugin_Updateduedateoflastinstallmentapprove
                 //Approved / Rejected Person[bsd_approvedrejectedperson] = Người nhấn nút duyệt
                 //Status Reason(entity Detail) = Approved
                 //Due Date(New) (ở entity Detail) về field Due Date của installment ở entity Detail
+                enDetailUpdate["bsd_approvedrejectedperson"] = new EntityReference("systemuser", context.UserId); //Status Reason(entity Detail) = Approved
+                enDetailUpdate["bsd_approvedrejecteddate"] =  DateTime.Now; //Status Reason(entity Detail) = Approved
                 enDetailUpdate["bsd_processing_pa"] = true; //Status Reason(entity Detail) = Approved
                 enDetailUpdate["bsd_error"] = false;
                 enDetailUpdate["bsd_errordetail"] = "";

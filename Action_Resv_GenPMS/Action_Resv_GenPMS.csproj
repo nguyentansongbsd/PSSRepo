@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Action_Resv_GenPMS</RootNamespace>
     <AssemblyName>Action_Resv_GenPMS</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -37,11 +37,11 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.CrmSdk.CoreAssemblies.9.0.0.7\lib\net452\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
+    <Reference Include="Microsoft.Crm.Sdk.Proxy">
+      <HintPath>..\..\DLL_XRM\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Sdk, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solution_PSSRepo\Main\Plugin\Plugin_Updateduedateoflastinstallmentapprove\bin\Debug\Microsoft.Xrm.Sdk.dll</HintPath>
+    <Reference Include="Microsoft.Xrm.Sdk">
+      <HintPath>..\..\DLL_XRM\Microsoft.Xrm.Sdk.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

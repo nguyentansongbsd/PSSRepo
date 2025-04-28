@@ -23,142 +23,166 @@ namespace Action_WarningNotices_GenerateWarningNotices
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
 
             traceService.Trace(string.Format("Context Depth {0}", context.Depth));
-            string pro = context.InputParameters["Project"].ToString();
-            string blo = context.InputParameters["Block"].ToString();
-            string flo = context.InputParameters["Floor"].ToString();
-            string units = context.InputParameters["Units"].ToString();
+            //string pro = context.InputParameters["Project"].ToString();
+            //string blo = context.InputParameters["Block"].ToString();
+            //string flo = context.InputParameters["Floor"].ToString();
+            //string units = context.InputParameters["Units"].ToString();
+            traceService.Trace("1111");
+            string optionEntryId = context.InputParameters.Contains("optionEntryId") ? context.InputParameters["optionEntryId"].ToString() : null;
+            traceService.Trace("2222");
             string date = "";
             if (context.InputParameters["Date"] != null)
             {
                 date = context.InputParameters["Date"].ToString();
             }
-            EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
+            //EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
+            traceService.Trace("1");
+            Entity OE = service.Retrieve("salesorder", Guid.Parse(optionEntryId), new ColumnSet(new string[] { "bsd_paymentscheme", "name",
+                "customerid","bsd_project","bsd_unitnumber"}));
             int dem = 0;
-            foreach (Entity OE in l_OptionEntry.Entities)
+            EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
+            traceService.Trace("2");
+            int PN_Date = -1;
+            if (l_PS.Entities.Count > 0)
             {
-                EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
-                int PN_Date = -1;
-                if (l_PS.Entities.Count > 0)
+                Entity PS = l_PS[0];
+                if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
                 {
-                    Entity PS = l_PS[0];
-                    if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
+                    traceService.Trace("3");
+                    #region INSTALLMENT
+                    EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
+                    foreach (Entity PSD in l_PSD.Entities)
                     {
-                        #region INSTALLMENT
-                        EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
-                        foreach (Entity PSD in l_PSD.Entities)
+                        int nday = (int)(DateTime.Now.AddHours(7).Date.Subtract(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date).TotalDays);
+                        if (nday > 0)
                         {
-                            int nday = (int)(DateTime.Now.AddHours(7).Date.Subtract(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date).TotalDays);
-                            if (nday > 0)
+                            EntityCollection L_warning = findWarningNotices(service, PSD);
+                            #region Da Generate WN
+                            if (L_warning.Entities.Count > 0)
                             {
-                                EntityCollection L_warning = findWarningNotices(service, PSD);
-                                #region Da Generate WN
-                                if (L_warning.Entities.Count > 0)
+                                Entity warning = L_warning[0];
+                                int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
+                                if (numberofWarning > 0 && numberofWarning < 4)
                                 {
-                                    Entity warning = L_warning[0];
-                                    int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
-                                    if (numberofWarning > 0 && numberofWarning < 4)
+                                    //numberofWarning == 1 ? "bsd_warningnotices2date" : (numberofWarning == 2 ? "bsd_warningnotices3date" : (numberofWarning == 3 ? "bsd_warningnotices4date" : null));
+                                    string warningdate = "bsd_warningnotices" + (numberofWarning + 1) + "date";
+                                    if (PS.Contains(warningdate) && nday >= (int)PS[warningdate])
                                     {
-                                        //numberofWarning == 1 ? "bsd_warningnotices2date" : (numberofWarning == 2 ? "bsd_warningnotices3date" : (numberofWarning == 3 ? "bsd_warningnotices4date" : null));
-                                        string warningdate = "bsd_warningnotices" + (numberofWarning + 1) + "date";
-                                        if (PS.Contains(warningdate) && nday >= (int)PS[warningdate])
+                                        EntityCollection l_war = findWarningNoticesByNumberOfWarning(service, PSD, (numberofWarning + 1));
+                                        if (l_war.Entities.Count == 0)
                                         {
-                                            EntityCollection l_war = findWarningNoticesByNumberOfWarning(service, PSD, (numberofWarning + 1));
-                                            if (l_war.Entities.Count == 0)
+                                            Entity warningNotices = new Entity("bsd_warningnotices");
+                                            if (OE.Contains("name"))
+                                                warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
+                                            else warningNotices["bsd_name"] = "Warning Notices";
+                                            warningNotices["bsd_subject"] = "Warning Notices";
+                                            warningNotices["bsd_optionentry"] = OE.ToEntityReference();
+                                            if (OE.Contains("customerid"))
+                                                warningNotices["bsd_customer"] = OE["customerid"];
+                                            if (OE.Contains("bsd_project"))
+                                                warningNotices["bsd_project"] = OE["bsd_project"];
+                                            if (OE.Contains("bsd_unitnumber"))
+                                                warningNotices["bsd_units"] = OE["bsd_unitnumber"];
+                                            warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
+                                            warningNotices["bsd_type"] = new OptionSetValue(100000000);
+
+                                            if (PSD.Contains("bsd_balance"))
                                             {
-                                                Entity warningNotices = new Entity("bsd_warningnotices");
-                                                if (OE.Contains("name"))
-                                                    warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
-                                                else warningNotices["bsd_name"] = "Warning Notices";
-                                                warningNotices["bsd_subject"] = "Warning Notices";
-                                                warningNotices["bsd_optionentry"] = OE.ToEntityReference();
-                                                if (OE.Contains("customerid"))
-                                                    warningNotices["bsd_customer"] = OE["customerid"];
-                                                if (OE.Contains("bsd_project"))
-                                                    warningNotices["bsd_project"] = OE["bsd_project"];
-                                                if (OE.Contains("bsd_unitnumber"))
-                                                    warningNotices["bsd_units"] = OE["bsd_unitnumber"];
-                                                warningNotices["bsd_numberofwarning"] = numberofWarning + 1;
-                                                warningNotices["bsd_type"] = new OptionSetValue(100000000);
-
-                                                if (PSD.Contains("bsd_balance"))
-                                                {
-                                                    decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
-                                                    warningNotices["bsd_amount"] = new Money(amount);
-                                                }
-                                                warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
-                                                warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
-                                                if (PSD.Contains("bsd_duedate"))
-                                                {
-                                                    warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
-                                                    int graceday = findGraceDays(service, PS.ToEntityReference());
-                                                    if (graceday != -1)
-                                                        warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
-                                                }
-
-                                                service.Create(warningNotices);
-                                                dem++;
-
-                                                Entity ins = new Entity(PSD.LogicalName);
-                                                ins.Id = PSD.Id;
-                                                string field = "bsd_warningnotices" + (numberofWarning + 1);
-                                                ins[field] = true;
-                                                service.Update(ins);
+                                                decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                                warningNotices["bsd_amount"] = new Money(amount);
                                             }
-                                        }
-                                    }
-                                }
-                                #endregion
-                                #region Chua Generate WN
-                                else
-                                {
-                                    PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
-                                    if (PN_Date >= 0 && nday >= PN_Date)
-                                    {
-                                        Entity warningNotices = new Entity("bsd_warningnotices");
-                                        if (OE.Contains("name"))
-                                            warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
-                                        else warningNotices["bsd_name"] = "Warning Notices";
-                                        warningNotices["bsd_subject"] = "Warning Notices";
-                                        warningNotices["bsd_optionentry"] = OE.ToEntityReference();
-                                        if (OE.Contains("customerid"))
-                                            warningNotices["bsd_customer"] = OE["customerid"];
-                                        if (OE.Contains("bsd_project"))
-                                            warningNotices["bsd_project"] = OE["bsd_project"];
-                                        if (OE.Contains("bsd_unitnumber"))
-                                            warningNotices["bsd_units"] = OE["bsd_unitnumber"];
-                                        warningNotices["bsd_numberofwarning"] = 1;
-                                        warningNotices["bsd_type"] = new OptionSetValue(100000000);
-                                        if (PSD.Contains("bsd_balance"))
-                                        {
-                                            decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
-                                            warningNotices["bsd_amount"] = new Money(amount);
-                                        }
-                                        warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
-                                        warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
-                                        if (PSD.Contains("bsd_duedate"))
-                                        {
-                                            warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
-                                            int graceday = findGraceDays(service, PS.ToEntityReference());
-                                            if (graceday != -1)
-                                                warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
-                                        }
-                                        service.Create(warningNotices);
-                                        dem++;
+                                            warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                            warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                            if (PSD.Contains("bsd_duedate"))
+                                            {
+                                                warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                                int graceday = findGraceDays(service, PS.ToEntityReference());
+                                                if (graceday != -1)
+                                                    warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                            }
 
-                                        Entity ins = new Entity(PSD.LogicalName);
-                                        ins.Id = PSD.Id;
-                                        string field = "bsd_warningnotices1";
-                                        ins[field] = true;
-                                        service.Update(ins);
+                                            var id = service.Create(warningNotices);
+                                            var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
+                                            dem++;
+
+                                            Entity ins = new Entity(PSD.LogicalName);
+                                            ins.Id = PSD.Id;
+                                            string field = "bsd_warningnotices" + (numberofWarning + 1);
+                                            ins[field] = true;
+                                            traceService.Trace("step1");
+                                            string field2 = "bsd_warningdate" + (numberofWarning + 1);
+                                            ins[field2] = ((DateTime)enWRN["bsd_date"]).AddHours(7);
+                                            traceService.Trace("step2");
+
+                                            string field3 = "bsd_w_noticesnumber" + (numberofWarning + 1);
+                                            ins[field3] = enWRN["bsd_noticesnumber"];
+                                            traceService.Trace("step3");
+
+                                            service.Update(ins);
+                                        }
                                     }
                                 }
-                                #endregion
                             }
+                            #endregion
+                            #region Chua Generate WN
+                            else
+                            {
+                                PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
+                                if (PN_Date >= 0 && nday >= PN_Date)
+                                {
+                                    Entity warningNotices = new Entity("bsd_warningnotices");
+                                    if (OE.Contains("name"))
+                                        warningNotices["bsd_name"] = "Warning Notices of " + OE["name"];
+                                    else warningNotices["bsd_name"] = "Warning Notices";
+                                    warningNotices["bsd_subject"] = "Warning Notices";
+                                    warningNotices["bsd_optionentry"] = OE.ToEntityReference();
+                                    if (OE.Contains("customerid"))
+                                        warningNotices["bsd_customer"] = OE["customerid"];
+                                    if (OE.Contains("bsd_project"))
+                                        warningNotices["bsd_project"] = OE["bsd_project"];
+                                    if (OE.Contains("bsd_unitnumber"))
+                                        warningNotices["bsd_units"] = OE["bsd_unitnumber"];
+                                    warningNotices["bsd_numberofwarning"] = 1;
+                                    warningNotices["bsd_type"] = new OptionSetValue(100000000);
+                                    if (PSD.Contains("bsd_balance"))
+                                    {
+                                        decimal amount = PSD.Contains("bsd_balance") ? ((Money)PSD["bsd_balance"]).Value : 0;
+                                        warningNotices["bsd_amount"] = new Money(amount);
+                                    }
+                                    warningNotices["bsd_date"] = !string.IsNullOrWhiteSpace(date) ? Convert.ToDateTime(date) : DateTime.Now; //RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                                    warningNotices["bsd_paymentschemedeitail"] = PSD.ToEntityReference();
+                                    if (PSD.Contains("bsd_duedate"))
+                                    {
+                                        warningNotices["bsd_duedate"] = ((DateTime)PSD["bsd_duedate"]);
+                                        int graceday = findGraceDays(service, PS.ToEntityReference());
+                                        if (graceday != -1)
+                                            warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
+                                    }
+                                    var id = service.Create(warningNotices);
+                                    var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
+
+                                    Entity ins = new Entity(PSD.LogicalName);
+                                    ins.Id = PSD.Id;
+                                    string field = "bsd_warningnotices1";
+                                    ins[field] = true;
+                                    traceService.Trace("step1z");
+                                    string field2 = "bsd_warningdate" + (1);
+                                    ins[field2] = ((DateTime)enWRN["bsd_date"]).AddHours(7);
+                                    traceService.Trace("step2z");
+
+                                    string field3 = "bsd_w_noticesnumber" + (1);
+                                    ins[field3] = enWRN["bsd_noticesnumber"];
+                                    traceService.Trace("step3z");
+                                    service.Update(ins);
+                                }
+                            }
+                            #endregion
                         }
-                        #endregion
                     }
+                    #endregion
                 }
             }
+            traceService.Trace("dem: " + dem);
             context.OutputParameters["returnN"] = dem.ToString();
         }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)

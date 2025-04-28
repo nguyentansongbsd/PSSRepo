@@ -29,6 +29,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            traceService.Trace("billdate " + context.InputParameters["billdate"].ToString());
             string pro = "";
             if (context.InputParameters["project"] != null)
             {
@@ -46,6 +47,14 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             else
             {
                 estimatehandover = null;
+            }
+            DateTime billdate=DateTime.Now;
+            bool isContainsBilldate=false;
+            if (context.InputParameters["billdate"] != null)
+            {
+                isContainsBilldate = true;
+                traceService.Trace("billdate " + context.InputParameters["billdate"].ToString());
+                billdate = Convert.ToDateTime(context.InputParameters["billdate"].ToString());
             }
             //LAY DANH SACH CAC UEHD DETAIL HOP LE
             QueryExpression query = new QueryExpression("bsd_updateestimatehandoverdatedetail");
@@ -299,6 +308,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     {
                         hn["bsd_isincludelastinstallment"] = false;
                     }
+                    if (isContainsBilldate)
+                        hn["bsd_billdate"] = billdate;
                     service.Create(hn);
 
                     //UPDATE UEHD
@@ -399,6 +410,10 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                                 bsd_signeddadate = (DateTime)oe["bsd_signeddadate"];
                                 caseSign = 1;
                             }
+                            else
+                            {
+                                caseSign = 4;
+                            }    
                         }
                         var latedays2 = lateDays;
 
@@ -487,6 +502,12 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                                 result = true;
                                 lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
                             }
+                            else
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
                             else result = false;
                         }
                     }
@@ -502,7 +523,26 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     else
                     {
                         //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
+                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                    }
+                    break;
+                case 4:
+
+                    if (rs.Entities.Count > 0)
+                    {
+                        if (isContainDueDate == false)
+                            result = false;
+                        else
+                        {
+                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
+                            traceService.Trace("bsd_duedate >= bsd_duedateFlag: " + (bsd_duedate >= bsd_duedateFlag).ToString());
+                            if (bsd_duedate >= bsd_duedateFlag)
+                            {
+                                result = true;
+                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
+                            }
+                            else result = false;
+                        }
                     }
                     break;
                 default:

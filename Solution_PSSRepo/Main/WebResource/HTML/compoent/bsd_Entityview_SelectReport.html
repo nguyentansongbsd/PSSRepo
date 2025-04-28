@@ -1,0 +1,429 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="ClientGlobalContext.js.aspx"></script>
+    <script type="text/javascript" src="new_jquery2.0.3.min"></script>
+    <script type="text/javascript" src="bsd_CrmFetchKit.js"></script>
+    <script type="text/javascript" src="bsd_common.js"></script>
+    <script type="text/javascript" src="bsd_pdf-lib.min.js"></script>
+    <style type="text/css">
+        html {
+            font-family: Segoe UI,Tahoma,Arial;
+            font-size: 12px;
+            color: #444;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            padding: 0px;
+            margin: 0px;
+            font-family: Segoe UI, Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        #page-title {
+            font-family: Segoe UI, Arial, sans-serif;
+            margin: 10px auto 10px auto;
+            display: block;
+            font-weight: lighter;
+            font-size: 27px;
+            line-height: 27px;
+            padding: 3px;
+        }
+
+        span.section-title {
+            display: block;
+            font-weight: lighter;
+            font-size: 20px;
+            line-height: 27px;
+            margin: 10px 0 2px 0px;
+        }
+
+
+        div#main {
+            position: relative;
+            margin: auto;
+            height: auto;
+            border: 0 solid #ccc;
+            overflow: hidden;
+        }
+
+            div#main > div.content {
+                display: block;
+                padding: 0 3px 0 3px;
+            }
+
+        .ps-scrollbar-x-rail {
+            right: 0px;
+        }
+
+
+        .button {
+            display: block;
+            line-height: 25px;
+            border: 1px solid #C6C6C6;
+            background-image: none;
+            width: auto;
+            min-width: 80px;
+            white-space: nowrap;
+            color: #444;
+            background-color: #fff;
+            text-align: center;
+            text-decoration: none;
+            float: right;
+            cursor: pointer;
+            font-family: Segoe UI, Arial, sans-serif;
+        }
+
+        button:hover {
+            background-color: #B1D6F0;
+            border: 1px solid #0094ff;
+        }
+
+
+        .textArea {
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            margin: 5px 0 5px 0;
+        }
+
+        .noti {
+            font-size: 14px;
+            margin: 0 0 0 10px;
+        }
+
+        .container {
+            height: 239px;
+            padding: 0 10px 0 10px;
+            overflow: auto;
+        }
+
+        .lableradio {
+            display: block;
+            padding: 5px 0px 5px 0px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .al {
+            font-family: 'Segoe UI';
+        }
+    </style>
+    <meta>
+    <meta>
+    <meta>
+    <meta>
+</head>
+<body style="word-wrap: break-word;" data-new-gr-c-s-check-loaded="14.1052.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1052.0">
+    <div id="page-title" style="font-family: Segoe UI;">
+        <span style="text-align:center;display:block">Select Form</span>
+    </div>
+    <p class="noti" style="font-family: Segoe UI;"> Please select the template for printing:</p>
+    <div class="container" id="container" style="font-family: Segoe UI;">
+        <!--<label style='display:block;'><input type="radio" name="optradio">Option 1</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 2</label>
+        <label style='display:block;'><input type="radio" name="optradio">Option 3</label>-->
+    </div>
+    <div style="display: block; padding: 5px 20px; position: relative; background-color: rgb(248, 248, 248); font-family: undefined;">
+        <a id="okBtn" class="button" style="margin-left:20px;font-family: Segoe UI, Arial, sans-serif;" onclick="RunReport()">Print</a>
+        <a id="okBtn" class="button" style="margin-left:20px;font-family: Segoe UI, Arial, sans-serif;" onclick="CreateEmail()">Create Mail</a>
+        <div style="display:block;font-size:0px;clear:both;"></div>
+    </div>
+    <script type="text/javascript">
+        //var reportID = null;
+        //var fileName = null;
+        var data = new Array();
+        var reportId = null;
+        var type = "";
+        var entityname = "";
+        var templateName = "";
+        var countListid = 0;
+        debugger;
+        $(document).ready(function (doc) {
+
+            var typecode = window.top.entityTypeCode;
+            console.log()
+            var fetchXml = `
+                <fetch>
+                  <entity name="documenttemplate">
+                    <attribute name="name" />
+                    <attribute name="documenttemplateid" />
+                    <filter>
+                      <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
+                    </filter>
+                  </entity>
+                </fetch>`;
+            // Gọi API để thực hiện truy vấn FetchXML
+            Xrm.WebApi.retrieveMultipleRecords("documenttemplate", "?fetchXml=" + fetchXml).then(
+                function (result) {
+                    if (result.entities.length > 0) {
+                        console.log("Word Templates found:");
+                        result.entities.forEach(function (template) {
+                            templateName = template.name;
+                            data.push({ value: template.documenttemplateid, text: template.name }); //DEF
+                            console.log("Name: " + template.name + ", ID: " + template.documenttemplateid);
+                        });
+                        var customernoticesId = common.getParameterByName("data");
+                        var data_cus = getParameterByName("data");
+                        entityname = window.top.entityname;
+                        data_cus = data_cus.split(",");
+                        var entity = customernoticesId[1];
+                        type = data_cus[data_cus.length - 1];
+                        //report list - chinh ten template hien thi
+                        //DEF
+
+                        var container = document.getElementById("container");
+                        for (var i = 0; i < data.length; i++) {
+                            var radio1 = document.createElement('input');
+                            radio1.id = 'myRadioId' + i.toString();
+                            radio1.type = 'radio';
+                            radio1.name = 'radioGroup';
+                            radio1.value = data[i].value + "," + data[i].text;
+
+                            var label1 = document.createElement('label');
+                            label1.htmlFor = radio1.id;
+                            label1.classList.add("lableradio");
+                            label1.appendChild(radio1);
+                            label1.appendChild(document.createTextNode(data[i].text));
+                            $(label1).click(function (e) {
+                                var radio = this.firstElementChild;
+                                radio = radio.value.split(",");
+                                data.text = radio[1];
+                                reportId = radio[0];
+                            });
+                            container.appendChild(label1);
+                        }
+                    } else {
+                        console.log("No Word Templates found for the entity: " + "Option Entry");
+                    }
+                },
+                function (error) {
+                    console.error("Error fetching Word Templates: " + error.message);
+                }
+            );
+
+        });
+        function RunReport() {
+            var idrecord = common.getParameterByName("data").replace('{', '').replace('}', '');
+            countListid = idrecord.split(',').length;
+            downloadFileFromPowerAutomate(idrecord, reportId, entityname, "");
+
+        }
+        function CreateEmail() {
+            var idrecord = common.getParameterByName("data").replace('{', '').replace('}', '');
+            countListid = idrecord.split(',').length;
+            CrateEmailPA(idrecord, reportId, entityname, "");
+
+        }
+        function CrateEmailPA(lstid, templateid) {
+            var url = "https://prod-47.southeastasia.logic.azure.com:443/workflows/eef0b68534d242ac9c7384623d0310a2/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dh10bNa8innN4RJ3nUgDfEPAhTHXox69f73VqSSA6HM";
+            Xrm.Utility.showProgressIndicator("Please Wait!...");
+            var fetchXml = `
+                <fetch>
+                  <entity name="bsd_documents">
+                    <attribute name="bsd_name" />
+                    <attribute name="bsd_documentsid" />
+                    <filter>
+                      <condition attribute="bsd_name" operator="eq" value="${templateName}" />
+                    </filter>
+                  </entity>
+                </fetch>`;
+            var templateid = "";
+            // Gọi API để thực hiện truy vấn FetchXML
+            Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml).then(
+                function (result) {
+                    if (result.entities.length > 0) {
+                        result.entities.forEach(function (template) {
+                            var data = {
+                                listId: lstid,
+                                templateId: template.bsd_documentsid,
+                                userId: Xrm.Utility.getGlobalContext().getUserId()
+                            };
+                            fetchWithTimeout(url, {
+                                method: "POST",
+                                headers: {
+                                    "OData-MaxVersion": "4.0",
+                                    "OData-Version": "4.0",
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json; charset=utf-8"
+                                },
+                                body: JSON.stringify(data)
+                            }).then(response => {
+                                debugger;
+                                if (response.status == 200) {
+                                    Xrm.Utility.closeProgressIndicator();
+
+                                }
+                            }).then(data => {
+
+                                var confirmStrings = {
+                                    text: "Created " + (countListid - data) + "/error" + data,
+                                    title: "Notice"
+                                };
+                                Xrm.Navigation.openConfirmDialog(confirmStrings, confirmOptions).then(
+                                    function (success) {
+
+                                    }
+                                );
+                            }).
+                                catch(error => {
+                                    debugger;
+                                    Xrm.Utility.closeProgressIndicator();
+                                    console.log(error);
+                                });
+                        })
+                    }
+                    else { alert("not found documents") }
+                });
+
+        }
+        function fetchWithTimeout(url, options, timeout = 1800000) {
+            return Promise.race([
+                fetch(url, options),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Request timed out')), timeout)
+                )
+            ]);
+        }
+        var countCallPA = 0;
+        function downloadFileFromPowerAutomate(lstid, templateid, entityid, base64) {
+            var url = "https://prod-53.southeastasia.logic.azure.com:443/workflows/9d4b4fb80d394481a23bddcafdd74fa4/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-O1cJvocQjwm2ULYbaBGHAYVk0G1zsudBgOx4aqmGmc";
+            //var url ="https://prod-46.southeastasia.logic.azure.com:443/workflows/0b294680618b486b8cc329b391d0514d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RD7NEksiD61KA9LS6INQSGS6wV2FEfXhbe7ZyU1pbdA"
+            Xrm.Utility.showProgressIndicator("Please Wait!...");
+
+            // Tạo đối tượng dữ liệu để gửi
+
+
+            // Gửi yêu cầu HTTP POST
+            //$.ajax({
+            //    type: "POST",
+            //    url: url,
+            //    contentType: "application/json",
+            //    data: JSON.stringify(data),
+            //    success: function (response) {
+            //        // Giả sử response chứa nội dung file base64
+            //        var base64Content = response; // Thay đổi nếu response có cấu trúc khác
+            //        downloadBase64File(base64Content, "report.pdf", "application/pdf");
+            //    },
+            //    error: function (xhr, status, error) {
+            //        console.error("Error calling Power Automate: ", error);
+            //    }
+            //});
+            var data = {
+                entityname: entityid,
+                listid: lstid.split(',').slice(countCallPA, countCallPA + 20).join(','),
+                templateid: templateid
+            };
+            fetchWithTimeout(url, {
+                method: "POST",
+                headers: {
+                    "OData-MaxVersion": "4.0",
+                    "OData-Version": "4.0",
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                debugger;
+                if (response.status == 200) {
+                    return response.json(); // Thay đổi nếu response có cấu trúc khác
+
+                }
+            }).then(data => {
+                var base64Content = data;
+
+                if (countCallPA < countListid) {
+                    countCallPA = countCallPA + 20;
+                    console.log("countCallPA =>" + countCallPA);
+                    if (base64 != "") {
+                        window.top.ExecuteAction("", "", "bsd_Action_MergeFilePDF", [{ name: 'files', type: 'string', value: base64 + "," + base64Content.data }]
+                            , function (result) {
+                                if (result != null && result.status != null) {
+                                    downloadFileFromPowerAutomate(lstid, templateid, entityid, result.data.fileres.value)
+                                }
+                            }, true);
+                    }
+                    else {
+                        downloadFileFromPowerAutomate(lstid, templateid, entityid, base64Content.data)
+                    }
+                }
+                else {
+                    Xrm.Utility.closeProgressIndicator();
+                    var name = "";
+                    switch (entityname) {
+                        case "bsd_customernotices":
+                            name = "PaymentNotice_" + getCurrentDateFormatted();
+                            break;
+                        case "bsd_warningnotices":
+                            name = "WarringNotice_" + getCurrentDateFormatted();
+                            break;
+
+                    }
+                    downloadBase64File(base64, name + ".pdf", "application/pdf");
+                }
+            }).
+                catch(error => {
+                    debugger;
+                    Xrm.Utility.closeProgressIndicator();
+                    console.log(error);
+                });
+        }
+
+
+        function getCurrentDateFormatted() {
+            // Lấy ngày hiện tại
+            var currentDate = new Date();
+
+            // Lấy ngày, tháng và năm
+            var day = String(currentDate.getDate()).padStart(2, '0'); // Đảm bảo có 2 chữ số
+            var month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+            var year = currentDate.getFullYear();
+
+            // Tạo chuỗi theo định dạng dd/mm/yyyy
+            var formattedDate = day + '_' + month + '_' + year;
+
+            return formattedDate;
+        }
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        function downloadBase64File(base64Content, fileName, mimeType) {
+            // Tạo một đối tượng Blob từ nội dung base64
+            var byteCharacters = atob(base64Content);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var blob = new Blob([byteArray], { type: mimeType });
+
+            // Tạo một URL cho Blob
+            var url = URL.createObjectURL(blob);
+
+            // Tạo một thẻ <a> để tải xuống
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+
+            // Thêm thẻ <a> vào document và kích hoạt click
+            document.body.appendChild(a);
+            a.click();
+
+            // Xóa thẻ <a> sau khi tải xong
+            document.body.removeChild(a);
+
+            // Giải phóng URL
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration><ddict-div style="visibility: visible !important;"></ddict-div>
+</body>
+</html>

@@ -8,7 +8,7 @@ function onload(executionContextObj) {
         disableFormFields(true);
     }
     else {
-        disableFormFields(false);
+        //disableFormFields(false);
     }
     var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
     if (installmentnumber != null && statuscode == 1) {
@@ -19,14 +19,65 @@ function onload(executionContextObj) {
     }
 }
 function lock_ins() {
+    var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
+
     var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
-    if (installmentnumber != null) {
-        Xrm.Page.getControl("bsd_installment").setDisabled(true);
+    if (optionentry != null) {
+        if (installmentnumber != null) {
+            Xrm.Page.getControl("bsd_installment").setDisabled(true);
+            fillter_ins();
+        }
+        else {
+            Xrm.Page.getControl("bsd_installment").setDisabled(false);
+            Xrm.Page.getAttribute("bsd_installment").setValue(null);
+            Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
+        }
     }
     else {
-        Xrm.Page.getControl("bsd_installment").setDisabled(false);
-        Xrm.Page.getAttribute("bsd_installment").setValue(null);
+        if (installmentnumber != null) {
+            Xrm.Page.getControl("bsd_installment").setDisabled(true);
+            fillter_ins_quote();
+        }
+        else {
+            Xrm.Page.getControl("bsd_installment").setDisabled(false);
+            Xrm.Page.getAttribute("bsd_installment").setValue(null);
+            Xrm.Page.getAttribute("bsd_duedateold").setValue(null);
+        }
     }
+
+}
+function mapInstallment() {
+
+    var bsd_installment = Xrm.Page.getAttribute("bsd_installment").getValue();
+    if (bsd_installment == null) return;
+    var xml = [];
+    xml.push("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>");
+    xml.push("<entity name='bsd_paymentschemedetail'>");
+    xml.push("<attribute name='bsd_paymentschemedetailid' />");
+    xml.push("<attribute name='bsd_name' />");
+    xml.push("<attribute name='createdon' />");
+    xml.push("<attribute name='bsd_ordernumber' />");
+    xml.push("<order attribute='bsd_name' descending='false' />");
+    xml.push("<filter type='and'>");
+    xml.push("<condition attribute='bsd_paymentschemedetailid' operator='eq' value='" + bsd_installment[0].id + "'/>");
+    xml.push("</filter>");
+    xml.push("</entity>");
+    xml.push("</fetch>");
+    CrmFetchKit.Fetch(xml.join(""), false).then(function (rs) {
+        debugger;
+        if (rs.length > 0) {
+           
+            var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
+            if (installmentnumber == null || installmentnumber != rs[0].attributes.bsd_ordernumber.value) {
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(rs[0].attributes.bsd_ordernumber.value);
+            }
+        }
+        else {
+        }
+    },
+        function (err) {
+            console.log(err);
+        });
 }
 function onchange_Project() {
     Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
@@ -98,6 +149,9 @@ function fillter_ins() {
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
         xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionentry[0].id + "' />");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -109,10 +163,13 @@ function fillter_ins() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+               
                 fillter_olddate();
             }
             else {
                 alert("No Installment" + installmentnumber + " in optionEntry");
+
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
             }
         },
             function (err) {
@@ -124,8 +181,7 @@ function fillter_ins() {
 function fillter_olddate() {
     var installment = Xrm.Page.getAttribute("bsd_installment").getValue();
     //var optionentry = Xrm.Page.getAttribute("bsd_optionentry").getValue();
-    
-    
+
     if (installment != null) {
 
         var xml = [];
@@ -170,6 +226,9 @@ function dislay_ins() {
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='" + optionEntry[0].id + "' />");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
         xml.push("</fetch>");
@@ -245,7 +304,7 @@ function FilterOE(executionContextObj) {
     formContext.getControl("bsd_optionentry").addCustomFilter(customerAccountFilter);
 }
 
-//region 
+//region
 function fillter_pro_unit_quote() {
     debugger;
     var bsd_quote = Xrm.Page.getAttribute("bsd_quote").getValue();
@@ -307,6 +366,9 @@ function fillter_ins_quote() {
         xml.push("<attribute name='createdon' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
         xml.push("<condition attribute='bsd_reservation' operator='eq' uitype='quote' value='" + bsd_quote[0].id + "' />");
         xml.push("</filter>");
@@ -320,10 +382,12 @@ function fillter_ins_quote() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+               
                 fillter_olddate();
             }
             else {
                 alert("No Installment" + installmentnumber + " in optionEntry");
+                Xrm.Page.getAttribute("bsd_installmentnumber").setValue(null);
             }
         },
             function (err) {
@@ -346,6 +410,9 @@ function dislay_ins_quote() {
         xml.push("<attribute name='createdon' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
+
+        xml.push("<condition attribute='bsd_lastinstallment' operator='eq' value='" + 0 + "'/>");
+        xml.push("<condition attribute='bsd_duedatecalculatingmethod' operator='ne' uitype='salesorder' value='" + 100000002 + "' />");
         xml.push("<condition attribute='bsd_reservation' operator='eq' uitype='quote' value='" + bsd_quote[0].id + "' />");
         xml.push("</filter>");
         xml.push("</entity>");
@@ -415,13 +482,7 @@ function Filter_quote(executionContextObj) {
     //Filteroe += "<condition attribute='statuscode' operator='neq' value='100000006'/>";
     if (bsd_project != null) {
         Filteroe += "<condition attribute='bsd_projectid' operator='eq' value='" + bsd_project[0].id + "'/>";
-        Filteroe +=
-            "      <condition attribute='statuscode' operator='in'>" +
-            "        <value>"+ 100000004+ "</value>" +
-            "        <value>"+ 100000007+ "</value>" +
-            "        <value>"+ 100000000+ "</value>" +
-            "        <value>"+ 100000006+ "</value>" +
-            "      </condition>";
+        Filteroe += "      <condition attribute='statuscode' operator='in'>" + "        <value>" + 100000004 + "</value>" + "        <value>" + 100000007 + "</value>" + "        <value>" + 100000000 + "</value>" + "        <value>" + 100000006 + "</value>" + "      </condition>";
     }
     Filteroe += "</filter>";
     var customerAccountFilter = Filteroe;
@@ -490,6 +551,8 @@ function fillter_ins_quotation() {
         xml.push("<attribute name='bsd_paymentschemedetailid' />");
         xml.push("<attribute name='bsd_name' />");
         xml.push("<attribute name='createdon' />");
+
+        xml.push("<attribute name='bsd_ordernumber' />");
         xml.push("<order attribute='bsd_name' descending='false' />");
         xml.push("<filter type='and'>");
         xml.push("<condition attribute='bsd_ordernumber' operator='eq' value='" + installmentnumber + "'/>");
@@ -505,10 +568,14 @@ function fillter_ins_quotation() {
                     name: rs[0].attributes.bsd_name.value,
                     entityType: "bsd_paymentschemedetail"
                 }]);
+                var installmentnumber = Xrm.Page.getAttribute("bsd_installmentnumber").getValue();
+                if (installmentnumber == null || installmentnumber != rs[0].attributes.bsd_ordernumber.value) {
+                    Xrm.Page.getAttribute("bsd_installmentnumber").setValue(rs[0].attributes.bsd_ordernumber.value);
+                }
                 fillter_olddate();
             }
             else {
-                alert("No Installment" + installmentnumber + " in optionEntry");
+                alert("No Installment" + installmentnumber + " in Quote");
             }
         },
             function (err) {

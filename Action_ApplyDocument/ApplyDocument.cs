@@ -1,910 +1,924 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Text;
+using Microsoft.Crm.Sdk.Messages;
 using System.Web.Script.Serialization;
+using System.Diagnostics;
+using System.Collections;
 
 namespace Action_ApplyDocument
 {
-    internal class ApplyDocument
+    class ApplyDocument
     {
-        private IOrganizationService service = (IOrganizationService)null;
-        private IOrganizationServiceFactory factory = (IOrganizationServiceFactory)null;
-        private IPluginExecutionContext context = (IPluginExecutionContext)null;
-        private StringBuilder strMess = new StringBuilder();
-        private StringBuilder strMess1 = new StringBuilder();
-        private IServiceProvider serviceProvider;
-        private Decimal d_oe_bsd_totalamountpaid = 0M;
-
+        IOrganizationService service = null;
+        IOrganizationServiceFactory factory = null;
+        IPluginExecutionContext context = null;
+        StringBuilder strMess = new StringBuilder();
+        StringBuilder strMess1 = new StringBuilder();
+        IServiceProvider serviceProvider;
+        decimal d_oe_bsd_totalamountpaid = 0;
         public ApplyDocument(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            this.factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-            this.service = this.factory.CreateOrganizationService(new Guid?(this.context.UserId));
+            context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
+            factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            service = factory.CreateOrganizationService(context.UserId);
         }
 
         public void checkInput(Entity en_app)
         {
-            if ((en_app.Contains("bsd_differenceamount") ? ((Money)en_app["bsd_differenceamount"]).Value : 0M) < 0M)
-                throw new InvalidPluginExecutionException("The amount you pay exceeds the amount paid. Please choose another Advance Payment or other Payment Phase!");
-            if (!en_app.Contains("bsd_transactiontype"))
-                throw new InvalidPluginExecutionException("Please choose 'Type of payment'!");
-            int num1 = en_app.Contains("bsd_receiptdate") ? ((OptionSetValue)en_app["bsd_transactiontype"]).Value : throw new InvalidPluginExecutionException("Please select payment actual time");
-            this.strMess.AppendLine("111111111111111");
-            Decimal num2 = en_app.Contains("bsd_amountadvancepayment") ? ((Money)en_app["bsd_amountadvancepayment"]).Value : 0M;
-            if (num2 == 0M)
-                throw new InvalidPluginExecutionException("Please choose at least one row of Advance Payment List!");
-            if (!en_app.Contains("bsd_arrayadvancepayment"))
-                throw new InvalidPluginExecutionException("Please choose at least one row of Advance Payment List!");
-            if (!en_app.Contains("bsd_arrayamountadvance"))
-                throw new InvalidPluginExecutionException("Cannot find any amount of advance payment list!");
-            this.strMess.AppendLine("2222222222222");
-            string str1 = en_app.Contains("bsd_arrayadvancepayment") ? (string)en_app["bsd_arrayadvancepayment"] : "";
-            string str2 = en_app.Contains("bsd_arrayamountadvance") ? (string)en_app["bsd_arrayamountadvance"] : "";
-            this.strMess.AppendLine("s_bsd_arrayadvancepayment: " + str1);
-            this.strMess.AppendLine("s_bsd_arrayamountadvance: " + str2);
-            string[] strArray1 = str1.Split(',');
-            string[] strArray2 = str2.Split(',');
-            int length = strArray1.Length;
-            this.strMess.AppendLine("33333333333");
-            Decimal num3 = en_app.Contains("bsd_totalapplyamount") ? ((Money)en_app["bsd_totalapplyamount"]).Value : 0M;
-            if (num3 == 0M)
-                throw new InvalidPluginExecutionException("Please choose at least one row of " + (num1 == 1 ? " Deposit list!" : " Installment or Interest List!"));
-            if (!en_app.Contains("bsd_arraypsdid") && !en_app.Contains("bsd_arrayinstallmentinterest") && !en_app.Contains("bsd_arrayfeesid") && !en_app.Contains("bsd_arraymicellaneousid"))
-                throw new InvalidPluginExecutionException("Please choose at least one row of " + (num1 == 1 ? " Deposit list!" : " Installment or Interest List or Fees list or Miscellaneous list!"));
-            if (!en_app.Contains("bsd_arrayamountpay") && !en_app.Contains("bsd_arrayinterestamount") && !en_app.Contains("bsd_arrayfeesamount") && !en_app.Contains("bsd_arraymicellaneousamount"))
-                throw new InvalidPluginExecutionException("Cannot find any amount of " + (num1 == 1 ? " Deposit list!" : " Installment or Interest List or Fees list or Miscellaneous list!"));
-            this.strMess.AppendLine("4444444444444");
-            if (num3 > num2)
-                throw new InvalidPluginExecutionException("The amout you pay exceeds the amount paid. Please choose another Advance Payment or other Payment Phase!");
-            this.strMess.AppendLine("55555555555");
-            Decimal num4 = 0M;
-            for (int index = 0; index < strArray1.Length; ++index)
+            int bsd_transactiontype = en_app.Contains("bsd_transactiontype") ? ((OptionSetValue)en_app["bsd_transactiontype"]).Value : 0;
+            decimal bsd_advancepaymentamount = en_app.Contains("bsd_advancepaymentamount") ? ((Money)en_app["bsd_advancepaymentamount"]).Value : 0;
+            if (bsd_transactiontype != 0)
             {
-                this.strMess.AppendLine("Adv ID: " + strArray1[index].ToString());
-                Entity entity = this.service.Retrieve("bsd_advancepayment", Guid.Parse(strArray1[index]), new ColumnSet(true));
-                if (!entity.Contains("statuscode") || ((OptionSetValue)entity["statuscode"]).Value == 100000002)
-                    throw new InvalidPluginExecutionException("Advance payment " + (string)entity["bsd_name"] + " has been Revert!");
-                if (((OptionSetValue)entity["statuscode"]).Value == 100000001)
-                    throw new InvalidPluginExecutionException("Advance payment " + (string)entity["bsd_name"] + " has been Pay off!");
-                this.strMess.AppendLine("6666666666");
-                Decimal num5 = entity.Contains("bsd_amount") ? ((Money)entity["bsd_amount"]).Value : throw new InvalidPluginExecutionException("Advance payment " + (string)entity["bsd_name"] + " does not contain 'Amount'. Please check again!");
-                Decimal num6 = entity.Contains("bsd_paidamount") ? ((Money)entity["bsd_paidamount"]).Value : 0M;
-                Decimal num7 = entity.Contains("bsd_refundamount") ? ((Money)entity["bsd_refundamount"]).Value : 0M;
-                this.strMess.AppendLine("d_bsd_paidamount: " + num6.ToString());
-                this.strMess.AppendLine("7777777777");
-                Decimal num8 = num5 - num7 - num6;
-                this.strMess.AppendLine("8888888888");
-                num4 += num8;
-                if (Decimal.Parse(strArray2[index]) > num8)
-                    throw new InvalidPluginExecutionException("Remaining amount of Advance payment " + (string)entity["bsd_name"] + " is less than require amount. Cannot excute payment!");
-            }
-            if (num4 < num3)
-                throw new InvalidPluginExecutionException("Amount Advance Payment must larger than Total Apply Amount!");
-            this.strMess.AppendLine("checkInput done");
-        }
-
-        public void paymentDeposit(Guid quoteId, Decimal d_amp, DateTime d_now, Entity en_app)
-        {
-            Entity entity1 = this.service.Retrieve("quote", quoteId, new ColumnSet(new string[8]
-            {
-        "bsd_deposittime",
-        "statuscode",
-        "bsd_depositfee",
-        "name",
-        "bsd_totalamountpaid",
-        "bsd_projectid",
-        "customerid",
-        "bsd_isdeposited"
-            }));
-            if (((OptionSetValue)entity1["statuscode"]).Value == 6)
-                throw new InvalidPluginExecutionException("Reservation " + (string)entity1["name"] + " had been cancelled, cannot deposit!");
-            Entity entity2 = ((OptionSetValue)entity1["statuscode"]).Value != 3 ? new Entity(entity1.LogicalName) : throw new InvalidPluginExecutionException("Quotation Reservation " + (string)entity1["name"] + " had been depositted, cannot payment!");
-            entity2.Id = entity1.Id;
-            EntityCollection entityCollection = this.Get1st_Resv(entity1.Id.ToString());
-            Entity entity3 = new Entity(entityCollection.Entities[0].LogicalName);
-            entity3.Id = entityCollection[0].Id;
-            Decimal num = entityCollection.Entities[0].Contains("bsd_amountofthisphase") ? ((Money)entityCollection.Entities[0]["bsd_amountofthisphase"]).Value : 0M;
-            if (num == 0M)
-                throw new InvalidPluginExecutionException("Amount of Installment 1 - Reservation " + (string)entity1["name"] + " is null. Please check again!");
-            bool flag = entity3.Contains("bsd_typeofstartdate") && (bool)entity3["bsd_typeofstartdate"];
-            if (entityCollection.Entities[0].Contains("bsd_duedatecalculatingmethod") && ((OptionSetValue)entityCollection.Entities[0]["bsd_duedatecalculatingmethod"]).Value == 100000001 && flag)
-            {
-                EntityCollection ecInsResv = this.Get_ec_Ins_Resv(entity1.Id.ToString());
-                this.reGenerate(this.service, entity1, d_now, ecInsResv);
-            }
-            entity3["bsd_balance"] = (object)new Money(num - d_amp);
-            entity3["bsd_depositamount"] = (object)new Money(d_amp);
-            this.service.Update(entity3);
-            entity2["bsd_totalamountpaid"] = (object)new Money(d_amp);
-            entity2["bsd_deposittime"] = en_app["bsd_receiptdate"];
-            entity2["bsd_isdeposited"] = (object)true;
-            this.service.Update(entity2);
-            this.service.Execute((OrganizationRequest)new SetStateRequest()
-            {
-                EntityMoniker = entity1.ToEntityReference(),
-                State = new OptionSetValue(0),
-                Status = new OptionSetValue(100000000)
-            });
-            this.service.Execute((OrganizationRequest)new SetStateRequest()
-            {
-                EntityMoniker = entity1.ToEntityReference(),
-                State = new OptionSetValue(1),
-                Status = new OptionSetValue(3)
-            });
-            this.create_app_detail(this.service, en_app, entityCollection.Entities[0], entity1, 100000000, d_amp, 0, 0M, 0);
-        }
-
-        public void paymentInstallment(Entity en_app)
-        {
-            string s_bsd_arraypsdid = en_app.Contains("bsd_arraypsdid") ? (string)en_app["bsd_arraypsdid"] : "";
-            string s_bsd_arrayamountpay = en_app.Contains("bsd_arrayamountpay") ? (string)en_app["bsd_arrayamountpay"] : "";
-            this.strMess.AppendLine("10.1");
-            Entity en_OE = this.service.Retrieve("salesorder", ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
-            en_OE.Id.ToString();
-            if (!en_OE.Contains("bsd_unitnumber"))
-                throw new InvalidPluginExecutionException("Cannot find Unit information in Option Entry " + (string)en_OE["name"] + "!");
-            this.strMess.AppendLine("10.2");
-            this.d_oe_bsd_totalamountpaid = en_OE.Contains("bsd_totalamountpaid") ? ((Money)en_OE["bsd_totalamountpaid"]).Value : 0M;
-            if ((en_OE.Contains("bsd_totalamountlessfreight") ? ((Money)en_OE["bsd_totalamountlessfreight"]).Value : 0M) == 0M)
-                throw new InvalidPluginExecutionException("'Net Selling Price' must be larger than 0");
-            this.strMess.AppendLine("10.3");
-            this.strMess.AppendLine("10.4");
-            if (s_bsd_arraypsdid != "")
-                this.applyIntallment(en_app, en_OE, s_bsd_arraypsdid, s_bsd_arrayamountpay);
-            this.strMess.AppendLine("10.5");
-            string s_bsd_arrayinstallmentinterest = en_app.Contains("bsd_arrayinstallmentinterest") ? (string)en_app["bsd_arrayinstallmentinterest"] : "";
-            string s_bsd_arrayinterestamount = en_app.Contains("bsd_arrayinterestamount") ? (string)en_app["bsd_arrayinterestamount"] : "";
-            if (s_bsd_arrayinstallmentinterest != "")
-                this.applyInterestcharge(en_app, en_OE, s_bsd_arrayinstallmentinterest, s_bsd_arrayinterestamount);
-            this.strMess.AppendLine("10.6");
-            string s_fees = en_app.Contains("bsd_arrayfeesid") ? (string)en_app["bsd_arrayfeesid"] : "";
-            string s_feesAM = en_app.Contains("bsd_arrayfeesamount") ? (string)en_app["bsd_arrayfeesamount"] : "";
-            if (s_fees != "")
-                this.applyFees(en_app, en_OE, s_fees, s_feesAM);
-            this.strMess.AppendLine("10.7");
-            this.strMess.AppendLine("10.8");
-            string s_bsd_arraymicellaneousid = en_app.Contains("bsd_arraymicellaneousid") ? (string)en_app["bsd_arraymicellaneousid"] : "";
-            string s_bsd_arraymicellaneousamount = en_app.Contains("bsd_arraymicellaneousamount") ? (string)en_app["bsd_arraymicellaneousamount"] : "";
-            if (s_bsd_arraymicellaneousid != "")
-                this.applyMicellaneous(en_app, en_OE, s_bsd_arraymicellaneousid, s_bsd_arraymicellaneousamount);
-            this.strMess.AppendLine("10.9");
-        }
-
-        public void createCOA(Entity en_app)
-        {
-            Decimal num1 = en_app.Contains("bsd_totalapplyamount") ? ((Money)en_app["bsd_totalapplyamount"]).Value : 0M;
-            string str1 = en_app.Contains("bsd_arrayadvancepayment") ? (string)en_app["bsd_arrayadvancepayment"] : "";
-            string str2 = en_app.Contains("bsd_arrayamountadvance") ? (string)en_app["bsd_arrayamountadvance"] : "";
-            string[] strArray1 = str1.Split(',');
-            string[] strArray2 = str2.Split(',');
-            Decimal[] numArray1 = new Decimal[strArray1.Length];
-            Decimal[] numArray2 = new Decimal[strArray1.Length];
-            this.strMess.AppendLine("s_eachAdv: " + strArray1.Length.ToString());
-            for (int index = 0; index < strArray1.Length; ++index)
-            {
-                Entity enAdvancePayment = this.service.Retrieve("bsd_advancepayment", Guid.Parse(strArray1[index]), new ColumnSet(true));
-                this.strMess.AppendLine("ID: " + strArray1[index].ToString());
-                Decimal bsd_advancepaymentamount = enAdvancePayment.Contains("bsd_amount") ? ((Money)enAdvancePayment["bsd_amount"]).Value : 0M;
-                Decimal num2 = enAdvancePayment.Contains("bsd_paidamount") ? ((Money)enAdvancePayment["bsd_paidamount"]).Value : 0M;
-                this.strMess.AppendLine("bsd_paidamount: " + num2.ToString());
-                Decimal num3 = enAdvancePayment.Contains("bsd_refundamount") ? ((Money)enAdvancePayment["bsd_refundamount"]).Value : 0M;
-                Decimal bsd_avPMPaid = num2 + num3;
-                Decimal num4 = Decimal.Parse(strArray2[index]);
-                if (num1 == 0M)
+                if (!en_app.Contains("bsd_customer") || !en_app.Contains("bsd_project") || !en_app.Contains("bsd_optionentry"))
                 {
-                    numArray1[index] = 0M;
-                    numArray2[index] = bsd_advancepaymentamount - num2;
+                    throw new InvalidPluginExecutionException("Missing information. Please check again.");
                 }
-                else if (num1 > 0M)
+                Entity enOE = service.Retrieve(((EntityReference)en_app["bsd_optionentry"]).LogicalName, ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
+                int statuscode = enOE.Contains("statuscode") ? ((OptionSetValue)enOE["statuscode"]).Value : 0;
+                if (statuscode == 100000006)
                 {
-                    Decimal num5 = num1 - num4;
-                    this.strMess.AppendLine("delta: " + num5.ToString());
-                    if (num5 >= 0M)
-                    {
-                        numArray1[index] = num4;
-                        numArray2[index] = bsd_advancepaymentamount - num3 - num2 - numArray1[index];
-                    }
-                    else if (num5 < 0M)
-                    {
-                        numArray1[index] = num1;
-                        numArray2[index] = bsd_advancepaymentamount - num3 - num2 - numArray1[index];
-                    }
-                    num1 -= numArray1[index];
+                    throw new InvalidPluginExecutionException("Status is incorrect. Please check again.");
                 }
-                this.strMess.AppendLine("totalavancedamount: " + bsd_advancepaymentamount.ToString());
-                this.strMess.AppendLine("apply: " + numArray1[index].ToString());
-                this.strMess.AppendLine("remain: " + numArray2[index].ToString());
-                this.strMess.AppendLine("bsd_avPMPaid: " + bsd_avPMPaid.ToString());
-                this.create_Applydocument_RemainingCOA(this.service, en_app, enAdvancePayment, bsd_advancepaymentamount, numArray1[index], numArray2[index], bsd_avPMPaid);
+                checkAmountAdvance(((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, bsd_advancepaymentamount);
             }
         }
-
-        public void updateApplyDocument(Entity en_app)
+        private void checkAmountAdvance(Guid KH, Guid DA, Guid OE, decimal AmountAdvance)
         {
-            Decimal trans_am = en_app.Contains("bsd_totalapplyamount") ? ((Money)en_app["bsd_totalapplyamount"]).Value : 0M;
-            string str1 = en_app.Contains("bsd_arrayadvancepayment") ? (string)en_app["bsd_arrayadvancepayment"] : "";
-            string str2 = en_app.Contains("bsd_arrayamountadvance") ? (string)en_app["bsd_arrayamountadvance"] : "";
-            string[] strArray1 = str1.Split(',');
-            string[] strArray2 = str2.Split(',');
-            int length = strArray1.Length;
-            for (int index = 0; index < length && !(trans_am == 0M); ++index)
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                                <fetch>
+                                  <entity name=""bsd_advancepayment"">
+                                    <attribute name=""bsd_remainingamount"" />
+                                    <filter>
+                                      <condition attribute=""bsd_customer"" operator=""eq"" value=""{KH}"" />
+                                      <condition attribute=""bsd_project"" operator=""eq"" value=""{DA}"" />
+                                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{OE}"" />
+                                      <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
+                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                                    </filter>
+                                  </entity>
+                                </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (rs.Entities.Count == 0 || rs.Entities.Sum(x => ((Money)x["bsd_remainingamount"]).Value) < AmountAdvance)
             {
-                Decimal num;
-                if (trans_am == Decimal.Parse(strArray2[index]))
+                throw new InvalidPluginExecutionException("Advance payment is excess amount remaining. Please check again.");
+            }
+        }
+        public void paymentInstallment(Entity en_app, ref decimal totalapplyamout, string type, ref string str0, ref string str00, ArrayList listCheckFee)
+        {
+            Entity en_OE = service.Retrieve("salesorder", ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
+            string optionentryID = en_OE.Id.ToString();
+            if (!en_OE.Contains("bsd_unitnumber")) throw new InvalidPluginExecutionException("Cannot find Unit information in Option Entry " + (string)en_OE["name"] + "!");
+            d_oe_bsd_totalamountpaid = en_OE.Contains("bsd_totalamountpaid") ? ((Money)en_OE["bsd_totalamountpaid"]).Value : 0;
+            decimal d_oe_bsd_totalamountlessfreight = en_OE.Contains("bsd_totalamountlessfreight") ? ((Money)en_OE["bsd_totalamountlessfreight"]).Value : 0;
+            if (d_oe_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' must be larger than 0");
+            if (type == "Installments")
+            {
+                applyIntallment(en_app, en_OE, ref totalapplyamout, ref str0, ref str00);
+            }
+            else if (type == "Interest")
+            {
+                applyInterestcharge(en_app, en_OE, ref totalapplyamout);
+            }
+            else if (type == "Fees")
+            {
+                applyFees(en_app, en_OE, ref totalapplyamout, ref str0, ref str00, listCheckFee);
+            }
+            else if (type == "Miscellaneous")
+            {
+                applyMicellaneous(en_app, en_OE, ref totalapplyamout);
+            }
+        }
+        public void createCOA(Entity en_app, decimal totalapplyamout, ArrayList s_eachAdv, ArrayList s_amAdv)
+        {
+            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, ((EntityReference)en_app["bsd_project"]).Id);
+            foreach (Entity en_Adv in ecAdvance.Entities)
+            {
+                decimal totalavancedamount = en_Adv.Contains("bsd_amount") ? ((Money)en_Adv["bsd_amount"]).Value : 0;
+                decimal bsd_paidamount = en_Adv.Contains("bsd_paidamount") ? ((Money)en_Adv["bsd_paidamount"]).Value : 0;
+                decimal bsd_refundamount = en_Adv.Contains("bsd_refundamount") ? ((Money)en_Adv["bsd_refundamount"]).Value : 0;
+                decimal bsd_remainingamount = en_Adv.Contains("bsd_remainingamount") ? ((Money)en_Adv["bsd_remainingamount"]).Value : 0;
+                decimal bsd_avPMPaid = bsd_paidamount + bsd_refundamount;
+                decimal apply = 0;
+                decimal delta = 0;
+                decimal remain = 0;
+                if (totalapplyamout == 0)
                 {
-                    this.strMess.AppendLine("Up_adv 1");
-                    this.Up_adv(Guid.Parse(strArray1[index]), Decimal.Parse(strArray2[index]));
-                    num = 0M;
                     break;
                 }
-                if (trans_am < Decimal.Parse(strArray2[index]))
+                else if (totalapplyamout > 0)
                 {
-                    this.strMess.AppendLine("Up_adv 2");
-                    this.Up_adv(Guid.Parse(strArray1[index]), trans_am);
-                    num = 0M;
+                    s_eachAdv.Add(en_Adv.Id);
+                    delta = totalapplyamout - bsd_remainingamount;
+                    if (delta >= 0)
+                    {
+                        apply = bsd_remainingamount;
+                        s_amAdv.Add(apply);
+                        remain = totalavancedamount - bsd_refundamount - bsd_paidamount - apply;
+                    }
+                    else
+                    {
+                        apply = totalapplyamout;
+                        s_amAdv.Add(apply);
+                        remain = totalavancedamount - bsd_refundamount - bsd_paidamount - apply;
+                    }
+                    // Tính remaining
+                    totalapplyamout -= apply;
+                }
+                create_Applydocument_RemainingCOA(service, en_app, en_Adv, totalavancedamount, apply, remain, bsd_avPMPaid);
+            }
+        }
+        public void updateApplyDocument(Entity en_app, decimal d_tmp, ArrayList s_eachAdv, ArrayList s_amAdv)
+        {
+            decimal bsd_actualamountspent = d_tmp;
+            for (int n = 0; n < s_eachAdv.Count; n++)
+            {
+                if (d_tmp == 0) break;
+                // so tien can tra cho applydoc = so tien cua adv check dau tien - k can update nua - chi update cho adv nay thoi
+                if (d_tmp == (decimal)s_amAdv[n])
+                {
+                    strMess.AppendLine("Up_adv 1");
+                    Up_adv((Guid)s_eachAdv[n], (decimal)s_amAdv[n]); // payoff
+                    d_tmp = 0;
                     break;
                 }
-                if (trans_am > Decimal.Parse(strArray2[index]))
+                if (d_tmp < (decimal)s_amAdv[n])
                 {
-                    this.strMess.AppendLine("Up_adv 3");
-                    this.Up_adv(Guid.Parse(strArray1[index]), Decimal.Parse(strArray2[index]));
-                    trans_am -= Decimal.Parse(strArray2[index]);
+                    strMess.AppendLine("Up_adv 2");
+                    Up_adv((Guid)s_eachAdv[n], d_tmp); // collect
+                    d_tmp = 0;
+                    break;
                 }
-                this.strMess.AppendLine("1111111111111111777777777777");
-            }
-            this.strMess.AppendLine("1111111111");
-            DateTime dateTime = this.RetrieveLocalTimeFromUTCTime(DateTime.Now);
-            this.service.Update(new Entity(en_app.LogicalName)
-            {
-                Id = en_app.Id,
-                ["statuscode"] = (object)new OptionSetValue(100000002),
-                ["bsd_approvaldate"] = (object)dateTime,
-                ["bsd_approver"] = (object)new EntityReference("systemuser", this.context.UserId)
-            });
-            this.strMess.AppendLine("aaaaa");
-        }
+                if (d_tmp > (decimal)s_amAdv[n])
+                {
+                    strMess.AppendLine("Up_adv 3");
+                    Up_adv((Guid)s_eachAdv[n], (decimal)s_amAdv[n]); // payoff -- tiep tu for toi advance pm tiep theo
+                    d_tmp -= (decimal)s_amAdv[n];
 
-        private void applyIntallment(
-          Entity en_app,
-          Entity en_OE,
-          string s_bsd_arraypsdid,
-          string s_bsd_arrayamountpay)
-        {
-            this.strMess.AppendLine("s_bsd_arraypsdid: " + s_bsd_arraypsdid);
-            this.strMess.AppendLine("s_bsd_arrayamountpay: " + s_bsd_arrayamountpay);
-            string[] s_id = s_bsd_arraypsdid.Split(',');
-            string[] strArray = s_bsd_arrayamountpay.Split(',');
-            int length = s_id.Length;
-            EntityCollection ecIns = this.get_ecIns(this.service, s_id);
-            for (int index1 = 0; index1 < ecIns.Entities.Count; ++index1)
-            {
-                Entity entity = ecIns.Entities[index1];
-                entity.Id = ecIns.Entities[index1].Id;
-                this.strMess.AppendLine("bsd_name: " + entity["bsd_name"].ToString());
-                if (!ecIns.Entities[index1].Contains("statuscode"))
-                    throw new InvalidPluginExecutionException("Please check status code of '" + (string)ecIns.Entities[index1]["bsd_name"] + "!");
-                if (((OptionSetValue)ecIns.Entities[index1]["statuscode"]).Value == 100000001)
-                    throw new InvalidPluginExecutionException((string)ecIns.Entities[index1]["bsd_name"] + " has been Paid!");
-                int num1 = ecIns.Entities[index1].Contains("bsd_duedatecalculatingmethod") ? ((OptionSetValue)ecIns.Entities[index1]["bsd_duedatecalculatingmethod"]).Value : 0;
-                if (!ecIns.Entities[index1].Contains("bsd_amountofthisphase"))
-                    throw new InvalidPluginExecutionException("Installment " + (string)ecIns.Entities[index1]["bsd_name"] + " did not contain 'Amount of this phase'!");
-                Decimal num2 = ((Money)ecIns.Entities[index1]["bsd_amountofthisphase"]).Value;
-                Decimal psd_amountPaid1 = ecIns.Entities[index1].Contains("bsd_amountwaspaid") ? ((Money)ecIns.Entities[index1]["bsd_amountwaspaid"]).Value : 0M;
-                Decimal num3 = ecIns.Entities[index1].Contains("bsd_depositamount") ? ((Money)ecIns.Entities[index1]["bsd_depositamount"]).Value : 0M;
-                Decimal num4 = ecIns.Entities[index1].Contains("bsd_waiveramount") ? ((Money)ecIns.Entities[index1]["bsd_waiveramount"]).Value : 0M;
-                Decimal num5 = ecIns.Entities[index1].Contains("bsd_waiverinstallment") ? ((Money)ecIns.Entities[index1]["bsd_waiverinstallment"]).Value : 0M;
-                Decimal num6 = ecIns.Entities[index1].Contains("bsd_balance") ? ((Money)ecIns.Entities[index1]["bsd_balance"]).Value : 0M;
-                bool flag1 = ecIns.Entities[index1].Contains("bsd_maintenancefeesstatus") && (bool)ecIns.Entities[index1]["bsd_maintenancefeesstatus"];
-                bool flag2 = ecIns.Entities[index1].Contains("bsd_managementfeesstatus") && (bool)ecIns.Entities[index1]["bsd_managementfeesstatus"];
-                int num7 = (int)ecIns.Entities[index1]["bsd_ordernumber"];
-                Decimal num8 = 0M;
-                bool flag3 = false;
-                for (int index2 = 0; index2 < s_id.Length; ++index2)
-                {
-                    if (entity.Id.ToString() == s_id[index2])
-                    {
-                        num8 = Decimal.Parse(strArray[index2]);
-                        flag3 = true;
-                        break;
-                    }
                 }
-                if (!flag3)
-                    throw new InvalidPluginExecutionException("Cannot find ID of '" + (string)ecIns.Entities[index1]["bsd_name"] + "' in Installment array!");
-                bool f_1st = this.check_Ins_Paid(this.service, en_OE.Id, 1);
-                this.strMess.AppendLine("so sanh ampay voi baslane");
+            }
+            DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
+            // update status code cua apply document = approve
+            Entity en_appTmp = new Entity(en_app.LogicalName);
+            en_appTmp.Id = en_app.Id;
+            en_appTmp["bsd_actualamountspent"] = new Money(bsd_actualamountspent);
+            en_appTmp["statuscode"] = new OptionSetValue(100000002);
+            en_appTmp["bsd_approvaldate"] = d_now;
+            en_appTmp["bsd_approver"] = new EntityReference("systemuser", context.UserId);
+            service.Update(en_appTmp);
+            strMess.AppendLine("aaaaa");
+        }
+        private void applyIntallment(Entity en_app, Entity en_OE, ref decimal totalapplyamout, ref string str1, ref string str2)
+        {
+            EntityCollection ec_ins = get_ecIns(service, en_OE.Id);
+            if (ec_ins.Entities.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
+            ArrayList listID = new ArrayList();
+            ArrayList listAmount = new ArrayList();
+            for (int i = 0; i < ec_ins.Entities.Count; i++)
+            {
+                if (totalapplyamout == 0) break;
+                Entity en_pms = ec_ins.Entities[i];
+                en_pms.Id = ec_ins.Entities[i].Id;
+                int psd_statuscode = ((OptionSetValue)ec_ins.Entities[i]["statuscode"]).Value;
+                if (psd_statuscode == 100000001) throw new InvalidPluginExecutionException((string)ec_ins.Entities[i]["bsd_name"] + " has been Paid!");
+                if (!en_pms.Contains("bsd_duedate"))
+                {
+                    throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + en_pms["bsd_name"].ToString());
+                }
+                int i_duedateMethod = ec_ins.Entities[i].Contains("bsd_duedatecalculatingmethod") ? ((OptionSetValue)ec_ins.Entities[i]["bsd_duedatecalculatingmethod"]).Value : 0;
+                if (!ec_ins.Entities[i].Contains("bsd_amountofthisphase")) throw new InvalidPluginExecutionException("Installment " + (string)ec_ins.Entities[i]["bsd_name"] + " did not contain 'Amount of this phase'!");
+                decimal psd_amountPhase = ((Money)ec_ins.Entities[i]["bsd_amountofthisphase"]).Value;
+                decimal psd_amountPaid = ec_ins.Entities[i].Contains("bsd_amountwaspaid") ? ((Money)ec_ins.Entities[i]["bsd_amountwaspaid"]).Value : 0;
+                decimal psd_deposit = ec_ins.Entities[i].Contains("bsd_depositamount") ? ((Money)ec_ins.Entities[i]["bsd_depositamount"]).Value : 0;
+                decimal psd_waiver = ec_ins.Entities[i].Contains("bsd_waiveramount") ? ((Money)ec_ins.Entities[i]["bsd_waiveramount"]).Value : 0;
+                decimal psd_waiverIns = ec_ins.Entities[i].Contains("bsd_waiverinstallment") ? ((Money)ec_ins.Entities[i]["bsd_waiverinstallment"]).Value : 0;
+                decimal psd_bsd_balance = ec_ins.Entities[i].Contains("bsd_balance") ? ((Money)ec_ins.Entities[i]["bsd_balance"]).Value : 0;
+                bool psd_bsd_maintenancefeesstatus = ec_ins.Entities[i].Contains("bsd_maintenancefeesstatus") ? (bool)ec_ins.Entities[i]["bsd_maintenancefeesstatus"] : false;
+                bool psd_bsd_managementfeesstatus = ec_ins.Entities[i].Contains("bsd_managementfeesstatus") ? (bool)ec_ins.Entities[i]["bsd_managementfeesstatus"] : false;
+                int i_phaseNum = (int)ec_ins.Entities[i]["bsd_ordernumber"];
+                // --------------------- Update ------------------------------------
+                decimal d_ampay = 0;
+                bool f_check_1st = false;
+                f_check_1st = check_Ins_Paid(service, en_OE.Id, 1);
+                // --------------------------- payment --------------------------------------------------
                 int i_late = 0;
-                Decimal d_outstandingAM = 0M;
-                Decimal num9 = num7 != 1 ? num2 - psd_amountPaid1 - num5 : num2 - psd_amountPaid1 - num3 - num5;
-                this.strMess.AppendLine("psd_bsd_balance: " + num9.ToString());
-                this.strMess.AppendLine("d_ampay: " + num8.ToString());
-                DateTime dateTime = new DateTime();
-                if (entity.Contains("bsd_duedate"))
-                    dateTime = (DateTime)en_app["bsd_receiptdate"];
-                if (num8 >= num9)
+                decimal d_outstandingAM = 0;
+                if (i_phaseNum == 1)
+                    psd_bsd_balance = psd_amountPhase - psd_amountPaid - psd_deposit - psd_waiverIns;// psd_balance - psd_deposit
+                else psd_bsd_balance = psd_amountPhase - psd_amountPaid - psd_waiverIns; // = psd_balance
+                if (totalapplyamout > psd_bsd_balance)
                 {
-                    psd_amountPaid1 += num9;
-                    int psd_statuscode = 100000001;
-                    if (ecIns.Entities[index1].Contains("bsd_duedate"))
-                    {
-                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
-                        this.checkInterest(ecIns.Entities[index1], d_receipt, num9, ref i_late, ref d_outstandingAM);
-                    }
-                    this.strMess.AppendLine("i_late: " + i_late.ToString());
-                    this.strMess.AppendLine("d_outstandingAM: " + d_outstandingAM.ToString());
-                    this.d_oe_bsd_totalamountpaid += num9;
-                    DateTime d_now = this.RetrieveLocalTimeFromUTCTime(DateTime.Now);
-                    this.Up_Ins_OE(entity, en_OE, psd_amountPaid1, 0M, psd_statuscode, num9, f_1st, d_now, i_late, d_outstandingAM);
-                    this.create_app_detail(this.service, en_app, entity, en_OE, 100000001, num9, i_late, d_outstandingAM, 0);
-                }
-                if (num8 < num9)
-                {
-                    int psd_statuscode = 100000000;
-                    Decimal psd_amountPaid2 = psd_amountPaid1 + num8;
-                    Decimal psd_balance = num9 - num8;
-                    if (entity.Contains("bsd_duedate"))
-                    {
-                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
-                        this.checkInterest(entity, d_receipt, num8, ref i_late, ref d_outstandingAM);
-                    }
-                    this.strMess.AppendLine("i_late: " + i_late.ToString());
-                    this.strMess.AppendLine("d_outstandingAM: " + d_outstandingAM.ToString());
-                    this.d_oe_bsd_totalamountpaid += num8;
-                    DateTime d_now = this.RetrieveLocalTimeFromUTCTime(DateTime.Now);
-                    this.Up_Ins_OE(entity, en_OE, psd_amountPaid2, psd_balance, psd_statuscode, num8, f_1st, d_now, i_late, d_outstandingAM);
-                    this.create_app_detail(this.service, en_app, entity, en_OE, 100000001, num8, i_late, d_outstandingAM, 0);
-                }
-            }
-        }
-
-        private void checkInterest(
-          Entity enInstallment,
-          DateTime d_receipt,
-          Decimal amountPay,
-          ref int i_late,
-          ref Decimal d_outstandingAM)
-        {
-            this.RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"]);
-            d_receipt = this.RetrieveLocalTimeFromUTCTime(d_receipt);
-            foreach (KeyValuePair<string, object> result in (DataCollection<string, object>)this.service.Execute(new OrganizationRequest("bsd_Action_Calculate_Interest")
-            {
-                ["installmentid"] = (object)enInstallment.Id.ToString(),
-                ["amountpay"] = (object)amountPay.ToString(),
-                ["receiptdate"] = (object)d_receipt.ToString("MM/dd/yyyy")
-            }).Results)
-            {
-                Installment installment = new JavaScriptSerializer().Deserialize<Installment>(result.Value.ToString());
-                i_late = installment.LateDays;
-                d_outstandingAM = installment.InterestCharge;
-            }
-        }
-
-        private void applyInterestcharge(
-          Entity en_app,
-          Entity en_OE,
-          string s_bsd_arrayinstallmentinterest,
-          string s_bsd_arrayinterestamount)
-        {
-            if (s_bsd_arrayinterestamount == "")
-                throw new InvalidPluginExecutionException("Cannot find any Intest Amount Array. Please check again!");
-            string[] s_id = s_bsd_arrayinstallmentinterest.Split(',');
-            string[] strArray = s_bsd_arrayinterestamount.Split(',');
-            Decimal appAM1 = 0M;
-            EntityCollection ecIns = this.get_ecIns(this.service, s_id);
-            if (ecIns.Entities.Count < 0)
-                throw new InvalidPluginExecutionException("Cannot find any Installment ID with Interest charge array!");
-            for (int index1 = 0; index1 < ecIns.Entities.Count; ++index1)
-            {
-                Entity entity = ecIns.Entities[index1];
-                entity.Id = ecIns.Entities[index1].Id;
-                Decimal num1 = entity.Contains("bsd_interestchargeamount") ? ((Money)entity["bsd_interestchargeamount"]).Value : 0M;
-                Decimal psd_bsd_interestwaspaid1 = entity.Contains("bsd_interestwaspaid") ? ((Money)entity["bsd_interestwaspaid"]).Value : 0M;
-                Decimal num2 = entity.Contains("bsd_waiverinterest") ? ((Money)entity["bsd_waiverinterest"]).Value : 0M;
-                int num3 = entity.Contains("bsd_interestchargestatus") ? ((OptionSetValue)entity["bsd_interestchargestatus"]).Value : 0;
-                Decimal num4 = (Decimal)(entity.Contains("bsd_actualgracedays") ? (int)entity["bsd_actualgracedays"] : 0);
-                int num5 = entity.Contains("statuscode") ? ((OptionSetValue)entity["statuscode"]).Value : 0;
-                if (num3 == 100000001)
-                    throw new InvalidPluginExecutionException("The Interest charge of " + (string)entity["bsd_name"] + " has been paid!");
-                bool flag = false;
-                Decimal appAM2 = num1 - psd_bsd_interestwaspaid1 - num2;
-                for (int index2 = 0; index2 < s_id.Length; ++index2)
-                {
-                    if (entity.Id.ToString() == s_id[index2])
-                    {
-                        appAM1 = Decimal.Parse(strArray[index2]);
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag)
-                    throw new InvalidPluginExecutionException("Cannot find '" + (string)entity["bsd_name"] + "' in Interest charge array!");
-                if (appAM1 > appAM2)
-                    throw new InvalidPluginExecutionException("Input amount was larger than balance Interest charge amount of " + (string)entity["bsd_name"] + ". Please check again!");
-                if (appAM1 == appAM2)
-                {
-                    psd_bsd_interestwaspaid1 += appAM2;
-                    int psd_bsd_interestchargestatus = num5 != 100000001 ? 100000000 : 100000001;
-                    this.Update_Interest(this.service, entity, psd_bsd_interestwaspaid1, psd_bsd_interestchargestatus);
-                    this.create_app_detail(this.service, en_app, entity, en_OE, 100000003, appAM2, 0, 0M, 0);
-                }
-                if (appAM1 < appAM2)
-                {
-                    Decimal psd_bsd_interestwaspaid2 = psd_bsd_interestwaspaid1 + appAM1;
-                    int psd_bsd_interestchargestatus = 100000000;
-                    this.Update_Interest(this.service, entity, psd_bsd_interestwaspaid2, psd_bsd_interestchargestatus);
-                    this.create_app_detail(this.service, en_app, entity, en_OE, 100000003, appAM1, 0, 0M, 0);
-                }
-            }
-        }
-
-        private void applyFees(Entity en_app, Entity en_OE, string s_fees, string s_feesAM)
-        {
-            this.strMess.AppendLine("0000000000000");
-            if (!en_app.Contains("bsd_units"))
-                throw new InvalidPluginExecutionException("Please check Units of Apply Document!");
-            Entity entity1 = this.service.Retrieve(((EntityReference)en_app["bsd_units"]).LogicalName, ((EntityReference)en_app["bsd_units"]).Id, new ColumnSet(new string[3]
-            {
-        "bsd_handovercondition",
-        "name",
-        "bsd_opdate"
-            }));
-            this.strMess.AppendLine("111111111111");
-            int num1;
-            if (entity1.Contains("bsd_opdate"))
-            {
-                DateTime dateTime = (DateTime)entity1["bsd_opdate"];
-                num1 = 0;
-            }
-            else
-                num1 = 1;
-            if (num1 != 0)
-                throw new InvalidPluginExecutionException("Product " + (string)entity1["name"] + " have not contain OP Date. Cannot Payment fees. Please check again!");
-            string[] strArray1 = s_fees.Split(',');
-            string[] strArray2 = s_feesAM.Split(',');
-            for (int index = 0; index < strArray1.Length; ++index)
-            {
-                this.strMess.AppendLine("22222222222");
-                string[] strArray3 = strArray1[index].Split('_');
-                string installmentid = strArray3[0];
-                string str = strArray3[1];
-                Decimal appAM = Decimal.Parse(strArray2[index].ToString());
-                Entity installment = this.getInstallment(this.service, installmentid);
-                bool flag1 = installment.Contains("bsd_maintenancefeesstatus") && (bool)installment["bsd_maintenancefeesstatus"];
-                bool flag2 = installment.Contains("bsd_managementfeesstatus") && (bool)installment["bsd_managementfeesstatus"];
-                Decimal num2 = installment.Contains("bsd_maintenanceamount") ? ((Money)installment["bsd_maintenanceamount"]).Value : 0M;
-                Decimal num3 = installment.Contains("bsd_managementamount") ? ((Money)installment["bsd_managementamount"]).Value : 0M;
-                Decimal num4 = installment.Contains("bsd_maintenancefeepaid") ? ((Money)installment["bsd_maintenancefeepaid"]).Value : 0M;
-                Decimal num5 = installment.Contains("bsd_managementfeepaid") ? ((Money)installment["bsd_managementfeepaid"]).Value : 0M;
-                Decimal num6 = installment.Contains("bsd_maintenancefeewaiver") ? ((Money)installment["bsd_maintenancefeewaiver"]).Value : 0M;
-                Decimal num7 = installment.Contains("bsd_managementfeewaiver") ? ((Money)installment["bsd_managementfeewaiver"]).Value : 0M;
-                Decimal num8 = num2 - num4 - num6;
-                Decimal num9 = num3 - num5 - num7;
-                Entity entity2 = new Entity(installment.LogicalName);
-                entity2.Id = installment.Id;
-                switch (str)
-                {
-                    case "main":
-                        if (flag1)
-                            throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
-                        if (appAM < num8)
-                        {
-                            num4 += appAM;
-                            flag1 = false;
-                            this.d_oe_bsd_totalamountpaid += appAM;
-                        }
-                        else if (appAM == num8)
-                        {
-                            num4 += appAM;
-                            flag1 = true;
-                            this.d_oe_bsd_totalamountpaid += appAM;
-                        }
-                        else if (appAM > num8)
-                            throw new InvalidPluginExecutionException("Amount pay larger than balance of Maintenance fees amount. Please check again!");
-                        this.strMess.AppendLine("333333333333");
-                        this.create_app_detail(this.service, en_app, installment, en_OE, 100000002, appAM, 0, 0M, 1);
-                        entity2["bsd_maintenancefeesstatus"] = (object)flag1;
-                        entity2["bsd_maintenancefeepaid"] = (object)new Money(num4);
-                        this.strMess.AppendLine("444444444444");
-                        break;
-                    case "mana":
-                        this.strMess.AppendLine("555555555555");
-                        if (flag2)
-                            throw new InvalidPluginExecutionException("Management fees had been paid. Please check again!");
-                        this.strMess.AppendLine("66666666666666");
-                        if (appAM < num9)
-                        {
-                            num5 += appAM;
-                            flag2 = false;
-                        }
-                        else if (appAM == num9)
-                        {
-                            num5 += appAM;
-                            flag2 = true;
-                        }
-                        else if (appAM > num9)
-                            throw new InvalidPluginExecutionException("Amount pay larger than balance of Management fees amount. Please check again!");
-                        this.create_app_detail(this.service, en_app, installment, en_OE, 100000002, appAM, 0, 0M, 2);
-                        this.strMess.AppendLine("7777777");
-                        entity2["bsd_managementfeesstatus"] = (object)flag2;
-                        entity2["bsd_managementfeepaid"] = (object)new Money(num5);
-                        break;
-                }
-                this.strMess.AppendLine("88888888888888");
-                this.service.Update(entity2);
-                this.strMess.AppendLine("999999999999");
-            }
-        }
-
-        private void applyMicellaneous(
-          Entity en_app,
-          Entity en_OE,
-          string s_bsd_arraymicellaneousid,
-          string s_bsd_arraymicellaneousamount)
-        {
-            this.strMess.AppendLine("10.8");
-            if (s_bsd_arraymicellaneousamount == "")
-                throw new InvalidPluginExecutionException("Cannot find any Miscellaneous amount array!");
-            string[] strArray1 = new string[0];
-            string[] strArray2 = new string[0];
-            string[] s_id = s_bsd_arraymicellaneousid.Split(',');
-            string[] strArray3 = s_bsd_arraymicellaneousamount.Split(',');
-            EntityCollection ecMis = this.get_ecMIS(this.service, s_id, en_OE.Id.ToString());
-            if (ecMis.Entities.Count <= 0)
-                throw new InvalidPluginExecutionException("There's not any Miscellaneous found!");
-            for (int index1 = 0; index1 < ecMis.Entities.Count; ++index1)
-            {
-                if (!ecMis.Entities[index1].Contains("bsd_installment"))
-                    throw new InvalidPluginExecutionException("Miscellaneous has Installment is null. Please check Miscellaneous - " + (string)ecMis.Entities[index1]["bsd_name"] + "!");
-                Entity en_Ins = this.service.Retrieve(((EntityReference)ecMis.Entities[index1]["bsd_installment"]).LogicalName, ((EntityReference)ecMis.Entities[index1]["bsd_installment"]).Id, new ColumnSet(new string[3]
-                {
-          "bsd_paymentschemedetailid",
-          "bsd_name",
-          "statuscode"
-                }));
-                int num1 = en_Ins.Contains("statuscode") ? ((OptionSetValue)en_Ins["statuscode"]).Value : 100000000;
-                if ((ecMis.Entities[index1].Contains("statuscode") ? ((OptionSetValue)ecMis.Entities[index1]["statuscode"]).Value : 1) == 100000000)
-                    throw new InvalidPluginExecutionException("Miscellaneous " + (string)ecMis.Entities[index1]["bsd_name"] + " has been paid");
-                Decimal appAM = 0M;
-                bool flag = false;
-                for (int index2 = 0; index2 < s_id.Length; ++index2)
-                {
-                    if (ecMis.Entities[index1].Id.ToString() == s_id[index2])
-                    {
-                        appAM = Decimal.Parse(strArray3[index2]);
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag)
-                    throw new InvalidPluginExecutionException("Cannot find ID of Miscellaneous " + (string)ecMis.Entities[index1]["bsd_name"] + "' in Miscellaneous array!");
-                Decimal num2 = ecMis.Entities[index1].Contains("bsd_paidamount") ? ((Money)ecMis.Entities[index1]["bsd_paidamount"]).Value : 0M;
-                Decimal num3 = ecMis.Entities[index1].Contains("bsd_balance") ? ((Money)ecMis.Entities[index1]["bsd_balance"]).Value : 0M;
-                Decimal num4 = ecMis.Entities[index1].Contains("bsd_totalamount") ? ((Money)ecMis.Entities[index1]["bsd_totalamount"]).Value : 0M;
-                Decimal num5;
-                Decimal num6;
-                int num7;
-                if (appAM == num3)
-                {
-                    num5 = 0M;
-                    num6 = num4;
-                    num7 = 100000000;
+                    d_ampay = psd_bsd_balance;
+                    totalapplyamout -= psd_bsd_balance;
                 }
                 else
                 {
-                    if (!(appAM < num3))
-                        throw new InvalidPluginExecutionException("Input amount is larger than balance amount of Miscellaneous " + (string)ecMis.Entities[index1]["bsd_name"]);
-                    num7 = 1;
-                    num5 = num3 - appAM;
-                    num6 = num2 + appAM;
+                    d_ampay = totalapplyamout;
+                    totalapplyamout = 0;
                 }
-                this.service.Update(new Entity(ecMis.Entities[index1].LogicalName)
+                listID.Add(en_pms.Id);
+                listAmount.Add(d_ampay);
+                DateTime d_receipt1 = new DateTime();
+                if (en_pms.Contains("bsd_duedate"))
                 {
-                    Id = ecMis.Entities[index1].Id,
-                    ["bsd_paidamount"] = (object)new Money(num6),
-                    ["bsd_balance"] = (object)new Money(num5),
-                    ["statuscode"] = (object)new OptionSetValue(num7)
-                });
-                this.create_app_detail_MISS(this.service, en_app, en_Ins, en_OE, 100000004, appAM, 0, 0M, 0, ecMis.Entities[index1]);
+                    d_receipt1 = (DateTime)en_app["bsd_receiptdate"];
+                }
+                if (d_ampay >= psd_bsd_balance) // cap nhat installment
+                {
+                    psd_amountPaid += psd_bsd_balance;
+                    psd_statuscode = 100000001;
+                    if (ec_ins.Entities[i].Contains("bsd_duedate"))
+                    {
+                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
+                        checkInterest(ec_ins.Entities[i], d_receipt, psd_bsd_balance, ref i_late, ref d_outstandingAM);
+                    }
+                    d_oe_bsd_totalamountpaid += psd_bsd_balance;
+                    DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, 0, psd_statuscode, psd_bsd_balance, f_check_1st, d_now, i_late, d_outstandingAM);
+                    create_app_detail(service, en_app, en_pms, en_OE, 100000001, psd_bsd_balance, i_late, d_outstandingAM, 0);
+                }
+                else if (d_ampay < psd_bsd_balance) // not paid
+                {
+
+                    psd_statuscode = 100000000;
+                    psd_amountPaid += d_ampay;
+                    psd_bsd_balance -= d_ampay;
+                    if (en_pms.Contains("bsd_duedate"))
+                    {
+                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
+                        checkInterest(en_pms, d_receipt, d_ampay, ref i_late, ref d_outstandingAM);
+                    }
+                    d_oe_bsd_totalamountpaid += d_ampay;
+                    DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, psd_bsd_balance, psd_statuscode, d_ampay, f_check_1st, d_now, i_late, d_outstandingAM);
+                    create_app_detail(service, en_app, en_pms, en_OE, 100000001, d_ampay, i_late, d_outstandingAM, 0);
+                }
+            } // end for each installment
+            if (listID.Count > 0)
+            {
+                str1 = String.Join(",", listID.ToArray());
+                str2 = String.Join(",", listAmount.ToArray());
             }
         }
+        private void checkInterest(Entity enInstallment, DateTime d_receipt, decimal amountPay, ref int i_late, ref decimal d_outstandingAM)
+        {
+            DateTime d_duedate = RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"]);
+            d_receipt = RetrieveLocalTimeFromUTCTime(d_receipt);
 
+            OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
+            //parameter:
+            req["installmentid"] = enInstallment.Id.ToString();
+            req["amountpay"] = amountPay.ToString();
+            req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
+            //execute the request
+            OrganizationResponse response = service.Execute(req);
+            foreach (var item in response.Results)
+            {
+                var serializer = new JavaScriptSerializer();
+                var result = serializer.Deserialize<Installment>(item.Value.ToString());
+                i_late = result.LateDays;
+                d_outstandingAM = result.InterestCharge;
+            }
+        }
+        private void applyInterestcharge(Entity en_app, Entity en_OE, ref decimal totalapplyamout)
+        {
+            EntityCollection ec_PMSDTL = get_ecIns_Int(service, en_OE.Id);
+            if (ec_PMSDTL.Entities.Count < 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
+            for (int j = 0; j < ec_PMSDTL.Entities.Count; j++)
+            {
+                Entity en_interIns = ec_PMSDTL.Entities[j];
+                en_interIns.Id = ec_PMSDTL.Entities[j].Id;
+                if (totalapplyamout == 0) break;
+                if (!en_interIns.Contains("bsd_duedate"))
+                {
+                    throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + en_interIns["bsd_name"].ToString());
+                }
+                decimal psd_bsd_interestchargeamount = en_interIns.Contains("bsd_interestchargeamount") ? ((Money)en_interIns["bsd_interestchargeamount"]).Value : 0;
+                decimal psd_bsd_interestwaspaid = en_interIns.Contains("bsd_interestwaspaid") ? ((Money)en_interIns["bsd_interestwaspaid"]).Value : 0;
+                decimal psd_bsd_waiveramount = en_interIns.Contains("bsd_waiverinterest") ? ((Money)en_interIns["bsd_waiverinterest"]).Value : 0;
+                int psd_bsd_interestchargestatus = en_interIns.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_interIns["bsd_interestchargestatus"]).Value : 0;
+                decimal psd_actualgracedays = en_interIns.Contains("bsd_actualgracedays") ? (int)en_interIns["bsd_actualgracedays"] : 0;
+                int statuscode = en_interIns.Contains("statuscode") ? ((OptionSetValue)en_interIns["statuscode"]).Value : 0;
+                if (psd_bsd_interestchargestatus == 100000001) throw new InvalidPluginExecutionException("The Interest charge of " + (string)en_interIns["bsd_name"] + " has been paid!");
+                decimal d_ampay = 0;
+                decimal d_balance = psd_bsd_interestchargeamount - psd_bsd_interestwaspaid - psd_bsd_waiveramount;
+                if (totalapplyamout > d_balance)
+                {
+                    d_ampay = d_balance;
+                    totalapplyamout -= d_balance;
+                }
+                else
+                {
+                    d_ampay = totalapplyamout;
+                    totalapplyamout = 0;
+                }
+                if (d_ampay == d_balance) // cap nhat installment
+                {
+                    psd_bsd_interestwaspaid += d_balance;
+                    if (statuscode == 100000001) psd_bsd_interestchargestatus = 100000001;
+                    else psd_bsd_interestchargestatus = 100000000;
+                    Update_Interest(service, en_interIns, psd_bsd_interestwaspaid, psd_bsd_interestchargestatus);
+                    create_app_detail(service, en_app, en_interIns, en_OE, 100000003, d_balance, 0, 0, 0);
+                }
+                else if (d_ampay < d_balance) // not paid
+                {
+                    psd_bsd_interestwaspaid += d_ampay;
+                    psd_bsd_interestchargestatus = 100000000;
+                    Update_Interest(service, en_interIns, psd_bsd_interestwaspaid, psd_bsd_interestchargestatus);
+                    create_app_detail(service, en_app, en_interIns, en_OE, 100000003, d_ampay, 0, 0, 0);
+                }
+            }// end for int j = 0 ; j < ec_PMSDTL.count
+        }
+        private void applyFees(Entity en_app, Entity en_OE, ref decimal totalapplyamout, ref string str3, ref string str4, ArrayList listCheckFee)
+        {
+            if (!en_app.Contains("bsd_units"))
+                throw new InvalidPluginExecutionException("Please check Units of Apply Document!");
+            Entity en_product = service.Retrieve(((EntityReference)en_app["bsd_units"]).LogicalName, ((EntityReference)en_app["bsd_units"]).Id, new ColumnSet(new string[] { "bsd_handovercondition", "name", "bsd_opdate" }));
+            EntityCollection ecFee_Main = get_ecFee_Main(service, en_OE.Id);
+            EntityCollection ecFee_Mana = get_ecFee_Mana(service, en_OE.Id);
+            if (ecFee_Main.Entities.Count == 0 && ecFee_Mana.Entities.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
+            ArrayList listID = new ArrayList();
+            ArrayList listAmount = new ArrayList();
+            foreach (Entity enInstallment in ecFee_Main.Entities)
+            {
+                if (totalapplyamout == 0) break;
+                if (!enInstallment.Contains("bsd_duedate"))
+                {
+                    throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + enInstallment["bsd_name"].ToString());
+                }
+                decimal fee = 0;
+                bool f_main = (enInstallment.Contains("bsd_maintenancefeesstatus")) ? (bool)enInstallment["bsd_maintenancefeesstatus"] : false;
+                decimal d_bsd_maintenanceamount = enInstallment.Contains("bsd_maintenanceamount") ? ((Money)enInstallment["bsd_maintenanceamount"]).Value : 0;
+                decimal d_bsd_maintenancefeepaid = enInstallment.Contains("bsd_maintenancefeepaid") ? ((Money)enInstallment["bsd_maintenancefeepaid"]).Value : 0;
+                decimal d_bsd_maintenancefeewaiver = enInstallment.Contains("bsd_maintenancefeewaiver") ? ((Money)enInstallment["bsd_maintenancefeewaiver"]).Value : 0;
+                decimal d_mainBL = d_bsd_maintenanceamount - d_bsd_maintenancefeepaid - d_bsd_maintenancefeewaiver;
+                if (totalapplyamout > d_mainBL)
+                {
+                    fee = d_mainBL;
+                    totalapplyamout -= d_mainBL;
+                }
+                else
+                {
+                    fee = totalapplyamout;
+                    totalapplyamout = 0;
+                }
+                listID.Add(enInstallment.Id);
+                listAmount.Add(fee);
+                Entity en_INS_update = new Entity(enInstallment.LogicalName);
+                en_INS_update.Id = enInstallment.Id;
+                if (f_main == true) throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
+                if (fee < d_mainBL)
+                {
+                    d_bsd_maintenancefeepaid += fee;
+                    f_main = false;
+                    d_oe_bsd_totalamountpaid += fee;
+
+                }
+                else if (fee == d_mainBL)
+                {
+                    d_bsd_maintenancefeepaid += fee;
+                    f_main = true;
+                    d_oe_bsd_totalamountpaid += fee;
+
+                }
+                else if (fee > d_mainBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Maintenance fees amount. Please check again!");
+                create_app_detail(service, en_app, enInstallment, en_OE, 100000002, fee, 0, 0, 1);
+                en_INS_update["bsd_maintenancefeesstatus"] = f_main;
+                en_INS_update["bsd_maintenancefeepaid"] = new Money(d_bsd_maintenancefeepaid);
+                service.Update(en_INS_update);
+                listCheckFee.Add("main");
+            }
+            foreach (Entity enInstallment in ecFee_Mana.Entities)
+            {
+                if (totalapplyamout == 0) break;
+                if (!enInstallment.Contains("bsd_duedate"))
+                {
+                    throw new Exception("The Installment you are paying has no due date. Please update due date before confirming payment! " + enInstallment["bsd_name"].ToString());
+                }
+                decimal fee = 0;
+                bool f_mana = (enInstallment.Contains("bsd_managementfeesstatus")) ? (bool)enInstallment["bsd_managementfeesstatus"] : false;
+                decimal d_bsd_managementamount = enInstallment.Contains("bsd_managementamount") ? ((Money)enInstallment["bsd_managementamount"]).Value : 0;
+                decimal d_bsd_managementfeepaid = enInstallment.Contains("bsd_managementfeepaid") ? ((Money)enInstallment["bsd_managementfeepaid"]).Value : 0;
+                decimal d_bsd_managementfeewaiver = enInstallment.Contains("bsd_managementfeewaiver") ? ((Money)enInstallment["bsd_managementfeewaiver"]).Value : 0;
+                decimal d_manaBL = d_bsd_managementamount - d_bsd_managementfeepaid - d_bsd_managementfeewaiver;
+                if (totalapplyamout > d_manaBL)
+                {
+                    fee = d_manaBL;
+                    totalapplyamout -= d_manaBL;
+                }
+                else
+                {
+                    fee = totalapplyamout;
+                    totalapplyamout = 0;
+                }
+                listID.Add(enInstallment.Id);
+                listAmount.Add(fee);
+                Entity en_INS_update = new Entity(enInstallment.LogicalName);
+                en_INS_update.Id = enInstallment.Id;
+                if (f_mana == true) throw new InvalidPluginExecutionException("Management fees had been paid. Please check again!");
+                if (fee < d_manaBL)
+                {
+                    d_bsd_managementfeepaid += fee;
+                    f_mana = false;
+                }
+                else if (fee == d_manaBL)
+                {
+                    d_bsd_managementfeepaid += fee;
+                    f_mana = true;
+                }
+                else if (fee > d_manaBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Management fees amount. Please check again!");
+                create_app_detail(service, en_app, enInstallment, en_OE, 100000002, fee, 0, 0, 2);
+                en_INS_update["bsd_managementfeesstatus"] = f_mana;
+                en_INS_update["bsd_managementfeepaid"] = new Money(d_bsd_managementfeepaid);
+                service.Update(en_INS_update);
+                listCheckFee.Add("mana");
+            }
+            if (listID.Count > 0)
+            {
+                str3 = String.Join(",", listID.ToArray());
+                str4 = String.Join(",", listAmount.ToArray());
+            }
+        }
+        private void applyMicellaneous(Entity en_app, Entity en_OE, ref decimal totalapplyamout)
+        {
+            EntityCollection ec_MIS = get_ecMIS(service, en_OE.Id);
+            if (ec_MIS.Entities.Count <= 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
+            for (int i = 0; i < ec_MIS.Entities.Count; i++)
+            {
+                if (totalapplyamout == 0) break;
+                Entity en_Ins_MIS = service.Retrieve(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).LogicalName, ((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).Id,
+                        new ColumnSet(new string[] { "bsd_paymentschemedetailid", "bsd_name", "statuscode" }));
+                int i_INS_statuscode = en_Ins_MIS.Contains("statuscode") ? ((OptionSetValue)en_Ins_MIS["statuscode"]).Value : 100000000;
+                // MISS has been paid
+                int f_paid = ec_MIS.Entities[i].Contains("statuscode") ? ((OptionSetValue)ec_MIS.Entities[i]["statuscode"]).Value : 1;
+
+                if (f_paid == 100000000)
+                    throw new InvalidPluginExecutionException("Miscellaneous " + (string)ec_MIS.Entities[i]["bsd_name"] + " has been paid");
+                decimal d_amp = 0;
+                decimal d_MI_paid = ec_MIS.Entities[i].Contains("bsd_paidamount") ? ((Money)ec_MIS.Entities[i]["bsd_paidamount"]).Value : 0;
+                decimal d_MI_balance = ec_MIS.Entities[i].Contains("bsd_balance") ? ((Money)ec_MIS.Entities[i]["bsd_balance"]).Value : 0;
+                decimal d_MI_am = ec_MIS.Entities[i].Contains("bsd_totalamount") ? ((Money)ec_MIS.Entities[i]["bsd_totalamount"]).Value : 0;
+                if (totalapplyamout > d_MI_balance)
+                {
+                    d_amp = d_MI_balance;
+                    totalapplyamout -= d_MI_balance;
+                }
+                else
+                {
+                    d_amp = totalapplyamout;
+                    totalapplyamout = 0;
+                }
+                // -- 29.03.2018 - Han - Update Misc
+                if (d_amp == d_MI_balance)
+                {
+                    d_MI_balance = 0;
+                    d_MI_paid = d_MI_am;
+                    f_paid = 100000000;
+                }
+                else if (d_amp < d_MI_balance)
+                {
+                    f_paid = 1;
+                    d_MI_balance -= d_amp;
+                    d_MI_paid += d_amp;
+                }
+                else throw new InvalidPluginExecutionException("Input amount is larger than balance amount of Miscellaneous " + (string)ec_MIS.Entities[i]["bsd_name"]);
+                // update
+                Entity en_up_MIS = new Entity(ec_MIS.Entities[i].LogicalName);
+                en_up_MIS.Id = ec_MIS.Entities[i].Id;
+                en_up_MIS["bsd_paidamount"] = new Money(d_MI_paid);
+                en_up_MIS["bsd_balance"] = new Money(d_MI_balance);
+                en_up_MIS["statuscode"] = new OptionSetValue(f_paid);
+                service.Update(en_up_MIS);
+                create_app_detail_MISS(service, en_app, en_Ins_MIS, en_OE, 100000004, d_amp, 0, 0, 0, ec_MIS.Entities[i]);
+            }// end for
+        }
         private EntityCollection Get1st_Resv(string resvID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[8]
-            {
-        "bsd_name",
-        "bsd_depositamount",
-        "bsd_ordernumber",
-        "bsd_paymentschemedetailid",
-        "statuscode",
-        "bsd_amountwaspaid",
-        "bsd_balance",
-        "bsd_amountofthisphase"
-            });
+
+            query.ColumnSet = new ColumnSet(new string[] { "bsd_name", "bsd_depositamount", "bsd_ordernumber", "bsd_paymentschemedetailid", "statuscode", "bsd_amountwaspaid", "bsd_balance", "bsd_amountofthisphase" });
             query.Distinct = true;
             query.Criteria = new FilterExpression();
-            query.Criteria.AddCondition("bsd_reservation", ConditionOperator.Equal, (object)resvID);
+            query.Criteria.AddCondition("bsd_reservation", ConditionOperator.Equal, resvID);
             query.AddOrder("bsd_ordernumber", OrderType.Ascending);
-            query.TopCount = new int?(1);
-            return this.service.RetrieveMultiple((QueryBase)query);
-        }
+            query.TopCount = 1;
 
-        private EntityCollection get_ecIns(IOrganizationService crmservices, string[] s_id)
-        {
-            string str = "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\n                <entity name='bsd_paymentschemedetail' >\n                <all-attributes />\n                <filter type='and' >\n                  <condition attribute='bsd_paymentschemedetailid' operator='in' >";
-            for (int index = 0; index < s_id.Length; ++index)
-                str = str + "<value>" + Guid.Parse(s_id[index]).ToString() + "</value>";
-            string query = str + "</condition>\n                            </filter>\n                            <order attribute='bsd_ordernumber' />\n                          </entity>\n                        </fetch>";
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query));
+            EntityCollection psdFirst = service.RetrieveMultiple(query);
+            return psdFirst;
         }
-
-        private void Up_adv(Guid advID, Decimal trans_am)
+        private EntityCollection get_ecAdvance(IOrganizationService crmservices, Guid idCus, Guid Proj, Guid OE)
         {
-            Entity entity = this.service.Retrieve("bsd_advancepayment", advID, new ColumnSet(new string[9]
-            {
-        "bsd_name",
-        "bsd_remainingamount",
-        "bsd_payment",
-        "bsd_amount",
-        "bsd_paidamount",
-        "bsd_customer",
-        "statuscode",
-        "bsd_project",
-        "bsd_transferredamount"
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_advancepayment"">
+                <attribute name=""bsd_advancepaymentid"" />
+                <attribute name=""bsd_amount"" />
+                <attribute name=""bsd_paidamount"" />
+                <attribute name=""bsd_refundamount"" />
+                <attribute name=""bsd_remainingamount"" />
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_remainingamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_customer"" operator=""eq"" value=""{idCus}"" />
+                  <condition attribute=""bsd_project"" operator=""eq"" value=""{Proj}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{OE}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                </filter>
+                <order attribute=""bsd_remainingamount"" />
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection get_ecIns(IOrganizationService crmservices, Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_duedatecalculatingmethod"" />
+                <attribute name=""bsd_amountofthisphase"" />
+                <attribute name=""bsd_amountwaspaid"" />
+                <attribute name=""bsd_depositamount"" />
+                <attribute name=""bsd_waiveramount"" />
+                <attribute name=""bsd_balance"" />
+                <attribute name=""bsd_maintenancefeesstatus"" />
+                <attribute name=""bsd_maintenancefeesstatus"" />
+                <attribute name=""bsd_waiverinstallment"" />
+                <attribute name=""bsd_ordernumber"" />
+                <attribute name=""bsd_duedate"" />
+                <attribute name=""statuscode"" />
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_balance"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                  <condition attribute=""bsd_ordernumber"" operator=""not-null"" />
+                </filter>
+                <order attribute=""bsd_ordernumber"" />
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection get_ecIns_Int(IOrganizationService crmservices, Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_interestchargeamount"" />
+                <attribute name=""bsd_interestwaspaid"" />
+                <attribute name=""bsd_waiverinterest"" />
+                <attribute name=""bsd_interestchargestatus"" />
+                <attribute name=""bsd_actualgracedays"" />
+                <attribute name=""bsd_name"" />
+                <attribute name=""bsd_duedate"" />
+                <attribute name=""statuscode"" />
+                <filter>
+                  <condition attribute=""bsd_interestchargeamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                  <condition attribute=""bsd_interestchargestatus"" operator=""ne"" value=""{100000001}"" />
+                  <condition attribute=""bsd_ordernumber"" operator=""not-null"" />
+                </filter>
+                <order attribute=""bsd_ordernumber"" />
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection get_ecFee_Main(IOrganizationService crmservices, Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_maintenancefeesstatus"" />
+                <attribute name=""bsd_maintenanceamount"" />
+                <attribute name=""bsd_maintenancefeepaid"" />
+                <attribute name=""bsd_maintenancefeewaiver"" />
+                <attribute name=""bsd_duedate"" />
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_maintenanceamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private EntityCollection get_ecFee_Mana(IOrganizationService crmservices, Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_managementfeesstatus"" />
+                <attribute name=""bsd_managementamount"" />
+                <attribute name=""bsd_managementfeepaid"" />
+                <attribute name=""bsd_managementfeewaiver"" />
+                <attribute name=""bsd_duedate"" />
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_managementamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private void Up_adv(Guid advID, decimal trans_am)
+        {
+            Entity en_up = service.Retrieve("bsd_advancepayment", advID, new ColumnSet(new string[] {
+               "bsd_name",
+                        "bsd_remainingamount",
+                        "bsd_payment",
+                        "bsd_amount",
+                        "bsd_paidamount",
+                        "bsd_customer",
+                        "statuscode",
+                        "bsd_project",
+                        "bsd_transferredamount"
             }));
-            Decimal num1 = entity.Contains("bsd_paidamount") ? ((Money)entity["bsd_paidamount"]).Value : 0M;
-            Decimal num2 = entity.Contains("bsd_remainingamount") ? ((Money)entity["bsd_remainingamount"]).Value : 0M;
-            Decimal num3 = entity.Contains("bsd_amount") ? ((Money)entity["bsd_amount"]).Value : 0M;
-            if (num3 == 0M)
-                throw new InvalidPluginExecutionException("Cannot find Advance payment amount of " + (string)entity["bsd_name"] + "!");
-            if (num3 < trans_am)
-                throw new InvalidPluginExecutionException("Transaction amount is larger than Advance payment amount!");
-            Decimal num4 = num1 + trans_am;
-            Decimal num5 = num2 - trans_am;
-            int num6 = 100000000;
-            if (num5 == 0M)
-                num6 = 100000001;
-            this.service.Update(new Entity("bsd_advancepayment")
-            {
-                Id = advID,
-                ["bsd_remainingamount"] = (object)new Money(num5),
-                ["bsd_paidamount"] = (object)new Money(num4),
-                ["statuscode"] = (object)new OptionSetValue(num6)
-            });
-        }
+            decimal d_bsd_paidamount = en_up.Contains("bsd_paidamount") ? ((Money)en_up["bsd_paidamount"]).Value : 0;
+            decimal d_bsd_remainingamount = en_up.Contains("bsd_remainingamount") ? ((Money)en_up["bsd_remainingamount"]).Value : 0;
+            decimal d_bsd_amount = en_up.Contains("bsd_amount") ? ((Money)en_up["bsd_amount"]).Value : 0;
+            if (d_bsd_amount == 0) throw new InvalidPluginExecutionException("Cannot find Advance payment amount of " + (string)en_up["bsd_name"] + "!");
+            if (d_bsd_amount < trans_am) throw new InvalidPluginExecutionException("Transaction amount is larger than Advance payment amount!");
+            d_bsd_paidamount += trans_am;
+            d_bsd_remainingamount -= trans_am;
+            int i_status = 100000000; // collect
+            if (d_bsd_remainingamount == 0)
+                i_status = 100000001; // payoff
 
+            Entity en_adv = new Entity("bsd_advancepayment");
+            en_adv.Id = advID;
+            en_adv["bsd_remainingamount"] = new Money(d_bsd_remainingamount);
+            en_adv["bsd_paidamount"] = new Money(d_bsd_paidamount);
+            en_adv["statuscode"] = new OptionSetValue(i_status);
+            service.Update(en_adv);
+        }
         private EntityCollection Get_ec_Ins_Resv(string resvID)
         {
-            return this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\n                  <entity name='bsd_paymentschemedetail' >\n                    <attribute name='bsd_typeofstartdate' />\n                    <attribute name='bsd_duedate' />\n                    <attribute name='bsd_nextdaysofendphase' />\n                    <attribute name='bsd_duedatecalculatingmethod' />\n                    <attribute name='bsd_estimateamount' />\n                    <attribute name='bsd_depositamount' />\n                    <attribute name='bsd_nextperiodtype' />\n                    <attribute name='statuscode' />\n                    <attribute name='bsd_ordernumber' />\n                    <attribute name='bsd_fixeddate' />\n                    <attribute name='bsd_datepaymentofmonthly' />\n                    <attribute name='bsd_paymentschemedetailid' />\n                    <attribute name='bsd_amountpay' />\n                    <attribute name='bsd_withindate' />\n                    <attribute name='bsd_amountofthisphase' />\n                    <attribute name='bsd_numberofnextmonth' />\n                    <attribute name='bsd_emailreminderforeigner' />\n                    <attribute name='bsd_numberofnextdays' />\n                    <attribute name='bsd_balance' />\n                    <attribute name='bsd_amountpercent' />\n                    <attribute name='bsd_amountwaspaid' />\n                    <attribute name='bsd_reservation' />\n                    <attribute name='bsd_typepayment' />\n                    <filter type='and' >\n                      <condition attribute='bsd_reservation' operator='eq' value='{0}' />\n                      <condition attribute='bsd_optionentry' operator='null' />\n                    </filter>\n                    <order attribute='bsd_ordernumber' />\n                  </entity>\n            </fetch>", (object)resvID)));
-        }
+            string fetchXml =
+                              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                  <entity name='bsd_paymentschemedetail' >
+                    <attribute name='bsd_typeofstartdate' />
+                    <attribute name='bsd_duedate' />
+                    <attribute name='bsd_nextdaysofendphase' />
+                    <attribute name='bsd_duedatecalculatingmethod' />
+                    <attribute name='bsd_estimateamount' />
+                    <attribute name='bsd_depositamount' />
+                    <attribute name='bsd_nextperiodtype' />
+                    <attribute name='statuscode' />
+                    <attribute name='bsd_ordernumber' />
+                    <attribute name='bsd_fixeddate' />
+                    <attribute name='bsd_datepaymentofmonthly' />
+                    <attribute name='bsd_paymentschemedetailid' />
+                    <attribute name='bsd_amountpay' />
+                    <attribute name='bsd_withindate' />
+                    <attribute name='bsd_amountofthisphase' />
+                    <attribute name='bsd_numberofnextmonth' />
+                    <attribute name='bsd_emailreminderforeigner' />
+                    <attribute name='bsd_numberofnextdays' />
+                    <attribute name='bsd_balance' />
+                    <attribute name='bsd_amountpercent' />
+                    <attribute name='bsd_amountwaspaid' />
+                    <attribute name='bsd_reservation' />
+                    <attribute name='bsd_typepayment' />
+                    <filter type='and' >
+                      <condition attribute='bsd_reservation' operator='eq' value='{0}' />
+                      <condition attribute='bsd_optionentry' operator='null' />
+                    </filter>
+                    <order attribute='bsd_ordernumber' />
+                  </entity>
+            </fetch>";
 
-        private EntityCollection get_ecMIS(
-          IOrganizationService crmservices,
-          string[] s_id,
-          string oeID)
-        {
-            string str = "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>\n                                  <entity name='bsd_miscellaneous'>\n                                    <attribute name='bsd_miscellaneousid' />\n                                    <attribute name='bsd_name' />\n                                    <attribute name='createdon' />\n                                    <attribute name='bsd_waiveramount' />\n                                    <attribute name='bsd_vatamount' />\n                                    <attribute name='bsd_units' />\n                                    <attribute name='bsd_type' />\n                                    <attribute name='bsd_totalamount' />\n                                    <attribute name='statuscode' />\n                                    <attribute name='bsd_project' />\n                                    <attribute name='bsd_paidamount' />\n                                    <attribute name='bsd_optionentry' />\n                                    <attribute name='bsd_miscellaneousnumber' />\n                                    <attribute name='bsd_miscellaneouscodesams' />\n                                    <attribute name='bsd_installmentnumber' />\n                                    <attribute name='bsd_installment' />\n                                    <attribute name='bsd_duedate' />\n                                    <attribute name='bsd_balance' />\n                                    <attribute name='bsd_amount' />\n                                    <order attribute='bsd_name' descending='false' />\n                                    <filter type='and'>\n                                      <condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='{0}' />" + "<condition attribute='bsd_miscellaneousid' operator='in' >";
-            for (int index = 0; index < s_id.Length; ++index)
-                str = str + "<value>" + Guid.Parse(s_id[index]).ToString() + "</value>";
-            string query = string.Format(str + "</condition>" + "</filter>                       \n                          </entity>\n                        </fetch>", (object)oeID, (object)s_id);
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query));
+            fetchXml = string.Format(fetchXml, resvID);
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
         }
-
-        private void reGenerate(
-          IOrganizationService serv,
-          Entity enQuote,
-          DateTime dt_date,
-          EntityCollection ec_pms)
+        private EntityCollection get_ecMIS(IOrganizationService crmservices, Guid idOE)
         {
-            EntityReference entityReference = (EntityReference)enQuote["bsd_paymentscheme"];
-            QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[16]
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_miscellaneous"">
+                <attribute name=""bsd_name"" />
+                <attribute name=""bsd_installment"" />
+                <attribute name=""statuscode"" />
+                <attribute name=""bsd_paidamount"" />
+                <attribute name=""bsd_balance"" />
+                <attribute name=""bsd_totalamount"" />
+                <filter>
+                  <condition attribute=""bsd_balance"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{1}"" />
+                  <condition attribute=""bsd_installment"" operator=""not-null"" />
+                </filter>
+                <order attribute=""bsd_balance"" />
+              </entity>
+            </fetch>";
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
+        private void reGenerate(IOrganizationService serv, Entity enQuote, DateTime dt_date, EntityCollection ec_pms)
+        {
+            EntityReference paymentScheme = (EntityReference)enQuote["bsd_paymentscheme"];
+            QueryExpression q = new QueryExpression("bsd_paymentschemedetail");
+
+            q.ColumnSet = new ColumnSet(new string[] {
+                "bsd_name",
+                "bsd_paymentscheme",
+                "bsd_withindate",
+                "bsd_emailreminderforeigner",
+                "bsd_nextperiodtype",
+                "bsd_numberofnextmonth",
+                "bsd_numberofnextdays",
+                "bsd_datepaymentofmonthly",
+                "bsd_typepayment",
+                "bsd_number",
+                "bsd_nextdaysofendphase",
+                "bsd_duedatecalculatingmethod",
+                "bsd_lastinstallment",
+                "bsd_fixeddate",
+                "bsd_method",
+                "bsd_percent"
+
+           });
+
+            q.Criteria = new FilterExpression(LogicalOperator.And);
+            q.Criteria.AddCondition(new ConditionExpression("bsd_paymentscheme", ConditionOperator.Equal, paymentScheme.Id));
+            q.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Null));
+            q.Criteria.AddCondition(new ConditionExpression("bsd_reservation", ConditionOperator.Null));
+            q.Criteria.AddCondition(new ConditionExpression("bsd_quotation", ConditionOperator.Null));
+            q.AddOrder("bsd_ordernumber", OrderType.Ascending);
+            EntityCollection ec_ins = service.RetrieveMultiple(q);
+
+            Entity pms = service.Retrieve(paymentScheme.LogicalName, paymentScheme.Id,
+                 new ColumnSet(new string[] { "bsd_paymentschemecode", "bsd_startdate", "bsd_name", "bsd_paymentschemeid" }));
+            int i_dueCalMethod = -1;
+            int orderNumber = 0;
+            int i_nextMonth = 1;
+            for (int i = 0; i < ec_ins.Entities.Count; i++)
             {
-        "bsd_name",
-        "bsd_paymentscheme",
-        "bsd_withindate",
-        "bsd_emailreminderforeigner",
-        "bsd_nextperiodtype",
-        "bsd_numberofnextmonth",
-        "bsd_numberofnextdays",
-        "bsd_datepaymentofmonthly",
-        "bsd_typepayment",
-        "bsd_number",
-        "bsd_nextdaysofendphase",
-        "bsd_duedatecalculatingmethod",
-        "bsd_lastinstallment",
-        "bsd_fixeddate",
-        "bsd_method",
-        "bsd_percent"
-            });
-            query.Criteria = new FilterExpression(LogicalOperator.And);
-            query.Criteria.AddCondition(new ConditionExpression("bsd_paymentscheme", ConditionOperator.Equal, (object)entityReference.Id));
-            query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Null));
-            query.Criteria.AddCondition(new ConditionExpression("bsd_reservation", ConditionOperator.Null));
-            query.Criteria.AddCondition(new ConditionExpression("bsd_quotation", ConditionOperator.Null));
-            query.AddOrder("bsd_ordernumber", OrderType.Ascending);
-            EntityCollection entityCollection = this.service.RetrieveMultiple((QueryBase)query);
-            this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(new string[4]
-            {
-        "bsd_paymentschemecode",
-        "bsd_startdate",
-        "bsd_name",
-        "bsd_paymentschemeid"
-            }));
-            int index1 = 0;
-            for (int index2 = 0; index2 < entityCollection.Entities.Count; ++index2)
-            {
-                if (entityCollection.Entities[index2].Contains("bsd_duedatecalculatingmethod"))
+                if (ec_ins.Entities[i].Contains("bsd_duedatecalculatingmethod"))
                 {
-                    int num1 = ((OptionSetValue)entityCollection.Entities[index2]["bsd_duedatecalculatingmethod"]).Value;
-                    if (index2 == 0 && num1 != 100000001 || num1 == 100000002 || num1 == 100000000)
+                    i_dueCalMethod = ((OptionSetValue)ec_ins.Entities[i]["bsd_duedatecalculatingmethod"]).Value;
+                    if (i == 0 && i_dueCalMethod != 100000001)
                         break;
-                    if (num1 == 100000001)
+                    if (i_dueCalMethod == 100000002 || i_dueCalMethod == 100000000)
+                        break;
+                    if (i_dueCalMethod == 100000001)
                     {
-                        int num2 = ((OptionSetValue)entityCollection.Entities[index2]["bsd_nextperiodtype"]).Value;
-                        int day = 0;
-                        if (entityCollection.Entities[index2].Contains("bsd_datepaymentofmonthly"))
-                            day = (int)entityCollection.Entities[index2]["bsd_datepaymentofmonthly"];
-                        int? nullable1;
-                        int? nullable2;
-                        if (!entityCollection.Entities[index2].Contains("bsd_typepayment"))
+                        int i_bsd_nextperiodtype = (int)((OptionSetValue)ec_ins.Entities[i]["bsd_nextperiodtype"]).Value;
+                        int i_paymentdatemonthly = 0;
+                        if (ec_ins.Entities[i].Contains("bsd_datepaymentofmonthly"))
+                            i_paymentdatemonthly = (int)ec_ins.Entities[i]["bsd_datepaymentofmonthly"];
+                        //default or null
+                        int? payment_type = ec_ins.Entities[i].Contains("bsd_typepayment") ? (int?)((OptionSetValue)ec_ins.Entities[i]["bsd_typepayment"]).Value : null;
+
+                        if (i_paymentdatemonthly != 0)
+                            dt_date = new DateTime(dt_date.Year, dt_date.Month, i_paymentdatemonthly);
+                        Entity en_up = new Entity();
+                        if (payment_type == null || payment_type == 1)//default or month
                         {
-                            nullable1 = new int?();
-                            nullable2 = nullable1;
-                        }
-                        else
-                            nullable2 = new int?(((OptionSetValue)entityCollection.Entities[index2]["bsd_typepayment"]).Value);
-                        int? nullable3 = nullable2;
-                        if (day != 0)
-                            dt_date = new DateTime(dt_date.Year, dt_date.Month, day);
-                        Entity entity = new Entity();
-                        int num3;
-                        if (nullable3.HasValue)
-                        {
-                            nullable1 = nullable3;
-                            int num4 = 1;
-                            num3 = nullable1.GetValueOrDefault() == num4 & nullable1.HasValue ? 1 : 0;
-                        }
-                        else
-                            num3 = 1;
-                        if (num3 != 0)
-                        {
-                            switch (((OptionSetValue)entityCollection.Entities[index2]["bsd_nextperiodtype"]).Value)
+                            double extraDay = 0;
+                            int type = ((OptionSetValue)ec_ins.Entities[i]["bsd_nextperiodtype"]).Value;
+
+                            if (type == 1)//month
                             {
-                                case 1:
-                                    int months = (int)entityCollection.Entities[index2]["bsd_numberofnextmonth"];
-                                    dt_date = dt_date.AddMonths(months);
-                                    break;
-                                case 2:
-                                    double num5 = double.Parse(entityCollection.Entities[index2]["bsd_numberofnextdays"].ToString());
-                                    dt_date = dt_date.AddDays(num5);
-                                    break;
+                                i_nextMonth = ((int)ec_ins.Entities[i]["bsd_numberofnextmonth"]);
+                                dt_date = dt_date.AddMonths(i_nextMonth);
                             }
-                            entity.LogicalName = ec_pms.Entities[index1].LogicalName;
-                            entity.Id = ec_pms.Entities[index1].Id;
-                            entity["bsd_duedate"] = (object)dt_date;
-                            this.service.Update(entity);
-                            ++index1;
-                        }
-                        else
-                        {
-                            nullable1 = nullable3;
-                            int num6 = 2;
-                            if (nullable1.GetValueOrDefault() == num6 & nullable1.HasValue)
+                            else if (type == 2)//day
                             {
-                                int num7 = (int)entityCollection.Entities[index2]["bsd_number"];
-                                int num8 = 0;
-                                if (entityCollection.Entities[index2].Contains("bsd_nextdaysofendphase"))
-                                    num8 = (int)entityCollection.Entities[index2]["bsd_nextdaysofendphase"];
-                                for (int index3 = 0; index3 < num7; ++index3)
-                                {
-                                    if (index3 == num7 - 1)
-                                        dt_date = dt_date.AddDays((double)num8);
-                                    entity.LogicalName = ec_pms.Entities[index1].LogicalName;
-                                    entity.Id = ec_pms.Entities[index1].Id;
-                                    entity["bsd_duedate"] = (object)dt_date;
-                                    this.service.Update(entity);
-                                    ++index1;
-                                }
+                                extraDay = double.Parse(ec_ins.Entities[i]["bsd_numberofnextdays"].ToString());
+                                dt_date = dt_date.AddDays(extraDay);
+                            }
+                            en_up.LogicalName = ec_pms.Entities[orderNumber].LogicalName;
+                            en_up.Id = ec_pms.Entities[orderNumber].Id;
+                            en_up["bsd_duedate"] = dt_date;
+                            service.Update(en_up);
+
+                            orderNumber++;
+                        }
+                        else if (payment_type == 2)//times
+                        {
+                            int number = (int)ec_ins.Entities[i]["bsd_number"];
+                            int i_bsd_nextdaysofendphase = 0;
+                            if (ec_ins.Entities[i].Contains("bsd_nextdaysofendphase"))
+                            {
+                                i_bsd_nextdaysofendphase = (int)ec_ins.Entities[i]["bsd_nextdaysofendphase"];
+                            }
+                            for (int j = 0; j < number; j++)
+                            {
+                                if (j == number - 1)
+                                    dt_date = dt_date.AddDays(i_bsd_nextdaysofendphase);
+                                en_up.LogicalName = ec_pms.Entities[orderNumber].LogicalName;
+                                en_up.Id = ec_pms.Entities[orderNumber].Id;
+                                en_up["bsd_duedate"] = dt_date;
+                                service.Update(en_up);
+                                orderNumber++;
                             }
                         }
                     }
                 }
             }
         }
-
+        // installment func
         private EntityCollection GetPSD(string OptionEntryID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[4]
-            {
-        "bsd_ordernumber",
-        "bsd_paymentschemedetailid",
-        "statuscode",
-        "bsd_amountwaspaid"
-            });
+            query.ColumnSet = new ColumnSet(new string[] { "bsd_ordernumber", "bsd_paymentschemedetailid", "statuscode", "bsd_amountwaspaid" });
             query.Distinct = true;
             query.Criteria = new FilterExpression();
-            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, (object)OptionEntryID);
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, OptionEntryID);
             query.AddOrder("bsd_ordernumber", OrderType.Ascending);
-            return this.service.RetrieveMultiple((QueryBase)query);
+            //query.TopCount = 1;
+            EntityCollection psdFirst = service.RetrieveMultiple(query);
+            return psdFirst;
         }
-
-        private void Up_Ins_OE(
-          Entity en_Ins,
-          Entity en_OE,
-          Decimal psd_amountPaid,
-          Decimal psd_balance,
-          int psd_statuscode,
-          Decimal ampay,
-          bool f_1st,
-          DateTime d_now,
-          int lateday,
-          Decimal interestcharge)
+        private void Up_Ins_OE(Entity en_Ins, Entity en_OE, decimal psd_amountPaid, decimal psd_balance, int psd_statuscode, decimal ampay, bool f_1st, DateTime d_now, int lateday, decimal interestcharge)
         {
-            int num1 = en_Ins.Contains("bsd_ordernumber") ? (int)en_Ins["bsd_ordernumber"] : 1;
-            Decimal num2 = en_Ins.Contains("bsd_depositamount") ? ((Money)en_Ins["bsd_depositamount"]).Value : 0M;
-            int num3 = en_Ins.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_Ins["bsd_interestchargestatus"]).Value : 100000000;
-            bool flag1 = en_Ins.Contains("bsd_maintenancefeesstatus") && (bool)en_Ins["bsd_maintenancefeesstatus"];
-            bool flag2 = en_Ins.Contains("bsd_managementfeesstatus") && (bool)en_Ins["bsd_managementfeesstatus"];
-            Guid id = en_OE.Id;
-            EntityCollection allMisNotPaid = this.get_All_MIS_NotPaid(id.ToString());
-            int num4 = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 100000000;
-            Entity entity1 = this.service.Retrieve("product", ((EntityReference)en_OE["bsd_unitnumber"]).Id, new ColumnSet(new string[2]
-            {
-        "bsd_handovercondition",
-        "statuscode"
-            }));
-            id = en_OE.Id;
-            EntityCollection psd = this.GetPSD(id.ToString());
-            Entity entity2 = psd.Entities[0];
-            int count = psd.Entities.Count;
-            id = psd.Entities[count - 1].Id;
-            string str1 = id.ToString();
-            Entity entity3 = new Entity(en_Ins.LogicalName);
-            entity3.Id = en_Ins.Id;
-            entity3["bsd_amountwaspaid"] = (object)new Money(psd_amountPaid);
-            entity3["bsd_balance"] = (object)new Money(psd_balance);
-            entity3["statuscode"] = (object)new OptionSetValue(psd_statuscode);
+            // update ins, OE & Unit
+            // total amount paid of OE + ampay
+
+            int i_phaseNum = en_Ins.Contains("bsd_ordernumber") ? (int)en_Ins["bsd_ordernumber"] : 1;
+            decimal psd_deposit = en_Ins.Contains("bsd_depositamount") ? ((Money)en_Ins["bsd_depositamount"]).Value : 0;
+            int psd_statuscodeInterest = en_Ins.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_Ins["bsd_interestchargestatus"]).Value : 100000000;//check interest đã thanh toán chưa
+            bool psd_statuscodeFeeMain = en_Ins.Contains("bsd_maintenancefeesstatus") ? ((bool)en_Ins["bsd_maintenancefeesstatus"]) : false;//check fee đã thanh toán chưa
+            bool psd_statuscodeFeeMana = en_Ins.Contains("bsd_managementfeesstatus") ? ((bool)en_Ins["bsd_managementfeesstatus"]) : false;//check fee đã thanh toán chưa
+            var enmis = get_All_MIS_NotPaid(en_OE.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
+            int sttOE = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 100000000; // option
+                                                                                                                //tính trễ
+            int sttUnit = 100000001; // statuscode of unit= 1st installment
+            Entity Unit = service.Retrieve("product", ((EntityReference)en_OE["bsd_unitnumber"]).Id, new ColumnSet(new string[] { "bsd_handovercondition", "statuscode" }));
+
+            EntityCollection psdFirst = GetPSD(en_OE.Id.ToString());
+            Entity detailFirst = psdFirst.Entities[0];
+
+            int t = psdFirst.Entities.Count;
+            Entity detailLast = psdFirst.Entities[t - 1]; // entity cuoi cung ( phase cuoi cung )
+            string detailLastID = detailLast.Id.ToString();
+
+            Entity ins_tmp = new Entity(en_Ins.LogicalName);
+            ins_tmp.Id = en_Ins.Id;
+
+            ins_tmp["bsd_amountwaspaid"] = new Money(psd_amountPaid);
+            ins_tmp["bsd_balance"] = new Money(psd_balance);
+            ins_tmp["statuscode"] = new OptionSetValue(psd_statuscode);
             if (lateday > 0)
-                entity3["bsd_actualgracedays"] = (object)lateday;
-            Decimal num5 = entity3.Contains("bsd_interestchargeamount") ? ((Money)entity3["bsd_interestchargeamount"]).Value : 0M;
-            if (interestcharge > 0M)
-                entity3["bsd_interestchargeamount"] = (object)new Money(interestcharge + num5);
+            {
+                ins_tmp["bsd_actualgracedays"] = lateday;
+            }
+            var interestchargeamount_old = ins_tmp.Contains("bsd_interestchargeamount") ? ((Money)ins_tmp["bsd_interestchargeamount"]).Value : 0;
+            if (interestcharge > 0)
+            {
+                ins_tmp["bsd_interestchargeamount"] = new Money(interestcharge + interestchargeamount_old);
+            }
             if (psd_statuscode == 100000001)
-                entity3["bsd_paiddate"] = (object)d_now;
-            this.service.Update(entity3);
-            Entity entity4 = new Entity(en_OE.LogicalName);
-            entity4.Id = en_OE.Id;
-            int num6 = 100000003;
-            int num7 = 100000000;
-            int num8;
-            int num9;
-            if (num1 == 1)
+                ins_tmp["bsd_paiddate"] = d_now;  // update ngay paid cua INS
+
+            service.Update(ins_tmp);
+
+            // update OE
+
+            Entity en_OEup = new Entity(en_OE.LogicalName);
+            en_OEup.Id = en_OE.Id;
+            int i_Ustatus = 100000003; // deposit
+            int i_oeStatus = 100000000;// option
+
+            if (i_phaseNum == 1)
             {
                 if (en_OE.Contains("bsd_signedcontractdate"))
                 {
-                    num8 = 100000002;
-                    num9 = 100000002;
+                    sttOE = 100000002; // sign contract OE
+                    sttUnit = 100000002; // unit = sold
                     f_1st = true;
-                }
-                else if (psd_statuscode == 100000000)
-                {
-                    f_1st = false;
-                    num8 = 100000000;
-                    num9 = 100000003;
                 }
                 else
-                {
-                    f_1st = true;
-                    num8 = 100000001;
-                    num9 = 100000001;
+                { // khi 1st da Paid roi moi duoc chuyen sang 1st installment else van la option
+                    if (psd_statuscode == 100000000) // not paid
+                    {
+                        f_1st = false;
+                        sttOE = 100000000; // option
+                        sttUnit = 100000003; // depositd
+                    }
+                    else // paid
+                    {
+                        f_1st = true;
+                        sttOE = 100000001;//1st
+                        sttUnit = 100000001; // 1st
+                    }
+
                 }
             }
             else
@@ -912,361 +926,300 @@ namespace Action_ApplyDocument
                 f_1st = true;
                 if (!en_OE.Contains("bsd_signedcontractdate"))
                 {
-                    num8 = 100000001;
-                    num9 = 100000001;
+                    sttOE = 100000001; // if OE not signcontract - status code still is 1st Installment
+                    sttUnit = 100000001; // 1st
                 }
                 else
                 {
-                    num9 = 100000002;
-                    num8 = 100000003;
-                    string str2 = str1;
-                    id = en_Ins.Id;
-                    string str3 = id.ToString();
-                    if (((!(str2 == str3) || psd_statuscode != 100000001 ? 0 : (num3 == 100000001 ? 1 : 0)) & (flag1 ? 1 : 0) & (flag2 ? 1 : 0)) != 0 && allMisNotPaid != null && allMisNotPaid.Entities.Count == 0)
-                        num8 = 100000004;
+                    sttUnit = 100000002;
+                    sttOE = 100000003; //Being Payment (khi da sign contract)
+                    if (detailLastID == en_Ins.Id.ToString() && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
+                                        psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                        sttOE = 100000004; //Complete Payment
                 }
             }
-            if (!f_1st)
-            {
-                num8 = num7;
-                num9 = num6;
-            }
-            entity1["statuscode"] = (object)new OptionSetValue(num9);
-            this.service.Update(entity1);
-            entity4["statuscode"] = (object)new OptionSetValue(num8);
-            this.service.Update(entity4);
-        }
 
+            if (f_1st == false)
+            {
+                sttOE = i_oeStatus;
+                sttUnit = i_Ustatus;
+            }
+
+            Unit["statuscode"] = new OptionSetValue(sttUnit); // Unit statuscode = 1st Installment
+            service.Update(Unit);
+
+            en_OEup["statuscode"] = new OptionSetValue(sttOE);
+            service.Update(en_OEup);
+        }
         private bool check_Ins_Paid(IOrganizationService crmservices, Guid oeID, int i_ordernumber)
         {
-            bool flag = false;
-            string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\n                <entity name='bsd_paymentschemedetail' >\n                <attribute name='bsd_amountpay' />\n                <attribute name='statuscode' />\n                <attribute name='bsd_name' />\n                <attribute name='bsd_ordernumber' />\n                <attribute name='bsd_paymentschemedetailid' />\n                <filter type='and' >\n                <condition attribute='bsd_ordernumber' operator='eq' value='{0}' />\n                  <condition attribute='bsd_optionentry' operator='eq' value='{1}' />\n                </filter>\n              </entity>\n            </fetch>", (object)i_ordernumber, (object)oeID);
-            EntityCollection entityCollection = crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query));
-            if (entityCollection.Entities.Count > 0)
+            bool res = false;
+            // check neu installment truoc do da paid hay chua , neu paid r thi cho excute, neu chua paid thi thong bao ra
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                <entity name='bsd_paymentschemedetail' >
+                <attribute name='bsd_amountpay' />
+                <attribute name='statuscode' />
+                <attribute name='bsd_name' />
+                <attribute name='bsd_ordernumber' />
+                <attribute name='bsd_paymentschemedetailid' />
+                <filter type='and' >
+                <condition attribute='bsd_ordernumber' operator='eq' value='{0}' />
+                  <condition attribute='bsd_optionentry' operator='eq' value='{1}' />
+                </filter>
+              </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, i_ordernumber, oeID);
+
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+
+            if (entc.Entities.Count > 0)
             {
-                Entity entity = entityCollection.Entities[0];
-                entity.Id = entityCollection.Entities[0].Id;
-                if (((OptionSetValue)entity["statuscode"]).Value == 100000001)
-                    flag = true;
-                if (((OptionSetValue)entity["statuscode"]).Value == 100000000)
-                    flag = false;
+                Entity en_tmp = entc.Entities[0];
+                en_tmp.Id = entc.Entities[0].Id;
+                if (((OptionSetValue)en_tmp["statuscode"]).Value == 100000001) res = true;
+                if (((OptionSetValue)en_tmp["statuscode"]).Value == 100000000) res = false;
             }
-            return flag;
+            return res;
         }
-
-        private void Update_Interest(
-          IOrganizationService ser,
-          Entity en_interIns,
-          Decimal psd_bsd_interestwaspaid,
-          int psd_bsd_interestchargestatus)
+        // Intest charge function
+        private void Update_Interest(IOrganizationService ser, Entity en_interIns, decimal psd_bsd_interestwaspaid, int psd_bsd_interestchargestatus)
         {
-            ser.Update(new Entity(en_interIns.LogicalName)
-            {
-                Id = en_interIns.Id,
-                ["bsd_interestwaspaid"] = (object)new Money(psd_bsd_interestwaspaid),
-                ["bsd_interestchargestatus"] = (object)new OptionSetValue(psd_bsd_interestchargestatus)
-            });
+            Entity en_Up = new Entity(en_interIns.LogicalName);
+            en_Up.Id = en_interIns.Id;
+            en_Up["bsd_interestwaspaid"] = new Money(psd_bsd_interestwaspaid);
+            en_Up["bsd_interestchargestatus"] = new OptionSetValue(psd_bsd_interestchargestatus);
+            ser.Update(en_Up);
         }
-
-        private void calc_InterestCharge(
-          Entity e_InterMaster,
-          int i_day,
-          Decimal amountPay,
-          Entity OE,
-          Entity en_PmsDtl,
-          IOrganizationService serv,
-          out int i_late,
-          out Decimal d_interAM)
+        // fees function -----------
+        private void create_app_detail(IOrganizationService serv, Entity en_app, Entity en_Ins, Entity en_OE, int i_pmtype, decimal appAM, int i_outstanding_AppDtl,
+            decimal d_bsd_interestchargeamount, int fee_type)
         {
-            Decimal num1 = e_InterMaster.Contains("bsd_termsinterestpercentage") ? (Decimal)e_InterMaster["bsd_termsinterestpercentage"] : throw new InvalidPluginExecutionException("Please input 'Terms interest' data in Interest rate master:" + (string)e_InterMaster["bsd_name"]);
-            Entity entity1 = serv.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[2]
-            {
-        "bsd_name",
-        "bsd_dailyinterestchargebank"
-            }));
-            bool flag = entity1.Contains("bsd_dailyinterestchargebank") && (bool)entity1["bsd_dailyinterestchargebank"];
-            Decimal num2 = 0M;
-            if (flag)
-            {
-                EntityCollection dailyinterestrate = this.get_ec_bsd_dailyinterestrate(serv, entity1.Id);
-                Entity entity2 = dailyinterestrate.Entities[0];
-                entity2.Id = dailyinterestrate.Entities[0].Id;
-                num2 = entity2.Contains("bsd_interestrate") ? (Decimal)entity2["bsd_interestrate"] : throw new InvalidPluginExecutionException("Can not find Daily Interestrate for Project " + (string)entity1["bsd_name"] + " in master data. Please check again!");
-            }
-            Decimal num3 = num1 + num2;
-            if (!e_InterMaster.Contains("bsd_intereststartdatetype"))
-                throw new InvalidPluginExecutionException("Please input 'Interest Start Date Type' data in Interest rate master:" + (string)e_InterMaster["bsd_name"]);
-            Decimal num4 = e_InterMaster.Contains("bsd_toleranceinterestamount") ? ((Money)e_InterMaster["bsd_toleranceinterestamount"]).Value : 0M;
-            Decimal num5 = e_InterMaster.Contains("bsd_toleranceinterestpercentage") ? (Decimal)e_InterMaster["bsd_toleranceinterestpercentage"] : 0M;
-            Decimal num6 = num3 / 30M / 100M * (Decimal)i_day;
-            Decimal num7 = Convert.ToDecimal(amountPay) * num6;
-            Decimal num8 = this.SumInterestAM_OE(this.service, OE.Id);
-            Decimal num9 = num8 + num7;
-            Decimal num10 = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0M;
-            if (num10 == 0M)
-                throw new InvalidPluginExecutionException("'Net Selling Price' must be larger than 0");
-            int num11 = 0;
-            Decimal num12 = 0M;
-            Decimal num13;
-            if (num5 > 0M)
-            {
-                Decimal num14 = num10 * num5 / 100M;
-                num13 = !(num4 > 0M) ? num14 : (!(num14 > num4) ? num14 : num4);
-            }
-            else
-                num13 = num4 > 0M ? num4 : 0M;
-            if (num9 >= num13)
-                num7 = num13 > num8 ? num13 - num8 : 0M;
-            if (num7 > 0M)
-            {
-                if (OE.Contains("bsd_signedcontractdate") || OE.Contains("bsd_signeddadate"))
-                {
-                    Decimal num15 = en_PmsDtl.Contains("bsd_interestchargeamount") ? ((Money)en_PmsDtl["bsd_interestchargeamount"]).Value : 0M;
-                    Entity entity3 = new Entity(en_PmsDtl.LogicalName);
-                    entity3.Id = en_PmsDtl.Id;
-                    Decimal num16 = num15 + Convert.ToDecimal(num7);
-                    if (num16 < 0M)
-                        num16 = 0M;
-                    num12 = num16;
-                    entity3["bsd_interestchargeamount"] = (object)new Money(num16);
-                    int num17 = en_PmsDtl.Contains("bsd_actualgracedays") ? (int)en_PmsDtl["bsd_actualgracedays"] : 0;
-                    if (i_day >= num17)
-                        entity3["bsd_actualgracedays"] = (object)i_day;
-                    serv.Update(entity3);
-                }
-                num11 = i_day;
-            }
-            i_late = num11;
-            d_interAM = num7;
-        }
-
-        private Decimal SumInterestAM_OE(IOrganizationService crmservices, Guid OEID)
-        {
-            Decimal num = 0M;
-            string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>\n                  <entity name='bsd_paymentschemedetail' >\n                    <attribute name='bsd_interestchargestatus' />\n                    <attribute name='bsd_interestchargeamount' />\n                    <filter type='and' >\n                      <condition attribute='bsd_optionentry' operator='eq' value='{0}' />\n                        <condition attribute='bsd_interestchargeamount' operator='not-null' />\n                    </filter>\n                    <order attribute='bsd_ordernumber' descending='true' />\n                  </entity>\n                </fetch>", (object)OEID);
-            foreach (Entity entity in (Collection<Entity>)crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query)).Entities)
-                num += entity.Contains("bsd_interestchargeamount") ? ((Money)entity["bsd_interestchargeamount"]).Value : 0M;
-            return num;
-        }
-
-        private EntityCollection get_ec_bsd_dailyinterestrate(
-          IOrganizationService crmservices,
-          Guid projID)
-        {
-            string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>\n                  <entity name='bsd_dailyinterestrate' >\n                    <attribute name='bsd_date' />\n                    <attribute name='bsd_project' />\n                    <attribute name='bsd_interestrate' />\n                    <attribute name='createdon' />\n                    <filter type='and' >\n                      <condition attribute='bsd_project' operator='eq' value='{0}' />\n                        <condition attribute='statuscode' operator='eq' value='1' />\n                    </filter>\n                    <order attribute='createdon' descending='true' />\n                  </entity>\n                </fetch>", (object)projID);
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query));
-        }
-
-        private Entity getInstallment(IOrganizationService crmservices, string installmentid)
-        {
-            string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\n                <entity name='bsd_paymentschemedetail' >\n                <attribute name='bsd_duedatecalculatingmethod' />\n                <attribute name='bsd_maintenanceamount' />\n                <attribute name='bsd_maintenancefeepaid' />\n                <attribute name='bsd_maintenancefeewaiver' />\n                <attribute name='bsd_ordernumber' />\n                <attribute name='statuscode' />\n                <attribute name='bsd_managementfeepaid' />\n                <attribute name='bsd_managementfeewaiver' />\n                <attribute name='bsd_amountpay' />\n                <attribute name='bsd_maintenancefees' />\n                <attribute name='bsd_optionentry' />\n                <attribute name='bsd_managementfee' />\n                <attribute name='bsd_managementfeesstatus' />\n                <attribute name='bsd_managementamount' />\n                <attribute name='bsd_amountwaspaid' />\n                <attribute name='bsd_maintenancefeesstatus' />\n                <attribute name='bsd_name' />\n                <attribute name='bsd_paymentschemedetailid' />\n                <filter type='and' >\n                  <condition attribute='bsd_paymentschemedetailid' operator='eq' value='{0}' />\n                  \n                </filter>\n              </entity>\n            </fetch>", (object)installmentid);
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query)).Entities[0];
-        }
-
-        private void create_app_detail(
-          IOrganizationService serv,
-          Entity en_app,
-          Entity en_Ins,
-          Entity en_OE,
-          int i_pmtype,
-          Decimal appAM,
-          int i_outstanding_AppDtl,
-          Decimal d_bsd_interestchargeamount,
-          int fee_type)
-        {
-            Entity entity = new Entity("bsd_applydocumentdetail");
-            entity.Id = Guid.NewGuid();
-            string str = "";
+            Entity en_Up = new Entity("bsd_applydocumentdetail");
+            en_Up.Id = Guid.NewGuid();
+            string s_type = "";
             switch (i_pmtype)
             {
                 case 100000000:
-                    str = "Deposit";
+                    s_type = "Deposit";
                     break;
                 case 100000001:
-                    str = "Installment";
-                    break;
-                case 100000002:
-                    str = "Fees";
+                    s_type = "Installment";
                     break;
                 case 100000003:
-                    str = "Interest charge";
+                    s_type = "Interest charge";
+                    break;
+                case 100000002:
+                    s_type = "Fees";
                     break;
                 case 100000004:
-                    str = "Other";
+                    s_type = "Other";
                     break;
             }
-            entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + str);
-            entity["bsd_applydocument"] = (object)en_app.ToEntityReference();
-            entity["statuscode"] = (object)new OptionSetValue(100000000);
-            entity["bsd_paymenttype"] = (object)new OptionSetValue(i_pmtype);
-            entity["bsd_installment"] = (object)en_Ins.ToEntityReference();
-            entity["bsd_amountapply"] = (object)new Money(appAM);
-            if (i_pmtype == 100000002)
-            {
-                entity["bsd_optionentry"] = (object)en_OE.ToEntityReference();
-                if (fee_type == 1)
-                {
-                    entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-Maitenance Fees");
-                    entity["bsd_feetype"] = (object)new OptionSetValue(100000000);
-                }
-                else
-                {
-                    entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-Management Fees");
-                    entity["bsd_feetype"] = (object)new OptionSetValue(100000001);
-                }
-            }
-            if (i_pmtype == 100000000)
-                entity["bsd_reservation"] = (object)en_OE.ToEntityReference();
-            if (i_pmtype == 100000001 || i_pmtype == 100000003)
-            {
-                entity["bsd_optionentry"] = (object)en_OE.ToEntityReference();
-                if (en_OE.Contains("bsd_signeddadate") || en_OE.Contains("bsd_signedcontractdate"))
-                {
-                    entity["bsd_actualgracedays"] = (object)i_outstanding_AppDtl;
-                    entity["bsd_interestchargeamount"] = (object)new Money(d_bsd_interestchargeamount);
-                }
-                else
-                {
-                    Decimal num = 0M;
-                    entity["bsd_actualgracedays"] = (object)num;
-                    entity["bsd_interestchargeamount"] = (object)new Money(num);
-                }
-            }
-            this.service.Create(entity);
-        }
 
-        private void create_app_detail_MISS(
-          IOrganizationService serv,
-          Entity en_app,
-          Entity en_Ins,
-          Entity en_OE,
-          int i_pmtype,
-          Decimal appAM,
-          int i_outstanding_AppDtl,
-          Decimal d_bsd_interestchargeamount,
-          int fee_type,
-          Entity Miss_ID)
+            en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + s_type;
+
+            en_Up["bsd_applydocument"] = en_app.ToEntityReference();
+            en_Up["statuscode"] = new OptionSetValue(100000000); // confirm - Nhung
+
+            en_Up["bsd_paymenttype"] = new OptionSetValue(i_pmtype);
+            en_Up["bsd_installment"] = en_Ins.ToEntityReference();
+
+            en_Up["bsd_amountapply"] = new Money(appAM);
+
+            // bsd_feetype, Maintenace fee = 100.000.000, Management fee = 100.000.001
+            if (i_pmtype == 100000002) // Fees
+            {
+                en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
+                if (fee_type == 1) // main
+                {
+                    en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + "Maitenance Fees";
+                    en_Up["bsd_feetype"] = new OptionSetValue(100000000);
+                }
+                else
+                {
+                    en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + "Management Fees";
+                    en_Up["bsd_feetype"] = new OptionSetValue(100000001);
+                }
+            }
+            if (i_pmtype == 100000000) // deposit
+                en_Up["bsd_reservation"] = en_OE.ToEntityReference(); // quote
+
+
+            if (i_pmtype == 100000001 || i_pmtype == 100000003) // installment or interest charge
+            {
+                en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
+                en_Up["bsd_actualgracedays"] = i_outstanding_AppDtl;
+                en_Up["bsd_interestchargeamount"] = new Money(d_bsd_interestchargeamount);
+            }
+            service.Create(en_Up);
+        }
+        // create APP detail for MISS
+        private void create_app_detail_MISS(IOrganizationService serv, Entity en_app, Entity en_Ins, Entity en_OE, int i_pmtype, decimal appAM, int i_outstanding_AppDtl,
+            decimal d_bsd_interestchargeamount, int fee_type, Entity Miss_ID)
         {
-            Entity entity = new Entity("bsd_applydocumentdetail");
-            entity.Id = Guid.NewGuid();
-            string str = "";
+            Entity en_Up = new Entity("bsd_applydocumentdetail");
+            en_Up.Id = Guid.NewGuid();
+            string s_type = "";
             switch (i_pmtype)
             {
                 case 100000000:
-                    str = "Deposit";
+                    s_type = "Deposit";
                     break;
                 case 100000001:
-                    str = "Installment";
-                    break;
-                case 100000002:
-                    str = "Fees";
+                    s_type = "Installment";
                     break;
                 case 100000003:
-                    str = "Interest charge";
+                    s_type = "Interest charge";
+                    break;
+                case 100000002:
+                    s_type = "Fees";
                     break;
                 case 100000004:
-                    str = "Other";
+                    s_type = "Other";
                     break;
             }
-            entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + str);
-            entity["bsd_applydocument"] = (object)en_app.ToEntityReference();
-            entity["statuscode"] = (object)new OptionSetValue(100000000);
-            entity["bsd_paymenttype"] = (object)new OptionSetValue(i_pmtype);
-            entity["bsd_installment"] = (object)en_Ins.ToEntityReference();
-            entity["bsd_amountapply"] = (object)new Money(appAM);
-            if (i_pmtype == 100000002)
+
+            en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + s_type;
+
+            en_Up["bsd_applydocument"] = en_app.ToEntityReference();
+            en_Up["statuscode"] = new OptionSetValue(100000000); // confirm - Nhung
+
+            en_Up["bsd_paymenttype"] = new OptionSetValue(i_pmtype);
+            en_Up["bsd_installment"] = en_Ins.ToEntityReference();
+
+            en_Up["bsd_amountapply"] = new Money(appAM);
+
+            // bsd_feetype, Maintenace fee = 100.000.000, Management fee = 100.000.001
+            if (i_pmtype == 100000002) // interest charge
             {
-                entity["bsd_optionentry"] = (object)en_OE.ToEntityReference();
-                if (fee_type == 1)
+                en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
+                if (fee_type == 1) // main
                 {
-                    entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-Maitenance Fees");
-                    entity["bsd_feetype"] = (object)new OptionSetValue(100000000);
+                    en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + "Maitenance Fees";
+                    en_Up["bsd_feetype"] = new OptionSetValue(100000000);
                 }
                 else
                 {
-                    entity["bsd_name"] = (object)("Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-Management Fees");
-                    entity["bsd_feetype"] = (object)new OptionSetValue(100000001);
+                    en_Up["bsd_name"] = "Apply document detail-" + (string)en_app["bsd_name"] + "-" + (string)en_Ins["bsd_name"] + "-" + "Management Fees";
+                    en_Up["bsd_feetype"] = new OptionSetValue(100000001);
                 }
             }
-            if (i_pmtype == 100000000)
-                entity["bsd_reservation"] = (object)en_OE.ToEntityReference();
+            if (i_pmtype == 100000000) // deposit
+                en_Up["bsd_reservation"] = en_OE.ToEntityReference(); // quote
+                                                                      // Miscellaneous
             if (i_pmtype == 100000004)
             {
-                entity["bsd_optionentry"] = (object)en_OE.ToEntityReference();
-                entity["bsd_miscellaneous"] = (object)Miss_ID.ToEntityReference();
+                en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
+                en_Up["bsd_miscellaneous"] = Miss_ID.ToEntityReference();
             }
-            if (i_pmtype == 100000001 || i_pmtype == 100000003)
+
+            if (i_pmtype == 100000001 || i_pmtype == 100000003) // installment or interest charge
             {
-                entity["bsd_optionentry"] = (object)en_OE.ToEntityReference();
-                if (en_OE.Contains("bsd_signeddadate") || en_OE.Contains("bsd_signedcontractdate"))
+                en_Up["bsd_optionentry"] = en_OE.ToEntityReference(); // OE
+                if (en_OE.Contains("bsd_signeddadate") || en_OE.Contains("bsd_signedcontractdate"))// OE
                 {
-                    entity["bsd_actualgracedays"] = (object)i_outstanding_AppDtl;
-                    entity["bsd_interestchargeamount"] = (object)new Money(d_bsd_interestchargeamount);
+                    en_Up["bsd_actualgracedays"] = i_outstanding_AppDtl;
+                    en_Up["bsd_interestchargeamount"] = new Money(d_bsd_interestchargeamount);
                 }
                 else
                 {
-                    Decimal num = 0M;
-                    entity["bsd_actualgracedays"] = (object)num;
-                    entity["bsd_interestchargeamount"] = (object)new Money(num);
+                    decimal gt = 0;
+                    en_Up["bsd_actualgracedays"] = gt;
+                    en_Up["bsd_interestchargeamount"] = new Money(gt);
                 }
             }
-            this.service.Create(entity);
+            service.Create(en_Up);
         }
-
-        private void create_Applydocument_RemainingCOA(
-          IOrganizationService service,
-          Entity enApplyDocument,
-          Entity enAdvancePayment,
-          Decimal bsd_advancepaymentamount,
-          Decimal apply,
-          Decimal remain,
-          Decimal bsd_avPMPaid)
+        // Create Applydocument Remaining COA By Thạnh Đỗ
+        private void create_Applydocument_RemainingCOA(IOrganizationService service, Entity enApplyDocument, Entity enAdvancePayment,
+                                                       decimal bsd_advancepaymentamount, decimal apply, decimal remain, decimal bsd_avPMPaid)
         {
-            Entity entity = new Entity("bsd_applydocumentremainingcoa");
-            entity.Id = new Guid();
-            DateTime dateTime = this.RetrieveLocalTimeFromUTCTime(DateTime.Now);
-            entity["bsd_name"] = (object)("Apply Document Remaining COA-" + (string)enAdvancePayment["bsd_name"]);
-            entity["bsd_applydate"] = (object)dateTime;
-            entity["bsd_applydocument"] = (object)enApplyDocument.ToEntityReference();
-            entity["bsd_advancepayment"] = (object)enAdvancePayment.ToEntityReference();
-            entity[nameof(bsd_advancepaymentamount)] = (object)(Money)enAdvancePayment["bsd_amount"];
-            entity["bsd_advancepaymentapply"] = (object)new Money(apply);
-            entity["bsd_advancepaymentpaid"] = (object)new Money(bsd_avPMPaid);
-            entity["bsd_advancepaymentremaining"] = (object)new Money(remain);
-            service.Create(entity);
+            // Get entity Applydocument Remaining COA
+            Entity enApplyDocumentRemainingCOA = new Entity("bsd_applydocumentremainingcoa");
+            enApplyDocumentRemainingCOA.Id = new Guid();
+            // Load giá trị
+            DateTime dateNow = RetrieveLocalTimeFromUTCTime(DateTime.Now);
+            enApplyDocumentRemainingCOA["bsd_name"] = "Apply Document Remaining COA-" + (string)enAdvancePayment["bsd_name"];//name
+            enApplyDocumentRemainingCOA["bsd_applydate"] = dateNow;//applydate
+            enApplyDocumentRemainingCOA["bsd_applydocument"] = enApplyDocument.ToEntityReference();//applydocument
+            enApplyDocumentRemainingCOA["bsd_advancepayment"] = enAdvancePayment.ToEntityReference();//advancepayment
+            enApplyDocumentRemainingCOA["bsd_advancepaymentamount"] = (Money)enAdvancePayment["bsd_amount"];//advancepaymentamount
+            enApplyDocumentRemainingCOA["bsd_advancepaymentapply"] = new Money(apply);//advancepaymentapply
+            enApplyDocumentRemainingCOA["bsd_advancepaymentpaid"] = new Money(bsd_avPMPaid);//advancepaymentpaid
+            enApplyDocumentRemainingCOA["bsd_advancepaymentremaining"] = new Money(remain);//advancepaymentremaining
+            // Tạo Applydocument Remaining COA
+            service.Create(enApplyDocumentRemainingCOA);
         }
-
         public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
-            return ((LocalTimeFromUtcTimeResponse)this.service.Execute((OrganizationRequest)new LocalTimeFromUtcTimeRequest()
+            int? timeZoneCode = RetrieveCurrentUsersSettings(service);
+            if (!timeZoneCode.HasValue)
+                throw new InvalidPluginExecutionException("Can't find time zone code");
+            var request = new LocalTimeFromUtcTimeRequest
             {
-                TimeZoneCode = (this.RetrieveCurrentUsersSettings(this.service) ?? throw new InvalidPluginExecutionException("Can't find time zone code")),
+                TimeZoneCode = timeZoneCode.Value,
                 UtcTime = utcTime.ToUniversalTime()
-            })).LocalTime;
-        }
+            };
 
+            LocalTimeFromUtcTimeResponse response = (LocalTimeFromUtcTimeResponse)service.Execute(request);
+            return response.LocalTime;
+            //var utcTime = utcTime.ToString("MM/dd/yyyy HH:mm:ss");
+            //var localDateOnly = response.LocalTime.ToString("dd-MM-yyyy");
+        }
         private int? RetrieveCurrentUsersSettings(IOrganizationService service)
         {
-            IOrganizationService organizationService = service;
-            QueryExpression queryExpression1 = new QueryExpression("usersettings");
-            queryExpression1.ColumnSet = new ColumnSet(new string[2]
+            var currentUserSettings = service.RetrieveMultiple(
+            new QueryExpression("usersettings")
             {
-        "localeid",
-        "timezonecode"
-            });
-            QueryExpression queryExpression2 = queryExpression1;
-            FilterExpression filterExpression = new FilterExpression();
-            filterExpression.Conditions.Add(new ConditionExpression("systemuserid", ConditionOperator.EqualUserId));
-            queryExpression2.Criteria = filterExpression;
-            QueryExpression query = queryExpression1;
-            return (int?)organizationService.RetrieveMultiple((QueryBase)query).Entities[0].ToEntity<Entity>().Attributes["timezonecode"];
-        }
+                ColumnSet = new ColumnSet("localeid", "timezonecode"),
+                Criteria = new FilterExpression
+                {
+                    Conditions = { new ConditionExpression("systemuserid", ConditionOperator.EqualUserId) }
+                }
+            }).Entities[0].ToEntity<Entity>();
 
+            return (int?)currentUserSettings.Attributes["timezonecode"];
+        }
         public EntityCollection get_All_MIS_NotPaid(string oeID)
         {
-            return this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\n                <entity name='bsd_miscellaneous' >\n                <attribute name='bsd_balance' />\n                <attribute name='statuscode' />\n                <attribute name='bsd_miscellaneousnumber' />\n                <attribute name='bsd_units' />\n                <attribute name='bsd_optionentry' />\n                <attribute name='bsd_miscellaneousid' />\n                <attribute name='bsd_amount' />\n                <attribute name='bsd_paidamount' />\n                <attribute name='bsd_installment' />\n                <attribute name='bsd_name' />\n                <attribute name='bsd_project' />\n                <attribute name='bsd_installmentnumber' />\n                <filter type='and' >\n                    <condition attribute='bsd_optionentry' operator='eq' value='{0}' />\n                    <condition attribute='statecode' operator='eq' value='0' />\n                    <condition attribute='statuscode' operator='eq' value='1' />\n                </filter>                           \n                </entity>\n            </fetch>", (object)oeID)));
+            string fetchXml =
+                          @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                <entity name='bsd_miscellaneous' >
+                <attribute name='bsd_balance' />
+                <attribute name='statuscode' />
+                <attribute name='bsd_miscellaneousnumber' />
+                <attribute name='bsd_units' />
+                <attribute name='bsd_optionentry' />
+                <attribute name='bsd_miscellaneousid' />
+                <attribute name='bsd_amount' />
+                <attribute name='bsd_paidamount' />
+                <attribute name='bsd_installment' />
+                <attribute name='bsd_name' />
+                <attribute name='bsd_project' />
+                <attribute name='bsd_installmentnumber' />
+                <filter type='and' >
+                    <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
+                    <condition attribute='statecode' operator='eq' value='0' />
+                    <condition attribute='statuscode' operator='eq' value='1' />
+                </filter>                           
+                </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, oeID);
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
         }
-
-        public string GetCurrentMethod() => new StackTrace().GetFrame(1).GetMethod().Name;
+    }
+    public class Installment
+    {
+        public DateTime InterestStarDate { get; set; }
+        public int Intereststartdatetype { get; set; }
+        public int Gracedays { get; set; }
+        public int LateDays { get; set; }
+        public decimal MaxPercent { get; set; }
+        public decimal MaxAmount { get; set; }
+        public decimal InterestPercent { get; set; }
+        public decimal InterestCharge { get; set; }
+        public DateTime Duedate { get; set; }
     }
 }
