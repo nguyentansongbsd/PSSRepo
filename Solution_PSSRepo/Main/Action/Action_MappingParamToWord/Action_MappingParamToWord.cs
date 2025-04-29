@@ -32,11 +32,87 @@ namespace Action_MappingParamToWord
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             string base64Input = context.InputParameters["base64"].ToString();
             string jsonInput = context.InputParameters["lstParamValue"].ToString();
-            //PrintContentControlsFromBase64(base64Input, jsonInput);
+            PrintContentControlsFromBase64(base64Input, jsonInput);
             var rs = ReplaceByRemovingControls(base64Input, jsonInput);
+            rs = ReplaceTextInDocument(rs, jsonInput);
+
             //AnalyzeTemplate(base64Input);
             context.OutputParameters["result"] = rs;
 
+        }
+        private string ReplaceTextInDocument(string base64Word, string jsonData)
+        {
+            try
+            {
+                byte[] wordBytes = Convert.FromBase64String(base64Word);
+                var jsonObject = JObject.Parse(jsonData);
+
+                if (jsonObject["lstParamValue"] == null)
+                    throw new ArgumentException("JSON does not contain 'lstParamValue'.");
+
+                var replacements = jsonObject["lstParamValue"]
+                    .SelectMany(j => ((JObject)j).Properties())
+                    .ToDictionary(p => p.Name, p => p.Value?.ToString() ?? "");
+
+                using (var stream = new MemoryStream())
+                {
+                    stream.Write(wordBytes, 0, wordBytes.Length);
+
+                    using (var wordDoc = WordprocessingDocument.Open(stream, true))
+                    {
+                        var body = wordDoc.MainDocumentPart.Document.Body;
+
+                        // Duyệt qua tất cả các đoạn văn bản trong tài liệu
+                        foreach (var textElement in body.Descendants<Text>().ToList())
+                        {
+                            var textValue = textElement.Text;
+
+                            // Kiểm tra xem đoạn văn bản có khớp với key trong dictionary không
+                            if (replacements.TryGetValue(textValue, out var replacementValue))
+                            {
+                                tracingService.Trace($"Replacing text: '{textValue}' with value: '{replacementValue}'");
+
+                                // Thay thế đoạn văn bản
+                                textElement.Text = replacementValue;
+                            }
+                        }
+
+                        // Duyệt qua tất cả các bảng trong tài liệu
+                        foreach (var table in body.Descendants<Table>())
+                        {
+                            foreach (var row in table.Descendants<TableRow>())
+                            {
+                                foreach (var cell in row.Descendants<TableCell>())
+                                {
+                                    // Duyệt qua tất cả các đoạn văn bản trong ô
+                                    foreach (var textElement in cell.Descendants<Text>().ToList())
+                                    {
+                                        var textValue = textElement.Text;
+
+                                        // Kiểm tra xem đoạn văn bản có khớp với key trong dictionary không
+                                        if (replacements.TryGetValue(textValue, out var replacementValue))
+                                        {
+                                            tracingService.Trace($"Replacing text in cell: '{textValue}' with value: '{replacementValue}'");
+
+                                            // Thay thế đoạn văn bản
+                                            textElement.Text = replacementValue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        wordDoc.Save();
+                       
+                    }
+                    return Convert.ToBase64String(stream.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                tracingService.Trace($"Error: {ex.Message}");
+                throw;
+            }
         }
         public void PrintContentControlsFromBase64(string base64Word,string jsonInput)
         {

@@ -244,16 +244,16 @@ namespace Action_Approved_Updateduedate_Detail
                     {
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
                         {
-                            var mess = "The new due date is later than the previous batch. Please check again."; 
+                            var mess = "The new due date is later than the previous batch. Please check again.";
                             HandleError(item, mess);
                             result = false;
                             break;
-
                         }
                     }
                 }
 
             }
+            
         }
         /// <summary>
         /// CNNDH 04.3

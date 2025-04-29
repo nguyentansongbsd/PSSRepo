@@ -58,6 +58,7 @@
     <Content Include="HTML\report\bsd_SelectReport_SaleOrder.html" />
     <Content Include="HTML\report\bsd_Senique_Total_Payment_Confirmation_SPA.html" />
     <Content Include="HTML\report\bsd_Simulation_Report_InOptionEntryForm.html" />
+    <Content Include="JS\bsd_btnEmailView.js" />
     <Content Include="JS\bsd_btnHandoverNoticeView.js" />
     <Content Include="JS\bsd_btnSaleOrderView.js" />
     <Content Include="JS\bsd_BulkPrint_SaleOrder.js" />

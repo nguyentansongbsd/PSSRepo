@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin_Create_PaymentNotice_MapUpdateInstallment
+namespace Plugin_Update_PaymentNotices_Date
 {
-    public class Plugin_Create_PaymentNotice_MapUpdateInstallment : IPlugin
+    public class Plugin_Update_PaymentNotices_Date : IPlugin
     {
         IPluginExecutionContext context = null;
         IOrganizationServiceFactory factory = null;
@@ -23,15 +23,12 @@ namespace Plugin_Create_PaymentNotice_MapUpdateInstallment
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             Entity entity = (Entity)context.InputParameters["Target"];
             Entity enCreated = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-            EntityReference enInsRef =(EntityReference) enCreated["bsd_paymentschemedetail"];
-            Entity enIns = service.Retrieve(enInsRef.LogicalName,enInsRef.Id,new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-            Entity enInsUpdate= new Entity(enIns.LogicalName,enIns.Id);
-            enInsUpdate["bsd_paymentnotices"] = true;
+            EntityReference enInsRef = (EntityReference)enCreated["bsd_paymentschemedetail"];
+            Entity enIns = service.Retrieve(enInsRef.LogicalName, enInsRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+            Entity enInsUpdate = new Entity(enIns.LogicalName, enIns.Id);
             enInsUpdate["bsd_paymentnoticesdate"] = enCreated["bsd_date"];
-            enInsUpdate["bsd_paymentnoticesnumber"] = enCreated["bsd_noticesnumber"];
             service.Update(enInsUpdate);
 
         }
     }
-
 }

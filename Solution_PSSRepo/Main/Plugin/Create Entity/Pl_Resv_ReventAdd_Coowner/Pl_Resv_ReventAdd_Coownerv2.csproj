@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--Project was exported from assembly: C:\Users\ngoct\Downloads\New folder\Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.dll-->
+  <!--Project was exported from assembly: C:\Users\ngoct\Downloads\Pl_Resv_ReventAdd_Coowner_1.0.0.0.dll-->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{950F76C4-E19D-4FB6-8671-D7CFA1E0A703}</ProjectGuid>
+    <ProjectGuid>{1004E468-FAFB-416C-9199-5A4923DCC1CB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Plugin_UpdateLandvalueUnit_Approve</AssemblyName>
+    <AssemblyName>Pl_Resv_ReventAdd_Coownerv2</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
-    <RootNamespace>Plugin_UpdateLandvalueUnit_Approve</RootNamespace>
+    <RootNamespace>Pl_Resv_ReventAdd_Coownerv2</RootNamespace>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,16 +39,13 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Plugin_UpdateLandvalueUnit_Approve.cs" />
-    <Compile Include="AssemblyInfo.cs" />
+    <Reference Include="Microsoft.Xrm.Sdk">
+      <HintPath>..\..\Plugin_Updateduedateoflastinstallmentapprove\bin\Debug\Microsoft.Xrm.Sdk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ILMerge">
-      <Version>3.0.41</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies">
-      <Version>9.0.0.7</Version>
-    </PackageReference>
+    <Compile Include="Pl_Resv_ReventAdd_Coownerv2.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />

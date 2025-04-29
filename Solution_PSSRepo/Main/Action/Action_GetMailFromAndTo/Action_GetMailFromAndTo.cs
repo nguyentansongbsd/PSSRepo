@@ -97,8 +97,16 @@ namespace Action_GetMailFromAndTo
                 {
 
                     mess = "not found mail contact";
-                    return false;
                 }
+                else
+                {
+                    if (rs.Entities[0].Contains("emailaddress11"))
+                    {
+
+                        mess = "not found mail contact";
+                        return false;
+                    }
+                }    
             }
             tracingService.Trace("3");
 

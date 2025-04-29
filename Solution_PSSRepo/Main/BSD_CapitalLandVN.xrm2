@@ -127,9 +127,19 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
             },
             {
+              "CrmId": "1623cfc4-34d9-ef11-8ee9-000d3ac84358",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\select_date_simulation_optionEntryForm.html"
+            },
+            {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
+            },
+            {
+              "CrmId": "1c5b5e5a-7d3e-e511-80e3-3863bb344a68",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Option Entry\\bsd_btnOptionEntryForm.js"
             }
           ]
         }
@@ -414,6 +424,29 @@
                   "Name": "System.Xml.Linq"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "Name": "Action_CreateEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_CreateEmailMessage.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "015eda85-19f2-42bc-80d3-51d836de1581",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_CreateEmailMessage.dll",
+                "SourceType": 0
+              }
             }
           ]
         },
@@ -739,6 +772,56 @@
                 "PathNameOnServer": "Action_UpdateLandValue_Detail.dll",
                 "SourceType": 0
               }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "ServiceHelper"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
             }
           ]
         },
@@ -752,6 +835,29 @@
                 "Id": "e8fed5d6-267a-4f2d-bcd9-fc209f152b3c",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Pl_Resv_ReventAdd_Coownerv2.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Pl_Resv_ReventAdd_Coownerv2.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c1496122-9109-4879-93b2-74e2a6e7ef7a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Pl_Resv_ReventAdd_Coownerv2.dll",
                 "SourceType": 0
               }
             }
@@ -875,30 +981,9 @@
               "Config": {
                 "Id": "5ead8fac-f895-4566-94cc-a88fbd28e5be",
                 "IsolationMode": 2,
-                "IsRegisteredInCrm": false,
+                "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Create_PaymentNotice_MapUpdateInstallment.dll",
-                "SourceType": 0,
-                "PluginTypeConfigs": [
-                  {
-                    "Id": "074cc212-e369-4d24-b1e6-bc8d8639ac05",
-                    "TypeName": "Plugin_Create_PaymentNotice_MapUpdateInstallment.Plugin_Create_PaymentNotice_MapUpdateInstallment"
-                  }
-                ],
-                "StepConfigs": [
-                  {
-                    "DeleteAsyncOperationAfterCompletion": false,
-                    "DeploymentType": 0,
-                    "ExecutionOrder": 4,
-                    "Id": "0537fdb0-51a7-4ebf-a1b0-ab78df8caf4a",
-                    "IsDisabled": false,
-                    "Mode": 0,
-                    "Name": "Create - Payment Notices - Post-operation",
-                    "PluginTypeId": "074cc212-e369-4d24-b1e6-bc8d8639ac05",
-                    "SdkMessageFilterId": "3ee4329c-e0b6-e611-80f1-3863bb367d68",
-                    "SdkMessageId": "9ebdbb1b-ea3e-db11-86a7-000a3a5473e8",
-                    "Stage": 40
-                  }
-                ]
+                "SourceType": 0
               }
             }
           ]
@@ -1017,6 +1102,29 @@
           ]
         },
         {
+          "Name": "Plugin_Delete_PaymentNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Delete_PaymentNotices.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "8e524f07-cd8c-48aa-902e-3b267786d1ba",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Delete_PaymentNotices.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Update_Email_MapInforToPayment.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -1057,6 +1165,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Update_Installment.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Update_PaymentNotices_Date.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Update_PaymentNotices_Date.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "9191e52c-e8e0-4778-8283-7c5ea356c3bd",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_PaymentNotices_Date.dll",
                 "SourceType": 0
               }
             }
@@ -1140,6 +1271,11 @@
               "CrmId": "aa1dc0ee-32d9-ef11-8ee9-000d3ac84358",
               "FileType": 1,
               "RelativeFilePath": "\\HTML\\report\\bsd_Simulation_Report_InOptionEntryForm.html"
+            },
+            {
+              "CrmId": "6384cc50-1e20-f011-998a-6045bd21931e",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnEmailView.js"
             },
             {
               "CrmId": "e20a49b4-5238-e611-80e7-3863bb36bc80",

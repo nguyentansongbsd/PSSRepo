@@ -62,6 +62,7 @@ namespace Plugin_Updateduedate
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_updateduedate", ConditionOperator.Equal, en.Id.ToString());
             query.Criteria.AddCondition("statuscode", ConditionOperator.Equal, 1);
+            //query.AddOrder("bsd_duedatenew", OrderType.Descending);
             tracingService.Trace($"{en.Id}");
             var rs = service.RetrieveMultiple(query);
             tracingService.Trace($"count:{rs.Entities.Count}");

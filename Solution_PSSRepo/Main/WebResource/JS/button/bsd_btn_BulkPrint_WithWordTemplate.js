@@ -57,14 +57,6 @@ function RegisterModal() {
         script3.src = window.top.Xrm.Page.context.getClientUrl() + "/webresources/bsd_CrmFetchKit.js";
         window.parent.document.head.appendChild(script3);
     }
-    var script4 = window.parent.document.getElementById("bsd_Payment_Notices.html");
-    if (script4 == null) {
-        script4 = window.parent.document.createElement("script");
-        script4.type = "text/javascript";
-        script4.id = "bsd_Payment_Notices.html";
-        script4.src = window.top.Xrm.Page.context.getClientUrl() + "/webresources/bsd_Payment_Notices.html";
-        window.parent.document.head.appendChild(script4);
-    }
 
 }
 ready();
