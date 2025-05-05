@@ -95,6 +95,7 @@ function UpdateStatus_SendMail(item) {
     Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml).then(function (resutl) {
         var filenameroot = "";
         result.entities.forEach(function (email) {
+            window.parent.processingDlg.show();
             if (email.bsd_entityname) {
                 switch (email.bsd_entityname) {
                     case "bsd_payment":
@@ -121,7 +122,8 @@ function UpdateStatus_SendMail(item) {
                     }).then(response => {
                         debugger;
                         if (response.status == 200) {
-                            Xrm.Utility.closeProgressIndicator();
+                            window.parent.processingDlg.hide();
+
                         }
                     }).then(data => {
 
