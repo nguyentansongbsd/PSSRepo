@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33214.272
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_ApplyDocument", "Action_ApplyDocument.csproj", "{84A66969-5E46-4003-A196-1F6C10090E6B}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CustomerNotices_GenerateCustomerNotices", "..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices.csproj", "{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Update_Installment", "..\Solution_PSSRepo\Main\Plugin_Update_Installment\Plugin_Update_Installment.csproj", "{AF7B9608-EFC2-418A-83E9-520388DE854D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Approve", "..\Solution_PSSRepo\Main\Plugin_Approve\Plugin_Approve.csproj", "{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,8 +53,15 @@ Global
 		{AF7B9608-EFC2-418A-83E9-520388DE854D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF7B9608-EFC2-418A-83E9-520388DE854D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF7B9608-EFC2-418A-83E9-520388DE854D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {196C965C-E855-4AD6-8C35-8DF922D27463}
 	EndGlobalSection
 EndGlobal
