@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,8 +49,12 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             try
             {
                 if (this.target.Contains("bsd_unittype")) return;
+                EntityReference enfUnitType = getUnitType();
+                if (enfUnitType == null) return;
+                EntityReference enfUnitSpec = findUnitsSpec(enfUnitType);
                 Entity enOption = new Entity(this.target.LogicalName, this.target.Id);
                 enOption["bsd_unittype"] = getUnitType();
+                enOption["bsd_unitsspecification"] = enfUnitSpec != null ? enfUnitSpec : null;
                 this.service.Update(enOption);
             }
             catch (InvalidPluginExecutionException ex)
@@ -141,6 +146,34 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             {
                 throw ex;
             }
+        }
+        private EntityReference findUnitsSpec(EntityReference unitType)
+        {
+            EntityReference enfUnitSpec = null;
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_unitsspecification"">
+                   <attribute name=""statuscode"" />
+                    <link-entity name=""bsd_bsd_unitsspecification_bsd_unittype"" from=""bsd_unitsspecificationid"" to=""bsd_unitsspecificationid"" intersect=""true"">
+                      <filter>
+                        <condition attribute=""bsd_unittypeid"" operator=""eq"" value=""{unitType.Id}"" />
+                      </filter>
+                    </link-entity>
+                  </entity>
+                </fetch>";
+            var result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count == 0) throw new InvalidPluginExecutionException("There is no Unit Types associated with the Units Specifications.");
+            else if (result.Entities.Count == 1)
+            {
+                Entity enUnitSpec = result.Entities[0];
+                if (((OptionSetValue)enUnitSpec["statuscode"]).Value == 1) throw new InvalidPluginExecutionException("Please Approve the Units Specifications before proceeding.");
+                enfUnitSpec = enUnitSpec.ToEntityReference();
+            }
+            else // lon hon 1
+            {
+                throw new InvalidPluginExecutionException("Unit Type is linked to more than one Units Specifications.");
+            }
+            return enfUnitSpec;
         }
     }
 }
