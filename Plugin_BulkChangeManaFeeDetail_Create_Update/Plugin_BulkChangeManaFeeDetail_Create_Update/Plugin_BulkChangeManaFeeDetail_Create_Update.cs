@@ -48,7 +48,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                     EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
                     foreach (Entity entity in list2.Entities)
                     {
-                        enUp["bsd_project"] = (EntityReference)enTarget["bsd_project"];
+                        enUp["bsd_project"] = (EntityReference)entity["bsd_project"];
                         enUp["bsd_numberofmonthspaidmfcurrent"] = entity.Contains("bsd_numberofmonthspaidmf") ? (int)entity["bsd_numberofmonthspaidmf"] : 0;
                         enUp["bsd_managementfeecurrent"] = entity.Contains("bsd_managementfee") ? (Money)entity["bsd_managementfee"] : new Money(0);
                         if (!enTarget.Contains("bsd_units"))
