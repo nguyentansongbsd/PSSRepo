@@ -33,8 +33,8 @@ namespace Plugin_Update_Email_MapInforToPayment
             {
                 var enMap = service.Retrieve(enTarget["bsd_entityname"].ToString(), new Guid(enTarget["bsd_entityid"].ToString()),new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                 var enUpdate=new Entity(enMap.LogicalName,enMap.Id);
-                enUpdate["sd_emailstatus"] = enTarget["statecode"];
-                enUpdate["bsd_datesent"] = DateTime.Now;
+                enUpdate["bsd_emailstatus"] = enTarget["statuscode"];
+                enUpdate["bsd_datesent"] = DateTime.UtcNow.AddHours(7);
                 service.Update(enUpdate);
             }
 

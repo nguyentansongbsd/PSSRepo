@@ -142,9 +142,9 @@
         var countListid = 0;
         debugger;
         $(document).ready(function (doc) {
-
+            var confirmOptions = { height: 200, width: 450 };
             var typecode = window.top.entityTypeCode;
-            console.log()
+            console.log(typecode);
             var fetchXml = `
                 <fetch>
                   <entity name="documenttemplate">
@@ -217,8 +217,13 @@
             CrateEmailPA(idrecord, reportId, entityname, "");
 
         }
+      
         function CrateEmailPA(lstid, templateid) {
             var url = "https://prod-47.southeastasia.logic.azure.com:443/workflows/eef0b68534d242ac9c7384623d0310a2/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dh10bNa8innN4RJ3nUgDfEPAhTHXox69f73VqSSA6HM";
+            if (window.top.entityname == "bsd_customernotices") {
+                url = "https://prod-78.southeastasia.logic.azure.com:443/workflows/f45116a1937b4f20ab232604c3a6f987/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jFGvhuwSWhle6VEcV4LZ2XSmDxxHGWj4ZigifmxhC-A";
+
+            }
             Xrm.Utility.showProgressIndicator("Please Wait!...");
             var fetchXml = `
                 <fetch>
@@ -226,7 +231,7 @@
                     <attribute name="bsd_name" />
                     <attribute name="bsd_documentsid" />
                     <filter>
-                      <condition attribute="bsd_name" operator="eq" value="${templateName}" />
+                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
                     </filter>
                   </entity>
                 </fetch>`;

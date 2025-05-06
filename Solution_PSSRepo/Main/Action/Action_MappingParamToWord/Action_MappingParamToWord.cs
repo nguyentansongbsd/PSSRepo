@@ -74,6 +74,16 @@ namespace Action_MappingParamToWord
 
                                 // Thay thế đoạn văn bản
                                 textElement.Text = replacementValue;
+                                if (replacementValue.Contains("\n"))
+                                {
+                                    // Xử lý chuỗi có xuống dòng
+                                    InsertTextWithLineBreaks(textElement, replacementValue, wordDoc);
+                                }
+                                else
+                                {
+                                    // Nếu không có xuống dòng, thực hiện thay thế thông thường
+                                    textElement.Text = replacementValue;
+                                }
                             }
                         }
 
@@ -96,6 +106,16 @@ namespace Action_MappingParamToWord
 
                                             // Thay thế đoạn văn bản
                                             textElement.Text = replacementValue;
+                                            if (replacementValue.Contains("\n"))
+                                            {
+                                                // Xử lý chuỗi có xuống dòng
+                                                InsertTextWithLineBreaks(textElement, replacementValue, wordDoc);
+                                            }
+                                            else
+                                            {
+                                                // Nếu không có xuống dòng, thực hiện thay thế thông thường
+                                                textElement.Text = replacementValue;
+                                            }
                                         }
                                     }
                                 }
@@ -112,6 +132,42 @@ namespace Action_MappingParamToWord
             {
                 tracingService.Trace($"Error: {ex.Message}");
                 throw;
+            }
+        }
+        private void InsertTextWithLineBreaks(Text textElement, string replacementValue, WordprocessingDocument wordDoc)
+        {
+            // Tách chuỗi thành các dòng
+            string[] lines = replacementValue.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            if (lines.Length == 1)
+            {
+                // Nếu chỉ có một dòng, thực hiện thay thế thông thường
+                textElement.Text = replacementValue;
+                return;
+            }
+
+            // Lấy phần tử cha (Run) của Text
+            var run = textElement.Parent as Run;
+            if (run == null)
+            {
+                // Nếu không có phần tử cha, chỉ thay thế nội dung
+                textElement.Text = replacementValue.Replace("\n", " ").Replace("\r", "");
+                return;
+            }
+
+            // Xóa Text hiện tại
+            textElement.Remove();
+
+            // Thêm dòng đầu tiên
+            run.AppendChild(new Text(lines[0]));
+
+            // Thêm các dòng còn lại với break line
+            for (int i = 1; i < lines.Length; i++)
+            {
+                // Thêm break line
+                run.AppendChild(new Break());
+                // Thêm text mới
+                run.AppendChild(new Text(lines[i]));
             }
         }
         public void PrintContentControlsFromBase64(string base64Word,string jsonInput)

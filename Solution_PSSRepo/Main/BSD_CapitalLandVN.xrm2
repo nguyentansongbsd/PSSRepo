@@ -451,6 +451,29 @@
           ]
         },
         {
+          "Name": "Action_GetEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetEmailMessageAndUpdatePendingSend.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "1422eafb-4e5c-4a9c-9577-66df1ea47b03",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_GetMailFromAndTo.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -468,6 +491,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_GetMailFromAndTo.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetParamTransactionPayment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetParamTransactionPayment.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "6a14825a-2836-40ba-aa81-f44ba7b7b6f5",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetParamTransactionPayment.dll",
                 "SourceType": 0
               }
             }
@@ -1132,6 +1178,11 @@
               "CrmId": "00000000-0000-0000-0000-000000000000",
               "FileType": 26,
               "RelativeFilePath": "\\Plugin_Update_Email_MapInforToPayment.cs"
+            },
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Update_Email_MapInforToPayment.cs"
             }
           ],
           "Properties": [
@@ -1142,7 +1193,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Update_Email_MapInforToPayment.dll",
-                "SourceType": 0
+                "SourceType": 0,
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 1,
+                    "Id": "98cd800f-fcd1-4025-9835-8d24c69091fe",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Update - Email - Post-operation",
+                    "PluginTypeId": "d1037ec5-9a05-43d3-a3a7-0c1d40491808",
+                    "SdkMessageFilterId": "3fc9bb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "SdkMessageId": "20bebb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40
+                  }
+                ]
               }
             }
           ]

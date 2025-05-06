@@ -32,10 +32,13 @@ namespace Action_CreateEmailMessage
             try
             {
                 // Lấy các tham số đầu vào
-                string entityName = context.InputParameters["entityName"].ToString().Substring(0, context.InputParameters["entityName"].ToString().Length-1);
+                string entityIdBulkSendMail = context.InputParameters.Contains("entityIdBulkSendMail") ? context.InputParameters["entityIdBulkSendMail"].ToString() : "";
+                string entityName = context.InputParameters["entityName"].ToString().Substring(0, context.InputParameters["entityName"].ToString().Length - 1);
                 Guid entityMainId = new Guid(context.InputParameters["entityMainId"].ToString());
                 string base64FileAttach = context.InputParameters["base64FileAttach"].ToString();
-                entityMain = service.Retrieve(entityName, entityMainId,new ColumnSet(true));
+                entityMain = service.Retrieve(entityName, entityMainId, new ColumnSet(true));
+                var enProjectRef = (EntityReference)entityMain["bsd_project"];
+                enProject = service.Retrieve("bsd_project", enProjectRef.Id, new ColumnSet(true));
                 enUserAction = service.Retrieve("systemuser", new Guid(context.InputParameters["userAction"].ToString()), new ColumnSet(true));
                 tracingService.Trace("step0");
                 enCus = GetEntityCustomer();
@@ -49,8 +52,33 @@ namespace Action_CreateEmailMessage
                 Entity emailMessage = new Entity("email");
                 // Thiết lập các thuộc tính cho email message
                 emailMessage["description"] = GetEmailTemplate(); // Nội dung email
-                tracingService.Trace("step4");
+                emailMessage["bsd_entityname"] = entityName;
+                emailMessage["bsd_entityid"] = entityMainId.ToString();
+                emailMessage["bsd_emailcreator"] = enUserAction.ToEntityReference();
+                if (entityIdBulkSendMail == "")
+                {
+                    var enBulkSendManager = new Entity("bsd_bulksendmailmanager");
+                    enBulkSendManager["bsd_project"] = enProjectRef;
+                    string name = "";
+                    if (entityName == "bsd_payment")
+                    {
+                        enBulkSendManager["bsd_types"] = new OptionSetValue(100000000);
+                        name = "Confirm Payment";
+                    }
+                    else
+                    {
+                        enBulkSendManager["bsd_types"] = new OptionSetValue(100000001);
+                        name = "Payment Notices";
 
+                    }
+                    enBulkSendManager["bsd_name"] = name + $"-{enProject["bsd_name"]}-{DateTime.UtcNow.AddHours(7)}";
+                    enBulkSendManager["ownerid"] = enUserAction.ToEntityReference();
+                    var id= service.Create(enBulkSendManager).ToString();
+                    context.OutputParameters["idBulkSendMail"] = id;
+                    entityIdBulkSendMail = id;
+                }
+                emailMessage["bsd_bulksendmailmanager"] = new EntityReference("bsd_bulksendmailmanager", new Guid(entityIdBulkSendMail));
+                tracingService.Trace("step4");
                 emailMessage["subject"] = GetSubject(); // Tiêu đề email
                 tracingService.Trace("step5");
 
@@ -94,6 +122,8 @@ namespace Action_CreateEmailMessage
                     query_title = "Comfirm Payment";
                     break;
                 default:
+                    query_title = "Payment Notice";
+
                     break;
             }
             var query = new QueryExpression("template");
@@ -102,6 +132,7 @@ namespace Action_CreateEmailMessage
             var rs = service.RetrieveMultiple(query);
             if (rs.Entities.Count > 0)
             {
+                tracingService.Trace("##");
                 tracingService.Trace("GetEmailTemplate:" + rs.Entities.Count);
                 enEmailTemplate = rs.Entities[0];
                 return MapParamMailTemplate(rs.Entities[0]["safehtml"].ToString());
@@ -113,7 +144,7 @@ namespace Action_CreateEmailMessage
             switch (entityMain.LogicalName)
             {
                 case "bsd_payment":
-                    mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}",GetSignMail());
+                    mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
                     break;
                 default:
                     break;
@@ -132,6 +163,8 @@ namespace Action_CreateEmailMessage
                     entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
                 default:
+                    entityReference = (EntityReference)entityMain["bsd_customer"];
+                    entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
             }
             return entity;
@@ -147,6 +180,8 @@ namespace Action_CreateEmailMessage
                     entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
                 default:
+                    entityReference = (EntityReference)entityMain["bsd_units"];
+                    entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
             }
             return entity;
@@ -162,21 +197,31 @@ namespace Action_CreateEmailMessage
                     entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
                 default:
+                    entityReference = (EntityReference)entityMain["bsd_project"];
+                    entity = service.Retrieve(entityReference.LogicalName, entityReference.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                     break;
             }
             return entity;
         }
         private string GetSubject()
         {
+            tracingService.Trace("****1"+ enEmailTemplate["subjectsafehtml"].ToString());
+            tracingService.Trace("****1" + enUnit["name"].ToString());
+            tracingService.Trace("****1" + enProject["bsd_name"].ToString());
+
             string subject = "";
             switch (entityMain.LogicalName)
             {
                 case "bsd_payment":
+                    tracingService.Trace(enEmailTemplate.Id.ToString());
                     subject = enEmailTemplate["subjectsafehtml"].ToString().Replace("{project}", enProject["bsd_name"].ToString()).Replace("{unitname}", enUnit["name"].ToString());
                     break;
                 default:
+                    tracingService.Trace(enEmailTemplate.Id.ToString());
+                    subject = enEmailTemplate["subjectsafehtml"].ToString().Replace("{project}", enProject["bsd_name"].ToString()).Replace("{unitname}", enUnit["name"].ToString());
                     break;
             }
+            tracingService.Trace(subject);
             return subject;
 
         }
@@ -195,7 +240,6 @@ namespace Action_CreateEmailMessage
                 var userSystem = service.Retrieve("systemuser", ((EntityReference)item["bsd_usersystem"]).Id, new ColumnSet(true));
                 if (((OptionSetValue)item["bsd_type"]).Value == 100000001)
                 {
-
                     Entity fromparty = new Entity("activityparty");
                     fromparty["addressused"] = userSystem["internalemailaddress"].ToString();
                     fromparty["partyid"] = item["bsd_usersystem"];
@@ -230,20 +274,20 @@ namespace Action_CreateEmailMessage
         private void MapToMail(Entity entity)
         {
             Entity toparty = new Entity("activityparty");
-            if(enCus.LogicalName=="contact")
+            if (enCus.LogicalName == "contact")
             {
-                toparty["addressused"] = enCus.Contains("bsd_email2") ? enCus["bsd_email2"].ToString() : (enCus.Contains("emailaddress11")? enCus["emailaddress11"].ToString():(enCus.Contains("emailaddress1")? enCus["emailaddress1"].ToString():null));
+                toparty["addressused"] = enCus.Contains("bsd_email2") ? enCus["bsd_email2"].ToString() : (enCus.Contains("emailaddress11") ? enCus["emailaddress11"].ToString() : (enCus.Contains("emailaddress1") ? enCus["emailaddress1"].ToString() : null));
             }
             else
             {
                 toparty["addressused"] = enCus.Contains("bsd_email2") ? enCus["bsd_email2"].ToString() : (enCus.Contains("emailaddress11") ? enCus["emailaddress11"].ToString() : (enCus.Contains("emailaddress1") ? enCus["emailaddress1"].ToString() : null));
-            }    
+            }
             toparty["partyid"] = new EntityReference(enCus.LogicalName, enCus.Id);
             entity["to"] = new Entity[] { toparty };
         }
         private string GenFileNameAttach()
         {
-            return enProject["bsd_name"].ToString() + "_ConfirmPayment_" +enUnit["name"].ToString()+".docx";
+            return enProject["bsd_name"].ToString() + "_ConfirmPayment_" + enUnit["name"].ToString() + ".docx";
         }
         private string GetFullNameCustomer()
         {
@@ -267,10 +311,10 @@ namespace Action_CreateEmailMessage
             query.TopCount = 50; query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("ownerid", ConditionOperator.Equal, enUserAction.Id.ToString());
             var rs = service.RetrieveMultiple(query);
-            if(rs.Entities.Count > 0)
+            if (rs.Entities.Count > 0)
             {
                 return rs.Entities[0]["safehtml"].ToString();
-            }    
+            }
             else return "";
 
         }

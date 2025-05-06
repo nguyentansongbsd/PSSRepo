@@ -481,7 +481,7 @@ namespace Plugin_AutoShareRecord
           bool FinTeam,
           bool SaleMgtTeam)
         {
-            string str = "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\r\n                  <entity name='team' >\r\n                    <attribute name='name' />\r\n                    <attribute name='teamid' />\r\n                    <filter type='and' >\r\n                      <condition attribute='name' operator='like' value='%{0}%' />";
+            string str = "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\r\n                  <entity name='team' >\r\n                    <attribute name='name' />\r\n                    <attribute name='teamid' />\r\n                    <filter type='and' >\r\n                      <condition attribute='name' operator='like' value='%{0}-%' />";
             if (SaleTeam | CcrTeam | FinTeam | SaleMgtTeam)
                 str += "<filter type='or' >";
             if (SaleTeam)
