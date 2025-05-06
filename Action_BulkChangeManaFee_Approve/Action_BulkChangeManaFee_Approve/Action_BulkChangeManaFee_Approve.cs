@@ -105,7 +105,7 @@ namespace Action_BulkChangeManaFee_Approve
                     {
                         Id = enUnit.Id,
                         ["bsd_managementamountmonth"] = new Money(bsd_managementamountmonth_new),
-                        ["bsd_numberofmonthspaidmf"] = new Money(bsd_numberofmonthspaidmfnew)
+                        ["bsd_numberofmonthspaidmf"] = bsd_numberofmonthspaidmfnew
                     });
                 }
                 service.Update(new Entity(en_detail.LogicalName)
