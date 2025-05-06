@@ -42,6 +42,9 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ILMerge">
+      <Version>3.0.41</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies">
       <Version>9.0.0.7</Version>
     </PackageReference>

@@ -325,7 +325,7 @@ namespace Plugin_AutoShareRecord
                 if (inputParameter.LogicalName == "bsd_discount")
                 {
                     var en = service.Retrieve(logicalName, inputParameter.Id,new ColumnSet(true));
-                    if (((bool)en["bsd_applyafterpl"]) == false)
+                    if (!en.Contains("bsd_applyafterpl")||((bool)en["bsd_applyafterpl"]) == false)
                         return;
                     if (((OptionSetValue)en["statuscode"]).Value== 100000000)
                     {

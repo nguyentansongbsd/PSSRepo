@@ -24,7 +24,7 @@ namespace Plugin_ConvertToOptionEntry
             EntityReference enfOE = (EntityReference)inputParameter["salesorderid"];
             Entity enOE = this.service.Retrieve(enfOE.LogicalName, enfOE.Id, new ColumnSet(new string[]
             {
-                "quoteid"
+                "quoteid", "bsd_unittype"
             }));
             if (!enOE.Contains("quoteid"))
                 return;
@@ -65,9 +65,9 @@ namespace Plugin_ConvertToOptionEntry
             enOENew["bsd_totalamountpaid"] = enQuote.Contains("bsd_totalamountpaid") ? enQuote["bsd_totalamountpaid"] : (object)null;
             if (enQuote.Contains("bsd_unitno"))
             {
-                //EntityCollection unitsSpec = this.findUnitsSpec(this.service, (EntityReference)entity2["bsd_unitno"]);
-                //if (((Collection<Entity>)unitsSpec.Entities).Count > 0)
-                //    entity3["bsd_unitsspecification"] = (object)((Collection<Entity>)unitsSpec.Entities)[0].ToEntityReference();
+                EntityReference unitsSpec = this.findUnitsSpec(this.service, (EntityReference)enOE["bsd_unittype"]);
+                enOENew["bsd_unitsspecification"] = unitsSpec != null ? unitsSpec : null;
+
                 Entity entity4 = this.service.Retrieve(((EntityReference)enQuote["bsd_unitno"]).LogicalName, ((EntityReference)enQuote["bsd_unitno"]).Id, new ColumnSet(new string[1]
                 {
           "bsd_estimatehandoverdate"
@@ -115,10 +115,35 @@ namespace Plugin_ConvertToOptionEntry
             return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
 
-        private EntityCollection findUnitsSpec(IOrganizationService crmservices, EntityReference units)
+        private EntityReference findUnitsSpec(IOrganizationService crmservices, EntityReference unitType)
         {
-            string str = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                  <entity name='bsd_unitsspecification'>\r\n                    <attribute name='bsd_unitsspecificationid' />\r\n                    <order attribute='createdon' descending='true' />\r\n                    <link-entity name='bsd_unittype' from='bsd_unittypeid' to='bsd_unittype' alias='ac'>\r\n                      <link-entity name='product' from='bsd_unittype' to='bsd_unittypeid' alias='ad'>\r\n                        <filter type='and'>\r\n                          <condition attribute='productid' operator='eq'  uitype='product' value='{0}' />\r\n                        </filter>\r\n                      </link-entity>\r\n                    </link-entity>\r\n                  </entity>\r\n                </fetch>", (object)units.Id);
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(str));
+            EntityReference enfUnitSpec = null;
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_unitsspecification"">
+                   <attribute name=""statuscode"" />
+                    <link-entity name=""bsd_bsd_unitsspecification_bsd_unittype"" from=""bsd_unitsspecificationid"" to=""bsd_unitsspecificationid"" intersect=""true"">
+                      <filter>
+                        <condition attribute=""bsd_unittypeid"" operator=""eq"" value=""{unitType.Id}"" />
+                      </filter>
+                    </link-entity>
+                  </entity>
+                </fetch>";
+            var result = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count == 0) throw new InvalidPluginExecutionException("There is no Unit Types associated with the Units Specifications.");
+            else if (result.Entities.Count == 1)
+            {
+                Entity enUnitSpec = result.Entities[0];
+                if (((OptionSetValue)enUnitSpec["statuscode"]).Value == 1) throw new InvalidPluginExecutionException("Please Approve the Units Specifications before proceeding.");
+                enfUnitSpec = enUnitSpec.ToEntityReference();
+            }
+            else // lon hon 1
+            {
+                throw new InvalidPluginExecutionException("Unit Type is linked to more than one Units Specifications.");
+            }
+            return enfUnitSpec;
+            // string str = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                  <entity name='bsd_unitsspecification'>\r\n                    <attribute name='bsd_unitsspecificationid' />\r\n                    <order attribute='createdon' descending='true' />\r\n                    <link-entity name='bsd_unittype' from='bsd_unittypeid' to='bsd_unittype' alias='ac'>\r\n                      <link-entity name='product' from='bsd_unittype' to='bsd_unittypeid' alias='ad'>\r\n                        <filter type='and'>\r\n                          <condition attribute='productid' operator='eq'  uitype='product' value='{0}' />\r\n                        </filter>\r\n                      </link-entity>\r\n                    </link-entity>\r\n                  </entity>\r\n                </fetch>", (object)units.Id);
+            // return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
 
         private EntityCollection findFirstInstallment(

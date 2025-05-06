@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ServiceHelper;
 namespace Action_UpdateLandValue_Detail
 {
     public class Action_UpdateLandValue_Detail : IPlugin
@@ -18,6 +18,7 @@ namespace Action_UpdateLandValue_Detail
         Entity en = new Entity();
         string enHD_name = "";
         string enIntalments_fieldNameHD = "";
+        ServiceHelper.ServiceHelper serviceHelper = null;
         public void Execute(IServiceProvider serviceProvider)
         {
 
@@ -27,6 +28,9 @@ namespace Action_UpdateLandValue_Detail
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             //get entity
             string enDetailid = context.InputParameters["id"].ToString();
+            string userid = context.InputParameters["userid"].ToString();
+            EntityReference user = new EntityReference("systemuser", new Guid(userid));
+            serviceHelper = new ServiceHelper.ServiceHelper(service, user,tracingService,"Approve_Update_Land_Value");
             en = service.Retrieve("bsd_landvalue", new Guid(enDetailid), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             var item = en;
             if (!CheckConditionRun(en))
@@ -37,6 +41,7 @@ namespace Action_UpdateLandValue_Detail
             var status = ((OptionSetValue)en["statuscode"]).Value;
             tracingService.Trace("start :" + status);
             tracingService.Trace("enDetailid :" + enDetailid);
+            
             //check status
             var result = true;
             try
@@ -48,7 +53,7 @@ namespace Action_UpdateLandValue_Detail
                 if(((OptionSetValue)entity4["bsd_type"]).Value == 100000001)
                 {
                     tracingService.Trace("step1.1");
-                    this.service.Update(new Entity(entity3.LogicalName, entity3.Id)
+                    serviceHelper.Update(new Entity(entity3.LogicalName, entity3.Id)
                     {
                         ["statecode"] = (object)new OptionSetValue(0),
                         ["statuscode"] = (object)new OptionSetValue(100000002)
@@ -57,7 +62,7 @@ namespace Action_UpdateLandValue_Detail
                 else if (((OptionSetValue)entity4["bsd_type"]).Value == 100000000)
                 {
                     tracingService.Trace("step1.2");
-                    this.service.Update(new Entity(entity3.LogicalName, entity3.Id)
+                    serviceHelper.Update(new Entity(entity3.LogicalName, entity3.Id)
                     {
                         ["statecode"] = (object)new OptionSetValue(0),
                         ["statuscode"] = (object)new OptionSetValue(100000002)
@@ -87,7 +92,7 @@ namespace Action_UpdateLandValue_Detail
                     EntityReference entityReference2 = entity4.Contains("bsd_units") ? (EntityReference)entity4["bsd_units"] : (EntityReference)null;
                     this.service.Retrieve(entityReference2.LogicalName, entityReference2.Id, new ColumnSet(true));
                     //#update
-                    this.service.Update(new Entity(entity5.LogicalName, entity5.Id)
+                    serviceHelper.Update(new Entity(entity5.LogicalName, entity5.Id)
                     {
                         ["bsd_landvaluededuction"] = (object)new Money(num5),
                         ["totaltax"] = (object)new Money(num6),
@@ -97,7 +102,7 @@ namespace Action_UpdateLandValue_Detail
                     tracingService.Trace("step4");
 
                     //#update
-                    this.service.Update(new Entity("salesorderdetail", this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("\r\n                        <fetch>\r\n                          <entity name='salesorderdetail'>\r\n                            <all-attributes />\r\n                            <filter>\r\n                              <condition attribute='salesorderid' operator='eq' value='{0}'/>\r\n                            </filter>\r\n                          </entity>\r\n                        </fetch>", (object)entity5.Id))).Entities[0].Id)
+                    serviceHelper.Update(new Entity("salesorderdetail", this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("\r\n                        <fetch>\r\n                          <entity name='salesorderdetail'>\r\n                            <all-attributes />\r\n                            <filter>\r\n                              <condition attribute='salesorderid' operator='eq' value='{0}'/>\r\n                            </filter>\r\n                          </entity>\r\n                        </fetch>", (object)entity5.Id))).Entities[0].Id)
                     {
                         ["tax"] = (object)new Money(num6),
                         ["extendedamount"] = (object)new Money(num1 + num6)
@@ -126,7 +131,7 @@ namespace Action_UpdateLandValue_Detail
                             enUpdate["bsd_balance"] =new Money( bsd_amountofthisphase - bsd_depositamount - bsd_amountwaspaid - bsd_waiverinstallment);
                             tracingService.Trace("step7");
                             #endregion
-                            this.service.Update(enUpdate);
+                            serviceHelper.Update(enUpdate);
                         }
                     }
                 }
@@ -135,7 +140,7 @@ namespace Action_UpdateLandValue_Detail
                     EntityReference entityReference = entity4.Contains("bsd_units") ? (EntityReference)entity4["bsd_units"] : (EntityReference)null;
                     Entity entity7 = this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(true));
                     //#update
-                    this.service.Update(new Entity(entity7.LogicalName, entity7.Id)
+                    serviceHelper.Update(new Entity(entity7.LogicalName, entity7.Id)
                     {
                         ["bsd_landvalueofunit"] = entity4["bsd_landvaluenew"]
                     });
@@ -150,27 +155,31 @@ namespace Action_UpdateLandValue_Detail
        
         public void HandleError(Entity item, string error)
         {
+            var enDetailUpdate=new Entity(item.LogicalName, item.Id);
+            enDetailUpdate["bsd_errordetail"] = error;
+            enDetailUpdate["statuscode"] = new OptionSetValue(100000005);
+            service.Update(enDetailUpdate);
             var enMasterRef = (EntityReference)item["bsd_updatelandvalue"];
             var enMaster = new Entity("bsd_updatelandvalue", enMasterRef.Id);
             enMaster["bsd_error"] = true;
-            enMaster["bsd_errordetail"] = error;
+            enMaster["bsd_errordetail"] = "Error exist. Please check (View Error) for detail";
             enMaster["bsd_processing_pa"] = false;
-            enMaster["statuscode"] = new OptionSetValue(1);
-            service.Update(enMaster);
+            serviceHelper.Update(enMaster);
         }
         public bool CheckConditionRun(Entity item)
         {
-            var enMasterRef = (EntityReference)item["bsd_updatelandvalue"];
-            var enMaster = service.Retrieve("bsd_updatelandvalue", enMasterRef.Id, new ColumnSet(true));
-            tracingService.Trace($"masterid {enMaster.Id}");
-            if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return true;
+            //var enMasterRef = (EntityReference)item["bsd_updatelandvalue"];
+            //var enMaster = service.Retrieve("bsd_updatelandvalue", enMasterRef.Id, new ColumnSet(true));
+            //tracingService.Trace($"masterid {enMaster.Id}");
+            //if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
+            //{
+            //    return false;
+            //}
+            //else
+            //{
+            //    return true;
+            //}
 
         }
     }

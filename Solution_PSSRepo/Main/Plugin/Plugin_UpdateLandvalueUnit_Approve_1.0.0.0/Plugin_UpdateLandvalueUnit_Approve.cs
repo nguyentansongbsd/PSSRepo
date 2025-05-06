@@ -121,6 +121,7 @@ namespace Plugin_UpdateLandvalueUnit_Approve
                     string listid = string.Join(",", entityCollection.Entities.Select(x => x.Id.ToString()));
                     request["listid"] = listid;
                     request["idmaster"] = entity2.Id.ToString();
+                    request["userid"] = context.UserId.ToString();
                     this.service.Execute(request);
                 }
             }

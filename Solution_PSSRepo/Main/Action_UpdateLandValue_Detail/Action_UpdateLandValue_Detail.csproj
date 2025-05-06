@@ -56,5 +56,16 @@
   <ItemGroup>
     <None Include="key.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ServiceHelper\ServiceHelper.csproj">
+      <Project>{3e2eb99a-1298-44e7-9906-367f50f37cdb}</Project>
+      <Name>ServiceHelper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ILMerge">
+      <Version>3.0.41</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
