@@ -27,7 +27,8 @@ namespace Plugin_AutoShareRecord
             IPluginExecutionContext service1 = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             this.factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             this.service = this.factory.CreateOrganizationService(new Guid?(service1.UserId));
-            ITracingService service2 = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            ITracingService traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            traceService.Trace("start");
             if (!(service1.MessageName == "Create") && !(service1.MessageName == "Update"))
                 return;
             Entity inputParameter = (Entity)service1.InputParameters["Target"];
@@ -352,7 +353,7 @@ namespace Plugin_AutoShareRecord
                         EntityCollection teamAccess = this.Get_TeamAccess(projectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
                         foreach ( Entity entity in teamAccess.Entities )
                         {
-                            service2.Trace($"teams {entity["name"]}");
+                            traceService.Trace($"teams {entity["name"]}");
                         }
                         if (teamAccess.Entities.Count > 0)
                         {
@@ -366,7 +367,8 @@ namespace Plugin_AutoShareRecord
                         }
                     }    
                 }    
-            }    
+            }
+            Plugin_AutoShareRecord_V2_1.Run(service, traceService, inputParameter, service1);
         }
 
         private void Role_SharePrivileges(
