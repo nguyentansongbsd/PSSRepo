@@ -107,6 +107,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                     warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
                                             }
 
+                                            if (!string.IsNullOrWhiteSpace(owner))
+                                            {
+                                                traceService.Trace("owner: " + owner);
+                                                warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                            }
                                             var id = service.Create(warningNotices);
                                             var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
                                             dem++;
