@@ -21,7 +21,9 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
             traceServiceClass = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-            if (context.MessageName == "Create" && context.Depth > 2)
+            //traceServiceClass.Trace("Plugin_BulkChangeManaFeeDetail_Create_Update");
+            //traceServiceClass.Trace("context.context " + context.Depth);
+            if (context.MessageName == "Create" && context.Depth <= 2)
             {
                 Entity target = (Entity)context.InputParameters["Target"];
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
@@ -37,6 +39,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                             <attribute name=""bsd_managementfee"" />
                             <attribute name=""bsd_numberofmonthspaidmf"" />
                             <attribute name=""bsd_unitnumber"" />
+                            <attribute name=""bsd_project"" />
                             <filter>
                               <condition attribute='salesorderid' operator='eq' value='{((EntityReference)enTarget["bsd_optionentry"]).Id}'/>
                             </filter>
@@ -45,6 +48,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                     EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
                     foreach (Entity entity in list2.Entities)
                     {
+                        enUp["bsd_project"] = (EntityReference)enTarget["bsd_project"];
                         enUp["bsd_numberofmonthspaidmfcurrent"] = entity.Contains("bsd_numberofmonthspaidmf") ? (int)entity["bsd_numberofmonthspaidmf"] : 0;
                         enUp["bsd_managementfeecurrent"] = entity.Contains("bsd_managementfee") ? (Money)entity["bsd_managementfee"] : new Money(0);
                         if (!enTarget.Contains("bsd_units"))
