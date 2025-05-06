@@ -16,6 +16,7 @@ namespace Action_InterestSimulation_CalculateSimulation
         static int intCount = 0;
         private static Entity enInstallment;
         public static Installment objIns = new Installment();
+        public static ITracingService TracingSe = null;
 
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
@@ -23,29 +24,29 @@ namespace Action_InterestSimulation_CalculateSimulation
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            //try
+            //{
+            #region --- Bodye Code ---
 
-            try
-            {
-                #region --- Bodye Code ---
-
-                string interestsimulationid = context.InputParameters["interestsimulationid"].ToString();
-                strMess.AppendLine("interestsimulationid: " + interestsimulationid);
-                string callfrom = context.InputParameters["callfrom"].ToString();
-                strMess.AppendLine("callfrom: " + callfrom);
-                string optinentryid = context.InputParameters["optinentryid"].ToString();
-                strMess.AppendLine("optinentryid: " + optinentryid);
-                string aginginterestsimulationoptionid = context.InputParameters.Contains("aginginterestsimulationoptionid") ? context.InputParameters["aginginterestsimulationoptionid"].ToString() : "";
-                strMess.AppendLine("aginginterestsimulationoptionid: " + aginginterestsimulationoptionid);
-                string strsimulationdate = context.InputParameters["simulationdate"].ToString();
-                strMess.AppendLine("strsimulationdate: " + strsimulationdate);
-                string strdateofinterestcalculation = context.InputParameters["dateofinterestcalculation"].ToString();
-                Main(interestsimulationid, callfrom, optinentryid, aginginterestsimulationoptionid, strsimulationdate, strdateofinterestcalculation);
-            }
-            catch (Exception ex)
-            {
-                strMess.AppendLine(ex.ToString());
-                throw new InvalidPluginExecutionException(strMess.ToString());
-            }
+            string interestsimulationid = context.InputParameters["interestsimulationid"].ToString();
+            TracingSe.Trace("interestsimulationid: " + interestsimulationid);
+            string callfrom = context.InputParameters["callfrom"].ToString();
+            TracingSe.Trace("callfrom: " + callfrom);
+            string optinentryid = context.InputParameters["optinentryid"].ToString();
+            TracingSe.Trace("optinentryid: " + optinentryid);
+            string aginginterestsimulationoptionid = context.InputParameters.Contains("aginginterestsimulationoptionid") ? context.InputParameters["aginginterestsimulationoptionid"].ToString() : "";
+            TracingSe.Trace("aginginterestsimulationoptionid: " + aginginterestsimulationoptionid);
+            string strsimulationdate = context.InputParameters["simulationdate"].ToString();
+            TracingSe.Trace("strsimulationdate: " + strsimulationdate);
+            string strdateofinterestcalculation = context.InputParameters["dateofinterestcalculation"].ToString();
+            Main(interestsimulationid, callfrom, optinentryid, aginginterestsimulationoptionid, strsimulationdate, strdateofinterestcalculation);
+            //}
+            //catch (Exception ex)
+            //{
+            //    TracingSe.Trace(ex.ToString());
+            //    throw new InvalidPluginExecutionException(strMess.ToString());
+            //}
         }
         public static void Main(string interestsimulationid, string callfrom, string optinentryid, string aginginterestsimulationoptionid, string strsimulationdate, string strdateofinterestcalculation)
         {
@@ -58,17 +59,17 @@ namespace Action_InterestSimulation_CalculateSimulation
             DateTime dateofinterestcalculation = new DateTime();
             QueryExpression q1 = new QueryExpression("bsd_paymentschemedetail");
             EntityCollection listInstallment = null;
-            strMess.AppendLine("1");
+            TracingSe.Trace("1");
             if (strsimulationdate != "")
             {
-                strMess.AppendLine("strsimulationdate: " + strsimulationdate);
+                TracingSe.Trace("strsimulationdate: " + strsimulationdate);
                 string[] arrstring = strsimulationdate.Split('-');
                 simulationDate = new DateTime(Convert.ToInt16(arrstring[0]), Convert.ToInt16(arrstring[1]) + 1, Convert.ToInt16(arrstring[2]));
                 simulationDate = RetrieveLocalTimeFromUTCTime(simulationDate);
             }
             if (strdateofinterestcalculation != "")
             {
-                strMess.AppendLine("strdateofinterestcalculation: " + strdateofinterestcalculation);
+                TracingSe.Trace("strdateofinterestcalculation: " + strdateofinterestcalculation);
                 string[] arrstring = strdateofinterestcalculation.Split('-');
                 dateofinterestcalculation = new DateTime(Convert.ToInt16(arrstring[0]), Convert.ToInt16(arrstring[1]) + 1, Convert.ToInt16(arrstring[2]));
                 dateofinterestcalculation = RetrieveLocalTimeFromUTCTime(dateofinterestcalculation);
@@ -145,7 +146,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                                 //q1.Criteria.AddCondition(new ConditionExpression("bsd_duedate", ConditionOperator.OnOrBefore, simulationDate));//Duedate <= simulation date
                                 listInstallment = service.RetrieveMultiple(q1);
                                 simulationoptions = getSimulationOption(enRef.Id.ToString(), oe.ToEntityReference().Id.ToString());
-                                strMess.AppendLine("simulationoptions: " + simulationoptions.Id.ToString());
+                                TracingSe.Trace("simulationoptions: " + simulationoptions.Id.ToString());
                                 if (listInstallment.Entities.Count > 0)
                                 {
                                     DateTime dateCalculate = target.Contains("bsd_dateofinterestcalculation") ? RetrieveLocalTimeFromUTCTime((DateTime)target["bsd_dateofinterestcalculation"]) : simulationDate;
@@ -172,14 +173,14 @@ namespace Action_InterestSimulation_CalculateSimulation
                                     }
                                     #endregion
                                 }
-                                strMess.AppendLine("aaaaaaaaaaaaaaaaaaaaaaaa");
-                                strMess.AppendLine("updateAdvantPayment:" + oe.LogicalName);
-                                strMess.AppendLine("updateAdvantPayment:" + oe["name"].ToString());
-                                strMess.AppendLine("simulationoptions: " + simulationoptions.Id.ToString());
+                                TracingSe.Trace("aaaaaaaaaaaaaaaaaaaaaaaa");
+                                TracingSe.Trace("updateAdvantPayment:" + oe.LogicalName);
+                                TracingSe.Trace("updateAdvantPayment:" + oe["name"].ToString());
+                                TracingSe.Trace("simulationoptions: " + simulationoptions.Id.ToString());
                                 updateNewInterestAmount(oe, simulationoptions, SimuType);
                                 updateAdvantPayment(oe, simulationoptions.Id.ToString());
 
-                                strMess.AppendLine("done");
+                                TracingSe.Trace("done");
 
                             }
 
@@ -190,8 +191,8 @@ namespace Action_InterestSimulation_CalculateSimulation
                     break;
                 case "DelInterestSimulation":
                     #region DelInterestSimulation
-                    strMess.AppendLine("DELETE RECORDS OLD");
-                    strMess.AppendLine("enRef.Id: " + enRef.Id.ToString());
+                    TracingSe.Trace("DELETE RECORDS OLD");
+                    TracingSe.Trace("enRef.Id: " + enRef.Id.ToString());
                     QueryExpression que1 = new QueryExpression("bsd_interestsimulationdetail");
                     que1.ColumnSet = new ColumnSet(new string[1] { "bsd_interestsimulationdetailid" });
                     que1.Criteria = new FilterExpression(LogicalOperator.And);
@@ -236,23 +237,23 @@ namespace Action_InterestSimulation_CalculateSimulation
                     break;
                 case "OptionEntrySOA":
                     #region OptionEntrySOA
-                    strMess.AppendLine("2");
+                    TracingSe.Trace("2");
                     Entity enOptionEntry = service.Retrieve("salesorder", new Guid(optinentryid), new ColumnSet(true));
                     int bsd_type = 100000002;
                     if (callfrom == "InterestSimulation")
                     {
                         bsd_type = 100000001;
                     }
-                    strMess.AppendLine("3");
+                    TracingSe.Trace("3");
 
                     if (callfrom == "InterestSimulation")
                     {
 
                         enInterestSimulation = service.Retrieve(enRef.LogicalName, enRef.Id, new ColumnSet(true));
-                        strMess.AppendLine("enInterestSimulation ID:" + enInterestSimulation.Id.ToString());
+                        TracingSe.Trace("enInterestSimulation ID:" + enInterestSimulation.Id.ToString());
                         bsd_type = ((OptionSetValue)enInterestSimulation["bsd_type"]).Value;
                     }
-                    strMess.AppendLine("4");
+                    TracingSe.Trace("4");
 
                     //DELETE RECORDS OLD
                     QueryExpression que11 = new QueryExpression("bsd_interestsimulationdetail");
@@ -262,7 +263,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                     que11.Criteria.AddCondition(new ConditionExpression("bsd_type", ConditionOperator.Equal, bsd_type));
                     foreach (Entity isd in service.RetrieveMultiple(que11).Entities)
                         service.Delete("bsd_interestsimulationdetail", (Guid)isd["bsd_interestsimulationdetailid"]);
-                    strMess.AppendLine("5");
+                    TracingSe.Trace("5");
                     if (callfrom == "OptionEntrySOA" || callfrom == "InterestSimulation")
                     {
                         q1.ColumnSet = new ColumnSet(true);
@@ -299,8 +300,8 @@ namespace Action_InterestSimulation_CalculateSimulation
                                 filter_Main.AddFilter(filter_paid);
                                 q1.Criteria = filter_Main;
 
-                                strMess.AppendLine("ID OE:" + enOptionEntry.Id);
-                                strMess.AppendLine(string.Format("#Add filter_Main: "));
+                                TracingSe.Trace("ID OE:" + enOptionEntry.Id);
+                                TracingSe.Trace(string.Format("#Add filter_Main: "));
                                 break;
                             case 100000001://Interest Simulation
                                 q1.Criteria = new FilterExpression(LogicalOperator.And);
@@ -314,10 +315,10 @@ namespace Action_InterestSimulation_CalculateSimulation
                                 break;
                         }
 
-                        strMess.AppendLine(string.Format("#Case: {0}", bsd_type));
+                        TracingSe.Trace(string.Format("#Case: {0}", bsd_type));
                         listInstallment = service.RetrieveMultiple(q1);
-                        strMess.AppendLine(string.Format("- List result: {0}", listInstallment.Entities.Count));
-                        strMess.AppendLine(listInstallment.Entities.Count.ToString());
+                        TracingSe.Trace(string.Format("- List result: {0}", listInstallment.Entities.Count));
+                        TracingSe.Trace(listInstallment.Entities.Count.ToString());
                     }
                     else
                     {
@@ -325,7 +326,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                     }
 
 
-                    strMess.AppendLine("6");
+                    TracingSe.Trace("6");
                     Entity enUint11 = service.Retrieve(((EntityReference)enOptionEntry["bsd_unitnumber"]).LogicalName, ((EntityReference)enOptionEntry["bsd_unitnumber"]).Id, new ColumnSet(true));
 
                     if (listInstallment.Entities.Count > 0)
@@ -341,11 +342,11 @@ namespace Action_InterestSimulation_CalculateSimulation
                         }
                         #endregion
                     }
-                    strMess.AppendLine("updateAdvantPayment");
+                    TracingSe.Trace("updateAdvantPayment");
                     updateNewInterestAmount(enOptionEntry, null, bsd_type);
                     updateAdvantPayment(enOptionEntry, "");
 
-                    strMess.AppendLine("done");
+                    TracingSe.Trace("done");
                     //throw new InvalidPluginExecutionException(strMess.ToString());
                     #endregion
                     break;
@@ -385,211 +386,211 @@ namespace Action_InterestSimulation_CalculateSimulation
                 </filter>
                </entity> 
             </fetch>";
-            strMess.AppendLine(xml);
+            TracingSe.Trace(xml);
             EntityCollection encol = service.RetrieveMultiple(new FetchExpression(xml));
             return encol;
         }
         private static void createAgingInterestSimulationDetail(Entity oe, Entity UnitsEn, Entity enInterestSimulation, Entity ins, Entity simulationoptions, DateTime simulationDate, DateTime dateCalculate, decimal interestProjectDaily, int SimuType)
         {
-            try
+            //try
+            //{
+            intCount += 1;
+            TracingSe.Trace("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ dòng thứ " + intCount);
+            if (ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry") || (!ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry")))
             {
-                intCount += 1;
-                strMess.AppendLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ dòng thứ " + intCount);
-                if (ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry") || (!ins.Contains("bsd_appendixcontract") && ins.Contains("bsd_optionentry")))
-                {
-                    // GET INTEREST CHARGE MASTER
-                    if (!oe.Contains("bsd_paymentscheme"))
-                        throw new InvalidPluginExecutionException("Please input Payment Scheme in Option entry: " + (oe.Contains("name") ? oe["name"] : ""));
+                // GET INTEREST CHARGE MASTER
+                if (!oe.Contains("bsd_paymentscheme"))
+                    throw new InvalidPluginExecutionException("Please input Payment Scheme in Option entry: " + (oe.Contains("name") ? oe["name"] : ""));
 
-                    Entity payScheme = service.Retrieve(((EntityReference)oe["bsd_paymentscheme"]).LogicalName, ((EntityReference)oe["bsd_paymentscheme"]).Id,
-                        new ColumnSet(new string[2] {
+                Entity payScheme = service.Retrieve(((EntityReference)oe["bsd_paymentscheme"]).LogicalName, ((EntityReference)oe["bsd_paymentscheme"]).Id,
+                    new ColumnSet(new string[2] {
                                 "bsd_name",
                                 "bsd_interestratemaster"
-                        }));
+                    }));
 
-                    if (!payScheme.Contains("bsd_interestratemaster"))
-                        throw new InvalidPluginExecutionException("Please input Interest Charge Master in Payment Scheme: " + (payScheme.Contains("bsd_name") ? payScheme["bsd_name"] : ""));
-                    var intereststartdatetype = 0;
-                    decimal interestMasterPercent = 0;
-                    DateTime InterestStarDate = new DateTime();
-                    int lateDays = 0;
-                    decimal balance = 0;
-                    decimal interest_New = 0;
-                    decimal interest = 0;
-                    decimal decInterestCharge = 0;
-                    int bsd_numberofdaysdue;
-                    // Số tiền trễ chưa thanh toán
-                    decimal interest_NotPaid = 0;
-                    interest_NotPaid = CalculateInterestNotPaid(ins);
-                    var decInterestAmountIns = CalculateInterestAmount(ins);
-                    objIns = new Installment();
-                    //Gọi tính trễ
+                if (!payScheme.Contains("bsd_interestratemaster"))
+                    throw new InvalidPluginExecutionException("Please input Interest Charge Master in Payment Scheme: " + (payScheme.Contains("bsd_name") ? payScheme["bsd_name"] : ""));
+                var intereststartdatetype = 0;
+                decimal interestMasterPercent = 0;
+                DateTime InterestStarDate = new DateTime();
+                int lateDays = 0;
+                decimal balance = 0;
+                decimal interest_New = 0;
+                decimal interest = 0;
+                decimal decInterestCharge = 0;
+                int bsd_numberofdaysdue;
+                // Số tiền trễ chưa thanh toán
+                decimal interest_NotPaid = 0;
+                interest_NotPaid = CalculateInterestNotPaid(ins);
+                var decInterestAmountIns = CalculateInterestAmount(ins);
+                objIns = new Installment();
+                //Gọi tính trễ
 
-                    Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), ref lateDays, ref interestMasterPercent);
-                    intereststartdatetype = objIns.Intereststartdatetype;
-                    decInterestCharge = objIns.InterestCharge;
-                    InterestStarDate = objIns.InterestStarDate;
-                    Entity interestMaster = service.Retrieve(((EntityReference)payScheme["bsd_interestratemaster"]).LogicalName, ((EntityReference)payScheme["bsd_interestratemaster"]).Id,
-                        new ColumnSet(new string[]
-                        {
+                Calculate_Interest(ins.Id.ToString(), interest_NotPaid.ToString(), dateCalculate.ToString("MM/dd/yyyy"), ref lateDays, ref interestMasterPercent);
+                intereststartdatetype = objIns.Intereststartdatetype;
+                decInterestCharge = objIns.InterestCharge;
+                InterestStarDate = objIns.InterestStarDate;
+                Entity interestMaster = service.Retrieve(((EntityReference)payScheme["bsd_interestratemaster"]).LogicalName, ((EntityReference)payScheme["bsd_interestratemaster"]).Id,
+                    new ColumnSet(new string[]
+                    {
                                 "bsd_intereststartdatetype",
                                 "bsd_gracedays",
                                 "bsd_termsinterestpercentage"
-                        }));
-                    if (!(interestMaster.Contains("bsd_intereststartdatetype") && interestMaster.Contains("bsd_gracedays") && interestMaster.Contains("bsd_termsinterestpercentage")))
-                        throw new InvalidPluginExecutionException("Interest charge master not enough infomation required. Please check again!");
-                    strMess.AppendLine("createAgingInterestSimulationDetail " + ins.Id.ToString());
-                    decimal interestPercent = interestMasterPercent + interestProjectDaily;
+                    }));
+                if (!(interestMaster.Contains("bsd_intereststartdatetype") && interestMaster.Contains("bsd_gracedays") && interestMaster.Contains("bsd_termsinterestpercentage")))
+                    throw new InvalidPluginExecutionException("Interest charge master not enough infomation required. Please check again!");
+                TracingSe.Trace("createAgingInterestSimulationDetail " + ins.Id.ToString());
+                decimal interestPercent = interestMasterPercent + interestProjectDaily;
 
-                    string UnitsID = UnitsEn.Id.ToString();
-                    string UnitsName = UnitsEn.Contains("name") ? UnitsEn["name"].ToString() : "";
-                    Entity ISDetail = new Entity("bsd_interestsimulationdetail");
-                    if (enInterestSimulation != null)
+                string UnitsID = UnitsEn.Id.ToString();
+                string UnitsName = UnitsEn.Contains("name") ? UnitsEn["name"].ToString() : "";
+                Entity ISDetail = new Entity("bsd_interestsimulationdetail");
+                if (enInterestSimulation != null)
+                {
+                    ISDetail["bsd_name"] = "" + (enInterestSimulation.Contains("bsd_name") ? enInterestSimulation["bsd_name"] : "") + "-" + UnitsName + "-" + (ins.Contains("bsd_name") ? ins["bsd_name"] : "");
+                    ISDetail["bsd_interestsimulation"] = enInterestSimulation.ToEntityReference();
+                }
+                else
+                {
+                    ISDetail["bsd_name"] = UnitsName + "-" + (ins.Contains("bsd_name") ? ins["bsd_name"] : "");
+                    ISDetail["bsd_interestsimulation"] = null;
+                }
+                ISDetail["bsd_optionentry"] = oe.ToEntityReference();
+                ISDetail["bsd_simulationdate"] = simulationDate;
+                ISDetail["bsd_type"] = new OptionSetValue(SimuType);
+                ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
+                ISDetail["bsd_units"] = UnitsEn.ToEntityReference();
+                TracingSe.Trace(ISDetail["bsd_name"].ToString() + "-----" + ins["bsd_name"].ToString());
+                TracingSe.Trace("interest_NotPaid: " + interest_NotPaid.ToString());
+
+                ISDetail["bsd_aginginterestsimulationoption"] = simulationoptions != null ? simulationoptions.ToEntityReference() : null;
+                ISDetail["bsd_installment"] = ins.ToEntityReference();
+                ISDetail["bsd_installmentamount"] = ins.Contains("bsd_amountofthisphase") ? ins["bsd_amountofthisphase"] : new Money(0);
+                ISDetail["bsd_paidamount"] = ins.Contains("bsd_amountwaspaid") ? ins["bsd_amountwaspaid"] : new Money(0);
+                ISDetail["bsd_outstandingamount"] = ins.Contains("bsd_balance") ? ins["bsd_balance"] : new Money(0);
+
+
+                ISDetail["bsd_numberofdaysdue"] = 0;
+
+                TracingSe.Trace("1");
+                TracingSe.Trace("2");
+
+                TracingSe.Trace("Info .. ");
+
+                // Create Detail
+                interest = interest_New + interest_NotPaid;
+                #region -- type = Interest Simulation = 100000001
+                DateTime duedate = new DateTime();
+                decimal bsd_interestchargeamount = 0;
+                TracingSe.Trace("statuscode: " + ((OptionSetValue)ins["statuscode"]).Value.ToString());
+                bool bolCheckPaid = false;
+                bolCheckPaid = (((OptionSetValue)ins["statuscode"]).Value == 100000001 && ins.Contains("bsd_interestchargestatus") && ((OptionSetValue)ins["bsd_interestchargestatus"]).Value == 100000000);
+                if (interest_NotPaid > 0 || ((OptionSetValue)ins["statuscode"]).Value == 100000000 || bolCheckPaid)
+                {
+                    TracingSe.Trace("11111111111111111111");
+                    if (ins.Contains("bsd_duedate"))
                     {
-                        ISDetail["bsd_name"] = "" + (enInterestSimulation.Contains("bsd_name") ? enInterestSimulation["bsd_name"] : "") + "-" + UnitsName + "-" + (ins.Contains("bsd_name") ? ins["bsd_name"] : "");
-                        ISDetail["bsd_interestsimulation"] = enInterestSimulation.ToEntityReference();
-                    }
-                    else
-                    {
-                        ISDetail["bsd_name"] = UnitsName + "-" + (ins.Contains("bsd_name") ? ins["bsd_name"] : "");
-                        ISDetail["bsd_interestsimulation"] = null;
-                    }
-                    ISDetail["bsd_optionentry"] = oe.ToEntityReference();
-                    ISDetail["bsd_simulationdate"] = simulationDate;
-                    ISDetail["bsd_type"] = new OptionSetValue(SimuType);
-                    ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
-                    ISDetail["bsd_units"] = UnitsEn.ToEntityReference();
-                    strMess.AppendLine(ISDetail["bsd_name"].ToString() + "-----" + ins["bsd_name"].ToString());
-                    strMess.AppendLine("interest_NotPaid: " + interest_NotPaid.ToString());
-
-                    ISDetail["bsd_aginginterestsimulationoption"] = simulationoptions != null ? simulationoptions.ToEntityReference() : null;
-                    ISDetail["bsd_installment"] = ins.ToEntityReference();
-                    ISDetail["bsd_installmentamount"] = ins.Contains("bsd_amountofthisphase") ? ins["bsd_amountofthisphase"] : new Money(0);
-                    ISDetail["bsd_paidamount"] = ins.Contains("bsd_amountwaspaid") ? ins["bsd_amountwaspaid"] : new Money(0);
-                    ISDetail["bsd_outstandingamount"] = ins.Contains("bsd_balance") ? ins["bsd_balance"] : new Money(0);
-
-
-                    ISDetail["bsd_numberofdaysdue"] = 0;
-
-                    strMess.AppendLine("1");
-                    strMess.AppendLine("2");
-
-                    strMess.AppendLine("Info .. ");
-
-                    // Create Detail
-                    interest = interest_New + interest_NotPaid;
-                    #region -- type = Interest Simulation = 100000001
-                    DateTime duedate = new DateTime();
-                    decimal bsd_interestchargeamount = 0;
-                    strMess.AppendLine("statuscode: " + ((OptionSetValue)ins["statuscode"]).Value.ToString());
-                    bool bolCheckPaid = false;
-                    bolCheckPaid = (((OptionSetValue)ins["statuscode"]).Value == 100000001 && ins.Contains("bsd_interestchargestatus") && ((OptionSetValue)ins["bsd_interestchargestatus"]).Value == 100000000);
-                    if (interest_NotPaid > 0 || ((OptionSetValue)ins["statuscode"]).Value == 100000000 || bolCheckPaid)
-                    {
-                        strMess.AppendLine("11111111111111111111");
-                        if (ins.Contains("bsd_duedate"))
+                        duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"]);
+                        ISDetail["bsd_duedate"] = duedate;
+                        DateTime InterestStarDate1 = InterestStarDate;
+                        ISDetail["bsd_intereststartdate"] = InterestStarDate1;
+                        TracingSe.Trace("duedate: " + duedate.ToString());
+                        bsd_numberofdaysdue = (int)simulationDate.Date.Subtract(duedate.Date).TotalDays;
+                        TracingSe.Trace("simulationDate: " + simulationDate.ToString());
+                        TracingSe.Trace("InterestStarDate: " + InterestStarDate1.ToString());
+                        TracingSe.Trace("dateCalculate: " + dateCalculate.ToString());
+                        if (InterestStarDate1 < dateCalculate)
                         {
-                            duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"]);
-                            ISDetail["bsd_duedate"] = duedate;
-                            DateTime InterestStarDate1 = InterestStarDate;
-                            ISDetail["bsd_intereststartdate"] = InterestStarDate1;
-                            strMess.AppendLine("duedate: " + duedate.ToString());
-                            bsd_numberofdaysdue = (int)simulationDate.Date.Subtract(duedate.Date).TotalDays;
-                            strMess.AppendLine("simulationDate: " + simulationDate.ToString());
-                            strMess.AppendLine("InterestStarDate: " + InterestStarDate1.ToString());
-                            strMess.AppendLine("dateCalculate: " + dateCalculate.ToString());
-                            if (InterestStarDate1 < dateCalculate)
-                            {
-                                balance = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
-                                decimal returnValue = CalculateNewInterest(balance, lateDays, interestPercent);
-                                interest_New = returnValue < 0 ? 0 : returnValue;
-                            }
-                            else
-                            {
-                                lateDays = 0;
-                                balance = 0;
-                                interest_New = 0;
-                            }
-
-                            if (bsd_numberofdaysdue > 0)
-                            {
-                                ISDetail["bsd_numberofdaysdue"] = bsd_numberofdaysdue;
-                            }
-
-                            ISDetail["bsd_outstandingday"] = lateDays;
-                            ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
-                            ISDetail["bsd_interestpercent"] = interestPercent;
-                            ISDetail["bsd_groupaging"] = new OptionSetValue(CheckGroupAging(lateDays));
-                            ISDetail["bsd_interestamountinstallment"] = new Money(decInterestAmountIns);
-                            decimal decnewinterestamount = bolCheckPaid ? 0 : interest_New > decInterestCharge ? decInterestCharge : interest_New;
-                            strMess.AppendLine("decnewinterestamount " + decnewinterestamount);
-                            strMess.AppendLine("bolCheckPaid " + bolCheckPaid);
-                            strMess.AppendLine("interest_New " + interest_New);
-                            strMess.AppendLine("decInterestCharge " + decInterestCharge);
-                            ISDetail["bsd_newinterestamount"] = new Money(decnewinterestamount);
-                            ISDetail["bsd_interestchargeamount"] = new Money(decnewinterestamount + decInterestAmountIns);
-                            bsd_interestchargeamount = interest + interest_New;
-                            ISDetail["bsd_advancepayment"] = new Money(0);
-                            strMess.AppendLine("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
-                            strMess.AppendLine("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
-                            strMess.AppendLine("2.1");
+                            balance = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
+                            decimal returnValue = CalculateNewInterest(balance, lateDays, interestPercent);
+                            interest_New = returnValue < 0 ? 0 : returnValue;
                         }
                         else
                         {
-
-                            ISDetail["bsd_outstandingday"] = 0;
-                            ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
-                            ISDetail["bsd_interestpercent"] = (decimal)0;
-                            ISDetail["bsd_interestamountinstallment"] = new Money(0);
-                            ISDetail["bsd_newinterestamount"] = new Money(0);
-                            ISDetail["bsd_interestchargeamount"] = new Money(0);
-                            ISDetail["bsd_advancepayment"] = new Money(0);
-
-                            strMess.AppendLine("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
-                            strMess.AppendLine("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
-                            strMess.AppendLine("2.2");
+                            lateDays = 0;
+                            balance = 0;
+                            interest_New = 0;
                         }
 
+                        if (bsd_numberofdaysdue > 0)
+                        {
+                            ISDetail["bsd_numberofdaysdue"] = bsd_numberofdaysdue;
+                        }
+
+                        ISDetail["bsd_outstandingday"] = lateDays;
+                        ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
+                        ISDetail["bsd_interestpercent"] = interestPercent;
+                        ISDetail["bsd_groupaging"] = new OptionSetValue(CheckGroupAging(lateDays));
+                        ISDetail["bsd_interestamountinstallment"] = new Money(decInterestAmountIns);
+                        decimal decnewinterestamount = bolCheckPaid ? 0 : interest_New > decInterestCharge ? decInterestCharge : interest_New;
+                        TracingSe.Trace("decnewinterestamount " + decnewinterestamount);
+                        TracingSe.Trace("bolCheckPaid " + bolCheckPaid);
+                        TracingSe.Trace("interest_New " + interest_New);
+                        TracingSe.Trace("decInterestCharge " + decInterestCharge);
+                        ISDetail["bsd_newinterestamount"] = new Money(decnewinterestamount);
+                        ISDetail["bsd_interestchargeamount"] = new Money(decnewinterestamount + decInterestAmountIns);
+                        bsd_interestchargeamount = interest + interest_New;
+                        ISDetail["bsd_advancepayment"] = new Money(0);
+                        TracingSe.Trace("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
+                        TracingSe.Trace("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
+                        TracingSe.Trace("2.1");
                     }
-                    #endregion
                     else
                     {
-                        if (ins.Contains("bsd_duedate"))
-                        {
-                            strMess.AppendLine("222222222222222");
-                            duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"]);
-                            ISDetail["bsd_duedate"] = duedate;
-                            strMess.AppendLine("duedate: " + duedate.ToString());
-                            ISDetail["bsd_outstandingday"] = 0;
-                            ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
-                            ISDetail["bsd_interestpercent"] = (decimal)0;
-                            ISDetail["bsd_interestamountinstallment"] = new Money(0);
-                            ISDetail["bsd_newinterestamount"] = new Money(0);
-                            ISDetail["bsd_interestchargeamount"] = new Money(0);
-                            ISDetail["bsd_advancepayment"] = new Money(0);
 
-                            strMess.AppendLine("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
-                            strMess.AppendLine("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
-                            strMess.AppendLine("2.3");
-                        }
+                        ISDetail["bsd_outstandingday"] = 0;
+                        ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
+                        ISDetail["bsd_interestpercent"] = (decimal)0;
+                        ISDetail["bsd_interestamountinstallment"] = new Money(0);
+                        ISDetail["bsd_newinterestamount"] = new Money(0);
+                        ISDetail["bsd_interestchargeamount"] = new Money(0);
+                        ISDetail["bsd_advancepayment"] = new Money(0);
+
+                        TracingSe.Trace("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
+                        TracingSe.Trace("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
+                        TracingSe.Trace("2.2");
                     }
-                    strMess.AppendLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 5");
-                    service.Create(ISDetail);
+
                 }
-                //throw new InvalidPluginExecutionException(strMess.ToString());
-                strMess.AppendLine("---------------------------------------");
+                #endregion
+                else
+                {
+                    if (ins.Contains("bsd_duedate"))
+                    {
+                        TracingSe.Trace("222222222222222");
+                        duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"]);
+                        ISDetail["bsd_duedate"] = duedate;
+                        TracingSe.Trace("duedate: " + duedate.ToString());
+                        ISDetail["bsd_outstandingday"] = 0;
+                        ISDetail["bsd_paymentscheme"] = payScheme.ToEntityReference();
+                        ISDetail["bsd_interestpercent"] = (decimal)0;
+                        ISDetail["bsd_interestamountinstallment"] = new Money(0);
+                        ISDetail["bsd_newinterestamount"] = new Money(0);
+                        ISDetail["bsd_interestchargeamount"] = new Money(0);
+                        ISDetail["bsd_advancepayment"] = new Money(0);
+
+                        TracingSe.Trace("bsd_numberofdaysdue: " + ISDetail["bsd_numberofdaysdue"].ToString());
+                        TracingSe.Trace("bsd_outstandingday: " + ISDetail["bsd_outstandingday"].ToString());
+                        TracingSe.Trace("2.3");
+                    }
+                }
+                TracingSe.Trace("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 5");
+                service.Create(ISDetail);
             }
-            catch (InvalidPluginExecutionException ex)
-            {
-                strMess.AppendLine(ex.ToString());
-                throw new InvalidPluginExecutionException(strMess.ToString());
-            }
+            //throw new InvalidPluginExecutionException(strMess.ToString());
+            TracingSe.Trace("---------------------------------------");
+            //}
+            //catch (InvalidPluginExecutionException ex)
+            //{
+            //    TracingSe.Trace(ex.ToString());
+            //    throw new InvalidPluginExecutionException(strMess.ToString());
+            //}
         }
         private static decimal getInterestCap(Entity enOptionEntry)
         {
             decimal lim = -100599;
             decimal totalamount = enOptionEntry.Contains("totalamount") ? ((Money)enOptionEntry["totalamount"]).Value : 0;
-            strMess.AppendLine("totalamount: " + totalamount.ToString());
+            TracingSe.Trace("totalamount: " + totalamount.ToString());
             EntityReference enrefPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
             if (enrefPaymentScheme != null)
             {
@@ -601,9 +602,9 @@ namespace Action_InterestSimulation_CalculateSimulation
                     decimal bsd_toleranceinterestamount = enInterestRateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestRateMaster["bsd_toleranceinterestamount"]).Value : 0;
                     decimal bsd_toleranceinterestpercentage = enInterestRateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestRateMaster["bsd_toleranceinterestpercentage"] : 0;
                     decimal amountcalbypercent = totalamount * bsd_toleranceinterestpercentage / 100;
-                    strMess.AppendLine("bsd_toleranceinterestamount: " + bsd_toleranceinterestamount.ToString());
-                    strMess.AppendLine("bsd_toleranceinterestpercentage: " + bsd_toleranceinterestpercentage.ToString());
-                    strMess.AppendLine("amountcalbypercent: " + bsd_toleranceinterestamount.ToString());
+                    TracingSe.Trace("bsd_toleranceinterestamount: " + bsd_toleranceinterestamount.ToString());
+                    TracingSe.Trace("bsd_toleranceinterestpercentage: " + bsd_toleranceinterestpercentage.ToString());
+                    TracingSe.Trace("amountcalbypercent: " + bsd_toleranceinterestamount.ToString());
                     if (bsd_toleranceinterestamount > 0 && amountcalbypercent > 0 && enInterestRateMaster.Contains("bsd_toleranceinterestamount") && enInterestRateMaster.Contains("bsd_toleranceinterestpercentage"))
                     {
                         lim = Math.Min(bsd_toleranceinterestamount, amountcalbypercent);
@@ -622,7 +623,7 @@ namespace Action_InterestSimulation_CalculateSimulation
 
                 }
             }
-            strMess.AppendLine("Cap: " + lim.ToString());
+            TracingSe.Trace("Cap: " + lim.ToString());
             return lim;
         }
         private static void updateNewInterestAmount(Entity enOptionEntry, Entity enInterestSimulateOption, int reportype)
@@ -656,29 +657,29 @@ namespace Action_InterestSimulation_CalculateSimulation
             </fetch>";
             EntityCollection encolInterestSimulationDetail = service.RetrieveMultiple(new FetchExpression(xml));
             decimal cap = getInterestCap(optionEntry);
-            strMess.AppendLine("Cap: " + cap.ToString());
+            TracingSe.Trace("Cap: " + cap.ToString());
             if (cap != -100599)
             {
                 //Tính toán New Interest Amount sao cho tổng nhỏ hơn hoặc bằng cap
                 //Ưu tiên giảm các đợt cuối trở về trước
                 decimal sumInterestAmount = encolInterestSimulationDetail.Entities.AsEnumerable().Sum(x => x.Contains("bsd_interestamountinstallment") ? ((Money)x["bsd_interestamountinstallment"]).Value : 0);
-                strMess.AppendLine("sumInterestAmount: " + sumInterestAmount);
+                TracingSe.Trace("sumInterestAmount: " + sumInterestAmount);
                 decimal[] arrNewInterestAmount = { };
                 for (int i = 0; i < encolInterestSimulationDetail.Entities.Count; i++)
                 {
                     Entity enInterestSimulationDetail = encolInterestSimulationDetail.Entities[i];
-                    strMess.AppendLine("sumInterestAmount < cap: " + (sumInterestAmount < cap).ToString());
+                    TracingSe.Trace("sumInterestAmount < cap: " + (sumInterestAmount < cap).ToString());
                     decimal bsd_newinterestamount = enInterestSimulationDetail.Contains("bsd_newinterestamount") ? ((Money)enInterestSimulationDetail["bsd_newinterestamount"]).Value : 0;
                     decimal bsd_interestamountinstallment = enInterestSimulationDetail.Contains("bsd_interestamountinstallment") ? ((Money)enInterestSimulationDetail["bsd_interestamountinstallment"]).Value : 0;
                     if (sumInterestAmount < cap)
                     {
-                        strMess.AppendLine("bsd_newinterestamount: " + bsd_newinterestamount.ToString());
+                        TracingSe.Trace("bsd_newinterestamount: " + bsd_newinterestamount.ToString());
                         decimal total = sumInterestAmount + bsd_newinterestamount;
-                        strMess.AppendLine("total: " + total.ToString());
+                        TracingSe.Trace("total: " + total.ToString());
                         if (total > cap && bsd_newinterestamount != 0)
                         {
                             decimal denta = cap - sumInterestAmount;
-                            strMess.AppendLine("denta:" + denta.ToString());
+                            TracingSe.Trace("denta:" + denta.ToString());
                             //Set New Interest Amount = denta
                             Entity en = new Entity(enInterestSimulationDetail.LogicalName, enInterestSimulationDetail.Id);
                             en["bsd_newinterestamount"] = new Money(denta);
@@ -760,15 +761,15 @@ namespace Action_InterestSimulation_CalculateSimulation
         }
         private static Entity getSimulationOption(string simulationid, string bsd_optionentry)
         {
-            strMess.AppendLine("simulationid: " + simulationid);
-            strMess.AppendLine("bsd_optionentryid: " + bsd_optionentry);
+            TracingSe.Trace("simulationid: " + simulationid);
+            TracingSe.Trace("bsd_optionentryid: " + bsd_optionentry);
             QueryExpression que = new QueryExpression("bsd_aginginterestsimulationoption");
             que.ColumnSet = new ColumnSet(true);
             que.Criteria = new FilterExpression(LogicalOperator.And);
             que.Criteria.AddCondition(new ConditionExpression("bsd_aginginterestsimulation", ConditionOperator.Equal, simulationid));
             que.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, bsd_optionentry));
             EntityCollection simulationoptions = service.RetrieveMultiple(que);
-            strMess.AppendLine(simulationoptions.Entities.Count.ToString());
+            TracingSe.Trace(simulationoptions.Entities.Count.ToString());
             if (simulationoptions.Entities.Count > 0)
             {
                 return simulationoptions.Entities[0];
@@ -841,7 +842,7 @@ namespace Action_InterestSimulation_CalculateSimulation
             xml.AppendLine("</filter>");
             xml.AppendLine("</entity>");
             xml.AppendLine("</fetch>");
-            strMess.AppendLine(xml.ToString());
+            TracingSe.Trace(xml.ToString());
             return service.RetrieveMultiple(new FetchExpression(xml.ToString()));
         }
         private static void updateAdvantPayment(Entity oe, string aginginterestsimulationoption)
@@ -849,7 +850,7 @@ namespace Action_InterestSimulation_CalculateSimulation
             //Cal Sum Advance Payment
             decimal AdvPayAmt = 0;
             EntityCollection AdvSum = CalSum_AdvancePayment(oe.Id.ToString());
-            strMess.AppendLine("1");
+            TracingSe.Trace("1");
             if (AdvSum.Entities.Count > 0)
             {
                 Entity AdvSumEn = AdvSum.Entities[0];
@@ -858,13 +859,13 @@ namespace Action_InterestSimulation_CalculateSimulation
                 if (((AliasedValue)AdvSumEn.Attributes["SumAdv"]).Value != null)
                     AdvPayAmt = ((Money)((AliasedValue)AdvSumEn.Attributes["SumAdv"]).Value).Value;
             }
-            strMess.AppendLine("2");
+            TracingSe.Trace("2");
             string condition = "<condition attribute='bsd_aginginterestsimulationoption' operator='null' />";
             if (aginginterestsimulationoption != "")
             {
                 condition = "<condition attribute='bsd_aginginterestsimulationoption' operator='eq' value='" + aginginterestsimulationoption + "'/>";
             }
-            strMess.AppendLine("AdvantPayment: " + AdvPayAmt.ToString());
+            TracingSe.Trace("AdvantPayment: " + AdvPayAmt.ToString());
             //Hồ fix 03-06-2019
             string xml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
 	            <entity name='bsd_interestsimulationdetail'>
@@ -899,16 +900,16 @@ namespace Action_InterestSimulation_CalculateSimulation
 	            </entity>
             </fetch>";
             //Hồ fix 03-06-2019
-            strMess.AppendLine(xml);
+            TracingSe.Trace(xml);
 
             EntityCollection encoInterestSimulationDetail = service.RetrieveMultiple(new FetchExpression(xml));
-            strMess.AppendLine(encoInterestSimulationDetail.Entities.Count.ToString());
+            TracingSe.Trace(encoInterestSimulationDetail.Entities.Count.ToString());
             if (encoInterestSimulationDetail.Entities.Count > 0)
             {
                 Entity enInterestSimulationDetail = new Entity("bsd_interestsimulationdetail", encoInterestSimulationDetail.Entities[0].Id);
                 enInterestSimulationDetail["bsd_advancepayment"] = new Money(AdvPayAmt);
                 service.Update(enInterestSimulationDetail);
-                strMess.AppendLine("Update done");
+                TracingSe.Trace("Update done");
             }
         }
         public static DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
@@ -944,92 +945,92 @@ namespace Action_InterestSimulation_CalculateSimulation
         #region Code tính Interest
         private static void getInterestStartDate()
         {
-            try
+            //try
+            //{
+            EntityReference enrefOptionEntry = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
+            Entity enOptionEntry = enInstallment.Contains("bsd_optionentry") ? service.Retrieve(enrefOptionEntry.LogicalName, enrefOptionEntry.Id, new ColumnSet(true)) : null;
+
+            EntityReference enrefPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
+            Entity enPaymentScheme = service.Retrieve(enrefPaymentScheme.LogicalName, enrefPaymentScheme.Id, new ColumnSet(true));
+            EntityReference enrefInterestrateMaster = enPaymentScheme.Contains("bsd_interestratemaster") ? (EntityReference)enPaymentScheme["bsd_interestratemaster"] : null;
+            if (enrefInterestrateMaster != null)
             {
-                EntityReference enrefOptionEntry = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
-                Entity enOptionEntry = enInstallment.Contains("bsd_optionentry") ? service.Retrieve(enrefOptionEntry.LogicalName, enrefOptionEntry.Id, new ColumnSet(true)) : null;
+                Entity enInterestrateMaster = service.Retrieve(enrefInterestrateMaster.LogicalName, enrefInterestrateMaster.Id, new ColumnSet(true));
+                objIns.Gracedays = enInterestrateMaster.Contains("bsd_gracedays") ? ((int)enInterestrateMaster["bsd_gracedays"]) : 0;
+                objIns.orderNumber = enInstallment.Contains("bsd_ordernumber") ? ((int)enInstallment["bsd_ordernumber"]) : 0;
+                objIns.idOE = enOptionEntry.Id;
 
-                EntityReference enrefPaymentScheme = enOptionEntry.Contains("bsd_paymentscheme") ? (EntityReference)enOptionEntry["bsd_paymentscheme"] : null;
-                Entity enPaymentScheme = service.Retrieve(enrefPaymentScheme.LogicalName, enrefPaymentScheme.Id, new ColumnSet(true));
-                EntityReference enrefInterestrateMaster = enPaymentScheme.Contains("bsd_interestratemaster") ? (EntityReference)enPaymentScheme["bsd_interestratemaster"] : null;
-                if (enrefInterestrateMaster != null)
-                {
-                    Entity enInterestrateMaster = service.Retrieve(enrefInterestrateMaster.LogicalName, enrefInterestrateMaster.Id, new ColumnSet(true));
-                    objIns.Gracedays = enInterestrateMaster.Contains("bsd_gracedays") ? ((int)enInterestrateMaster["bsd_gracedays"]) : 0;
-                    objIns.orderNumber = enInstallment.Contains("bsd_ordernumber") ? ((int)enInstallment["bsd_ordernumber"]) : 0;
-                    objIns.idOE = enOptionEntry.Id;
+                objIns.Intereststartdatetype = ((OptionSetValue)enInterestrateMaster["bsd_intereststartdatetype"]).Value;//100000000: Due date;100000001: Grace period
+                                                                                                                         //throw new InvalidPluginExecutionException(((DateTime)enInstallment["bsd_duedate"]).ToString());
+                objIns.Duedate = enInstallment.Contains("bsd_duedate") ? RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"]) : DateTime.Now;
 
-                    objIns.Intereststartdatetype = ((OptionSetValue)enInterestrateMaster["bsd_intereststartdatetype"]).Value;//100000000: Due date;100000001: Grace period
-                                                                                                                             //throw new InvalidPluginExecutionException(((DateTime)enInstallment["bsd_duedate"]).ToString());
-                    objIns.Duedate = enInstallment.Contains("bsd_duedate") ? RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"]) : DateTime.Now;
-
-                    objIns.MaxPercent = enInterestrateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestrateMaster["bsd_toleranceinterestpercentage"] : 100;
-                    objIns.MaxAmount = enInterestrateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestrateMaster["bsd_toleranceinterestamount"]).Value : 0;
-                    objIns.InterestPercent = enInstallment.Contains("bsd_interestchargeper") ? (decimal)enInstallment["bsd_interestchargeper"] : 0;
-                    objIns.InterestStarDate = objIns.Duedate.AddDays(objIns.Gracedays + 1);
-                    strMess.AppendLine("InterestStarDate: " + objIns.InterestStarDate.ToString());
-                }
+                objIns.MaxPercent = enInterestrateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestrateMaster["bsd_toleranceinterestpercentage"] : 100;
+                objIns.MaxAmount = enInterestrateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestrateMaster["bsd_toleranceinterestamount"]).Value : 0;
+                objIns.InterestPercent = enInstallment.Contains("bsd_interestchargeper") ? (decimal)enInstallment["bsd_interestchargeper"] : 0;
+                objIns.InterestStarDate = objIns.Duedate.AddDays(objIns.Gracedays + 1);
+                TracingSe.Trace("InterestStarDate: " + objIns.InterestStarDate.ToString());
             }
-            catch (InvalidPluginExecutionException ex)
-            {
-                throw new InvalidPluginExecutionException(strMess.ToString());
-            }
+            //}
+            //catch (InvalidPluginExecutionException ex)
+            //{
+            //    throw new InvalidPluginExecutionException(strMess.ToString());
+            //}
 
 
         }
         public static int getLateDays(DateTime dateCalculate)
         {
-            try
+            //try
+            //{
+            int lateDays = (int)dateCalculate.Date.Subtract(objIns.Duedate.Date).TotalDays;
+            int orderNumberSightContract = getViTriDotSightContract(objIns.idOE);
+            Entity oe = service.Retrieve("salesorder", objIns.idOE, new ColumnSet(true));
+            int bsd_ordernumber = objIns.orderNumber;
+            int numberOfDays2 = 0;
+            if (orderNumberSightContract != -1)
             {
-                int lateDays = (int)dateCalculate.Date.Subtract(objIns.Duedate.Date).TotalDays;
-                int orderNumberSightContract = getViTriDotSightContract(objIns.idOE);
-                Entity oe = service.Retrieve("salesorder", objIns.idOE, new ColumnSet(true));
-                int bsd_ordernumber = objIns.orderNumber;
-                int numberOfDays2 = 0;
-                if (orderNumberSightContract != -1)
+                if (orderNumberSightContract <= bsd_ordernumber && oe.Contains("bsd_signedcontractdate"))
                 {
-                    if (orderNumberSightContract <= bsd_ordernumber && oe.Contains("bsd_signedcontractdate"))
-                    {
-                        numberOfDays2 = -100599;
-                    }
-                    else if (orderNumberSightContract > bsd_ordernumber)
-                    {
-                        if (oe.Contains("bsd_signeddadate"))
-                        {
-                            DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
-                            TimeSpan difference2 = dateCalculate - bsd_signeddadate;
-                            numberOfDays2 = difference2.Days;
-                            numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
-                        }
-                    }
-                    else numberOfDays2 = -100599;
+                    numberOfDays2 = -100599;
                 }
-                if (objIns.Intereststartdatetype == 100000001)// Grace Period
+                else if (orderNumberSightContract > bsd_ordernumber)
                 {
-                    lateDays = lateDays - objIns.Gracedays;
-                    lateDays = lateDays < 0 ? 0 : lateDays;
-                    if (numberOfDays2 != -100599 && numberOfDays2 < lateDays) lateDays = numberOfDays2;
-                }
-                else//DueDate
-                {
-                    lateDays = lateDays < 0 ? 0 : lateDays;
-                    if (numberOfDays2 != -100599 && numberOfDays2 < lateDays) lateDays = numberOfDays2;
-                    if (objIns.InterestStarDate > dateCalculate)
+                    if (oe.Contains("bsd_signeddadate"))
                     {
-                        lateDays = 0;
+                        DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"]);
+                        TimeSpan difference2 = dateCalculate - bsd_signeddadate;
+                        numberOfDays2 = difference2.Days;
+                        numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
                     }
                 }
-
-                objIns.LateDays = lateDays;
-                if (lateDays < 0)
+                else numberOfDays2 = -100599;
+            }
+            if (objIns.Intereststartdatetype == 100000001)// Grace Period
+            {
+                lateDays = lateDays - objIns.Gracedays;
+                lateDays = lateDays < 0 ? 0 : lateDays;
+                if (numberOfDays2 != -100599 && numberOfDays2 < lateDays) lateDays = numberOfDays2;
+            }
+            else//DueDate
+            {
+                lateDays = lateDays < 0 ? 0 : lateDays;
+                if (numberOfDays2 != -100599 && numberOfDays2 < lateDays) lateDays = numberOfDays2;
+                if (objIns.InterestStarDate > dateCalculate)
+                {
                     lateDays = 0;
-                return lateDays;
+                }
             }
-            catch (InvalidPluginExecutionException ex)
-            {
-                strMess.AppendLine(ex.ToString());
-                throw new InvalidPluginExecutionException(strMess.ToString());
-            }
+
+            objIns.LateDays = lateDays;
+            if (lateDays < 0)
+                lateDays = 0;
+            return lateDays;
+            //}
+            //catch (InvalidPluginExecutionException ex)
+            //{
+            //    TracingSe.Trace(ex.ToString());
+            //    throw new InvalidPluginExecutionException(strMess.ToString());
+            //}
 
         }
         private static int getViTriDotSightContract(Guid idOE)
@@ -1061,190 +1062,190 @@ namespace Action_InterestSimulation_CalculateSimulation
         /// <returns></returns>
         public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, ref decimal interestMasterPercent)
         {
-            try
+            //try
+            //{
+            var result = 0m;
+            TracingSe.Trace("[calc_InterestCharge2] Tham số đầu vào:");
+            TracingSe.Trace(string.Format("- amountPay: {0}", format_Money(amountPay)));
+            TracingSe.Trace("11111111");
+            EntityReference OE_ref = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
+            if (OE_ref == null)
             {
-                var result = 0m;
-                strMess.AppendLine("[calc_InterestCharge2] Tham số đầu vào:");
-                strMess.AppendLine(string.Format("- amountPay: {0}", format_Money(amountPay)));
-                strMess.AppendLine("11111111");
-                EntityReference OE_ref = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
-                if (OE_ref == null)
+                TracingSe.Trace(string.Format("Không có dữ liệu record [bsd_optionentry]"));
+                throw new Exception(strMess.ToString());
+            }
+            #region --- Body Code ---
+            if (OE_ref != null)
+            {
+                TracingSe.Trace(string.Format("ID record [bsd_optionentry]: {0}", OE_ref.Id));
+                decimal interestcharge_amount = 0;
+                Entity OE = service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true));
+                Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
+                bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
+                decimal d_dailyinterest = 0;
+
+                TracingSe.Trace(string.Format("- bsd_dailyinterestchargebank: {0}", bsd_dailyinterestchargebank));
+                if (bsd_dailyinterestchargebank)
                 {
-                    strMess.AppendLine(string.Format("Không có dữ liệu record [bsd_optionentry]"));
-                    throw new Exception(strMess.ToString());
+                    #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
+                    EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
+                    Entity ent = entc.Entities[0];
+                    ent.Id = entc.Entities[0].Id;
+                    if (!ent.Contains("bsd_interestrate"))
+                        throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
+                    d_dailyinterest = (decimal)ent["bsd_interestrate"];
+                    #endregion
                 }
-                #region --- Body Code ---
-                if (OE_ref != null)
+                TracingSe.Trace("InterestPercent" + objIns.InterestPercent);
+                TracingSe.Trace("d_dailyinterest" + d_dailyinterest);
+
+                objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
+                interestMasterPercent = objIns.InterestPercent;
+                decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
+                interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
+                TracingSe.Trace("LateDays" + objIns.LateDays);
+                TracingSe.Trace("amountPay" + amountPay);
+                #region --- Trace đợt đang xét ---
+                TracingSe.Trace(string.Format("----------------------------------------------------"));
+                TracingSe.Trace(string.Format("#. [Đợt đang xét] "));
+                TracingSe.Trace(string.Format("- InterestPercent: {0}", format_Money(objIns.InterestPercent)));
+                TracingSe.Trace(string.Format("- interestcharge_percent: {0}", format_Money(interestcharge_percent)));
+                TracingSe.Trace(string.Format("- interestcharge_amount 'tiền lãi': {0}", format_Money(interestcharge_amount)));
+                TracingSe.Trace(string.Format("----------------------------------------------------"));
+                #endregion
+
+                decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
+                decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay) - sum_bsd_waiverinterest;
+                decimal sum_temp = sum_Inr_AM + interestcharge_amount;
+
+                #region --- Trace kết quả tổng đợt: tạm tính ---
+                TracingSe.Trace(string.Format("----------------------------------------------------"));
+                TracingSe.Trace(string.Format("##. Kết quả tổng đợt TẠM TÍNH: "));
+                TracingSe.Trace(string.Format("- Số tiền trả trước [waiverinterest]: {0}", format_Money(sum_bsd_waiverinterest)));
+                TracingSe.Trace(string.Format("- Tổng lãi phát sinh, không tính lãi đợt đang xét [sum_Inr_AM]: {0}", format_Money(sum_Inr_AM)));
+                TracingSe.Trace(string.Format("- Tổng lãi phát sinh [sum_temp] (bao gồm đợt đang xét): {0}", format_Money(sum_temp)));
+                TracingSe.Trace(string.Format("----------------------------------------------------"));
+                #endregion
+
+                #region --- @. Throw theo điều kiện: Hân note ---
+                // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
+                decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
+                if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
+
+                // Han_28072018 - Update field tính Interest Charge = field Total Amount
+                decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
+                if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
+                #endregion
+
+                #region --- #. Tính số tiền CAP ---
+                decimal range_enOptionEntryAM = 0;
+                decimal cap = 0;
+                /* ------------------------------------------------------------------------
+                 * Lưu ý: 
+                 * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
+                 * - Nếu range nào chạm mức trước thì tính range đó
+                 *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
+                 *      + Maxamount  ->  Cài đặt trước số tiền
+                 --------------------------------------------------------------------------*/
+                TracingSe.Trace("#. Tính số tiền CAP:");
+                TracingSe.Trace(string.Format("- MaxPercent: {0}", format_Money(objIns.MaxPercent)));
+                TracingSe.Trace(string.Format("- Maxamount: {0}", format_Money(objIns.MaxAmount)));
+
+                if (objIns.MaxPercent > 0)
                 {
-                    strMess.AppendLine(string.Format("ID record [bsd_optionentry]: {0}", OE_ref.Id));
-                    decimal interestcharge_amount = 0;
-                    Entity OE = service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true));
-                    Entity Project = service.Retrieve("bsd_project", ((EntityReference)OE["bsd_project"]).Id, new ColumnSet(new string[] { "bsd_name", "bsd_dailyinterestchargebank" }));
-                    bool bsd_dailyinterestchargebank = Project.Contains("bsd_dailyinterestchargebank") ? (bool)Project["bsd_dailyinterestchargebank"] : false;
-                    decimal d_dailyinterest = 0;
-
-                    strMess.AppendLine(string.Format("- bsd_dailyinterestchargebank: {0}", bsd_dailyinterestchargebank));
-                    if (bsd_dailyinterestchargebank)
+                    //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
+                    range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
+                    if (objIns.MaxAmount > 0)
                     {
-                        #region --- Lấy thông tin setup bsd_dailyinterestrate, dòng đầu tiên ---
-                        EntityCollection entc = get_ec_bsd_dailyinterestrate(Project.Id);
-                        Entity ent = entc.Entities[0];
-                        ent.Id = entc.Entities[0].Id;
-                        if (!ent.Contains("bsd_interestrate"))
-                            throw new InvalidPluginExecutionException("Can not find Daily Interestrate in Project " + (string)Project["bsd_name"] + " in master data. Please check again!");
-                        d_dailyinterest = (decimal)ent["bsd_interestrate"];
-                        #endregion
-                    }
-                    strMess.AppendLine("InterestPercent" + objIns.InterestPercent);
-                    strMess.AppendLine("d_dailyinterest" + d_dailyinterest);
-
-                    objIns.InterestPercent = (objIns.InterestPercent + d_dailyinterest);
-                    interestMasterPercent = objIns.InterestPercent;
-                    decimal interestcharge_percent = objIns.InterestPercent / 100 * objIns.LateDays;
-                    interestcharge_amount = Convert.ToDecimal(amountPay) * interestcharge_percent;
-                    strMess.AppendLine("LateDays" + objIns.LateDays);
-                    strMess.AppendLine("amountPay" + amountPay);
-                    #region --- Trace đợt đang xét ---
-                    strMess.AppendLine(string.Format("----------------------------------------------------"));
-                    strMess.AppendLine(string.Format("#. [Đợt đang xét] "));
-                    strMess.AppendLine(string.Format("- InterestPercent: {0}", format_Money(objIns.InterestPercent)));
-                    strMess.AppendLine(string.Format("- interestcharge_percent: {0}", format_Money(interestcharge_percent)));
-                    strMess.AppendLine(string.Format("- interestcharge_amount 'tiền lãi': {0}", format_Money(interestcharge_amount)));
-                    strMess.AppendLine(string.Format("----------------------------------------------------"));
-                    #endregion
-
-                    decimal sum_bsd_waiverinterest = sumWaiverInterest(OE);
-                    decimal sum_Inr_AM = SumInterestAM_OE_New(OE.Id, dateCalculate, amountPay) - sum_bsd_waiverinterest;
-                    decimal sum_temp = sum_Inr_AM + interestcharge_amount;
-
-                    #region --- Trace kết quả tổng đợt: tạm tính ---
-                    strMess.AppendLine(string.Format("----------------------------------------------------"));
-                    strMess.AppendLine(string.Format("##. Kết quả tổng đợt TẠM TÍNH: "));
-                    strMess.AppendLine(string.Format("- Số tiền trả trước [waiverinterest]: {0}", format_Money(sum_bsd_waiverinterest)));
-                    strMess.AppendLine(string.Format("- Tổng lãi phát sinh, không tính lãi đợt đang xét [sum_Inr_AM]: {0}", format_Money(sum_Inr_AM)));
-                    strMess.AppendLine(string.Format("- Tổng lãi phát sinh [sum_temp] (bao gồm đợt đang xét): {0}", format_Money(sum_temp)));
-                    strMess.AppendLine(string.Format("----------------------------------------------------"));
-                    #endregion
-
-                    #region --- @. Throw theo điều kiện: Hân note ---
-                    // 170224 - @Han confirm - su dung field net selling price de tinh interest charge  - k dung total amount
-                    decimal d_enOptionEntry_bsd_totalamountlessfreight = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
-                    if (d_enOptionEntry_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' of " + (string)OE["name"] + " must be larger than 0");
-
-                    // Han_28072018 - Update field tính Interest Charge = field Total Amount
-                    decimal enOptionEntry_TotalAmount = OE.Contains("totalamount") ? ((Money)OE["totalamount"]).Value : 0;
-                    if (enOptionEntry_TotalAmount == 0) throw new InvalidPluginExecutionException("'Total Amount' of " + (string)OE["name"] + " must be larger than 0");
-                    #endregion
-
-                    #region --- #. Tính số tiền CAP ---
-                    decimal range_enOptionEntryAM = 0;
-                    decimal cap = 0;
-                    /* ------------------------------------------------------------------------
-                     * Lưu ý: 
-                     * - Tính total range interertcharge dựa vào tỷ lệ % và số tiền
-                     * - Nếu range nào chạm mức trước thì tính range đó
-                     *      + MaxPercent ->  Cài đặt %, tính ra số tiền theo %
-                     *      + Maxamount  ->  Cài đặt trước số tiền
-                     --------------------------------------------------------------------------*/
-                    strMess.AppendLine("#. Tính số tiền CAP:");
-                    strMess.AppendLine(string.Format("- MaxPercent: {0}", format_Money(objIns.MaxPercent)));
-                    strMess.AppendLine(string.Format("- Maxamount: {0}", format_Money(objIns.MaxAmount)));
-
-                    if (objIns.MaxPercent > 0)
-                    {
-                        //range_enOptionEntryAM = d_enOptionEntry_bsd_totalamountlessfreight * MaxPercent / 100;
-                        range_enOptionEntryAM = enOptionEntry_TotalAmount * objIns.MaxPercent / 100;
-                        if (objIns.MaxAmount > 0)
-                        {
-                            if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
-                            else cap = range_enOptionEntryAM;
-                        }
+                        if (range_enOptionEntryAM > objIns.MaxAmount) cap = objIns.MaxAmount;
                         else cap = range_enOptionEntryAM;
                     }
-                    else
-                    {
-                        cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
-                    }
+                    else cap = range_enOptionEntryAM;
+                }
+                else
+                {
+                    cap = objIns.MaxAmount > 0 ? objIns.MaxAmount : 0;
+                }
 
-                    strMess.AppendLine(string.Format("- Calc Amout of MaxPercent: {0}", format_Money(range_enOptionEntryAM)));
-                    strMess.AppendLine(string.Format("@ CAP: {0}", format_Money(cap)));
-                    #endregion
+                TracingSe.Trace(string.Format("- Calc Amout of MaxPercent: {0}", format_Money(range_enOptionEntryAM)));
+                TracingSe.Trace(string.Format("@ CAP: {0}", format_Money(cap)));
+                #endregion
 
-                    #region --- @@ Nghiệp vụ tính tiền lãi ---
-                    /* ------------------------------------------------------------------------------------------
-                     * Khái niệm: 
-                     * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
-                     * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
-                     * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
-                     * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
-                     --------------------------------------------------------------------------------------------*/
-                    strMess.AppendLine("222222222");
-                    if (cap <= 0)
+                #region --- @@ Nghiệp vụ tính tiền lãi ---
+                /* ------------------------------------------------------------------------------------------
+                 * Khái niệm: 
+                 * - Tổng tiền trễ tất cả các đợt. bao gồm đợt hiện tại             : sum_temp
+                 * - Cap : số tiền chạm móc đầu tiên ()                             : cap    
+                 * - Tổng tiền trễ không tính đợt hiện tại - sum(waiverinterest)    : sum_Inr_AM
+                 * - Tiền trễ đợt hiện tại                                          : interestcharge_amount
+                 --------------------------------------------------------------------------------------------*/
+                TracingSe.Trace("222222222");
+                if (cap <= 0)
+                {
+                    var rs = check_Data_Setup();
+                    TracingSe.Trace(string.Format("Case: cap <= 0"));
+                    if (rs)
                     {
-                        var rs = check_Data_Setup();
-                        strMess.AppendLine(string.Format("Case: cap <= 0"));
-                        if (rs)
-                        {
-                            strMess.AppendLine("Không giới hạn tiền lãi");
-                            result = interestcharge_amount;
-                        }
-                        else
-                        {
-                            strMess.AppendLine("Cap thiết lặp chạm móc là 0. return 0");
-                            result = 0m;
-                        }
-                    }
-                    else if (sum_temp > cap)
-                    {
-                        strMess.AppendLine(string.Format("sum_temp " + sum_temp));
-                        strMess.AppendLine(string.Format("cap " + cap));
-                        strMess.AppendLine(string.Format("Case: sum_temp > cap"));
-                        if (cap > sum_Inr_AM)
-                        {
-                            strMess.AppendLine(string.Format("@ cap > sum_Inr_AM"));
-                            result = cap - sum_Inr_AM;
-                        }
-                        else
-                        {
-                            strMess.AppendLine(string.Format("@ cap <= sum_Inr_AM"));
-                            result = 0m;
-                        }
-
-                    }
-                    else if (sum_temp == cap)
-                    {
-                        strMess.AppendLine(string.Format("Case: sum_temp == cap"));
-                        if (sum_Inr_AM < cap)
-                            result = cap - sum_Inr_AM;
-                        else
-                            result = 0m;
-                    }
-                    else if (sum_temp < cap)
-                    {
-                        strMess.AppendLine(string.Format("Case: sum_temp < cap"));
+                        TracingSe.Trace("Không giới hạn tiền lãi");
                         result = interestcharge_amount;
                     }
                     else
                     {
-                        strMess.AppendLine(string.Format("Case: Chưa xác định, lấy nguyên lãi của đợt này"));
-                        result = interestcharge_amount;
+                        TracingSe.Trace("Cap thiết lặp chạm móc là 0. return 0");
+                        result = 0m;
                     }
-                    #endregion
+                }
+                else if (sum_temp > cap)
+                {
+                    TracingSe.Trace(string.Format("sum_temp " + sum_temp));
+                    TracingSe.Trace(string.Format("cap " + cap));
+                    TracingSe.Trace(string.Format("Case: sum_temp > cap"));
+                    if (cap > sum_Inr_AM)
+                    {
+                        TracingSe.Trace(string.Format("@ cap > sum_Inr_AM"));
+                        result = cap - sum_Inr_AM;
+                    }
+                    else
+                    {
+                        TracingSe.Trace(string.Format("@ cap <= sum_Inr_AM"));
+                        result = 0m;
+                    }
 
+                }
+                else if (sum_temp == cap)
+                {
+                    TracingSe.Trace(string.Format("Case: sum_temp == cap"));
+                    if (sum_Inr_AM < cap)
+                        result = cap - sum_Inr_AM;
+                    else
+                        result = 0m;
+                }
+                else if (sum_temp < cap)
+                {
+                    TracingSe.Trace(string.Format("Case: sum_temp < cap"));
+                    result = interestcharge_amount;
+                }
+                else
+                {
+                    TracingSe.Trace(string.Format("Case: Chưa xác định, lấy nguyên lãi của đợt này"));
+                    result = interestcharge_amount;
                 }
                 #endregion
 
-                strMess.AppendLine(string.Format("result : {0}", format_Money(result)));
-                //throw new InvalidPluginExecutionException(strMess.ToString());
-                return result;
-                //Test trace ##############################
+            }
+            #endregion
 
-            }
-            catch (Exception ex)
-            {
-                strMess.AppendLine(ex.ToString());
-                throw new InvalidPluginExecutionException(strMess.ToString());
-            }
+            TracingSe.Trace(string.Format("result : {0}", format_Money(result)));
+            //throw new InvalidPluginExecutionException(strMess.ToString());
+            return result;
+            //Test trace ##############################
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    TracingSe.Trace(ex.ToString());
+            //    throw new InvalidPluginExecutionException(strMess.ToString());
+            //}
         }
         public static decimal sumWaiverInterest(Entity enOptionEntry)
         {
@@ -1263,23 +1264,23 @@ namespace Action_InterestSimulation_CalculateSimulation
             QEbsd_paymentschemedetail.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, QEbsd_paymentschemedetail_bsd_optionentry);
             QEbsd_paymentschemedetail.Criteria.AddCondition("statecode", ConditionOperator.Equal, QEbsd_paymentschemedetail_statecode);
             EntityCollection encolInstallment = service.RetrieveMultiple(QEbsd_paymentschemedetail);
-            strMess.AppendLine("Count encolInstallment: " + encolInstallment.Entities.Count.ToString());
+            TracingSe.Trace("Count encolInstallment: " + encolInstallment.Entities.Count.ToString());
             //decimal sum = encolInstallment.Entities.Sum(x => ((Money)x.Attributes["bsd_waiverinterest"]).Value);
             decimal sum = 0;
             foreach (Entity en in encolInstallment.Entities)
             {
                 decimal bsd_waiverinterest = en.Contains("bsd_waiverinterest") ? ((Money)en["bsd_waiverinterest"]).Value : 0;
-                strMess.AppendLine("bsd_waiverinterest: " + bsd_waiverinterest.ToString());
+                TracingSe.Trace("bsd_waiverinterest: " + bsd_waiverinterest.ToString());
                 sum += bsd_waiverinterest;
             }
-            strMess.AppendLine("Sum bsd_waiverinterest: " + sum.ToString());
+            TracingSe.Trace("Sum bsd_waiverinterest: " + sum.ToString());
             return sum;
         }
         public static decimal getInterestSimulation(Entity enIns, DateTime dateCalculate, decimal amountpay)
         {
-            strMess.AppendLine("aaaaaaaaaaaaaaaaaaaaaamountPay:" + amountpay);
+            TracingSe.Trace("aaaaaaaaaaaaaaaaaaaaaamountPay:" + amountpay);
             enInstallment = service.Retrieve(enIns.LogicalName, enIns.Id, new ColumnSet(true));
-            strMess.AppendLine("2");
+            TracingSe.Trace("2");
             getInterestStartDate();
             objIns.LateDays = getLateDays(dateCalculate);
             //Lãi ước tính = số ngày tre * lai suat * so tien trể = balance
@@ -1308,7 +1309,7 @@ namespace Action_InterestSimulation_CalculateSimulation
                 </fetch>";
 
             fetchXml = string.Format(fetchXml, OEID, bsd_ordernumber.ToString());
-            strMess.AppendLine(fetchXml);
+            TracingSe.Trace(fetchXml);
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             //foreach (Entity en_r in entc.Entities)
             for (int i = 0; i < entc.Entities.Count; i++)
@@ -1336,8 +1337,8 @@ namespace Action_InterestSimulation_CalculateSimulation
                 }
 
             }
-            strMess.AppendLine("Tong Lãi phát sinh: " + sumAmount.ToString());
-            strMess.AppendLine("Tong Lãi ước tinh đợt trước: " + sumSimulation.ToString());
+            TracingSe.Trace("Tong Lãi phát sinh: " + sumAmount.ToString());
+            TracingSe.Trace("Tong Lãi ước tinh đợt trước: " + sumSimulation.ToString());
             return sumSimulation + sumAmount;
 
 
@@ -1367,16 +1368,16 @@ namespace Action_InterestSimulation_CalculateSimulation
         public static decimal SumInterestAM_OE_New(Guid OEID, DateTime dateCalculate, decimal amountpay)
         {
             decimal result = 0m;
-            try
+            //try
+            //{
+            if (enInstallment == null || enInstallment.Contains("bsd_ordernumber"))
             {
-                if (enInstallment == null || enInstallment.Contains("bsd_ordernumber"))
-                {
-                    strMess.AppendLine("Reocord [Installment] is null or Field [bsd_ordernumber] not data, Please check code Func [SumInterestAM_OE_New]");
-                }
-                int bsd_ordernumber = (int)enInstallment["bsd_ordernumber"];
+                TracingSe.Trace("Reocord [Installment] is null or Field [bsd_ordernumber] not data, Please check code Func [SumInterestAM_OE_New]");
+            }
+            int bsd_ordernumber = (int)enInstallment["bsd_ordernumber"];
 
-                #region --- Fetch XML: bsd_paymentschemedetail ---
-                string fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+            #region --- Fetch XML: bsd_paymentschemedetail ---
+            string fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                       <entity name='bsd_paymentschemedetail' >
                                         <all-attributes/>
                                         <filter type='and' >
@@ -1388,81 +1389,81 @@ namespace Action_InterestSimulation_CalculateSimulation
                                         <order attribute='bsd_ordernumber' descending='false' />
                                       </entity>
                                     </fetch>";
-                fetchXml = string.Format(fetchXml, OEID, bsd_ordernumber.ToString());
-                #endregion
+            fetchXml = string.Format(fetchXml, OEID, bsd_ordernumber.ToString());
+            #endregion
 
-                EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                if (entc.Entities.Any())
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (entc.Entities.Any())
+            {
+                decimal sumAmount = 0;
+                decimal sumSimulation = 0;
+                int count = 0;
+                foreach (var item in entc.Entities)
                 {
-                    decimal sumAmount = 0;
-                    decimal sumSimulation = 0;
-                    int count = 0;
-                    foreach (var item in entc.Entities)
+                    count += 1;
+                    TracingSe.Trace(string.Format("- Dòng thứ i = {0}", count));
+                    if (item.Contains("bsd_interestchargeamount"))
                     {
-                        count += 1;
-                        strMess.AppendLine(string.Format("- Dòng thứ i = {0}", count));
-                        if (item.Contains("bsd_interestchargeamount"))
-                        {
-                            sumAmount += ((Money)item["bsd_interestchargeamount"]).Value;
-                            strMess.AppendLine(string.Format("+ lãi phát sinh: {0}", ((Money)item["bsd_interestchargeamount"]).Value));
+                        sumAmount += ((Money)item["bsd_interestchargeamount"]).Value;
+                        TracingSe.Trace(string.Format("+ lãi phát sinh: {0}", ((Money)item["bsd_interestchargeamount"]).Value));
 
-                            if (count != entc.Entities.Count)
+                        if (count != entc.Entities.Count)
+                        {
+                            if (item.Contains("bsd_balance") && ((Money)item["bsd_balance"]).Value > 0)
                             {
-                                if (item.Contains("bsd_balance") && ((Money)item["bsd_balance"]).Value > 0)
-                                {
-                                    decimal bsd_balance = ((Money)item["bsd_balance"]).Value;
-                                    sumSimulation += getInterestSimulation(item, dateCalculate, bsd_balance);
-                                    strMess.AppendLine(string.Format("+ lãi ước tính đợt trước: {0}", getInterestSimulation(item, dateCalculate, bsd_balance)));
-                                }
+                                decimal bsd_balance = ((Money)item["bsd_balance"]).Value;
+                                sumSimulation += getInterestSimulation(item, dateCalculate, bsd_balance);
+                                TracingSe.Trace(string.Format("+ lãi ước tính đợt trước: {0}", getInterestSimulation(item, dateCalculate, bsd_balance)));
                             }
                         }
                     }
-                    result = sumSimulation + sumAmount;
+                }
+                result = sumSimulation + sumAmount;
 
-                    #region --- Trace debug ---
-                    strMess.AppendLine(string.Format("Tổng lãi phát sinh: {0}", sumAmount));
-                    strMess.AppendLine(string.Format("Tổng lãi ước tính đợt trước: {0}", sumSimulation));
-                    strMess.AppendLine(string.Format("result: {0}", result));
-                    #endregion
-                }
-                else
-                {
-                    strMess.AppendLine("Fetch bsd_paymentschemedetail is not data!");
-                }
+                #region --- Trace debug ---
+                TracingSe.Trace(string.Format("Tổng lãi phát sinh: {0}", sumAmount));
+                TracingSe.Trace(string.Format("Tổng lãi ước tính đợt trước: {0}", sumSimulation));
+                TracingSe.Trace(string.Format("result: {0}", result));
+                #endregion
             }
-            catch (Exception ex)
+            else
             {
-                result = 0;
-                throw new Exception(string.Format(strMess.ToString()));
+                TracingSe.Trace("Fetch bsd_paymentschemedetail is not data!");
             }
+            //}
+            //catch (Exception ex)
+            //{
+            //    result = 0;
+            //    throw new Exception(string.Format(strMess.ToString()));
+            //}
             return result;
         }
         private static bool check_Data_Setup()
         {
-            try
+            //try
+            //{
+            EntityReference OE_ref = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
+            Entity OE = enInstallment.Contains("bsd_optionentry") ? service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true)) : null;
+            if (OE == null) return false;
+            EntityReference paymentscheme_ref = OE.Contains("bsd_paymentscheme") ? (EntityReference)OE["bsd_paymentscheme"] : null;
+            Entity PaymentScheme = service.Retrieve(paymentscheme_ref.LogicalName, paymentscheme_ref.Id, new ColumnSet(true));
+            EntityReference interestratemaster_ref = PaymentScheme.Contains("bsd_interestratemaster") ? (EntityReference)PaymentScheme["bsd_interestratemaster"] : null;
+            if (interestratemaster_ref != null)
             {
-                EntityReference OE_ref = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
-                Entity OE = enInstallment.Contains("bsd_optionentry") ? service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true)) : null;
-                if (OE == null) return false;
-                EntityReference paymentscheme_ref = OE.Contains("bsd_paymentscheme") ? (EntityReference)OE["bsd_paymentscheme"] : null;
-                Entity PaymentScheme = service.Retrieve(paymentscheme_ref.LogicalName, paymentscheme_ref.Id, new ColumnSet(true));
-                EntityReference interestratemaster_ref = PaymentScheme.Contains("bsd_interestratemaster") ? (EntityReference)PaymentScheme["bsd_interestratemaster"] : null;
-                if (interestratemaster_ref != null)
+                Entity InterestrateMaster = service.Retrieve(interestratemaster_ref.LogicalName, interestratemaster_ref.Id, new ColumnSet(true));
+                if (!InterestrateMaster.Contains("bsd_termsinterestpercentage") && !InterestrateMaster.Contains("bsd_toleranceinterestamount"))
                 {
-                    Entity InterestrateMaster = service.Retrieve(interestratemaster_ref.LogicalName, interestratemaster_ref.Id, new ColumnSet(true));
-                    if (!InterestrateMaster.Contains("bsd_termsinterestpercentage") && !InterestrateMaster.Contains("bsd_toleranceinterestamount"))
-                    {
-                        strMess.AppendLine(string.Format("Chưa setup {tỷ lệ / số tiền} tính lãi cho CAP"));
-                        return true;
-                    }
+                    TracingSe.Trace(string.Format("Chưa setup {tỷ lệ / số tiền} tính lãi cho CAP"));
+                    return true;
                 }
-                return false;
             }
-            catch (Exception)
-            {
-                strMess.AppendLine(string.Format("sys exception ..."));
-                return false;
-            }
+            return false;
+            //}
+            //catch (Exception)
+            //{
+            //    TracingSe.Trace(string.Format("sys exception ..."));
+            //    return false;
+            //}
 
         }
         private static string format_Money(decimal money)
@@ -1500,7 +1501,7 @@ namespace Action_InterestSimulation_CalculateSimulation
 
             receiptdate = RetrieveLocalTimeFromUTCTime(receiptdate);
             enInstallment = service.Retrieve("bsd_paymentschemedetail", new Guid(installmentid), new ColumnSet(true));
-            strMess.AppendLine("2");
+            TracingSe.Trace("2");
             getInterestStartDate();
             objIns.LateDays = getLateDays(receiptdate);
             lateDays = objIns.LateDays;

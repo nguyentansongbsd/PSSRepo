@@ -49,13 +49,14 @@
   <ItemGroup>
     <Compile Include="Plugin_AutoShareRecord_V2.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Plugin_AutoShareRecord_V2_1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies">
-      <Version>9.0.2.59</Version>
+      <Version>9.0.0.7</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

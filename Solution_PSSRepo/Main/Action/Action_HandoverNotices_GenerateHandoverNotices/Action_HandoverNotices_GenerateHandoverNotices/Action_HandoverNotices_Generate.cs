@@ -63,8 +63,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, "100000000"));// == APPROVED
             query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, 0));// == Active
-            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate",
-                                                        "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
+            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate","bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
             query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.And);
             var bsd_types_1 = 100000002;
             var bsd_types_2 = 100000001;
@@ -79,31 +78,13 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             {
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_updateestimatehandoverdateid", ConditionOperator.Equal, estimatehandover));
             }
-            //query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("createdon", ConditionOperator.Today)); 
-
-            //query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.Or);
-            //query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_generated", ConditionOperator.Equal, "0"));// == NO
-            //query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_generated", ConditionOperator.Null));// NULL
-
-            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "salesorder",
-                                                        "bsd_optionentry", "salesorderid", JoinOperator.Inner));
+            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "salesorder","bsd_optionentry", "salesorderid", JoinOperator.Inner));
             query.LinkEntities[1].LinkCriteria = new FilterExpression(LogicalOperator.And);
             query.LinkEntities[1].LinkCriteria.AddCondition(new ConditionExpression("bsd_signedcontractdate", ConditionOperator.NotNull));// Not NULL
-
-            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "product",
-                                                        "bsd_units", "productid", JoinOperator.Inner));
+            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "product", "bsd_units", "productid", JoinOperator.Inner));
             query.LinkEntities[2].LinkCriteria = new FilterExpression(LogicalOperator.And);
             query.LinkEntities[2].LinkCriteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, "100000002"));// == Sold
-
-            //Hân - 02.03.2018
-            //query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_project",
-            //                                            "bsd_project", "bsd_projectid", JoinOperator.Inner));
-            //query.LinkEntities[3].LinkCriteria = new FilterExpression(LogicalOperator.And);
-            //query.LinkEntities[3].LinkCriteria.AddCondition(new ConditionExpression("bsd_projectcode", ConditionOperator.Equal, "SSA"));
-
             EntityCollection list = service.RetrieveMultiple(query);
-            //throw new InvalidPluginExecutionException(list.Entities.Count.ToString());
-
             foreach (Entity detail in list.Entities)
             {
                 DateTime today = RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
@@ -229,11 +210,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                             traceService.Trace("bsd_toleranceinterestamount: " + bsd_toleranceinterestamount.ToString());
                             traceService.Trace("bsd_toleranceinterestpercentage: " + bsd_toleranceinterestpercentage.ToString());
                             traceService.Trace("amountcalbypercent: " + bsd_toleranceinterestamount.ToString());
-                            if (enInterestRateMaster.Contains("bsd_toleranceinterestamount") || enInterestRateMaster.Contains
-("bsd_toleranceinterestpercentage"))
+                            if (enInterestRateMaster.Contains("bsd_toleranceinterestamount") || enInterestRateMaster.Contains("bsd_toleranceinterestpercentage"))
                             {
-
-
                                 if (bsd_toleranceinterestamount > 0 && amountcalbypercent > 0)
                                 {
                                     lim = Math.Min(bsd_toleranceinterestamount, amountcalbypercent);
@@ -251,13 +229,9 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                                 }
                                 estimateInterest = estimateInterest < lim ? estimateInterest : lim;
                                 traceService.Trace("lim :" + lim);
-
                             }
-
                         }
                         traceService.Trace("estimateInterest :" + estimateInterest);
-
-                        //estimateInterest = Interest(service, OE, today.Date);
                     }
                     else
                         hn["bsd_name"] = "Handover Notices";
@@ -267,7 +241,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                         hn["bsd_installment"] = detail["bsd_installment"];
                         Entity ins = service.Retrieve(((EntityReference)detail["bsd_installment"]).LogicalName, ((EntityReference)detail["bsd_installment"]).Id,
                             new ColumnSet(new string[2] { "bsd_amountofthisphase", "bsd_balance" }));
-                        //installmentAmount = ins.Contains("bsd_amountofthisphase") ? ((Money)ins["bsd_amountofthisphase"]).Value : decimal.Zero;
                         installmentAmount = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
                         hn["bsd_installmentamount"] = new Money(installmentAmount);
                     }
@@ -287,10 +260,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                         hn["bsd_paymentduedate"] = detail["bsd_paymentduedate"];
                     if (detail.Contains("bsd_estimatehandoverdatenew"))
                         hn["bsd_handoverdateactual"] = detail["bsd_estimatehandoverdatenew"];
-                    //hn["bsd_other"] = new Money(orther - TotalSysRe);
                     hn["bsd_other"] = new Money(orther);
                     decimal total = managementF + maintenanceF + outstandingUnPaid + orther + actualInterest + estimateInterest + installmentAmount - advancePaymentAmount;
-                    //throw new InvalidPluginExecutionException(total.ToString());
                     hn["bsd_totalamount"] = new Money(total);
                     hn["bsd_generatedbysystem"] = true;
                     if (UpEHDEn.Contains("bsd_isincludelastinstallment"))
@@ -311,18 +282,15 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     if (isContainsBilldate)
                         hn["bsd_billdate"] = billdate;
                     service.Create(hn);
-
                     //UPDATE UEHD
                     Entity uehd = new Entity("bsd_updateestimatehandoverdate");
                     uehd.Id = ((EntityReference)detail["bsd_updateestimatehandoverdate"]).Id;
                     uehd["bsd_generated"] = true;
                     service.Update(uehd);
-
                     count++;
                 }
             }
             context.OutputParameters["ReturnId"] = count.ToString();
-
         }
         private decimal Interest(IOrganizationService crmservices, Entity oe, DateTime dateCalculate)
         {
@@ -363,14 +331,9 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                 int interestStartDateType = ((OptionSetValue)interestMaster["bsd_intereststartdatetype"]).Value;//100000000: Due date;         100000001: Grace period  
                 decimal interestMasterPercent = (decimal)interestMaster["bsd_termsinterestpercentage"];
                 decimal interestProjectDaily = 0;
-
                 interestProjectDaily = DailyInterest(service, oe.ToEntityReference());
-
                 decimal interestPercent = interestMasterPercent + interestProjectDaily;
-
-
                 var bsd_signedcontractdate = new DateTime();
-
                 var bsd_signeddadate = new DateTime();
                 //CREATE INTEREST SIMULATION DETAIL
                 foreach (Entity ins in listInstallment.Entities)
@@ -379,11 +342,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     decimal balance = 0;
                     interestPercent = (decimal)ins["bsd_interestchargeper"];
                     //TINH LAI
-
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
-
                     DateTime InterestStarDate = duedate.AddDays(Graceday);
-
                     if (InterestStarDate.Date < dateCalculate.Date)
                     {
                         traceService.Trace("start tính lãi");
@@ -392,7 +352,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                         {
                             lateDays = lateDays + Graceday;
                         }
-
                         if (oe.Contains("bsd_signedcontractdate"))
                         {
                             bsd_signedcontractdate = (DateTime)oe["bsd_signedcontractdate"];
@@ -416,7 +375,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                             }    
                         }
                         var latedays2 = lateDays;
-
                         traceService.Trace("caseSign " + caseSign);
                         traceService.Trace("lateDays " + lateDays);
                         var resCheckCaseSign = checkCaseSignAndCalLateDays(ins, oe, bsd_signedcontractdate, bsd_signeddadate, dateCalculate, ref latedays2);
@@ -433,7 +391,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     }
                 }
             }
-
             return interest;
         }
         public bool checkCaseSignAndCalLateDays(Entity enInstallment, Entity enOptionEntry, DateTime bsd_signedcontractdate, DateTime bsd_signeddadate, DateTime receiptdate, ref int lateDays)
@@ -551,15 +508,12 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             }
             traceService.Trace($"start caseSign {caseSign}");
             traceService.Trace($"rs.Entities.Count {rs.Entities.Count}");
-
             traceService.Trace("resultCaseSign:" + result);
             return result;
         }
         private decimal CalculateNewInterest(decimal balance, int lateDays, decimal interestPercent)
         {
-            //decimal interest = balance * lateDays * (interestPercent / 30 / 100);
             decimal interest = balance * lateDays * (interestPercent / 100);
-
             return interest;
         }
         private decimal DailyInterest(IOrganizationService crmservices, EntityReference oe)
@@ -588,7 +542,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             }
             return 0;
         }
-
         private bool CheckExistHandoverNotices(IOrganizationService crmservices, EntityReference oe, EntityReference ins)
         {
             string fetchXml =
@@ -642,7 +595,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-
         private EntityCollection CalSum_SystemReceipt(IOrganizationService crmservices, EntityReference oe)
         {
             string fetchXml =
@@ -659,7 +611,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-
         private EntityCollection CalculateOther(IOrganizationService crmservices, EntityReference oe, Boolean isincludelastinstallment)
         {
             string fetchXml = "";
@@ -722,19 +673,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
         }
         private EntityCollection CalculateAdvancePayment(IOrganizationService crmservices, EntityReference cus, EntityReference pro, EntityReference oe)
         {
-            //string fetchXml =
-            //      @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'  aggregate='true' >
-            //      <entity name='bsd_advancepayment'>
-            //        <attribute name='bsd_remainingamount' alias='remaining' aggregate='sum'  />
-            //        <filter type='and'>
-            //          <condition attribute='bsd_customer' operator='eq' value='{0}' />
-            //          <condition attribute='statuscode' operator='eq' value='100000000' />
-            //          <condition attribute='bsd_project' operator='eq' value='{1} '/>
-            //          <condition attribute='bsd_optionentry' operator='eq' value='{2} '/>
-            //        </filter>
-            //      </entity>
-            //    </fetch>";
-
             string fetchXml =
                   @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'  aggregate='true' >
                   <entity name='bsd_advancepayment'>
@@ -750,7 +688,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime, IOrganizationService service)
         {
             var currentUserSettings = service.RetrieveMultiple(
@@ -779,52 +716,31 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             var response = (LocalTimeFromUtcTimeResponse)service.Execute(request);
 
             return response.LocalTime;
-            //var utcTime = utcTime.ToString("MM/dd/yyyy HH:mm:ss");
-            //var localDateOnly = response.LocalTime.ToString("dd-MM-yyyy");
         }
         private EntityCollection fect_paymentcheme(IOrganizationService crmservices, Entity oe)
         {
             string fetchXml =
                   @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-  <entity name='salesorder'>
-    <attribute name='name' />
-    <attribute name='customerid' />
-    <attribute name='statuscode' />
-    <attribute name='totalamount' />
-    <attribute name='bsd_unitnumber' />
-    <attribute name='bsd_project' />
-    <attribute name='bsd_optionno' />
-    <attribute name='createdon' />
-    <attribute name='bsd_paymentscheme' />
-    <attribute name='bsd_contractnumber' />
-    <attribute name='totalamount' />
-    <attribute name='bsd_phaseslaunch' />
-    <attribute name='salesorderid' />
-    <order attribute='createdon' descending='true' />
-    <filter type='and'>
-      <condition attribute='salesorderid' operator='eq' value='{0}' />
-    </filter>
-  </entity>
-</fetch>";
-            fetchXml = string.Format(fetchXml, oe.Id);
-            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
-            return entc;
-        }
-        private EntityCollection fect_ins(IOrganizationService crmservices, EntityReference oe)
-        {
-            string fetchXml =
-                  @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-  <entity name='bsd_paymentschemedetail'>
-    <attribute name='bsd_paymentschemedetailid' />
-    <attribute name='bsd_name' />
-    <attribute name='createdon' />
-    <order attribute='bsd_name' descending='false' />
-    <filter type='and'>
-      <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
-      <condition attribute='bsd_managementfee' operator='eq' value='1' />
-    </filter>
-  </entity>
-</fetch>";
+              <entity name='salesorder'>
+                <attribute name='name' />
+                <attribute name='customerid' />
+                <attribute name='statuscode' />
+                <attribute name='totalamount' />
+                <attribute name='bsd_unitnumber' />
+                <attribute name='bsd_project' />
+                <attribute name='bsd_optionno' />
+                <attribute name='createdon' />
+                <attribute name='bsd_paymentscheme' />
+                <attribute name='bsd_contractnumber' />
+                <attribute name='totalamount' />
+                <attribute name='bsd_phaseslaunch' />
+                <attribute name='salesorderid' />
+                <order attribute='createdon' descending='true' />
+                <filter type='and'>
+                  <condition attribute='salesorderid' operator='eq' value='{0}' />
+                </filter>
+              </entity>
+            </fetch>";
             fetchXml = string.Format(fetchXml, oe.Id);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
