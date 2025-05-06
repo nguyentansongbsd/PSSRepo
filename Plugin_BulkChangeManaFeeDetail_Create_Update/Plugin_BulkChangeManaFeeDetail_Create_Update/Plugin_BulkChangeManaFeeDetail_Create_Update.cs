@@ -78,7 +78,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                               <entity name='bsd_paymentschemedetail'>
                                 <attribute name=""bsd_paymentschemedetailid"" />
                                 <filter>
-                                  <condition attribute='bsd_optionentry' operator='eq' value='{((EntityReference)entity["bsd_optionentry"]).Id}'/>
+                                  <condition attribute='bsd_optionentry' operator='eq' value='{((EntityReference)enTarget["bsd_optionentry"]).Id}'/>
                                   <condition attribute='bsd_managementfee' operator='eq' value='1'/>
                                 </filter>
                               </entity>
