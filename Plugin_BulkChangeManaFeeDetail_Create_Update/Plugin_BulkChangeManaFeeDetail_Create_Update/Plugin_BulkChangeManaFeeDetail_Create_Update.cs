@@ -67,7 +67,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                             EntityCollection list21 = service.RetrieveMultiple(new FetchExpression(fetchXml21));
                             foreach (Entity entity1 in list21.Entities)
                             {
-                                decimal bsd_netsaleablearea = enTarget.Contains("bsd_netsaleablearea") ? (decimal)enTarget["bsd_netsaleablearea"] : 0;
+                                decimal bsd_netsaleablearea = entity1.Contains("bsd_netsaleablearea") ? (decimal)entity1["bsd_netsaleablearea"] : 0;
                                 enUp["bsd_managementfeenew"] = bsd_netsaleablearea * bsd_numberofmonthspaidmfnew * bsd_managementamountmonth_new;
                                 enUp["bsd_units"] = entity1.ToEntityReference();
                                 enUp["bsd_managementamountmonth_current"] = entity1.Contains("bsd_managementamountmonth") ? (Money)entity1["bsd_managementamountmonth"] : new Money(0);
@@ -107,7 +107,7 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                     EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
                     foreach (Entity entity in list2.Entities)
                     {
-                        decimal bsd_netsaleablearea = enTarget.Contains("bsd_netsaleablearea") ? (decimal)enTarget["bsd_netsaleablearea"] : 0;
+                        decimal bsd_netsaleablearea = entity.Contains("bsd_netsaleablearea") ? (decimal)entity["bsd_netsaleablearea"] : 0;
                         enUp["bsd_managementfeenew"] = bsd_netsaleablearea * bsd_numberofmonthspaidmfnew * bsd_managementamountmonth_new;
                         enUp["bsd_managementamountmonth_current"] = entity.Contains("bsd_managementamountmonth") ? (Money)entity["bsd_managementamountmonth"] : new Money(0);
                         checkUp = true;
