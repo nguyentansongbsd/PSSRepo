@@ -369,8 +369,9 @@ namespace Plugin_AutoShareRecord
                         }
                     }    
                 }    
+            
+                Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
             }
-            Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
         }
 
         private void Role_SharePrivileges(
