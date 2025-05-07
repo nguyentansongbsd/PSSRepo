@@ -320,6 +320,8 @@ namespace Plugin_AutoShareRecord
                         }
                     }
                 }
+                
+                Plugin_AutoShareRecord_V2_1.Run_Create(service, traceService, inputParameter, service1);
             }
             if(service1.MessageName == "Update")
             {
@@ -368,7 +370,7 @@ namespace Plugin_AutoShareRecord
                     }    
                 }    
             }
-            Plugin_AutoShareRecord_V2_1.Run(service, traceService, inputParameter, service1);
+            Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
         }
 
         private void Role_SharePrivileges(
