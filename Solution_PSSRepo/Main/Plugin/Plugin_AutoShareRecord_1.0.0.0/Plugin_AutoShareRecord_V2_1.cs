@@ -29,6 +29,12 @@ namespace Plugin_AutoShareRecord
                 case "bsd_paymentscheme":
                     Run_PaymentScheme();
                     break;
+                case "bsd_event":
+                    Run_Event();
+                    break;
+                case "bsd_updatepricelist":
+                    Run_UpdatePriceList();
+                    break;
             }
 
 
@@ -213,7 +219,7 @@ namespace Plugin_AutoShareRecord
 
             if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Confirm
             {
-                Entity enPS = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project"}));
+                Entity enPS = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project" }));
                 if (!enPS.Contains("bsd_project")) return;
 
                 EntityReference refProject = (EntityReference)enPS["bsd_project"];
@@ -261,30 +267,51 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private static void Run_FollowUpList()
+        public static void ShareTeams_OneEntity(string projecField, string teamWriteShare, int status = -999)
         {
-            traceService.Trace("Run_FollowUpList");
+            traceService.Trace("ShareTeams_OneEntity");
 
-            Entity enFollowUpList = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project" }));
-            if (!enFollowUpList.Contains("bsd_project")) return;
+            if (status != -999 && (!target.Contains("statuscode") || ((OptionSetValue)target["statuscode"]).Value != status))
+                return;
 
-            EntityReference refProject = (EntityReference)enFollowUpList["bsd_project"];
+            Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { projecField }));
+            if (!enTarget.Contains(projecField)) return;
+
+            EntityReference refProject = (EntityReference)enTarget[projecField];
             string projectCode = GetProjectCode(refProject);
             EntityCollection rs = GetTeams(projectCode);
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
-                EntityReference refFollowUpList = enFollowUpList.ToEntityReference();
+                EntityReference refTarget = enTarget.ToEntityReference();
 
                 EntityReference refTeam = null;
                 bool hasWriteShare = false;
                 foreach (Entity team in rs.Entities)
                 {
                     refTeam = team.ToEntityReference();
-                    hasWriteShare = $"{projectCode}_Management_Team".Equals((string)team["name"]);
+                    hasWriteShare = $"{projectCode}_{teamWriteShare}_Team".Equals((string)team["name"]);
 
-                    ShareTeams(refFollowUpList, refTeam, hasWriteShare);
+                    ShareTeams(refTarget, refTeam, hasWriteShare);
                 }
             }
+        }
+
+        private static void Run_FollowUpList()
+        {
+            traceService.Trace("Run_FollowUpList");
+            ShareTeams_OneEntity("bsd_project", "Management");
+        }
+
+        private static void Run_Event()
+        {
+            traceService.Trace("Run_Event");
+            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
+        }
+
+        private static void Run_UpdatePriceList()
+        {
+            traceService.Trace("Run_UpdatePriceList");
+            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
         }
     }
 }
