@@ -25,9 +25,6 @@ namespace Plugin_Project_CreateTeam
             Entity target = (Entity)context.InputParameters["Target"];
             Entity enProject = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_projectcode" }));
             string projectCode = enProject.Contains("bsd_projectcode") ? (string)enProject["bsd_projectcode"] : string.Empty;
-            if (string.IsNullOrWhiteSpace(projectCode))
-                throw new InvalidPluginExecutionException("Project Code is invalid, please check again.");
-
             Entity enUser = service.Retrieve("systemuser", context.UserId, new ColumnSet(new string[] { "businessunitid" }));
 
             EntityReference refProject = enProject.ToEntityReference();

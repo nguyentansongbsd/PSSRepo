@@ -14,13 +14,12 @@ namespace Plugin_AutoShareRecord
         static IOrganizationService service = null;
         static ITracingService traceService = null;
         static Entity target = null;
-        static string projectField_Name = "";
-        public static void Run(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext context)
+        public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
             traceService = _traceService;
             target = _target;
-            traceService.Trace("Plugin_AutoShareRecord_V2_1");
+            traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update");
 
             switch (target.LogicalName)
             {
@@ -52,6 +51,15 @@ namespace Plugin_AutoShareRecord
                 case "bsd_packageselling":
                     Run_PhasesLaunch();
                     break;
+                case "bsd_paymentscheme":
+                    Run_PaymentScheme();
+                    break;
+                case "bsd_event":
+                    Run_Event();
+                    break;
+                case "bsd_updatepricelist":
+                    Run_UpdatePriceList();
+                    break;
             }
 
 
@@ -81,6 +89,23 @@ namespace Plugin_AutoShareRecord
                 }
             }    
         }
+        public static void Run_Create(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
+        {
+            service = _service;
+            traceService = _traceService;
+            target = _target;
+            traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Create");
+
+            switch (target.LogicalName)
+            {
+                case "bsd_followuplist":
+                    Run_FollowUpList();
+                    break;
+            }
+
+
+        }
+
         public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, bool hasWriteShare)
         {
             traceService.Trace("ShareTeams");
@@ -148,6 +173,7 @@ namespace Plugin_AutoShareRecord
         private static void Run_PhasesLaunch()
         {
             traceService.Trace("Run_PhasesLaunch");
+
             if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Launched
             {
                 Entity enPhasesLaunch = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_projectid", "bsd_discountlist" }));
@@ -159,7 +185,14 @@ namespace Plugin_AutoShareRecord
                 if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
                 {
                     EntityReference refPhasesLaunch = enPhasesLaunch.ToEntityReference();
+                    EntityCollection rsPromotions = GetPromotions(refPhasesLaunch);
                     EntityReference refDiscountList = enPhasesLaunch.Contains("bsd_discountlist") ? (EntityReference)enPhasesLaunch["bsd_discountlist"] : null;
+                    EntityCollection rsDiscounts = null;
+                    if (refDiscountList != null)
+                    {
+                        rsDiscounts = GetDiscounts(refDiscountList);
+                    }
+
                     EntityReference refTeam = null;
                     bool hasWriteShare = false;
                     foreach (Entity team in rs.Entities)
@@ -168,21 +201,36 @@ namespace Plugin_AutoShareRecord
                         hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
 
                         ShareTeams(refPhasesLaunch, refTeam, hasWriteShare);
+
                         if (refDiscountList != null)
                         {
                             traceService.Trace("Share DiscountList");
+
                             ShareTeams(refDiscountList, refTeam, hasWriteShare);
-                            ShareTeams_Discount(refDiscountList, team, hasWriteShare);
+                            if (rsDiscounts != null && rsDiscounts.Entities != null && rsDiscounts.Entities.Count > 0)
+                            {
+                                foreach (var discount in rsDiscounts.Entities)
+                                {
+                                    ShareTeams(discount.ToEntityReference(), refTeam, hasWriteShare);
+                                }
+                            }
                         }
-                        ShareTeams_Promotion(refPhasesLaunch, team, hasWriteShare);
+
+                        if (rsPromotions != null && rsPromotions.Entities != null && rsPromotions.Entities.Count > 0)
+                        {
+                            foreach (var promotion in rsPromotions.Entities)
+                            {
+                                ShareTeams(promotion.ToEntityReference(), refTeam, hasWriteShare);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        private static void ShareTeams_Discount(EntityReference refDiscountList, Entity team, bool hasWriteShare)
+        private static EntityCollection GetDiscounts(EntityReference refDiscountList)
         {
-            traceService.Trace("ShareTeams_Discount");
+            traceService.Trace("GetDiscounts");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
               <entity name=""bsd_discount"">
@@ -195,18 +243,12 @@ namespace Plugin_AutoShareRecord
               </entity>
             </fetch>";
             EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
-            {
-                foreach (var discount in rs.Entities)
-                {
-                    ShareTeams(discount.ToEntityReference(), team.ToEntityReference(), hasWriteShare);
-                }
-            }
+            return rs;
         }
 
-        private static void ShareTeams_Promotion(EntityReference refPhasesLaunch, Entity team, bool hasWriteShare)
+        private static EntityCollection GetPromotions(EntityReference refPhasesLaunch)
         {
-            traceService.Trace("ShareTeams_Promotion");
+            traceService.Trace("GetPromotions");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
               <entity name=""bsd_promotion"">
@@ -217,13 +259,108 @@ namespace Plugin_AutoShareRecord
               </entity>
             </fetch>";
             EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            return rs;
+        }
+
+        private static void Run_PaymentScheme()
+        {
+            traceService.Trace("Run_PaymentScheme");
+
+            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Confirm
             {
-                foreach (var discount in rs.Entities)
+                Entity enPS = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project" }));
+                if (!enPS.Contains("bsd_project")) return;
+
+                EntityReference refProject = (EntityReference)enPS["bsd_project"];
+                string projectCode = GetProjectCode(refProject);
+                EntityCollection rs = GetTeams(projectCode);
+                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
                 {
-                    ShareTeams(discount.ToEntityReference(), team.ToEntityReference(), hasWriteShare);
+                    EntityReference refPS = enPS.ToEntityReference();
+                    EntityCollection rsPSDetails = GetPaymentSchemeDetails(refPS);
+
+                    EntityReference refTeam = null;
+                    bool hasWriteShare = false;
+                    foreach (Entity team in rs.Entities)
+                    {
+                        refTeam = team.ToEntityReference();
+                        hasWriteShare = $"{projectCode}_CR_Team".Equals((string)team["name"]);
+
+                        ShareTeams(refPS, refTeam, hasWriteShare);
+
+                        if (rsPSDetails != null && rsPSDetails.Entities != null && rsPSDetails.Entities.Count > 0)
+                        {
+                            foreach (var ins in rsPSDetails.Entities)
+                            {
+                                ShareTeams(ins.ToEntityReference(), refTeam, hasWriteShare);
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        private static EntityCollection GetPaymentSchemeDetails(EntityReference refPS)
+        {
+            traceService.Trace("GetPaymentSchemeDetails");
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_name"" />
+                <filter>
+                  <condition attribute=""bsd_paymentscheme"" operator=""eq"" value=""{refPS.Id}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return rs;
+        }
+
+        public static void ShareTeams_OneEntity(string projecField, string teamWriteShare, int status = -999)
+        {
+            traceService.Trace("ShareTeams_OneEntity");
+
+            if (status != -999 && (!target.Contains("statuscode") || ((OptionSetValue)target["statuscode"]).Value != status))
+                return;
+
+            Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { projecField }));
+            if (!enTarget.Contains(projecField)) return;
+
+            EntityReference refProject = (EntityReference)enTarget[projecField];
+            string projectCode = GetProjectCode(refProject);
+            EntityCollection rs = GetTeams(projectCode);
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                EntityReference refTarget = enTarget.ToEntityReference();
+
+                EntityReference refTeam = null;
+                bool hasWriteShare = false;
+                foreach (Entity team in rs.Entities)
+                {
+                    refTeam = team.ToEntityReference();
+                    hasWriteShare = $"{projectCode}_{teamWriteShare}_Team".Equals((string)team["name"]);
+
+                    ShareTeams(refTarget, refTeam, hasWriteShare);
+                }
+            }
+        }
+
+        private static void Run_FollowUpList()
+        {
+            traceService.Trace("Run_FollowUpList");
+            ShareTeams_OneEntity("bsd_project", "Management");
+        }
+
+        private static void Run_Event()
+        {
+            traceService.Trace("Run_Event");
+            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
+        }
+
+        private static void Run_UpdatePriceList()
+        {
+            traceService.Trace("Run_UpdatePriceList");
+            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
         }
     }
 }
