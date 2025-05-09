@@ -370,6 +370,7 @@ namespace Plugin_AutoShareRecord
                 }
 
                 Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
+                Plugin_AutoShareRecord_V2_2.Run_ProcessShareTeam(service, traceService, inputParameter, service1);
             }
 
         }

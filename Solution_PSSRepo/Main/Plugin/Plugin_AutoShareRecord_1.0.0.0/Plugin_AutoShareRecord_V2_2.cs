@@ -14,102 +14,124 @@ namespace Plugin_AutoShareRecord
         static IOrganizationService service = null;
         static ITracingService traceService = null;
         static Entity target = null;
-        static string projectField_Name = "bsd_project";
-        static List<string> listHasWrite_Entity = new List<string>()
-        {
-            "bsd_documents"
-        };
+        static Entity en = null;
+        static EntityReference refProject = null;
+        static string projectCode = "";
+        static EntityCollection rs = null;
         public static void Run_ProcessShareTeam(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
             traceService = _traceService;
             target = _target;
             traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update");
+
+            en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+            refProject = GetProject();
+            projectCode = GetProjectCode(refProject);
+            rs = GetTeams(projectCode);
+
             switch (target.LogicalName)
             {
 
                 case "bsd_documents":
-                    Run_ShareTemProject();
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "CR_Team", "Sales_Team", "Management_Team" });
                     break;
-                case "bsd_paymentscheme":
-                    Run_PaymentScheme();
+                case "bsd_landvalue":
+                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
                     break;
-                case "bsd_event":
-                    Run_Event();
+                case "bsd_updatelandvalue":
+                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
                     break;
-                case "bsd_updatepricelist":
-                    Run_UpdatePriceList();
+                case "bsd_updateduedate":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
                     break;
+                case "bsd_updateduedatedetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_bankingloan":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team"});
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+
+                case "bsd_updateduedateoflastinstallmentapprove":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateduedateoflastinstallment":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_applybankaccountunits":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_waiverapproval":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateestimatehandoverdate":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateestimatehandoverdatedetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_bulkwaiver":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_bulkchangemanagementfee":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_terminateletter":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_interestsimulation":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+
+                case "bsd_transactionpayment":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_waiverapprovaldetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_interestsimulationdetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+
+
             }
 
 
         }
 
-        public static void Run_WhenApprove()
+        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null)
         {
-            traceService.Trace($"Run_WhenApprove {target.LogicalName}");
-            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000)
-            {
-                Entity en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
-                if (!en.Contains(projectField_Name)) return;
-
-                EntityReference refProject = (EntityReference)en[projectField_Name];
-                string projectCode = GetProjectCode(refProject);
-                EntityCollection rs = GetTeams(projectCode);
-                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
-                {
-                    EntityReference refPhasesLaunch = en.ToEntityReference();
-                    EntityReference refTeam = null;
-                    bool hasWriteShare = false;
-                    foreach (Entity team in rs.Entities)
-                    {
-                        refTeam = team.ToEntityReference();
-                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
-                        ShareTeams(refPhasesLaunch, refTeam, hasWriteShare);
-                    }
-                }
-            }
-        }
-        public static void Run_ShareTemProject()
-        {
-            traceService.Trace($"Run_WhenApprove {target.LogicalName}");
-            Entity en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
-            if (!en.Contains(projectField_Name)) return;
-            EntityReference refProject = (EntityReference)en[projectField_Name];
-            string projectCode = GetProjectCode(refProject);
-            EntityCollection rs = GetTeams(projectCode);
+            traceService.Trace($"Run_ShareTemProject {target.LogicalName}");
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
-                
+
                 EntityReference refTeam = null;
                 bool hasWriteShare = false;
                 foreach (Entity team in rs.Entities)
                 {
-                    refTeam = team.ToEntityReference();
-                    if (!listHasWrite_Entity.Contains(target.LogicalName))
-                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
-                    else
-                        hasWriteShare = true;
-                    ShareTeams(target.ToEntityReference(), refTeam, hasWriteShare);
+                    if (teamShares != null)
+                    {
+                        if (teamShares.Contains((string)team["name"]))
+                            ShareTeams(target.ToEntityReference(), refTeam, hasWriteShare);
+                    }
                 }
             }
-
-        }
-        public static void Run_Create(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
-        {
-            service = _service;
-            traceService = _traceService;
-            target = _target;
-            traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Create");
-
-            switch (target.LogicalName)
-            {
-                case "bsd_followuplist":
-                    Run_FollowUpList();
-                    break;
-            }
-
-
         }
 
         public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, bool hasWriteShare)
@@ -175,198 +197,93 @@ namespace Plugin_AutoShareRecord
             traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
             return rs;
         }
-
-        private static void Run_PhasesLaunch()
+        public static EntityReference GetProject()
         {
-            traceService.Trace("Run_PhasesLaunch");
+            EntityReference enProjectRef2 = null;
+            EntityReference enMasterRef = null;
 
-            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Launched
+            Entity enMaster =null;
+            switch (target.LogicalName)
             {
-                Entity enPhasesLaunch = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_projectid", "bsd_discountlist" }));
-                if (!enPhasesLaunch.Contains("bsd_projectid")) return;
 
-                EntityReference refProject = (EntityReference)enPhasesLaunch["bsd_projectid"];
-                string projectCode = GetProjectCode(refProject);
-                EntityCollection rs = GetTeams(projectCode);
-                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
-                {
-                    EntityReference refPhasesLaunch = enPhasesLaunch.ToEntityReference();
-                    EntityCollection rsPromotions = GetPromotions(refPhasesLaunch);
-                    EntityReference refDiscountList = enPhasesLaunch.Contains("bsd_discountlist") ? (EntityReference)enPhasesLaunch["bsd_discountlist"] : null;
-                    EntityCollection rsDiscounts = null;
-                    if (refDiscountList != null)
-                    {
-                        rsDiscounts = GetDiscounts(refDiscountList);
-                    }
+                case "bsd_documents":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "CR_Team", "Sales_Team", "Management_Team" });
+                    break;
+                case "bsd_landvalue":
+                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    break;
+                case "bsd_updatelandvalue":
+                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    break;
+                case "bsd_updateduedate":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateduedatedetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_bankingloan":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
 
-                    EntityReference refTeam = null;
-                    bool hasWriteShare = false;
-                    foreach (Entity team in rs.Entities)
-                    {
-                        refTeam = team.ToEntityReference();
-                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
+                case "bsd_updateduedateoflastinstallmentapprove":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateduedateoflastinstallment":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_applybankaccountunits":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_waiverapproval":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateestimatehandoverdate":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_updateestimatehandoverdatedetail":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
+                case "bsd_bulkwaiver":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+                case "bsd_bulkchangemanagementfee":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+                case "bsd_terminateletter":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+                case "bsd_interestsimulation":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
 
-                        ShareTeams(refPhasesLaunch, refTeam, hasWriteShare);
+                case "bsd_transactionpayment":
+                    enMasterRef = (EntityReference)en["bsd_payment"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
+                    break;
+                case "bsd_waiverapprovaldetail":
+                    enMasterRef = (EntityReference)en["bsd_waiverapproval"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
+                    break;
+                case "bsd_interestsimulationdetail":
+                    enMasterRef = (EntityReference) en["bsd_interestsimulation"];
+                    enMaster=service.Retrieve(enMasterRef.LogicalName,enMasterRef.Id,new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
+                    break;
 
-                        if (refDiscountList != null)
-                        {
-                            traceService.Trace("Share DiscountList");
 
-                            ShareTeams(refDiscountList, refTeam, hasWriteShare);
-                            if (rsDiscounts != null && rsDiscounts.Entities != null && rsDiscounts.Entities.Count > 0)
-                            {
-                                foreach (var discount in rsDiscounts.Entities)
-                                {
-                                    ShareTeams(discount.ToEntityReference(), refTeam, hasWriteShare);
-                                }
-                            }
-                        }
-
-                        if (rsPromotions != null && rsPromotions.Entities != null && rsPromotions.Entities.Count > 0)
-                        {
-                            foreach (var promotion in rsPromotions.Entities)
-                            {
-                                ShareTeams(promotion.ToEntityReference(), refTeam, hasWriteShare);
-                            }
-                        }
-                    }
-                }
             }
-        }
-
-        private static EntityCollection GetDiscounts(EntityReference refDiscountList)
-        {
-            traceService.Trace("GetDiscounts");
-            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-            <fetch>
-              <entity name=""bsd_discount"">
-                <attribute name=""bsd_name"" />
-                <link-entity name=""bsd_bsd_discounttype_bsd_discount"" from=""bsd_discountid"" to=""bsd_discountid"" intersect=""true"">
-                  <filter>
-                    <condition attribute=""bsd_discounttypeid"" operator=""eq"" value=""{refDiscountList.Id}"" />
-                  </filter>
-                </link-entity>
-              </entity>
-            </fetch>";
-            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            return rs;
-        }
-
-        private static EntityCollection GetPromotions(EntityReference refPhasesLaunch)
-        {
-            traceService.Trace("GetPromotions");
-            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-            <fetch>
-              <entity name=""bsd_promotion"">
-                <attribute name=""bsd_name"" />
-                <filter>
-                  <condition attribute=""bsd_phaselaunch"" operator=""eq"" value=""{refPhasesLaunch.Id}"" />
-                </filter>
-              </entity>
-            </fetch>";
-            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            return rs;
-        }
-
-        private static void Run_PaymentScheme()
-        {
-            traceService.Trace("Run_PaymentScheme");
-
-            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Confirm
-            {
-                Entity enPS = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project" }));
-                if (!enPS.Contains("bsd_project")) return;
-
-                EntityReference refProject = (EntityReference)enPS["bsd_project"];
-                string projectCode = GetProjectCode(refProject);
-                EntityCollection rs = GetTeams(projectCode);
-                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
-                {
-                    EntityReference refPS = enPS.ToEntityReference();
-                    EntityCollection rsPSDetails = GetPaymentSchemeDetails(refPS);
-
-                    EntityReference refTeam = null;
-                    bool hasWriteShare = false;
-                    foreach (Entity team in rs.Entities)
-                    {
-                        refTeam = team.ToEntityReference();
-                        hasWriteShare = $"{projectCode}_CR_Team".Equals((string)team["name"]);
-
-                        ShareTeams(refPS, refTeam, hasWriteShare);
-
-                        if (rsPSDetails != null && rsPSDetails.Entities != null && rsPSDetails.Entities.Count > 0)
-                        {
-                            foreach (var ins in rsPSDetails.Entities)
-                            {
-                                ShareTeams(ins.ToEntityReference(), refTeam, hasWriteShare);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static EntityCollection GetPaymentSchemeDetails(EntityReference refPS)
-        {
-            traceService.Trace("GetPaymentSchemeDetails");
-            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-            <fetch>
-              <entity name=""bsd_paymentschemedetail"">
-                <attribute name=""bsd_name"" />
-                <filter>
-                  <condition attribute=""bsd_paymentscheme"" operator=""eq"" value=""{refPS.Id}"" />
-                </filter>
-              </entity>
-            </fetch>";
-            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            return rs;
-        }
-
-        public static void ShareTeams_OneEntity(string projecField, string teamWriteShare, int status = -999)
-        {
-            traceService.Trace("ShareTeams_OneEntity");
-
-            if (status != -999 && (!target.Contains("statuscode") || ((OptionSetValue)target["statuscode"]).Value != status))
-                return;
-
-            Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { projecField }));
-            if (!enTarget.Contains(projecField)) return;
-
-            EntityReference refProject = (EntityReference)enTarget[projecField];
-            string projectCode = GetProjectCode(refProject);
-            EntityCollection rs = GetTeams(projectCode);
-            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
-            {
-                EntityReference refTarget = enTarget.ToEntityReference();
-
-                EntityReference refTeam = null;
-                bool hasWriteShare = false;
-                foreach (Entity team in rs.Entities)
-                {
-                    refTeam = team.ToEntityReference();
-                    hasWriteShare = $"{projectCode}_{teamWriteShare}_Team".Equals((string)team["name"]);
-
-                    ShareTeams(refTarget, refTeam, hasWriteShare);
-                }
-            }
-        }
-
-        private static void Run_FollowUpList()
-        {
-            traceService.Trace("Run_FollowUpList");
-            ShareTeams_OneEntity("bsd_project", "Management");
-        }
-
-        private static void Run_Event()
-        {
-            traceService.Trace("Run_Event");
-            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
-        }
-
-        private static void Run_UpdatePriceList()
-        {
-            traceService.Trace("Run_UpdatePriceList");
-            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
+            return enProjectRef2;
         }
     }
 }
