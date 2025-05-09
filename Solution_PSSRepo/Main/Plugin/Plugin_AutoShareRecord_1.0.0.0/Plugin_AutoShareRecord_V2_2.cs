@@ -207,50 +207,48 @@ namespace Plugin_AutoShareRecord
             {
 
                 case "bsd_documents":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "CR_Team", "Sales_Team", "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_landvalue":
-                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    enMasterRef = (EntityReference)en["bsd_updatelandvalue"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_updatelandvalue":
-                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_updateduedate":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_updateduedatedetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enMasterRef = (EntityReference)en["bsd_updateduedate"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_bankingloan":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
-
                 case "bsd_updateduedateoflastinstallmentapprove":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_updateduedateoflastinstallment":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enMasterRef = (EntityReference)en["bsd_updateduedateoflastinstapprove"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_applybankaccountunits":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_waiverapproval":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_updateestimatehandoverdate":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    enMasterRef = (EntityReference)en["bsd_updateestimatehandoverdate"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_bulkwaiver":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
@@ -264,7 +262,6 @@ namespace Plugin_AutoShareRecord
                 case "bsd_interestsimulation":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
-
                 case "bsd_transactionpayment":
                     enMasterRef = (EntityReference)en["bsd_payment"];
                     enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
