@@ -25,10 +25,6 @@ namespace Plugin_AutoShareRecord
             target = _target;
             traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update");
 
-            en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
-            refProject = GetProject();
-            projectCode = GetProjectCode(refProject);
-            rs = GetTeams(projectCode);
 
             switch (target.LogicalName)
             {
@@ -118,6 +114,12 @@ namespace Plugin_AutoShareRecord
         public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null)
         {
             traceService.Trace($"Run_ShareTemProject {target.LogicalName}");
+
+            en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+            refProject = GetProject();
+            projectCode = GetProjectCode(refProject);
+            rs = GetTeams(projectCode);
+            traceService.Trace(target.LogicalName);
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
 
