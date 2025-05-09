@@ -36,8 +36,6 @@ namespace Plugin_AutoShareRecord
                     ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
                     break;
             }
-
-
         }
        
         public static void Run_Create(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
