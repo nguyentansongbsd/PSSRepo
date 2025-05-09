@@ -30,10 +30,8 @@ namespace Plugin_AutoShareRecord
                     Run_PaymentScheme();
                     break;
                 case "bsd_event":
-                    Run_Event();
-                    break;
                 case "bsd_updatepricelist":
-                    Run_UpdatePriceList();
+                    ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
                     break;
             }
 
@@ -50,7 +48,7 @@ namespace Plugin_AutoShareRecord
             switch (target.LogicalName)
             {
                 case "bsd_followuplist":
-                    Run_FollowUpList();
+                    ShareTeams_OneEntity("bsd_project", "Management");
                     break;
             }
 
@@ -294,24 +292,6 @@ namespace Plugin_AutoShareRecord
                     ShareTeams(refTarget, refTeam, hasWriteShare);
                 }
             }
-        }
-
-        private static void Run_FollowUpList()
-        {
-            traceService.Trace("Run_FollowUpList");
-            ShareTeams_OneEntity("bsd_project", "Management");
-        }
-
-        private static void Run_Event()
-        {
-            traceService.Trace("Run_Event");
-            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
-        }
-
-        private static void Run_UpdatePriceList()
-        {
-            traceService.Trace("Run_UpdatePriceList");
-            ShareTeams_OneEntity("bsd_project", "Sales", 100000000);
         }
     }
 }
