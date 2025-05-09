@@ -50,6 +50,7 @@
     <Compile Include="Plugin_AutoShareRecord_V2.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Plugin_AutoShareRecord_V2_1.cs" />
+    <Compile Include="Plugin_AutoShareRecord_V2_2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />

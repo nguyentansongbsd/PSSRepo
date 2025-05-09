@@ -9,13 +9,17 @@ using System.Threading.Tasks;
 
 namespace Plugin_AutoShareRecord
 {
-    class Plugin_AutoShareRecord_V2_1
+    class Plugin_AutoShareRecord_V2_2
     {
         static IOrganizationService service = null;
         static ITracingService traceService = null;
         static Entity target = null;
-        static string projectField_Name = "";
-        public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
+        static string projectField_Name = "bsd_project";
+        static List<string> listHasWrite_Entity = new List<string>()
+        {
+            "bsd_documents"
+        };
+        public static void Run_ProcessShareTeam(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
             traceService = _traceService;
@@ -23,15 +27,9 @@ namespace Plugin_AutoShareRecord
             traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update");
             switch (target.LogicalName)
             {
-                case "bsd_phaseslaunch":
-                    Run_PhasesLaunch();
-                    break;
-                case "bsd_discount":
-                    //Run_PhasesLaunch();
-                    projectField_Name = "";
-                    break;
-                case "bsd_packageselling":
-                    Run_PhasesLaunch();
+
+                case "bsd_documents":
+                    Run_ShareTemProject();
                     break;
                 case "bsd_paymentscheme":
                     Run_PaymentScheme();
@@ -46,6 +44,7 @@ namespace Plugin_AutoShareRecord
 
 
         }
+
         public static void Run_WhenApprove()
         {
             traceService.Trace($"Run_WhenApprove {target.LogicalName}");
@@ -69,7 +68,32 @@ namespace Plugin_AutoShareRecord
                         ShareTeams(refPhasesLaunch, refTeam, hasWriteShare);
                     }
                 }
-            }    
+            }
+        }
+        public static void Run_ShareTemProject()
+        {
+            traceService.Trace($"Run_WhenApprove {target.LogicalName}");
+            Entity en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+            if (!en.Contains(projectField_Name)) return;
+            EntityReference refProject = (EntityReference)en[projectField_Name];
+            string projectCode = GetProjectCode(refProject);
+            EntityCollection rs = GetTeams(projectCode);
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                
+                EntityReference refTeam = null;
+                bool hasWriteShare = false;
+                foreach (Entity team in rs.Entities)
+                {
+                    refTeam = team.ToEntityReference();
+                    if (!listHasWrite_Entity.Contains(target.LogicalName))
+                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
+                    else
+                        hasWriteShare = true;
+                    ShareTeams(target.ToEntityReference(), refTeam, hasWriteShare);
+                }
+            }
+
         }
         public static void Run_Create(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
