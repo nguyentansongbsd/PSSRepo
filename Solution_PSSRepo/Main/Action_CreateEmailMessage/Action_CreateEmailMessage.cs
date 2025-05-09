@@ -45,9 +45,7 @@ namespace Action_CreateEmailMessage
                 tracingService.Trace("step1");
                 enProject = GetEntityProject();
                 tracingService.Trace("step2");
-
                 enUnit = GetEntityunit(); tracingService.Trace("step3");
-
                 // Tạo một email message mới
                 Entity emailMessage = new Entity("email");
                 // Thiết lập các thuộc tính cho email message
@@ -55,6 +53,7 @@ namespace Action_CreateEmailMessage
                 emailMessage["bsd_entityname"] = entityName;
                 emailMessage["bsd_entityid"] = entityMainId.ToString();
                 emailMessage["bsd_emailcreator"] = enUserAction.ToEntityReference();
+                emailMessage["regardingobjectid"] = new EntityReference(entityName, new Guid(entityMainId.ToString()));
                 if (entityIdBulkSendMail == "")
                 {
                     var enBulkSendManager = new Entity("bsd_bulksendmailmanager");
@@ -94,19 +93,22 @@ namespace Action_CreateEmailMessage
 
                 // Thêm email message vào hệ thống
                 Guid emailId = service.Create(emailMessage);
-                Entity linkedAttachment = new Entity("activitymimeattachment");
-                linkedAttachment.Attributes["objectid"] = new EntityReference("email", emailId);
-                linkedAttachment.Attributes["objecttypecode"] = "email";
-                linkedAttachment.Attributes["filename"] = GenFileNameAttach();
-                tracingService.Trace("step9");
+                //Entity linkedAttachment = new Entity("activitymimeattachment");
+                //linkedAttachment.Attributes["objectid"] = new EntityReference("email", emailId);
+                //linkedAttachment.Attributes["objecttypecode"] = "email";
+                string fileName= GenFileNameAttach();
+                //linkedAttachment.Attributes["filename"] = fileName;
+                //tracingService.Trace("step9");
 
-                linkedAttachment.Attributes["mimetype"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                linkedAttachment.Attributes["body"] = base64FileAttach;
-                service.Create(linkedAttachment);
+                //linkedAttachment.Attributes["mimetype"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                //linkedAttachment.Attributes["body"] = base64FileAttach;
+                //service.Create(linkedAttachment);
                 tracingService.Trace("step10");
 
                 // Trả về ID của email message đã tạo
                 context.OutputParameters["EmailId"] = emailId;
+                context.OutputParameters["filename"] = fileName;
+
             }
             catch (Exception ex)
             {
@@ -141,14 +143,15 @@ namespace Action_CreateEmailMessage
         }
         private string MapParamMailTemplate(string mailTemplate)
         {
+            tracingService.Trace("MapParamMailTemplate");
             switch (entityMain.LogicalName)
             {
                 case "bsd_payment":
                     mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
                     break;
                 default:
+                    mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
                     break;
-
             }
             return mailTemplate;
         }
@@ -287,7 +290,43 @@ namespace Action_CreateEmailMessage
         }
         private string GenFileNameAttach()
         {
-            return enProject["bsd_name"].ToString() + "_ConfirmPayment_" + enUnit["name"].ToString() + ".docx";
+            if(entityMain.LogicalName== "bsd_payment")
+            {
+                return $"{enUnit["name"]}_{GetFullNameCustomer()}_{GetPaymentName()}";
+            }
+            else
+            {
+                return $"{enUnit["name"]}_{GetFullNameCustomer()}";
+            }
+        }
+        private string GetPaymentName()
+        {
+            string res = "";
+            switch (((OptionSetValue)entityMain["bsd_paymenttype"]).Value)
+            {
+                case 100000000:
+                    res = "Phí giữ chỗ";
+                    break;
+                case 100000001:
+                    res = "Đặt cọc";
+                    break;
+                case 100000002:
+                    res = "Đợt thanh toán ";
+                    var enInsMapRef = (EntityReference)entityMain["bsd_paymentschemedetail"];
+                    var enInsMap = service.Retrieve(enInsMapRef.LogicalName, enInsMapRef.Id, new ColumnSet(true));
+                    res += ((int)enInsMap["bsd_ordernumber"]).ToString();
+                    break;
+                case 100000003:
+                    res = "Lãi đợt";
+                    break;
+                case 100000004:
+                    res = "Phí";
+                    break;
+                default:
+                    res = "Other";
+                    break;
+            }
+            return res;
         }
         private string GetFullNameCustomer()
         {

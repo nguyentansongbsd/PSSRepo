@@ -14,6 +14,7 @@ namespace Plugin_AutoShareRecord
         static IOrganizationService service = null;
         static ITracingService traceService = null;
         static Entity target = null;
+        static string projectField_Name = "";
         public static void Run(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext context)
         {
             service = _service;
@@ -26,11 +27,60 @@ namespace Plugin_AutoShareRecord
                 case "bsd_phaseslaunch":
                     Run_PhasesLaunch();
                     break;
+                case "lead":
+                    Run_PhasesLaunch();
+                    projectField_Name = "";
+                    break;
+                case "account":
+                    Run_PhasesLaunch();
+                    projectField_Name = "";
+                    break;
+                case "contact":
+                    Run_PhasesLaunch();
+                    projectField_Name = "";
+                    break;
+                case "bsd_discount":
+                    Run_PhasesLaunch();
+                    projectField_Name = "";
+
+                    break;
+                case "bsd_event":
+                    Run_PhasesLaunch();
+                    projectField_Name = "";
+
+                    break;
+                case "bsd_packageselling":
+                    Run_PhasesLaunch();
+                    break;
             }
 
 
         }
+        public static void Run_WhenApprove()
+        {
+            traceService.Trace($"Run_WhenApprove {target.LogicalName}");
+            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000)
+            {
+                Entity en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+                if (!en.Contains(projectField_Name)) return;
 
+                EntityReference refProject = (EntityReference)en[projectField_Name];
+                string projectCode = GetProjectCode(refProject);
+                EntityCollection rs = GetTeams(projectCode);
+                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+                {
+                    EntityReference refPhasesLaunch = en.ToEntityReference();
+                    EntityReference refTeam = null;
+                    bool hasWriteShare = false;
+                    foreach (Entity team in rs.Entities)
+                    {
+                        refTeam = team.ToEntityReference();
+                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
+                        ShareTeams(refPhasesLaunch, refTeam, hasWriteShare);
+                    }
+                }
+            }    
+        }
         public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, bool hasWriteShare)
         {
             traceService.Trace("ShareTeams");

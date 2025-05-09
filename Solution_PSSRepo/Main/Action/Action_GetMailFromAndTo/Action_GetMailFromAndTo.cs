@@ -42,7 +42,8 @@ namespace Action_GetMailFromAndTo
                 case "bsd_payment":
                     fieldProject = "bsd_project";
                     break;
-                default:break;
+                default:
+                    fieldProject = "bsd_project"; break;
             }    
             tracingService.Trace(((EntityReference)en[fieldProject]).Id.ToString());
             if (CheckMailIsContain(idTo, ((EntityReference)en[fieldProject]).Id.ToString(), ref idFrom,ref message))
