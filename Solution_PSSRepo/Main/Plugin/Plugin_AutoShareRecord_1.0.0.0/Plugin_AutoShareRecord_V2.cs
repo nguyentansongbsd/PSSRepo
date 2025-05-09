@@ -323,14 +323,14 @@ namespace Plugin_AutoShareRecord
                 
                 Plugin_AutoShareRecord_V2_1.Run_Create(service, traceService, inputParameter, service1);
             }
-            if(service1.MessageName == "Update")
+            if (service1.MessageName == "Update")
             {
                 if (inputParameter.LogicalName == "bsd_discount")
                 {
-                    var en = service.Retrieve(logicalName, inputParameter.Id,new ColumnSet(true));
-                    if (!en.Contains("bsd_applyafterpl")||((bool)en["bsd_applyafterpl"]) == false)
+                    var en = service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(true));
+                    if (!en.Contains("bsd_applyafterpl") || ((bool)en["bsd_applyafterpl"]) == false)
                         return;
-                    if (((OptionSetValue)en["statuscode"]).Value== 100000000)
+                    if (((OptionSetValue)en["statuscode"]).Value == 100000000)
                     {
                         // Lấy thông tin của thực thể dự án từ dịch vụ
                         Entity projectEntity = this.service.Retrieve(
@@ -342,7 +342,6 @@ namespace Plugin_AutoShareRecord
                             )["bsd_project"]).Id,
                             new ColumnSet("bsd_projectcode", "bsd_name")
                         );
-
                         // Kiểm tra xem dự án có chứa mã dự án hay không và gán giá trị cho biến ProjectCode
                         string projectCode = projectEntity.Contains("bsd_projectcode")
                             ? (string)projectEntity["bsd_projectcode"]
@@ -353,7 +352,7 @@ namespace Plugin_AutoShareRecord
                         bool SaleTeam = num != 0;
                         bool SaleMgtTeam = num != 0;
                         EntityCollection teamAccess = this.Get_TeamAccess(projectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
-                        foreach ( Entity entity in teamAccess.Entities )
+                        foreach (Entity entity in teamAccess.Entities)
                         {
                             traceService.Trace($"teams {entity["name"]}");
                         }
@@ -367,11 +366,12 @@ namespace Plugin_AutoShareRecord
                                     this.Role_SharePrivileges(logicalName, inputParameter.Id, entity9.Id, true, true, true, this.service, false);
                             }
                         }
-                    }    
-                }    
-            
+                    }
+                }
+
                 Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
             }
+
         }
 
         private void Role_SharePrivileges(

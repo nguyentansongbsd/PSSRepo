@@ -146,15 +146,15 @@
             var typecode = window.top.entityTypeCode;
             console.log(typecode);
             var fetchXml = `
-                <fetch>
-                  <entity name="documenttemplate">
-                    <attribute name="name" />
-                    <attribute name="documenttemplateid" />
-                    <filter>
-                      <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
-                    </filter>
-                  </entity>
-                </fetch>`;
+                                <fetch>
+                                  <entity name="documenttemplate">
+                                    <attribute name="name" />
+                                    <attribute name="documenttemplateid" />
+                                    <filter>
+                                      <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
+                                    </filter>
+                                  </entity>
+                                </fetch>`;
             // Gọi API để thực hiện truy vấn FetchXML
             Xrm.WebApi.retrieveMultipleRecords("documenttemplate", "?fetchXml=" + fetchXml).then(
                 function (result) {
@@ -217,36 +217,59 @@
             CrateEmailPA(idrecord, reportId, entityname, "");
 
         }
-      
-        function CrateEmailPA(lstid, templateid) {
-            var url = "https://prod-47.southeastasia.logic.azure.com:443/workflows/eef0b68534d242ac9c7384623d0310a2/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dh10bNa8innN4RJ3nUgDfEPAhTHXox69f73VqSSA6HM";
-            if (window.top.entityname == "bsd_customernotices") {
-                url = "https://prod-78.southeastasia.logic.azure.com:443/workflows/f45116a1937b4f20ab232604c3a6f987/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jFGvhuwSWhle6VEcV4LZ2XSmDxxHGWj4ZigifmxhC-A";
-
+        function processArraySequentially(arrlstId, index, bulkManagerId, url, countListid) {
+            // Điều kiện dừng đệ quy
+            if (index >= arrlstId.length) {
+                Xrm.Utility.closeProgressIndicator();
+                var pageInput = {
+                    pageType: "entityrecord",
+                    entityName: "bsd_bulksendmailmanager",
+                    entityId: bulkManagerId
+                };
+                var navigationOptions = {
+                    target: 2,
+                    height: { value: 80, unit: "%" },
+                    width: { value: 70, unit: "%" },
+                    position: 1
+                };
+                Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
+                    function success() {
+                        // Run code on success
+                    },
+                    function error() {
+                        // Handle errors
+                    }
+                );
+                return Promise.resolve();
             }
-            Xrm.Utility.showProgressIndicator("Please Wait!...");
+
+            // Lưu giá trị hiện tại của i
+            var currentIndex = index;
             var fetchXml = `
-                <fetch>
-                  <entity name="bsd_documents">
-                    <attribute name="bsd_name" />
-                    <attribute name="bsd_documentsid" />
-                    <filter>
-                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
-                    </filter>
-                  </entity>
-                </fetch>`;
-            var templateid = "";
-            // Gọi API để thực hiện truy vấn FetchXML
-            Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml).then(
-                function (result) {
+                                <fetch>
+                                  <entity name="bsd_documents">
+                                    <attribute name="bsd_name" />
+                                    <attribute name="bsd_documentsid" />
+                                    <filter>
+                                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
+                                    </filter>
+                                  </entity>
+                                </fetch>`;
+
+            // Xử lý phần tử hiện tại
+            return Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml)
+                .then(function (result) {
                     if (result.entities.length > 0) {
-                        result.entities.forEach(function (template) {
+                        // Tạo một promise cho phần tử hiện tại
+                        return Promise.all(result.entities.map(function (template) {
                             var data = {
-                                listId: lstid,
+                                listId: arrlstId[currentIndex],
                                 templateId: template.bsd_documentsid,
-                                userId: Xrm.Utility.getGlobalContext().getUserId()
+                                userId: Xrm.Utility.getGlobalContext().getUserId(),
+                                bulkManagerId: bulkManagerId
                             };
-                            fetchWithTimeout(url, {
+
+                            return fetchWithTimeout(url, {
                                 method: "POST",
                                 headers: {
                                     "OData-MaxVersion": "4.0",
@@ -255,34 +278,62 @@
                                     "Content-Type": "application/json; charset=utf-8"
                                 },
                                 body: JSON.stringify(data)
-                            }).then(response => {
-                                debugger;
-                                if (response.status == 200) {
-                                    Xrm.Utility.closeProgressIndicator();
-
-                                }
-                            }).then(data => {
-
-                                var confirmStrings = {
-                                    text: "Created " + (countListid - data) + "/error" + data,
-                                    title: "Notice"
-                                };
-                                Xrm.Navigation.openConfirmDialog(confirmStrings, confirmOptions).then(
-                                    function (success) {
-
+                            })
+                                .then(response => {
+                                    if (response.status == 200) {
+                                        Xrm.Utility.closeProgressIndicator();
+                                        return response.json();
                                     }
-                                );
-                            }).
-                                catch(error => {
-                                    debugger;
-                                    Xrm.Utility.closeProgressIndicator();
-                                    console.log(error);
+                                })
+                                .then(data => {
+                                    if (data) {
+                                        if (bulkManagerId == "")
+                                            bulkManagerId = data.data.split(',')[0];
+                                        Xrm.Utility.closeProgressIndicator();
+                                        Xrm.Utility.showProgressIndicator("Created " + (countListid - parseInt(data.data.split(',')[1])));
+                                        return data.data;
+                                    }
                                 });
-                        })
+                        }));
+                    } else {
+                        alert("not found documents");
+                        return Promise.resolve();
                     }
-                    else { alert("not found documents") }
+                })
+                .then(() => {
+                    // Gọi đệ quy để xử lý phần tử tiếp theo
+                    return processArraySequentially(arrlstId, currentIndex + 1, bulkManagerId, url, countListid);
+                })
+                .catch(error => {
+                    console.error("Error processing item " + currentIndex, error);
+                    Xrm.Utility.closeProgressIndicator();
+                    // Vẫn tiếp tục với phần tử tiếp theo ngay cả khi có lỗi
+                    return processArraySequentially(arrlstId, currentIndex + 1, bulkManagerId, url, countListid);
                 });
+        }
 
+
+        function CrateEmailPA(lstid, templateid) {
+            var url = "https://prod-47.southeastasia.logic.azure.com:443/workflows/eef0b68534d242ac9c7384623d0310a2/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dh10bNa8innN4RJ3nUgDfEPAhTHXox69f73VqSSA6HM";
+            if (window.top.entityname == "bsd_customernotices") {
+                url = "https://prod-78.southeastasia.logic.azure.com:443/workflows/f45116a1937b4f20ab232604c3a6f987/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jFGvhuwSWhle6VEcV4LZ2XSmDxxHGWj4ZigifmxhC-A";
+            }
+            Xrm.Utility.showProgressIndicator("Please Wait!...");
+            var fetchXml = `
+                                <fetch>
+                                  <entity name="bsd_documents">
+                                    <attribute name="bsd_name" />
+                                    <attribute name="bsd_documentsid" />
+                                    <filter>
+                                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
+                                    </filter>
+                                  </entity>
+                                </fetch>`;
+            var templateid = "";
+            var arrlstId = lstid.split(',');
+            var bulkManagerId = "";
+            Xrm.Utility.showProgressIndicator("Starting process...");
+            processArraySequentially(arrlstId, 0, bulkManagerId, url, arrlstId.length);
         }
         function fetchWithTimeout(url, options, timeout = 1800000) {
             return Promise.race([
@@ -292,6 +343,7 @@
                 )
             ]);
         }
+
         var countCallPA = 0;
         function downloadFileFromPowerAutomate(lstid, templateid, entityid, base64) {
             var url = "https://prod-53.southeastasia.logic.azure.com:443/workflows/9d4b4fb80d394481a23bddcafdd74fa4/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-O1cJvocQjwm2ULYbaBGHAYVk0G1zsudBgOx4aqmGmc";
