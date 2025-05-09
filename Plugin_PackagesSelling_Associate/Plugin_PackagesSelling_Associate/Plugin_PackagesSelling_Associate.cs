@@ -29,24 +29,29 @@ namespace Plugin_PackagesSelling_Associate
             {
                 Relationship inputParameter1 = (Relationship)service1.InputParameters["Relationship"];
                 EntityReference target = (EntityReference)service1.InputParameters["Target"];
+                traceService.Trace("inputParameter1: " + inputParameter1);
                 traceService.Trace("target: " + target.LogicalName + " " + target.Id);
 
                 //if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling" || inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling")
-                if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling" && target.LogicalName == "bsd_packageselling")
+                if ((inputParameter1.SchemaName == "bsd_quote_bsd_packageselling" && target.LogicalName == "bsd_packageselling") ||
+                    (inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling" && target.LogicalName == "salesorder"))
                 {
-                    EntityReferenceCollection inputParameter3 = (EntityReferenceCollection)service1.InputParameters["RelatedEntities"];
-                    Entity entity1 = new Entity();
                     string attributeName = "";
                     string str = "";
+                    EntityReference refHD = new EntityReference();
                     if (inputParameter1.SchemaName == "bsd_quote_bsd_packageselling")
                     {
                         attributeName = "bsd_phaseslaunchid";
                         str = "bsd_quote_bsd_packageselling";
+                        EntityReferenceCollection inputParameter3 = (EntityReferenceCollection)service1.InputParameters["RelatedEntities"];
+                        refHD = inputParameter3[0];
+
                     }
                     else if (inputParameter1.SchemaName == "bsd_salesorder_bsd_packageselling")
                     {
                         attributeName = "bsd_phaseslaunch";
                         str = "bsd_salesorder_bsd_packageselling";
+                        refHD = target;
                     }
                     //        Entity entity2 = this.service.Retrieve(inputParameter2.LogicalName, inputParameter2.Id, new ColumnSet(new string[4]
                     //        {
@@ -55,7 +60,7 @@ namespace Plugin_PackagesSelling_Associate
                     //"bsd_detailamount",
                     //"bsd_discount"
                     //        }));
-                    Entity enHD = this.service.Retrieve(inputParameter3[0].LogicalName, inputParameter3[0].Id, new ColumnSet(new string[4]
+                    Entity enHD = this.service.Retrieve(refHD.LogicalName, refHD.Id, new ColumnSet(new string[4]
                     {
                         attributeName,
                         "bsd_totalamountlessfreight",
@@ -64,8 +69,7 @@ namespace Plugin_PackagesSelling_Associate
                     }));
                     if (!enHD.Contains(attributeName))
                         throw new InvalidPluginExecutionException("The Phases launch is currently empty. Please fill in the blank before processing this transaction.");
-                    if (this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                                      <entity name='bsd_bsd_phaseslaunch_bsd_packageselling'>\r\n                                            <filter type='and'>\r\n                                              <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}' />\r\n                                              <condition attribute='bsd_packagesellingid' operator='eq' value='{1}' />\r\n                                            </filter>\r\n                                      </entity>\r\n                                    </fetch>", ((EntityReference)enHD[attributeName]).Id, target.Id))).Entities.Count == 0)
-                        throw new InvalidPluginExecutionException("The package you selected is not on this phase launch. Please pick another one.");
+
                     StringBuilder stringBuilder1 = new StringBuilder();
                     stringBuilder1.AppendLine("<fetch mapping='logical' version='1.0'>");
                     stringBuilder1.AppendLine("<entity name='" + str + "'>");
@@ -81,9 +85,12 @@ namespace Plugin_PackagesSelling_Associate
                     Entity entity3 = new Entity(enHD.LogicalName);
                     entity3.Id = enHD.Id;
                     Decimal num1 = 0M;
-                    foreach (Entity entity4 in (Collection<Entity>)entityCollection1.Entities)
+                    foreach (Entity item in (Collection<Entity>)entityCollection1.Entities)
                     {
-                        Entity entity5 = this.service.Retrieve(target.LogicalName, (Guid)entity4["bsd_packagesellingid"], new ColumnSet(new string[8]
+                        EntityReference refPackageSelling = new EntityReference("bsd_packageselling", (Guid)item["bsd_packagesellingid"]);
+                        if (this.service.RetrieveMultiple((QueryBase)new FetchExpression(string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>\r\n                                      <entity name='bsd_bsd_phaseslaunch_bsd_packageselling'>\r\n                                            <filter type='and'>\r\n                                              <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}' />\r\n                                              <condition attribute='bsd_packagesellingid' operator='eq' value='{1}' />\r\n                                            </filter>\r\n                                      </entity>\r\n                                    </fetch>", ((EntityReference)enHD[attributeName]).Id, refPackageSelling.Id))).Entities.Count == 0)
+                            throw new InvalidPluginExecutionException("The package you selected is not on this phase launch. Please pick another one.");
+                        Entity enPackageSelling = this.service.Retrieve(refPackageSelling.LogicalName, refPackageSelling.Id, new ColumnSet(new string[8]
                         {
               "bsd_name",
               "bsd_amount",
@@ -94,7 +101,7 @@ namespace Plugin_PackagesSelling_Associate
               "bsd_method",
               "bsd_byunittype"
                         }));
-                        if (entity5.Contains("bsd_byunittype"))
+                        if (enPackageSelling.Contains("bsd_byunittype"))
                         {
                             StringBuilder stringBuilder2 = new StringBuilder();
                             stringBuilder2.AppendLine("<fetch version='1.0' mapping='logical'>");
@@ -119,53 +126,53 @@ namespace Plugin_PackagesSelling_Associate
                             stringBuilder2.AppendLine("</entity>");
                             stringBuilder2.AppendLine("</fetch>");
                             EntityCollection entityCollection2 = this.service.RetrieveMultiple((QueryBase)new FetchExpression(stringBuilder2.ToString()));
-                            if ((bool)entity5["bsd_byunittype"])
+                            if ((bool)enPackageSelling["bsd_byunittype"])
                             {
                                 if (entityCollection2.Entities.Count > 0)
                                 {
                                     Entity entity6 = entityCollection2.Entities[0];
                                     if (entity6.Contains("bsd_unittype"))
                                     {
-                                        if (entity6["bsd_unittype"] != entity5["bsd_unittype"])
+                                        if (entity6["bsd_unittype"] != enPackageSelling["bsd_unittype"])
                                             throw new InvalidPluginExecutionException("Handover condition is not matching with Unit type. Please check again!");
-                                        if (!entity5.Contains("bsd_method"))
-                                            throw new InvalidPluginExecutionException("Please choose Method of Handover condition " + (string)entity5["bsd_name"]);
-                                        switch (((OptionSetValue)entity5["bsd_method"]).Value)
+                                        if (!enPackageSelling.Contains("bsd_method"))
+                                            throw new InvalidPluginExecutionException("Please choose Method of Handover condition " + (string)enPackageSelling["bsd_name"]);
+                                        switch (((OptionSetValue)enPackageSelling["bsd_method"]).Value)
                                         {
                                             case 100000000:
-                                                if (!entity5.Contains("bsd_priceperm2"))
-                                                    throw new InvalidPluginExecutionException("Please choose Price/m2 of Handover Condition " + (string)entity5["bsd_name"]);
+                                                if (!enPackageSelling.Contains("bsd_priceperm2"))
+                                                    throw new InvalidPluginExecutionException("Please choose Price/m2 of Handover Condition " + (string)enPackageSelling["bsd_name"]);
                                                 if (entity6.Contains("bsd_actualarea"))
                                                 {
-                                                    Decimal num2 = (Decimal)entity6["bsd_actualarea"] * ((Money)entity5["bsd_priceperm2"]).Value;
+                                                    Decimal num2 = (Decimal)entity6["bsd_actualarea"] * ((Money)enPackageSelling["bsd_priceperm2"]).Value;
                                                     num1 += num2;
                                                     break;
                                                 }
                                                 if (entity6.Contains("bsd_netsaleablearea"))
                                                 {
-                                                    Decimal num3 = (Decimal)entity6["bsd_netsaleablearea"] * ((Money)entity5["bsd_priceperm2"]).Value;
+                                                    Decimal num3 = (Decimal)entity6["bsd_netsaleablearea"] * ((Money)enPackageSelling["bsd_priceperm2"]).Value;
                                                     num1 += num3;
                                                 }
                                                 break;
                                             case 100000001:
-                                                if (!entity5.Contains("bsd_amount"))
-                                                    throw new InvalidPluginExecutionException("Please choose Amount of Handover Condition " + (string)entity5["bsd_name"]);
+                                                if (!enPackageSelling.Contains("bsd_amount"))
+                                                    throw new InvalidPluginExecutionException("Please choose Amount of Handover Condition " + (string)enPackageSelling["bsd_name"]);
                                                 if (entity6.Contains("bsd_actualarea"))
                                                 {
-                                                    Decimal num4 = ((Money)entity5["bsd_amount"]).Value;
+                                                    Decimal num4 = ((Money)enPackageSelling["bsd_amount"]).Value;
                                                     num1 += num4;
                                                     break;
                                                 }
                                                 if (entity6.Contains("bsd_netsaleablearea"))
                                                 {
-                                                    Decimal num5 = ((Money)entity5["bsd_amount"]).Value;
+                                                    Decimal num5 = ((Money)enPackageSelling["bsd_amount"]).Value;
                                                     num1 += num5;
                                                 }
                                                 break;
                                             case 100000002:
                                                 Decimal num6 = ((Money)enHD["bsd_discount"]).Value;
                                                 Decimal num7 = ((Money)enHD["bsd_detailamount"]).Value;
-                                                Decimal num8 = entity5.Contains("bsd_percent") ? (Decimal)entity5["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover Condition " + (string)entity5["bsd_name"]);
+                                                Decimal num8 = enPackageSelling.Contains("bsd_percent") ? (Decimal)enPackageSelling["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover Condition " + (string)enPackageSelling["bsd_name"]);
                                                 num1 += (num7 - num6) * num8 / 100M;
                                                 break;
                                         }
@@ -175,44 +182,44 @@ namespace Plugin_PackagesSelling_Associate
                             else
                             {
                                 Entity entity7 = entityCollection2.Entities[0];
-                                if (!entity5.Contains("bsd_method"))
-                                    throw new InvalidPluginExecutionException("Please choose Method of Handover condition " + (string)entity5["bsd_name"]);
-                                switch (((OptionSetValue)entity5["bsd_method"]).Value)
+                                if (!enPackageSelling.Contains("bsd_method"))
+                                    throw new InvalidPluginExecutionException("Please choose Method of Handover condition " + (string)enPackageSelling["bsd_name"]);
+                                switch (((OptionSetValue)enPackageSelling["bsd_method"]).Value)
                                 {
                                     case 100000000:
-                                        if (!entity5.Contains("bsd_priceperm2"))
-                                            throw new InvalidPluginExecutionException("Please choose Price/m2 of Handover Condition " + (string)entity5["bsd_name"]);
+                                        if (!enPackageSelling.Contains("bsd_priceperm2"))
+                                            throw new InvalidPluginExecutionException("Please choose Price/m2 of Handover Condition " + (string)enPackageSelling["bsd_name"]);
                                         if (entity7.Contains("bsd_actualarea"))
                                         {
-                                            Decimal num9 = (Decimal)entity7["bsd_actualarea"] * ((Money)entity5["bsd_priceperm2"]).Value;
+                                            Decimal num9 = (Decimal)entity7["bsd_actualarea"] * ((Money)enPackageSelling["bsd_priceperm2"]).Value;
                                             num1 += num9;
                                             break;
                                         }
                                         if (entity7.Contains("bsd_netsaleablearea"))
                                         {
-                                            Decimal num10 = (Decimal)entity7["bsd_netsaleablearea"] * ((Money)entity5["bsd_priceperm2"]).Value;
+                                            Decimal num10 = (Decimal)entity7["bsd_netsaleablearea"] * ((Money)enPackageSelling["bsd_priceperm2"]).Value;
                                             num1 += num10;
                                         }
                                         break;
                                     case 100000001:
-                                        if (!entity5.Contains("bsd_amount"))
-                                            throw new InvalidPluginExecutionException("Please choose Amount of Handover condition " + (string)entity5["bsd_name"]);
+                                        if (!enPackageSelling.Contains("bsd_amount"))
+                                            throw new InvalidPluginExecutionException("Please choose Amount of Handover condition " + (string)enPackageSelling["bsd_name"]);
                                         if (entity7.Contains("bsd_actualarea"))
                                         {
-                                            Decimal num11 = ((Money)entity5["bsd_amount"]).Value;
+                                            Decimal num11 = ((Money)enPackageSelling["bsd_amount"]).Value;
                                             num1 += num11;
                                             break;
                                         }
                                         if (entity7.Contains("bsd_netsaleablearea"))
                                         {
-                                            Decimal num12 = ((Money)entity5["bsd_amount"]).Value;
+                                            Decimal num12 = ((Money)enPackageSelling["bsd_amount"]).Value;
                                             num1 += num12;
                                         }
                                         break;
                                     case 100000002:
                                         Decimal num13 = ((Money)enHD["bsd_discount"]).Value;
                                         Decimal num14 = ((Money)enHD["bsd_detailamount"]).Value;
-                                        Decimal num15 = entity5.Contains("bsd_percent") ? (Decimal)entity5["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover condition " + (string)entity5["bsd_name"]);
+                                        Decimal num15 = enPackageSelling.Contains("bsd_percent") ? (Decimal)enPackageSelling["bsd_percent"] : throw new InvalidPluginExecutionException("Please choose Percent of Handover condition " + (string)enPackageSelling["bsd_name"]);
                                         num1 += (num14 - num13) * num15 / 100M;
                                         break;
                                 }
