@@ -40,17 +40,17 @@ namespace Plugin_AutoShareRecord
             stringList.Add("bsd_customernotices");
             stringList.Add("bsd_warningnotices");
             stringList.Add("bsd_handovernotice");
-            stringList.Add("bsd_terminateletter");
+            //stringList.Add("bsd_terminateletter");
             stringList.Add("bsd_applydocument");
             stringList.Add("bsd_voidpayment");
             stringList.Add("bsd_refund");
             stringList.Add("bsd_transfermoney");
-            stringList.Add("bsd_approvechangeduedateinstallment");
-            stringList.Add("bsd_updateestimatehandoverdate");
-            stringList.Add("bsd_updateduedateoflastinstallmentapprove");
-            stringList.Add("bsd_updatelandvalue");
-            stringList.Add("bsd_waiverapproval");
-            stringList.Add("bsd_bulkwaiver");
+            //stringList.Add("bsd_approvechangeduedateinstallment");
+            //stringList.Add("bsd_updateestimatehandoverdate");
+            //stringList.Add("bsd_updateduedateoflastinstallmentapprove");
+            //stringList.Add("bsd_updatelandvalue");
+            //stringList.Add("bsd_waiverapproval");
+            //stringList.Add("bsd_bulkwaiver");
             if (service1.MessageName == "Create")
             {
                 if (stringList.Contains(inputParameter.LogicalName))

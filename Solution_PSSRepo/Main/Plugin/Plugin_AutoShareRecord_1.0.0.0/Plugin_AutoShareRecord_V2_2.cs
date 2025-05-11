@@ -38,27 +38,26 @@ namespace Plugin_AutoShareRecord
                 case "bsd_updatelandvalue":
                     Run_ShareTemProject(true, new List<string> { "Sales_Team" });
                     break;
-                case "bsd_updateduedate":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                    break;
-                case "bsd_updateduedatedetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                    break;
+                //case "bsd_updateduedate":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                //case "bsd_updateduedatedetail":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
                 case "bsd_bankingloan":
                     Run_ShareTemProject(true, new List<string> { "Finance_Team"});
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });
                     break;
-
-                case "bsd_updateduedateoflastinstallmentapprove":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                    break;
-                case "bsd_updateduedateoflastinstallment":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                    break;
+                //case "bsd_updateduedateoflastinstallmentapprove":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                //case "bsd_updateduedateoflastinstallment":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
                 case "bsd_applybankaccountunits":
                     Run_ShareTemProject(true, new List<string> { "Finance_Team" });
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });
@@ -91,7 +90,6 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "Finance_Team" });
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });
                     break;
-
                 case "bsd_transactionpayment":
                     Run_ShareTemProject(true, new List<string> { "Finance_Team" });
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });
@@ -104,11 +102,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "Finance_Team" });
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });
                     break;
-
-
             }
-
-
         }
 
         public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null)
@@ -142,7 +136,7 @@ namespace Plugin_AutoShareRecord
 
             AccessRights Access_Rights = AccessRights.ReadAccess | AccessRights.AppendAccess | AccessRights.AppendToAccess;
             if (hasWriteShare)
-                Access_Rights |= AccessRights.WriteAccess | AccessRights.ShareAccess;
+                Access_Rights |= AccessRights.WriteAccess ;
 
             var grantAccessRequest = new GrantAccessRequest
             {
