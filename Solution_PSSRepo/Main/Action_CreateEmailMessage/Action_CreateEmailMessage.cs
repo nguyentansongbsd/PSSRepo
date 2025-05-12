@@ -150,7 +150,13 @@ namespace Action_CreateEmailMessage
                     mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
                     break;
                 default:
-                    mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
+
+                    mailTemplate = mailTemplate
+                        .Replace("{fullname}", GetFullNameCustomer())
+                        .Replace("{sign_mail}", GetSignMail())
+                        .Replace("{bsd_customerservice}", enProject["bsd_customerservice"].ToString())
+                        .Replace("{bsd_Acountant}", enProject["bsd_acountant"].ToString())
+                        .Replace("{bsd_extfin}", enProject["bsd_customerservice"].ToString());
                     break;
             }
             return mailTemplate;
