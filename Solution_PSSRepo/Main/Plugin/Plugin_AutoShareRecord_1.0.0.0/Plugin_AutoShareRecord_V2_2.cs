@@ -29,6 +29,27 @@ namespace Plugin_AutoShareRecord
             switch (target.LogicalName)
             {
 
+
+                //case "bsd_updateduedate":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                //case "bsd_updateduedatedetail":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                //case "bsd_updateduedateoflastinstallmentapprove":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                //case "bsd_updateduedateoflastinstallment":
+                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    break;//
+                case "bsd_bankingloan":
+                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
+                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    break;
                 case "bsd_documents":
                     Run_ShareTemProject(true, new List<string> { "Finance_Team", "CR_Team", "Sales_Team", "Management_Team" });
                     break;
@@ -38,26 +59,6 @@ namespace Plugin_AutoShareRecord
                 case "bsd_updatelandvalue":
                     Run_ShareTemProject(true, new List<string> { "Sales_Team" });
                     break;
-                //case "bsd_updateduedate":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                //    break;//
-                //case "bsd_updateduedatedetail":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                //    break;//
-                case "bsd_bankingloan":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team"});
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                    break;
-                //case "bsd_updateduedateoflastinstallmentapprove":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                //    break;//
-                //case "bsd_updateduedateoflastinstallment":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
-                //    break;//
                 case "bsd_applybankaccountunits":
                     Run_ShareTemProject(true, new List<string> { "Finance_Team" });
                     Run_ShareTemProject(false, new List<string> { "Management_Team" });

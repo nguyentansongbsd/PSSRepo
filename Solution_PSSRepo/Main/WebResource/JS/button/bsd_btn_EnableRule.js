@@ -17,7 +17,39 @@ function ready() {
     }
     wait();
 }
+function DisableStatus() {
+    switch (Xrm.Page.data.entity.getEntityName()) {
+        case "bsd_interestratemaster":
+            if (!CheckRoleForUser("CLVN_CCR Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updatelandvalue":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updateactualareaapprove":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_capnhatphiquanly":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_refund":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_waiverapproval":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updateestimatehandoverdate":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+    }
 
+}
 function RegisterModal() {
     debugger;
     var script = window.parent.document.getElementById("new_modal.utilities.js");
@@ -108,7 +140,6 @@ function CheckEnable_Condition(tyle) {
     let status = Xrm.Page.getAttribute("statuscode").getValue();
     switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
         case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
-
             if (getStatusCodeValueByName("Approved") === status) return false;
             break;
         case "bsd_updatelandvalue-bsd_landvalue-subgriddetail":
@@ -139,6 +170,47 @@ function CheckEnable_Condition(tyle) {
             break;
         case "salesorder-form-SubSale":
             if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+             case "salesorder-form-PrintHOM":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "salesorder-form-InterestSimulation":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+
+        case "quote-form-CreateOrder":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "quote-form-PrintQuotaionFinal":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "quote-form-ConvertToOption":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break
+        case "quote-form-FUL":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+        case "quote-form-Recalculator":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+
+        case "bsd_discount-form-Approved":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            break;
+        case "bsd_confirmpayment-form-Confirm":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_confirmpayment-form-Confirm":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_packageselling-form-Approved":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            break;
+        case "bsd_advancepayment-form-ConfirmCollect":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_bankingloan-form-Mortgage":
+            if (getStatusCodeValueByName("Terminated")) return false;
+            break;
+        case "bsd_bankingloan-form-Demortgage":
+            if (getStatusCodeValueByName("CLVN_FIN_Finance Manager")) return false;
             break;
         default:
             return true;
