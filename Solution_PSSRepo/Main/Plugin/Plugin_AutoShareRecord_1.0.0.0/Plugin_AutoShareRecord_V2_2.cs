@@ -23,7 +23,7 @@ namespace Plugin_AutoShareRecord
             service = _service;
             traceService = _traceService;
             target = _target;
-            traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update");
+            traceService.Trace("Plugin_AutoShareRecord_V2_2");
 
 
             switch (target.LogicalName)
