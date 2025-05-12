@@ -197,7 +197,7 @@ function CheckEnable_Condition(tyle) {
         case "bsd_confirmpayment-form-Confirm":
             if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
             break;
-        case "bsd_confirmpayment-form-Confirm":
+        case "bsd_payment-form-Confirm":
             if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
             break;
         case "bsd_packageselling-form-Approved":
