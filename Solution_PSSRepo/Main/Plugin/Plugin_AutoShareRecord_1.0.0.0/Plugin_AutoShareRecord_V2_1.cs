@@ -32,10 +32,10 @@ namespace Plugin_AutoShareRecord
                     Run_PaymentScheme();
                     break;
                 case "bsd_event":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 0 }, { "Finance", 0 }, { "Sales", 2 }, { "Management", 0 } }, 100000000);
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 2 }, { "SALE-MGT", 0 } }, 100000000);
                     break;
                 case "bsd_updatepricelist":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 0 }, { "Finance", 0 }, { "Sales", 1 }, { "Management", 0 } }, 100000000);
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } }, 100000000);
                     break;
                     //case "pricelevel":
                     //    Run_PriceList();
@@ -57,38 +57,38 @@ namespace Plugin_AutoShareRecord
                 case "bsd_followuplist":
                 case "salesorder":
                 case "quote":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 1 }, { "Finance", 1 }, { "Sales", 1 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
                     break;
                 case "opportunity":
                 case "bsd_quotation":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 0 }, { "Finance", 0 }, { "Sales", 1 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_updateactualarea":
                 case "bsd_capnhatphiquanly":
                 case "bsd_updateactualareaapprove":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "Sales", 1 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "SALE-TEAM", 1 } });
                     break;
                 case "bsd_termination":
                 case "bsd_appendixcontract":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 1 }, { "Finance", 1 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 } });
                     break;
                 case "bsd_assign":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 1 }, { "Finance", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 0 } });
                     break;
                 case "bsd_paymentschemedetail":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "Finance", 1 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 } });
                     break;
                 case "bsd_advancepayment":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 1 }, { "Finance", 1 }, { "Sales", 0 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_transfermoney":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CR", 1 }, { "Finance", 1 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_terminateletter":
                 case "bsd_customernotices":
                 case "bsd_handovernotice":
                 case "bsd_warningnotices":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "Finance", 2 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 } });
                     break;
                 case "bsd_applydocument":
                 case "bsd_refund":
@@ -96,13 +96,13 @@ namespace Plugin_AutoShareRecord
                 case "bsd_payment":
                 case "bsd_miscellaneous":
                 case "bsd_invoice":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "Finance", 2 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_updateduedate":
                 case "bsd_updateduedatedetail":
                 case "bsd_updateduedateoflastinstallmentapprove":
                 case "bsd_updateduedateoflastinstallment":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "Finance", 1 }, { "Sales", 1 }, { "Management", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
                     break;
             }
 
@@ -234,10 +234,10 @@ namespace Plugin_AutoShareRecord
                 <attribute name=""name"" />
                 <filter>
                   <condition attribute=""name"" operator=""in"">
-                    <value>{projectCode}_CR_Team</value>
-                    <value>{projectCode}_Finance_Team</value>
-                    <value>{projectCode}_Sales_Team</value>
-                    <value>{projectCode}_Management_Team</value>
+                    <value>{projectCode}-CCR-TEAM</value>
+                    <value>{projectCode}-FINANCE-TEAM</value>
+                    <value>{projectCode}-SALE-TEAM</value>
+                    <value>{projectCode}-SALE-MGT</value>
                   </condition>
                 </filter>
               </entity>
@@ -273,7 +273,7 @@ namespace Plugin_AutoShareRecord
                     foreach (Entity team in rs.Entities)
                     {
                         refTeam = team.ToEntityReference();
-                        hasWriteShare = $"{projectCode}_Sales_Team".Equals((string)team["name"]);
+                        hasWriteShare = $"{projectCode}-SALE-TEAM".Equals((string)team["name"]);
                         accessType = hasWriteShare ? 2 : 0;
 
                         ShareTeams(refPhasesLaunch, refTeam, accessType);
@@ -383,7 +383,7 @@ namespace Plugin_AutoShareRecord
                     foreach (Entity team in rs.Entities)
                     {
                         refTeam = team.ToEntityReference();
-                        hasWrite = $"{projectCode}_CR_Team".Equals((string)team["name"]);
+                        hasWrite = $"{projectCode}-CCR-TEAM".Equals((string)team["name"]);
                         accessType = hasWrite ? 1 : 0;
 
                         ShareTeams(refPS, refTeam, accessType);
@@ -433,7 +433,7 @@ namespace Plugin_AutoShareRecord
                 Dictionary<string, Entity> allTeams = rs.Entities.ToDictionary(e => (string)e["name"], e => e);
                 foreach (var teamRights in listTeamRights)
                 {
-                    if (allTeams.TryGetValue($"{projectCode}_{teamRights.Key}_Team", out var tmpTeam))
+                    if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
                     {
                         refTeam = tmpTeam.ToEntityReference();
                         ShareTeams(refTarget, refTeam, teamRights.Value);
