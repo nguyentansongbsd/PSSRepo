@@ -31,77 +31,77 @@ namespace Plugin_AutoShareRecord
 
 
                 //case "bsd_updateduedate":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                 //    break;//
                 //case "bsd_updateduedatedetail":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team", "Sales_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                 //    break;//
                 //case "bsd_updateduedateoflastinstallmentapprove":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                 //    break;//
                 //case "bsd_updateduedateoflastinstallment":
-                //    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                //    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                 //    break;//
                 case "bsd_bankingloan":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_documents":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team", "CR_Team", "Sales_Team", "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "CCR-TEAM", "SALE-TEAM", "MGT-TEAM" });
                     break;
                 case "bsd_landvalue":
-                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
                     break;
                 case "bsd_updatelandvalue":
-                    Run_ShareTemProject(true, new List<string> { "Sales_Team" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
                     break;
                 case "bsd_applybankaccountunits":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_waiverapproval":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdate":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_bulkwaiver":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_bulkchangemanagementfee":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_terminateletter":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_interestsimulation":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_transactionpayment":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_waiverapprovaldetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
                 case "bsd_interestsimulationdetail":
-                    Run_ShareTemProject(true, new List<string> { "Finance_Team" });
-                    Run_ShareTemProject(false, new List<string> { "Management_Team" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
                     break;
             }
         }
@@ -182,10 +182,10 @@ namespace Plugin_AutoShareRecord
                 <attribute name=""name"" />
                 <filter>
                   <condition attribute=""name"" operator=""in"">
-                    <value>{projectCode}_CR_Team</value>
-                    <value>{projectCode}_Finance_Team</value>
-                    <value>{projectCode}_Sales_Team</value>
-                    <value>{projectCode}_Management_Team</value>
+                    <value>{projectCode}-CCR-TEAM</value>
+                    <value>{projectCode}-FINANCE-TEAM</value>
+                    <value>{projectCode}-SALE-TEAM</value>
+                    <value>{projectCode}-MGT-TEAM</value>
                   </condition>
                 </filter>
               </entity>

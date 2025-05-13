@@ -54,6 +54,21 @@ namespace Action_CreateEmailMessage
                 emailMessage["bsd_entityid"] = entityMainId.ToString();
                 emailMessage["bsd_emailcreator"] = enUserAction.ToEntityReference();
                 emailMessage["regardingobjectid"] = new EntityReference(entityName, new Guid(entityMainId.ToString()));
+                var enUpdate= service.Retrieve(entityName, new Guid(entityMainId.ToString()),new ColumnSet(true));
+                switch (entityName)
+                {
+                    case "bsd_customernotices":
+                        enUpdate["bsd_emailcreator"] = enUserAction.ToEntityReference();
+                        enUpdate["bsd_createmaildate"] = DateTime.UtcNow.AddHours(7);
+                        enUpdate["bsd_iscreateemail"] = true;
+                        enUpdate["bsd_emailstatus"] = new OptionSetValue(1);
+                        service.Update(enUpdate);
+                        break;
+                    case "bsd_payment":
+                        enUpdate["bsd_emailstatus"] = new OptionSetValue(1);
+                        service.Update(enUpdate);
+                        break;
+                }
                 if (entityIdBulkSendMail == "")
                 {
                     var enBulkSendManager = new Entity("bsd_bulksendmailmanager");
@@ -150,13 +165,16 @@ namespace Action_CreateEmailMessage
                     mailTemplate = mailTemplate.Replace("{fullname}", GetFullNameCustomer()).Replace("{sign_mail}", GetSignMail());
                     break;
                 default:
+                    var bsd_investornameRef = (EntityReference)enProject["bsd_investor"];
+                    var bsd_investorname = service.Retrieve(bsd_investornameRef.LogicalName, bsd_investornameRef.Id,new ColumnSet(true));
 
                     mailTemplate = mailTemplate
                         .Replace("{fullname}", GetFullNameCustomer())
                         .Replace("{sign_mail}", GetSignMail())
                         .Replace("{bsd_customerservice}", enProject.Contains("bsd_customerservice") ? enProject["bsd_customerservice"].ToString():"")
                         .Replace("{bsd_Acountant}", enProject.Contains("bsd_acountant") ?enProject["bsd_acountant"].ToString():"")
-                        .Replace("{bsd_extfin}", enProject.Contains("bsd_extfin") ?enProject["bsd_extfin"].ToString():"");
+                        .Replace("{bsd_extfin}", enProject.Contains("bsd_extfin") ?enProject["bsd_extfin"].ToString():"")
+                        .Replace("bsd_investorname", bsd_investorname["bsd_name"].ToString());
                     break;
             }
             return mailTemplate;
@@ -227,7 +245,7 @@ namespace Action_CreateEmailMessage
                     break;
                 default:
                     tracingService.Trace(enEmailTemplate.Id.ToString());
-                    subject = enEmailTemplate["subjectsafehtml"].ToString().Replace("{project}", enProject["bsd_name"].ToString()).Replace("{unitname}", enUnit["name"].ToString());
+                    subject = enEmailTemplate["subjectsafehtml"].ToString().Replace("{project}", "["+enProject["bsd_name"].ToString()+"]").Replace("{unitname}", enUnit["name"].ToString());
                     break;
             }
             tracingService.Trace(subject);
@@ -302,7 +320,9 @@ namespace Action_CreateEmailMessage
             }
             else
             {
-                return $"{enUnit["name"]}_{GetFullNameCustomer()}";
+                var enInsRef = (EntityReference)entityMain["bsd_paymentschemedetail"];
+                var enIns = service.Retrieve(enInsRef.LogicalName, enInsRef.Id, new ColumnSet(true));
+                return $"{enUnit["name"]}_{GetFullNameCustomer()}_Installment{enIns["bsd_ordernumber"]}_PN";
             }
         }
         private string GetPaymentName()
