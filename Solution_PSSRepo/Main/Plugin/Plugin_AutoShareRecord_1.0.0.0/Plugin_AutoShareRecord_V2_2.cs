@@ -28,8 +28,6 @@ namespace Plugin_AutoShareRecord
 
             switch (target.LogicalName)
             {
-
-
                 //case "bsd_updateduedate":
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-TEAM" });
                 //    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
