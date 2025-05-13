@@ -176,8 +176,8 @@ function UpdateStatus_SendMail() {
                     case "bsd_payment":
                         filenameroot = "ConfirmPayment";
                         break;
-                    default:
-
+                    case "bsd_customernotices":
+                        filenameroot = "NoticePayment";
                         break;
                 }
                 if (filenameroot != "") {
@@ -212,5 +212,4 @@ function UpdateStatus_SendMail() {
             }
         });
     })
-
 }

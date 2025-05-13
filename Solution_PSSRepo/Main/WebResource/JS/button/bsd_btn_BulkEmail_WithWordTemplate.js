@@ -90,7 +90,7 @@ function btnBulkCrateEmail_WordTemplate(item) {
     // gọi report html chọn mẫu
     var pageInput = {
         pageType: "webresource",
-        webresourceName: "bsd_bsd_Entityview_SelectReport.html",
+        webresourceName: "bsd_bsd_bsd_Entityview_SelectReport_Email.html",
         data: result.list_id.join(",")
     };
     var navigationOptions = {

@@ -128,7 +128,6 @@
     </div>
     <div style="display: block; padding: 5px 20px; position: relative; background-color: rgb(248, 248, 248); font-family: undefined;">
         <a id="okBtn1" class="button" style="margin-left:20px;font-family: Segoe UI, Arial, sans-serif;" onclick="RunReport()">Print</a>
-        <a id="okBtn" class="button" style="margin-left:20px;font-family: Segoe UI, Arial, sans-serif;" onclick="CreateEmail()">Create Mail</a>
         <div style="display:block;font-size:0px;clear:both;"></div>
     </div>
     <script type="text/javascript">
@@ -142,9 +141,6 @@
         var countListid = 0;
         debugger;
         $(document).ready(function (doc) {
-            if (window.top.entityname == "bsd_customernotices" || window.top.entityname == "bsd_payment" || window.top.entityname =="") {
-                //$("#okBtn1").hide()
-            }
             var confirmOptions = { height: 200, width: 450 };
             var typecode = window.top.entityTypeCode;
             console.log(typecode);

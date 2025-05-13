@@ -108,7 +108,7 @@
             {
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
-              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
             },
             {
               "CrmId": "1623cfc4-34d9-ef11-8ee9-000d3ac84358",
@@ -452,6 +452,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_GetMailFromAndTo.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetParamPaymentNotice.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetParamPaymentNotice.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c37f7447-f3ba-4441-a73b-9563fad314cc",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetParamPaymentNotice.dll",
                 "SourceType": 0
               }
             }
@@ -1196,7 +1219,12 @@
             {
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
-              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
             },
             {
               "CrmId": "58fe8065-a539-ea11-a813-000d3a085b2b",
@@ -1222,6 +1250,11 @@
               "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\bsd_HandoverNotice.js"
+            },
+            {
+              "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"
             },
             {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
