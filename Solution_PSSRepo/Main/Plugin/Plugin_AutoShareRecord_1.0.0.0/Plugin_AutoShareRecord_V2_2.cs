@@ -32,26 +32,26 @@ namespace Plugin_AutoShareRecord
 
                 //case "bsd_updateduedate":
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-TEAM" });
-                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT" });
                 //    break;//
                 //case "bsd_updateduedatedetail":
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-TEAM" });
-                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT" });
                 //    break;//
                 //case "bsd_updateduedateoflastinstallmentapprove":
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT" });
                 //    break;//
                 //case "bsd_updateduedateoflastinstallment":
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                //    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                //    Run_ShareTemProject(false, new List<string> { "MGT" });
                 //    break;//
                 case "bsd_bankingloan":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_documents":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "CCR-TEAM", "SALE-TEAM", "MGT-TEAM" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "CCR-TEAM", "SALE-TEAM", "MGT" });
                     break;
                 case "bsd_landvalue":
                     Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
@@ -61,47 +61,47 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_applybankaccountunits":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_waiverapproval":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_updateestimatehandoverdate":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_bulkwaiver":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_bulkchangemanagementfee":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_terminateletter":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_interestsimulation":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_transactionpayment":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_waiverapprovaldetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
                 case "bsd_interestsimulationdetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "MGT-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "MGT" });
                     break;
             }
         }
@@ -185,7 +185,7 @@ namespace Plugin_AutoShareRecord
                     <value>{projectCode}-CCR-TEAM</value>
                     <value>{projectCode}-FINANCE-TEAM</value>
                     <value>{projectCode}-SALE-TEAM</value>
-                    <value>{projectCode}-MGT-TEAM</value>
+                    <value>{projectCode}-MGT</value>
                   </condition>
                 </filter>
               </entity>
