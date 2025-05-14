@@ -281,7 +281,7 @@ namespace Action_ShareCustomerToTeam
                 <fetch>
                   <entity name='team'>
                     <filter>
-                      <condition attribute='name' operator='begins-with' value='%{team["name"].ToString().Split('-')[0]}%'/>
+                      <condition attribute='name' operator='like' value='%{team["name"].ToString().Split('-')[0]}-%'/>
                     </filter>
                   </entity>
                 </fetch>";

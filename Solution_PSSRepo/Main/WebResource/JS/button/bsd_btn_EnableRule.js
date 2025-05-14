@@ -195,10 +195,10 @@ function CheckEnable_Condition(tyle) {
             if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
             break;
         case "bsd_confirmpayment-form-Confirm":
-            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
             break;
         case "bsd_payment-form-Confirm":
-            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
             break;
         case "bsd_packageselling-form-Approved":
             if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;

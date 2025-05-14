@@ -155,6 +155,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetParamTransactionP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetParamPaymentNotice", "Action_GetParamPaymentNotice\Action_GetParamPaymentNotice.csproj", "{13C54E7D-BB21-4006-B08F-7DAF68235E77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_UpdateEmail_UpdateBulkSendMailStatus", "Plugin_UpdateEmail_UpdateBulkSendMailStatus\Plugin_UpdateEmail_UpdateBulkSendMailStatus.csproj", "{E4043E05-7094-42DE-A9A8-A02F8B51206B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -526,6 +528,12 @@ Global
 		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -602,6 +610,7 @@ Global
 		{EF9AA4D1-AB12-4F96-A18C-377D71D718E3} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
 		{309944AF-3FFB-46BD-AA2A-6A6670037A9E} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
 		{13C54E7D-BB21-4006-B08F-7DAF68235E77} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B} = {ADEE3F94-9E4B-46DD-A437-283E0B339563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

@@ -1185,6 +1185,29 @@
           ]
         },
         {
+          "Name": "Plugin_UpdateEmail_UpdateBulkSendMailStatus.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_UpdateEmail_UpdateBulkSendMailStatus.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "0366346b-f65b-49b4-a1e5-4a92b0a2bbf5",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateEmail_UpdateBulkSendMailStatus.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [

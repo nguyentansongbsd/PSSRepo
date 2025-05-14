@@ -50,15 +50,23 @@ namespace Action_GetParamTransactionPayment
                     {
                         ordernumberName = "2nd";
                     }
+                    else if ((orderNumber) == 3)
+                    {
+                        ordernumberName = "3rd";
+                    }
+                    else if ((orderNumber) == 1)
+                    {
+                        ordernumberName = "1st";
+                    }
                     else
                     {
                         ordernumberName = $"{orderNumber}th";
                     }
-                    nameF= $"{orderNumber} Installment / Thanh toán đợt {ordernumberName}\n";
+                    nameF= $"{ordernumberName} Installment / Thanh toán đợt {orderNumber}";
                     break;
                 case 100000001:
                     ValueInstallment = ((Money)payment["bsd_amountpay"]).Value.ToString("N0");
-                    nameF = $"Deposit fee/ Đặt cọc \n";
+                    nameF = $"Deposit fee/ Đặt cọc";
 
                     break;
                 case 100000000:
@@ -112,12 +120,20 @@ namespace Action_GetParamTransactionPayment
                         {
                             orderNumberMap = "2nd";
                         }
+                        else if ((((int)enInsMap["bsd_ordernumber"])) == 3)
+                        {
+                            orderNumberMap = "3rd";
+                        }
+                        else if ((((int)enInsMap["bsd_ordernumber"])) == 1)
+                        {
+                            orderNumberMap = "1st";
+                        }
                         else
                         {
                             orderNumberMap = $"{(int)enInsMap["bsd_ordernumber"]}th";
                         }
                         resultName += $"{orderNumberMap} Installment / Thanh toán đợt {orderNumberMap}\n";
-                        resultValue += ((Money)item["bsd_amount"]).Value.ToString("N0") + "\n";
+                        resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
                         break;
                     case 100000001:
                         tracingService.Trace("3");
@@ -128,12 +144,20 @@ namespace Action_GetParamTransactionPayment
                         {
                             orderNumberMapTransaction = "2nd";
                         }
+                        else if ((((int)enInsTransaction["bsd_ordernumber"])) == 3)
+                        {
+                            orderNumberMapTransaction = "3rd";
+                        }
+                        else if ((((int)enInsTransaction["bsd_ordernumber"])) == 1)
+                        {
+                            orderNumberMapTransaction = "1st";
+                        }
                         else
                         {
                             orderNumberMapTransaction = $"{(int)enInsTransaction["bsd_ordernumber"]}th";
                         }
                         resultName += $"{orderNumberMapTransaction} Installment Interest Charge/ Trả lãi suất cho đợt thứ {(int)enInsTransaction["bsd_ordernumber"]}\n";
-                        resultValue += ((Money)item["bsd_amount"]).Value.ToString("N0") + "\n";
+                        resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
                         break;
                     case 100000002:
                         if (item.Contains("bsd_feetype"))
@@ -149,7 +173,7 @@ namespace Action_GetParamTransactionPayment
                                 resultName += $"Management Fee/ Phí quản lý\n";
                             }
                             tracingService.Trace("4.4");
-                            resultValue += ((Money)item["bsd_amount"]).Value.ToString("N0") + "\n";
+                            resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
                         }
                         break;
                     case 100000003:
@@ -162,7 +186,7 @@ namespace Action_GetParamTransactionPayment
                         }
                         else
                             resultName += $"Other/ Khoản khác\n";
-                        resultValue += ((Money)item["bsd_amount"]).Value.ToString("N0") + "\n";
+                        resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
                         break;
                     default:
                         break;
@@ -172,8 +196,8 @@ namespace Action_GetParamTransactionPayment
             {
                 tracingService.Trace("6");
 
-                resultName += "Advance Payment/Thanh toán trước hạn";
-                resultValue += ((Money)item["bsd_amount"]).Value.ToString("N0") + "\n";
+                resultName += "Advance Payment/Thanh toán trước hạn\n";
+                resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
 
             }
             context.OutputParameters["giacanho"] = giacanho;

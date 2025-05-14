@@ -389,6 +389,8 @@ function addModelShareTeam() {
     
 }
 function btnSaveLAC() {
+    if (Xrm.Page.ui.getFormType() != 1)
+        return;
     Xrm.Page.data.entity.addOnPostSave(function () {
         $('#closeModal').click(function () {
             $("#modalForm").css("display", "none");

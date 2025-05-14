@@ -25,6 +25,7 @@ namespace Action_GetEmailMessage
         string mailBCC = "";
         string mailTo = "";
         string mailFrom = "";
+        Entity enEmailMessage = null;
         public void Execute(IServiceProvider serviceProvider)
         {
             // Lấy context
@@ -34,10 +35,11 @@ namespace Action_GetEmailMessage
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             string idEmailMessage= context.InputParameters["id"].ToString();
             tracingService.Trace(idEmailMessage);
-            Entity enEmailMessage = service.Retrieve("email", new Guid(idEmailMessage), new ColumnSet(true));
+            enEmailMessage = service.Retrieve("email", new Guid(idEmailMessage), new ColumnSet(true));
+            
             GetMail_To_CC_BCC(idEmailMessage);
             tracingService.Trace("ok");
-            context.OutputParameters["mailFrom"] = mailFrom;
+            context.OutputParameters["mailFrom"] = GetMailForm();
             context.OutputParameters["mailTo"] = mailTo;
             context.OutputParameters["mailCC"] = mailCC;
             context.OutputParameters["mailBCC"] = mailBCC;
@@ -46,6 +48,31 @@ namespace Action_GetEmailMessage
             context.OutputParameters["fileNameAttach"] = enEmailMessage["subject"].ToString().Replace("/","-")+".pdf";
             //Entity enUpdate=new Entity(enEmailMessage.LogicalName, enEmailMessage.Id); enUpdate["statuscode"] = new OptionSetValue(6);
             //service.Update(enUpdate);
+        }
+        private string GetMailForm()
+        {
+            var regardingobjectid =(EntityReference) enEmailMessage["regardingobjectid"];
+            var en=service.Retrieve(regardingobjectid.LogicalName, regardingobjectid.Id,new ColumnSet(true));
+            var enProjectRef = new EntityReference();
+            var enProject = new Entity();
+            var enUserRef=new EntityReference();
+            var enUser=new Entity();
+            switch (regardingobjectid.LogicalName)
+            {
+                case "bsd_customernotices":
+                    enProjectRef = (EntityReference)en["bsd_project"];
+                    enProject=service.Retrieve(enProjectRef.LogicalName,enProjectRef.Id,new ColumnSet(true));
+                    enUserRef = (EntityReference)enProject["bsd_senderconfigsystem"];
+                    enUser = service.Retrieve(enUserRef.LogicalName, enUserRef.Id, new ColumnSet(true));
+                    return enUser["internalemailaddress"].ToString();
+                case "bsd_payment":
+                    enProjectRef = (EntityReference)en["bsd_project"];
+                    enProject = service.Retrieve(enProjectRef.LogicalName, enProjectRef.Id, new ColumnSet(true));
+                    enUserRef = (EntityReference)enProject["bsd_senderconfigsystem"];
+                    enUser = service.Retrieve(enUserRef.LogicalName, enUserRef.Id, new ColumnSet(true));
+                    return enUser["internalemailaddress"].ToString();
+            }    
+            return "";
         }
         private string GetMail_To_CC_BCC(string idEmailMessage)
         {
