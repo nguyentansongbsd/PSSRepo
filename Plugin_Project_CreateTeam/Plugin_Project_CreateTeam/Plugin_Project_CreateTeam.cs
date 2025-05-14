@@ -29,16 +29,16 @@ namespace Plugin_Project_CreateTeam
 
             EntityReference refProject = enProject.ToEntityReference();
 
-            Guid teamId = CreateTeam(projectCode, "CR", enUser);
+            Guid teamId = CreateTeam(projectCode, "CCR-TEAM", enUser);
             ShareTeams(refProject, new EntityReference("team", teamId));
 
-            teamId = CreateTeam(projectCode, "Finance", enUser);
+            teamId = CreateTeam(projectCode, "FINANCE-TEAM", enUser);
             ShareTeams(refProject, new EntityReference("team", teamId));
 
-            teamId = CreateTeam(projectCode, "Sales", enUser);
+            teamId = CreateTeam(projectCode, "SALE-TEAM", enUser);
             ShareTeams(refProject, new EntityReference("team", teamId));
 
-            teamId = CreateTeam(projectCode, "Management", enUser);
+            teamId = CreateTeam(projectCode, "SALE-MGT", enUser);
             ShareTeams(refProject, new EntityReference("team", teamId));
         }
 
@@ -46,7 +46,7 @@ namespace Plugin_Project_CreateTeam
         {
             traceService.Trace("CreateTeam " + department);
             Entity team = new Entity("team");
-            team["name"] = $"{projectCode}_{department}_Team";
+            team["name"] = $"{projectCode}-{department}";
             team["businessunitid"] = enUser.Contains("businessunitid") ? enUser["businessunitid"] : null;
             team["administratorid"] = enUser.ToEntityReference();
             team["teamtype"] = new OptionSetValue(1);   //Access
