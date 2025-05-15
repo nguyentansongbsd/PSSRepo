@@ -637,19 +637,19 @@ namespace Action_Resv_GenPMS
             //    if ((bool)en["bsd_typeofstartdate"] == true)
             //        b_typeofstartdate = true;
             //}
-            bool b_typeofstartdate = ((bool)en["bsd_typeofstartdate"]);
-            if (b_typeofstartdate) // Nếu bsd_typeofstartdate = Yes => set lại ngày = bsd_reservationtime
-            {
-                //date = (DateTime)QO["createdon"]; 
-                //sửa lại lấy theo ngày đặt cọc
-                date = (DateTime)QO["bsd_ngaydatcoc"];
-                if (QO.Contains("statuscode") && ((OptionSetValue)QO["statuscode"]).Value == 100000000) //reservation
-                {
-                    if (!QO.Contains("bsd_reservationtime")) throw new InvalidPluginExecutionException("Reservation did not contain Reservation time! Please check again!");
-                    else date = (DateTime)QO["bsd_reservationtime"];
-                }
-                if (QO.Contains("bsd_quotecodesams")) date = (DateTime)QO["bsd_reservationtime"];
-            }
+            //bool b_typeofstartdate = ((bool)en["bsd_typeofstartdate"]);
+            //if (b_typeofstartdate) // Nếu bsd_typeofstartdate = Yes => set lại ngày = bsd_reservationtime
+            //{
+            //    //date = (DateTime)QO["createdon"]; 
+            //    //sửa lại lấy theo ngày đặt cọc
+            //    date = (DateTime)QO["bsd_ngaydatcoc"];
+            //    if (QO.Contains("statuscode") && ((OptionSetValue)QO["statuscode"]).Value == 100000000) //reservation
+            //    {
+            //        if (!QO.Contains("bsd_reservationtime")) throw new InvalidPluginExecutionException("Reservation did not contain Reservation time! Please check again!");
+            //        else date = (DateTime)QO["bsd_reservationtime"];
+            //    }
+            //    if (QO.Contains("bsd_quotecodesams")) date = (DateTime)QO["bsd_reservationtime"];
+            //}
 
             if (type == 1)//month
             {
@@ -725,28 +725,28 @@ namespace Action_Resv_GenPMS
                 tmp["bsd_depositamount"] = new Money(depositfee);
             }
             statusCode = QO.Attributes.Contains("statuscode") ? ((OptionSetValue)QO["statuscode"]).Value : -1;
-            if (statusCode != 100000011)
-            {
-                if (b_typeofstartdate == true) //&& orderNumber == 1)
-                {
-                    if (i_localization == 100000000)
-                    {
-                        if (!en.Attributes.Contains("bsd_withindate"))
-                            if (!QO.Contains("bsd_quotecodesams"))
-                                throw new InvalidPluginExecutionException("Please select field 'Email reminder (local)' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
-                        date = date.AddDays(double.Parse(en["bsd_withindate"].ToString()));
-                        tmp["bsd_withindate"] = (int)en["bsd_withindate"];
-                    }
-                    else
-                    {
-                        if (!en.Attributes.Contains("bsd_emailreminderforeigner"))
-                            if (!QO.Contains("bsd_quotecodesams"))
-                                throw new InvalidPluginExecutionException("Please select field 'Email reminder (foreigner)' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
-                        date = date.AddDays(double.Parse(en["bsd_emailreminderforeigner"].ToString()));
-                        tmp["bsd_emailreminderforeigner"] = (int)en["bsd_emailreminderforeigner"];
-                    }
-                }
-            }
+            //if (statusCode != 100000011)
+            //{
+            //    if (b_typeofstartdate == true) //&& orderNumber == 1)
+            //    {
+            //        if (i_localization == 100000000)
+            //        {
+            //            if (!en.Attributes.Contains("bsd_withindate"))
+            //                if (!QO.Contains("bsd_quotecodesams"))
+            //                    throw new InvalidPluginExecutionException("Please select field 'Email reminder (local)' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
+            //            date = date.AddDays(double.Parse(en["bsd_withindate"].ToString()));
+            //            tmp["bsd_withindate"] = (int)en["bsd_withindate"];
+            //        }
+            //        else
+            //        {
+            //            if (!en.Attributes.Contains("bsd_emailreminderforeigner"))
+            //                if (!QO.Contains("bsd_quotecodesams"))
+            //                    throw new InvalidPluginExecutionException("Please select field 'Email reminder (foreigner)' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
+            //            date = date.AddDays(double.Parse(en["bsd_emailreminderforeigner"].ToString()));
+            //            tmp["bsd_emailreminderforeigner"] = (int)en["bsd_emailreminderforeigner"];
+            //        }
+            //    }
+            //}
 
 
 
@@ -790,10 +790,10 @@ namespace Action_Resv_GenPMS
                 int bsd_nextdaysofendphase = (int)en["bsd_nextdaysofendphase"];
                 tmp["bsd_nextdaysofendphase"] = bsd_nextdaysofendphase;
             }
-            if (en.Contains("bsd_typeofstartdate"))
-            {
-                tmp["bsd_typeofstartdate"] = (bool)en["bsd_typeofstartdate"]; //bsd_typeofstartdate
-            }
+            //if (en.Contains("bsd_typeofstartdate"))
+            //{
+            //    tmp["bsd_typeofstartdate"] = (bool)en["bsd_typeofstartdate"]; //bsd_typeofstartdate
+            //}
             //if (en.Contains("bsd_calculatedfromdepositdate"))
             //    tmp["bsd_calculatedfromdepositdate"] = (bool)en["bsd_calculatedfromdepositdate"];
             //09012018 - Add new
