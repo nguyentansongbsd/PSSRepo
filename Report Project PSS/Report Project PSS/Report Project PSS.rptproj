@@ -55,7 +55,10 @@
     <Report Include="HWL_XacNhanCDT_VN_Contact_04112022.rdl" />
     <Report Include="HWL_XacNhanCDT_VN_NhieuLan_04112022.rdl" />
     <Report Include="Lumi For QR Code_Escrow Agreement (VN).rdl" />
+    <Report Include="LUMI_COM_APPENDIX_VN_05052025.rdl" />
+    <Report Include="LUMI_COM_SPA_VN_05052025.rdl" />
     <Report Include="LUMI_PRES_SPA_EN.rdl" />
+    <Report Include="LUMI_P_E_COM_SPA_VN_05052025.rdl" />
     <Report Include="rp52_SM_Purchaser Info_SALES_CCR_Final (1).rdl" />
     <Report Include="rp52_SM_Purchaser Info_SALES_CCR_Final.rdl" />
     <Report Include="rpHWL_SPA_02_EN_Normal_PDF_11102022.rdl" />
