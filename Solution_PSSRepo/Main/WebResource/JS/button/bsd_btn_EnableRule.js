@@ -13,11 +13,43 @@ function ready() {
         else timer = setTimeout(function () {
             wait()
         },
-        1000);
+            1000);
     }
     wait();
 }
+function DisableStatus() {
+    switch (Xrm.Page.data.entity.getEntityName()) {
+        case "bsd_interestratemaster":
+            if (!CheckRoleForUser("CLVN_CCR Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updatelandvalue":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updateactualareaapprove":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_capnhatphiquanly":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && CheckRoleForUser("CLVN_S & M_Head of Sale"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_refund":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_waiverapproval":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+        case "bsd_updateestimatehandoverdate":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+                Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
+            break;
+    }
 
+}
 function RegisterModal() {
     debugger;
     var script = window.parent.document.getElementById("new_modal.utilities.js");
@@ -77,27 +109,27 @@ function CheckRoleForUser(rolename) {
 function CheckEnable_Role() {
 
     switch (Xrm.Page.data.entity.getEntityName()) {
-    case "bsd_updateduedate":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_updateduedatedetail":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_updateduedateoflastinstallmentapprove":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_updateduedateoflastinstallment":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_terminateletter":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_updateestimatehandoverdate":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
-    case "bsd_updateestimatehandoverdatedetail":
-        if (CheckRoleForUser("System Administrator")) return true
-        else return false;
+        case "bsd_updateduedate":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_updateduedatedetail":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_updateduedateoflastinstallmentapprove":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_updateduedateoflastinstallment":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_terminateletter":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_updateestimatehandoverdate":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
+        case "bsd_updateestimatehandoverdatedetail":
+            if (CheckRoleForUser("System Administrator")) return true
+            else return false;
         default:
             return false;
     }
@@ -107,33 +139,81 @@ function CheckEnable_Condition(tyle) {
     debugger;
     let status = Xrm.Page.getAttribute("statuscode").getValue();
     switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
-    case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
+        case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_updatelandvalue-bsd_landvalue-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_updateduedate-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_updateestimatehandoverdate-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_discount-form_statuscode":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_packageselling-form_statuscode":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_phaseslaunch-bsd_promotion-subgriddetail":
+            if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status) return false;
+            break;
+        case "bsd_phaseslaunch-bsd_packageselling-subgriddetail":
+            if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status) return false;
+            break;
+        case "salesorder-form-PrintHOM":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "salesorder-form-InterestSimulation":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+        case "salesorder-form-SubSale":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+             case "salesorder-form-PrintHOM":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "salesorder-form-InterestSimulation":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
 
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_updatelandvalue-bsd_landvalue-subgriddetail":
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_updateduedate-subgriddetail":
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_updateestimatehandoverdate-subgriddetail":
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_discount-form_statuscode":
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_packageselling-form_statuscode":
-        if (getStatusCodeValueByName("Approved") === status) return false;
-        break;
-    case "bsd_phaseslaunch-bsd_promotion-subgriddetail":
-        if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status) return false;
-        break;
-    case "bsd_phaseslaunch-bsd_packageselling-subgriddetail":
-        if (getStatusCodeValueByName("Launched") != status && getStatusCodeValueByName("Not Launch") != status) return false;
-        break;
-    default:
-        return true;
+        case "quote-form-CreateOrder":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "quote-form-PrintQuotaionFinal":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+        case "quote-form-ConvertToOption":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break
+        case "quote-form-FUL":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+        case "quote-form-Recalculator":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
+
+        case "bsd_discount-form-Approved":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            break;
+        case "bsd_confirmpayment-form-Confirm":
+            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_payment-form-Confirm":
+            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_packageselling-form-Approved":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            break;
+        case "bsd_advancepayment-form-ConfirmCollect":
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            break;
+        case "bsd_bankingloan-form-Mortgage":
+            if (getStatusCodeValueByName("Terminated")) return false;
+            break;
+        case "bsd_bankingloan-form-Demortgage":
+            if (getStatusCodeValueByName("CLVN_FIN_Finance Manager")) return false;
+            break;
+        default:
+            return true;
     }
     return true;
 }
@@ -175,32 +255,32 @@ function getStatusCodeOptions() {
 }
 function GetDetailEntityName() {
     switch (Xrm.Page.data.entity.getEntityName()) {
-    case "bsd_updateduedate":
-        return "bsd_updateduedatedetail"
-        break;
-    case "bsd_updateduedateoflastinstallmentapprove":
-        return "bsd_updateduedateoflastinstallment"
-        break;
-    case "bsd_updateestimatehandoverdate":
-        return "bsd_updateestimatehandoverdatedetail"
-        break;
-    default:
-        return "";
+        case "bsd_updateduedate":
+            return "bsd_updateduedatedetail"
+            break;
+        case "bsd_updateduedateoflastinstallmentapprove":
+            return "bsd_updateduedateoflastinstallment"
+            break;
+        case "bsd_updateestimatehandoverdate":
+            return "bsd_updateestimatehandoverdatedetail"
+            break;
+        default:
+            return "";
     }
 }
 function GetDetailFieldMasterName() {
     switch (Xrm.Page.data.entity.getEntityName()) {
-    case "bsd_updateduedate":
-        return "bsd_updateduedatedetail"
-        break;
-    case "bsd_updateduedateoflastinstallmentapprove":
-        return "bsd_updateduedateoflastinstallment"
-        break;
-    case "bsd_updateestimatehandoverdate":
-        return "bsd_updateestimatehandoverdatedetail"
-        break;
-    default:
-        return "";
+        case "bsd_updateduedate":
+            return "bsd_updateduedatedetail"
+            break;
+        case "bsd_updateduedateoflastinstallmentapprove":
+            return "bsd_updateduedateoflastinstallment"
+            break;
+        case "bsd_updateestimatehandoverdate":
+            return "bsd_updateestimatehandoverdatedetail"
+            break;
+        default:
+            return "";
     }
 }
 function CheckDetailForMaster(entityName, entityId) {
@@ -210,6 +290,6 @@ function CheckDetailForMaster(entityName, entityId) {
         "bsd_updateestimatehandoverdate": Xrm.Page.data.entity.getId()
     };
     var fetchXml = ["<fetch>", "  <entity name='", entityNameDetail, "'>", "    <filter>", "      <condition attribute='", fieldMaster, "' operator='eq' value='", fetchData.bsd_updateestimatehandoverdate
-    /*00000000-0000-0000-0000-000000000000*/
-    , "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
+        /*00000000-0000-0000-0000-000000000000*/
+        , "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
 }

@@ -93,19 +93,27 @@ namespace Action_ShareCustomerToTeam
             //throw new InvalidPluginExecutionException(id);
             string[] arrID = id.Split(',');
             string fieldName = ""; //type == 0 ? "contact" : "account";
+            traceService.Trace("step1");
             if (type == 0)//KHCN
                 fieldName = "contact";
             else if (type == 1)
                 fieldName = "account";
+            else if(type==10)
+            {
+                fieldName = "lead";
+            }
             else
             {
-                fieldName = type == 2 ? "contact" : "account";
+                traceService.Trace("step@@");
+                fieldName = type == 2 ? "contact" : (type == 3 ? "account" : "lead");
                 ShareCustomerToTeam(arrID, fieldName);
             }
+            traceService.Trace(fieldName);
             foreach (string item in arrID)
             {
                 EntityReference enRef = new EntityReference(fieldName, Guid.Parse(item));
                 EntityCollection rs = GetListTeamOfCurrentUser(CurrentUser);
+                traceService.Trace("step2");
                 if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("Người dùng hiện tại chưa tham gia vào bất kỳ team nào !");
                 if (rs.Entities.Count == 1)
                 {
@@ -201,6 +209,7 @@ namespace Action_ShareCustomerToTeam
                 }
                 else
                 {
+                    traceService.Trace("step3");
                     List<TeamReturn> list = new List<TeamReturn>();
                     foreach (Entity it in rs.Entities)
                     {
@@ -272,7 +281,7 @@ namespace Action_ShareCustomerToTeam
                 <fetch>
                   <entity name='team'>
                     <filter>
-                      <condition attribute='name' operator='begins-with' value='%{team["name"].ToString().Split('-')[0]}%'/>
+                      <condition attribute='name' operator='like' value='%{team["name"].ToString().Split('-')[0]}-%'/>
                     </filter>
                   </entity>
                 </fetch>";

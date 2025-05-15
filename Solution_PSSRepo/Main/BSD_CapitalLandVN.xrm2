@@ -102,29 +102,13 @@
           ]
         },
         {
-          "Name": "Plugin_Updateduedate.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "210fcb6e-e3e6-4e7b-bda0-6a7eb9077a8c",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Plugin_Updateduedate.dll",
-                "SourceType": 0
-              }
-            }
-          ]
-        },
-        {
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
             {
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
-              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
             },
             {
               "CrmId": "1623cfc4-34d9-ef11-8ee9-000d3ac84358",
@@ -211,29 +195,6 @@
         "UniqueName": "Default"
       },
       "Projects": [
-        {
-          "Name": "Action_Action_UpdateLandValue.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Files": [
-            {
-              "CrmId": "00000000-0000-0000-0000-000000000000",
-              "FileType": 26,
-              "RelativeFilePath": "\\Action_Action_UpdateLandValue.cs"
-            }
-          ],
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "342dd899-a93a-44db-8a76-0551387de569",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Action_Action_UpdateLandValue.dll",
-                "SourceType": 0
-              }
-            }
-          ]
-        },
         {
           "Name": "Action_Approved_Updateduedate_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
@@ -451,6 +412,29 @@
           ]
         },
         {
+          "Name": "Action_GetEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetEmailMessageAndUpdatePendingSend.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "1422eafb-4e5c-4a9c-9577-66df1ea47b03",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_GetMailFromAndTo.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -474,15 +458,46 @@
           ]
         },
         {
-          "Name": "Action_HandoverNotices_GenerateHandoverNotices.csproj",
+          "Name": "Action_GetParamPaymentNotice.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetParamPaymentNotice.cs"
+            }
+          ],
           "Properties": [
             {
               "PropertiesType": 1,
               "Config": {
-                "Id": "49b22a8a-380b-448f-b68a-dcd06aa97d26",
+                "Id": "c37f7447-f3ba-4441-a73b-9563fad314cc",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetParamPaymentNotice.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetParamTransactionPayment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_GetParamTransactionPayment.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "6a14825a-2836-40ba-aa81-f44ba7b7b6f5",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetParamTransactionPayment.dll",
                 "SourceType": 0
               }
             }
@@ -737,22 +752,6 @@
           ]
         },
         {
-          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
-                "SourceType": 0
-              }
-            }
-          ]
-        },
-        {
           "Name": "Action_UpdateLandValue_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -858,29 +857,6 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Pl_Resv_ReventAdd_Coownerv2.dll",
-                "SourceType": 0
-              }
-            }
-          ]
-        },
-        {
-          "Name": "Plugin_Approve.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Files": [
-            {
-              "CrmId": "00000000-0000-0000-0000-000000000000",
-              "FileType": 26,
-              "RelativeFilePath": "\\Plugin_Approve.cs"
-            }
-          ],
-          "Properties": [
-            {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "bc278aa3-9302-4c85-a493-b4c05725881e",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Plugin_Approve.dll",
                 "SourceType": 0
               }
             }
@@ -1142,7 +1118,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Update_Email_MapInforToPayment.dll",
-                "SourceType": 0
+                "SourceType": 0,
+                "StepConfigs": [
+                  {
+                    "DeleteAsyncOperationAfterCompletion": false,
+                    "DeploymentType": 0,
+                    "ExecutionOrder": 1,
+                    "Id": "98cd800f-fcd1-4025-9835-8d24c69091fe",
+                    "IsDisabled": false,
+                    "Mode": 0,
+                    "Name": "Update - Email - Post-operation",
+                    "PluginTypeId": "d1037ec5-9a05-43d3-a3a7-0c1d40491808",
+                    "SdkMessageFilterId": "3fc9bb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "SdkMessageId": "20bebb1b-ea3e-db11-86a7-000a3a5473e8",
+                    "Stage": 40
+                  }
+                ]
               }
             }
           ]
@@ -1194,32 +1185,23 @@
           ]
         },
         {
-          "Name": "Plugin_Updateduedate.csproj",
+          "Name": "Plugin_UpdateEmail_UpdateBulkSendMailStatus.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Properties": [
+          "Files": [
             {
-              "PropertiesType": 1,
-              "Config": {
-                "Id": "210fcb6e-e3e6-4e7b-bda0-6a7eb9077a8c",
-                "IsolationMode": 2,
-                "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Plugin_Updateduedate.dll",
-                "SourceType": 0
-              }
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_UpdateEmail_UpdateBulkSendMailStatus.cs"
             }
-          ]
-        },
-        {
-          "Name": "Plugin_Updateduedateoflastinstallmentapprove.csproj",
-          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          ],
           "Properties": [
             {
               "PropertiesType": 1,
               "Config": {
-                "Id": "a15e4023-dd5b-4d8a-9d50-d0fc77051890",
+                "Id": "0366346b-f65b-49b4-a1e5-4a92b0a2bbf5",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
-                "PathNameOnServer": "Plugin_Updateduedateoflastinstallmentapprove.dll",
+                "PathNameOnServer": "Plugin_UpdateEmail_UpdateBulkSendMailStatus.dll",
                 "SourceType": 0
               }
             }
@@ -1260,7 +1242,12 @@
             {
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
-              "RelativeFilePath": "\\HTML\\compoent\\bsd_Entityview_SelectReport.html"
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
             },
             {
               "CrmId": "58fe8065-a539-ea11-a813-000d3a085b2b",
@@ -1286,6 +1273,11 @@
               "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\bsd_HandoverNotice.js"
+            },
+            {
+              "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"
             },
             {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",

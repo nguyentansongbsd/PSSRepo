@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33423.256
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Project_CreateTeam", "Plugin_Project_CreateTeam\Plugin_Project_CreateTeam.csproj", "{D8039026-0BD8-48B9-8817-21AD7CC4DB47}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8039026-0BD8-48B9-8817-21AD7CC4DB47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8039026-0BD8-48B9-8817-21AD7CC4DB47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8039026-0BD8-48B9-8817-21AD7CC4DB47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8039026-0BD8-48B9-8817-21AD7CC4DB47}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADEC0D3A-0D7D-4D0E-98D5-128298A09E54}
+	EndGlobalSection
+EndGlobal

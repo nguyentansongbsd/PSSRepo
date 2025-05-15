@@ -48,8 +48,8 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             {
                 estimatehandover = null;
             }
-            DateTime billdate=DateTime.Now;
-            bool isContainsBilldate=false;
+            DateTime billdate = DateTime.Now;
+            bool isContainsBilldate = false;
             if (context.InputParameters["billdate"] != null)
             {
                 isContainsBilldate = true;
@@ -63,7 +63,9 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, "100000000"));// == APPROVED
             query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, 0));// == Active
-            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate","bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
+            query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.NotNull));// == bsd_optionentry
+            query.Criteria.AddCondition(new ConditionExpression("bsd_installment", ConditionOperator.NotNull));// == bsd_installment
+            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
             query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.And);
             var bsd_types_1 = 100000002;
             var bsd_types_2 = 100000001;
@@ -78,7 +80,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             {
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_updateestimatehandoverdateid", ConditionOperator.Equal, estimatehandover));
             }
-            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "salesorder","bsd_optionentry", "salesorderid", JoinOperator.Inner));
+            query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "salesorder", "bsd_optionentry", "salesorderid", JoinOperator.Inner));
             query.LinkEntities[1].LinkCriteria = new FilterExpression(LogicalOperator.And);
             query.LinkEntities[1].LinkCriteria.AddCondition(new ConditionExpression("bsd_signedcontractdate", ConditionOperator.NotNull));// Not NULL
             query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "product", "bsd_units", "productid", JoinOperator.Inner));
@@ -89,7 +91,7 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             {
                 DateTime today = RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
                 //KIEM TRA DA CO HANDOVER NOTICES CHUA?
-                if (detail.Contains("bsd_optionentry") && CheckExistHandoverNotices(service, detail.Contains("bsd_optionentry") ? (EntityReference)detail["bsd_optionentry"] : null, detail.Contains("bsd_installment") ? (EntityReference)detail["bsd_installment"] : null) == false)
+                if (CheckExistHandoverNotices(service, (EntityReference)detail["bsd_optionentry"], (EntityReference)detail["bsd_installment"]) == false)
                 {
                     //Han-28.05.2018: Add Simulation Date 
                     Entity UpEHDEn = service.Retrieve(((EntityReference)detail["bsd_updateestimatehandoverdate"]).LogicalName,
@@ -113,138 +115,88 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     decimal TotalSysRe = decimal.Zero;
                     //EntityReference enrefUpdatEestimateHandoverdate = detail.Contains("bsd_updateestimatehandoverdate") ? (EntityReference)detail["bsd_updateestimatehandoverdate"] : null;
                     Entity hn = new Entity("bsd_handovernotice");
-                    if (detail.Contains("bsd_optionentry"))
+                    hn["bsd_name"] = "Handover Notices of " + ((EntityReference)detail["bsd_optionentry"]).Name;
+                    Entity OE = service.Retrieve(((EntityReference)detail["bsd_optionentry"]).LogicalName, ((EntityReference)detail["bsd_optionentry"]).Id,
+                        new ColumnSet(new string[] { "name", "bsd_paymentscheme", "bsd_totalpercent", "customerid", "bsd_estimatehandoverdatecontract", "bsd_freightamount", "bsd_managementfee", "bsd_depositamount", "bsd_project", "bsd_numberofmonthspaidmf", "bsd_signedcontractdate", "bsd_signeddadate" }));
+                    if (OE.Contains("customerid"))
                     {
-                        hn["bsd_name"] = "Handover Notices of " + ((EntityReference)detail["bsd_optionentry"]).Name;
-                        Entity OE = service.Retrieve(((EntityReference)detail["bsd_optionentry"]).LogicalName, ((EntityReference)detail["bsd_optionentry"]).Id,
-                            new ColumnSet(new string[] { "name", "bsd_paymentscheme", "bsd_totalpercent", "customerid", "bsd_estimatehandoverdatecontract", "bsd_freightamount", "bsd_managementfee", "bsd_depositamount", "bsd_project", "bsd_numberofmonthspaidmf", "bsd_signedcontractdate", "bsd_signeddadate" }));
-                        if (OE.Contains("customerid"))
+                        hn["bsd_customer"] = OE["customerid"];
+
+                        EntityCollection advance = CalculateAdvancePayment(service, (EntityReference)OE["customerid"], (EntityReference)OE["bsd_project"], OE.ToEntityReference());
+                        foreach (Entity e in advance.Entities)
                         {
-                            hn["bsd_customer"] = OE["customerid"];
-
-                            EntityCollection advance = CalculateAdvancePayment(service, (EntityReference)OE["customerid"], (EntityReference)OE["bsd_project"], OE.ToEntityReference());
-                            foreach (Entity e in advance.Entities)
-                            {
-                                advancePaymentAmount = (e.Contains("remaining") && ((AliasedValue)e["remaining"]).Value != null) ? ((Money)((AliasedValue)e["remaining"]).Value).Value : decimal.Zero;
-                            }
+                            advancePaymentAmount = (e.Contains("remaining") && ((AliasedValue)e["remaining"]).Value != null) ? ((Money)((AliasedValue)e["remaining"]).Value).Value : decimal.Zero;
                         }
-
-                        if (OE.Contains("bsd_estimatehandoverdatecontract"))
-                            hn["bsd_handoverdatebaseoncontract"] = OE["bsd_estimatehandoverdatecontract"];
-
-                        if (OE.Contains("bsd_project"))
-                            hn["bsd_project"] = OE["bsd_project"];
-                        hn["bsd_totalamountpaid"] = OE.Contains("bsd_totalpercent") ? OE["bsd_totalpercent"] : decimal.Zero;
-                        hn["bsd_optionentry"] = OE.ToEntityReference();
-                        if (OE.Contains("bsd_freightamount")) maintenanceF = ((Money)OE["bsd_freightamount"]).Value;
-                        if (OE.Contains("bsd_managementfee")) managementF = ((Money)OE["bsd_managementfee"]).Value;
-
-                        //Han_15082018 : Get Remaining Amount of Mana Fee + Main Fee
-                        EntityCollection InstallFee = CalSum_FeeRemaining(service, OE.ToEntityReference());
-
-                        foreach (Entity e in InstallFee.Entities)
-                        {
-                            if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
-                                maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
-
-                            if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
-                                managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
-                        }
-                        hn["bsd_maintenancefee"] = new Money(maintenanceF);
-                        hn["bsd_managementfee"] = new Money(managementF);
-                        hn["bsd_depositamount"] = OE.Contains("bsd_depositamount") ? OE["bsd_depositamount"] : new Money(decimal.Zero);
-                        hn["bsd_numberofmonthspaidmf"] = OE.Contains("bsd_numberofmonthspaidmf") ? OE["bsd_numberofmonthspaidmf"] : 0;
-                        hn["bsd_updateestimatehandoverdatedetail"] = detail.ToEntityReference();
-                        EntityCollection calculateOutstanding = CalculateOutstanding(service, OE.ToEntityReference(), bsd_isincludelastinstallment);
-                        foreach (Entity e in calculateOutstanding.Entities)
-                        {
-                            if (e.Contains("balance") && ((AliasedValue)e["balance"]).Value != null)
-                                outstandingUnPaid = ((Money)((AliasedValue)e.Attributes["balance"]).Value).Value;
-                        }
-
-                        // Total System Receipt
-                        EntityCollection SysReceiptEn = CalSum_SystemReceipt(service, OE.ToEntityReference());
-
-                        foreach (Entity e in SysReceiptEn.Entities)
-                        {
-                            if (e.Contains("TotalSysRe") && ((AliasedValue)e["TotalSysRe"]).Value != null)
-                                TotalSysRe = ((Money)((AliasedValue)e.Attributes["TotalSysRe"]).Value).Value;
-                        }
-
-                        outstandingUnPaid = outstandingUnPaid + TotalSysRe;
-
-                        //Waiver
-                        decimal waiverSum = 0;
-                        EntityCollection calculateActualInterest = CalculateActualInterest(service, OE.ToEntityReference());
-                        foreach (Entity e in calculateActualInterest.Entities)
-                        {
-                            decimal interestSum = (e.Contains("amount") && ((AliasedValue)e["amount"]).Value != null) ? ((Money)((AliasedValue)e["amount"]).Value).Value : decimal.Zero;
-                            decimal interestPaidSum = (e.Contains("paid") && ((AliasedValue)e["paid"]).Value != null) ? ((Money)((AliasedValue)e["paid"]).Value).Value : decimal.Zero;
-                            waiverSum = (e.Contains("waiver") && ((AliasedValue)e["waiver"]).Value != null) ? ((Money)((AliasedValue)e["waiver"]).Value).Value : decimal.Zero;
-                            actualInterest = interestSum - interestPaidSum - waiverSum;
-                            hn["bsd_totalwaiveramount"] = new Money(waiverSum);
-                        }
-                        EntityCollection calculateOther = CalculateOther(service, OE.ToEntityReference(), true);
-                        foreach (Entity e in calculateOther.Entities)
-                        {
-                            orther = (e.Contains("sumMis") && ((AliasedValue)e["sumMis"]).Value != null) ? ((Money)((AliasedValue)e.Attributes["sumMis"]).Value).Value : decimal.Zero;
-                        }
-                        //estimateInterest = Interest(service, OE, today.Date);
-                        estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date);
-                        traceService.Trace("estimateInterest :" + estimateInterest);
-                        var checkNullLim = false;
-                        EntityCollection oe_pay = fect_paymentcheme(service, OE);
-                        Entity oe_paymentcheme = oe_pay.Entities[0];
-                        decimal totalamount = oe_paymentcheme.Contains("totalamount") ? ((Money)oe_paymentcheme["totalamount"]).Value : 0;
-                        EntityReference PaymentScheme = oe_paymentcheme.Contains("bsd_paymentscheme") ? (EntityReference)oe_paymentcheme["bsd_paymentscheme"] : null;
-                        Entity enPaymentScheme = service.Retrieve(PaymentScheme.LogicalName, PaymentScheme.Id, new ColumnSet(true));
-                        EntityReference enrefInterestRateMaster = enPaymentScheme.Contains("bsd_interestratemaster") ? (EntityReference)enPaymentScheme["bsd_interestratemaster"] : null;
-                        decimal lim = 0;
-                        if (enrefInterestRateMaster != null)
-                        {
-
-                            Entity enInterestRateMaster = service.Retrieve(enrefInterestRateMaster.LogicalName, enrefInterestRateMaster.Id, new ColumnSet(true));
-                            decimal bsd_toleranceinterestamount = enInterestRateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestRateMaster["bsd_toleranceinterestamount"]).Value : 0;
-                            decimal bsd_toleranceinterestpercentage = enInterestRateMaster.Contains("bsd_toleranceinterestpercentage") ? (decimal)enInterestRateMaster["bsd_toleranceinterestpercentage"] : 0;
-                            decimal amountcalbypercent = totalamount * bsd_toleranceinterestpercentage / 100;
-                            traceService.Trace("bsd_toleranceinterestamount: " + bsd_toleranceinterestamount.ToString());
-                            traceService.Trace("bsd_toleranceinterestpercentage: " + bsd_toleranceinterestpercentage.ToString());
-                            traceService.Trace("amountcalbypercent: " + bsd_toleranceinterestamount.ToString());
-                            if (enInterestRateMaster.Contains("bsd_toleranceinterestamount") || enInterestRateMaster.Contains("bsd_toleranceinterestpercentage"))
-                            {
-                                if (bsd_toleranceinterestamount > 0 && amountcalbypercent > 0)
-                                {
-                                    lim = Math.Min(bsd_toleranceinterestamount, amountcalbypercent);
-                                }
-                                else
-                                {
-                                    if (bsd_toleranceinterestamount > 0)
-                                    {
-                                        lim = bsd_toleranceinterestamount;
-                                    }
-                                    if (amountcalbypercent > 0)
-                                    {
-                                        lim = amountcalbypercent;
-                                    }
-                                }
-                                estimateInterest = estimateInterest < lim ? estimateInterest : lim;
-                                traceService.Trace("lim :" + lim);
-                            }
-                        }
-                        traceService.Trace("estimateInterest :" + estimateInterest);
-                    }
-                    else
-                        hn["bsd_name"] = "Handover Notices";
-
-                    if (detail.Contains("bsd_installment"))
-                    {
-                        hn["bsd_installment"] = detail["bsd_installment"];
-                        Entity ins = service.Retrieve(((EntityReference)detail["bsd_installment"]).LogicalName, ((EntityReference)detail["bsd_installment"]).Id,
-                            new ColumnSet(new string[2] { "bsd_amountofthisphase", "bsd_balance" }));
-                        installmentAmount = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
-                        hn["bsd_installmentamount"] = new Money(installmentAmount);
                     }
 
+                    if (OE.Contains("bsd_estimatehandoverdatecontract"))
+                        hn["bsd_handoverdatebaseoncontract"] = OE["bsd_estimatehandoverdatecontract"];
+
+                    if (OE.Contains("bsd_project"))
+                        hn["bsd_project"] = OE["bsd_project"];
+                    hn["bsd_totalamountpaid"] = OE.Contains("bsd_totalpercent") ? OE["bsd_totalpercent"] : decimal.Zero;
+                    hn["bsd_optionentry"] = OE.ToEntityReference();
+                    if (OE.Contains("bsd_freightamount")) maintenanceF = ((Money)OE["bsd_freightamount"]).Value;
+                    if (OE.Contains("bsd_managementfee")) managementF = ((Money)OE["bsd_managementfee"]).Value;
+
+                    //Han_15082018 : Get Remaining Amount of Mana Fee + Main Fee
+                    EntityCollection InstallFee = CalSum_FeeRemaining(service, OE.ToEntityReference());
+
+                    foreach (Entity e in InstallFee.Entities)
+                    {
+                        if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
+                            maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
+
+                        if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
+                            managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
+                    }
+                    hn["bsd_maintenancefee"] = new Money(maintenanceF);
+                    hn["bsd_managementfee"] = new Money(managementF);
+                    hn["bsd_depositamount"] = OE.Contains("bsd_depositamount") ? OE["bsd_depositamount"] : new Money(decimal.Zero);
+                    hn["bsd_numberofmonthspaidmf"] = OE.Contains("bsd_numberofmonthspaidmf") ? OE["bsd_numberofmonthspaidmf"] : 0;
+                    hn["bsd_updateestimatehandoverdatedetail"] = detail.ToEntityReference();
+                    EntityCollection calculateOutstanding = CalculateOutstanding(service, OE.ToEntityReference(), bsd_isincludelastinstallment);
+                    foreach (Entity e in calculateOutstanding.Entities)
+                    {
+                        if (e.Contains("balance") && ((AliasedValue)e["balance"]).Value != null)
+                            outstandingUnPaid = ((Money)((AliasedValue)e.Attributes["balance"]).Value).Value;
+                    }
+
+                    // Total System Receipt
+                    EntityCollection SysReceiptEn = CalSum_SystemReceipt(service, OE.ToEntityReference());
+
+                    foreach (Entity e in SysReceiptEn.Entities)
+                    {
+                        if (e.Contains("TotalSysRe") && ((AliasedValue)e["TotalSysRe"]).Value != null)
+                            TotalSysRe = ((Money)((AliasedValue)e.Attributes["TotalSysRe"]).Value).Value;
+                    }
+
+                    outstandingUnPaid = outstandingUnPaid + TotalSysRe;
+
+                    //Waiver
+                    decimal waiverSum = 0;
+                    EntityCollection calculateActualInterest = CalculateActualInterest(service, OE.ToEntityReference());
+                    foreach (Entity e in calculateActualInterest.Entities)
+                    {
+                        decimal interestSum = (e.Contains("amount") && ((AliasedValue)e["amount"]).Value != null) ? ((Money)((AliasedValue)e["amount"]).Value).Value : decimal.Zero;
+                        decimal interestPaidSum = (e.Contains("paid") && ((AliasedValue)e["paid"]).Value != null) ? ((Money)((AliasedValue)e["paid"]).Value).Value : decimal.Zero;
+                        waiverSum = (e.Contains("waiver") && ((AliasedValue)e["waiver"]).Value != null) ? ((Money)((AliasedValue)e["waiver"]).Value).Value : decimal.Zero;
+                        actualInterest = interestSum - interestPaidSum - waiverSum;
+                        hn["bsd_totalwaiveramount"] = new Money(waiverSum);
+                    }
+                    EntityCollection calculateOther = CalculateOther(service, OE.ToEntityReference(), true);
+                    foreach (Entity e in calculateOther.Entities)
+                    {
+                        orther = (e.Contains("sumMis") && ((AliasedValue)e["sumMis"]).Value != null) ? ((Money)((AliasedValue)e.Attributes["sumMis"]).Value).Value : decimal.Zero;
+                    }
+                    //estimateInterest = Interest(service, OE, today.Date);
+                    estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date);
+                    traceService.Trace("estimateInterest :" + estimateInterest);
+                    hn["bsd_installment"] = detail["bsd_installment"];
+                    Entity ins = service.Retrieve(((EntityReference)detail["bsd_installment"]).LogicalName, ((EntityReference)detail["bsd_installment"]).Id,
+                        new ColumnSet(new string[2] { "bsd_amountofthisphase", "bsd_balance" }));
+                    installmentAmount = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
+                    hn["bsd_installmentamount"] = new Money(installmentAmount);
                     hn["bsd_advancepaymentamount"] = new Money(advancePaymentAmount);
                     hn["bsd_outstandingincludeinterest"] = new Money(outstandingUnPaid);
                     hn["bsd_actualinterest"] = new Money(actualInterest);
@@ -327,220 +279,85 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
                     throw new InvalidPluginExecutionException("Interest charge master not enough infomation required. Please check again!");
 
                 //Khai báo biến
-                int Graceday = ((int)interestMaster["bsd_gracedays"]);
+                //int Graceday = ((int)interestMaster["bsd_gracedays"]);
                 int interestStartDateType = ((OptionSetValue)interestMaster["bsd_intereststartdatetype"]).Value;//100000000: Due date;         100000001: Grace period  
-                decimal interestMasterPercent = (decimal)interestMaster["bsd_termsinterestpercentage"];
-                decimal interestProjectDaily = 0;
-                interestProjectDaily = DailyInterest(service, oe.ToEntityReference());
-                decimal interestPercent = interestMasterPercent + interestProjectDaily;
-                var bsd_signedcontractdate = new DateTime();
-                var bsd_signeddadate = new DateTime();
+                //decimal interestMasterPercent = (decimal)interestMaster["bsd_termsinterestpercentage"];
+                //decimal interestProjectDaily = 0;
+                //interestProjectDaily = DailyInterest(service, oe.ToEntityReference());
+                //decimal interestPercent = interestMasterPercent + interestProjectDaily;
+                //var bsd_signedcontractdate = new DateTime();
+                //var bsd_signeddadate = new DateTime();
                 //CREATE INTEREST SIMULATION DETAIL
                 foreach (Entity ins in listInstallment.Entities)
                 {
                     int lateDays = 0;
                     decimal balance = 0;
-                    interestPercent = (decimal)ins["bsd_interestchargeper"];
+                    decimal interestPercent = (decimal)ins["bsd_interestchargeper"];
+                    int Graceday = ((int)ins["bsd_gracedays"]);
+                    int bsd_ordernumber = (int)ins["bsd_ordernumber"];
                     //TINH LAI
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
-                    DateTime InterestStarDate = duedate.AddDays(Graceday);
-                    if (InterestStarDate.Date < dateCalculate.Date)
-                    {
-                        traceService.Trace("start tính lãi");
-                        lateDays = (int)dateCalculate.Date.Subtract(InterestStarDate.Date).TotalDays;
-                        if (interestStartDateType == 100000000)// Interest Start Date type: 100000000--> DueDate
-                        {
-                            lateDays = lateDays + Graceday;
-                        }
-                        if (oe.Contains("bsd_signedcontractdate"))
-                        {
-                            bsd_signedcontractdate = (DateTime)oe["bsd_signedcontractdate"];
-                            caseSign = 2;
-                            if (oe.Contains("bsd_signeddadate"))
-                            {
-                                bsd_signeddadate = (DateTime)oe["bsd_signeddadate"];
-                                caseSign = 3;
-                            }
-                        }
-                        else
-                        {
-                            if (oe.Contains("bsd_signeddadate"))
-                            {
-                                bsd_signeddadate = (DateTime)oe["bsd_signeddadate"];
-                                caseSign = 1;
-                            }
-                            else
-                            {
-                                caseSign = 4;
-                            }    
-                        }
-                        var latedays2 = lateDays;
-                        traceService.Trace("caseSign " + caseSign);
-                        traceService.Trace("lateDays " + lateDays);
-                        var resCheckCaseSign = checkCaseSignAndCalLateDays(ins, oe, bsd_signedcontractdate, bsd_signeddadate, dateCalculate, ref latedays2);
-                        lateDays = latedays2 <= lateDays ? latedays2 : lateDays;
-                        traceService.Trace("lateDays_ " + lateDays);
-                        balance = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
-                        if (resCheckCaseSign)
-                        {
+                    //DateTime InterestStarDate = duedate.AddDays(Graceday);
 
-                            decimal Newinterest = CalculateNewInterest(balance, lateDays, interestPercent);
-                            interest = interest + Newinterest;
+                    TimeSpan difference = dateCalculate - duedate;
+                    int bsd_latedays = difference.Days - Graceday;
+                    bsd_latedays = bsd_latedays < 0 ? 0 : bsd_latedays;
+                    int orderNumberSightContract = getViTriDotSightContract(oe.Id);
+                    int numberOfDays2 = 0;
+                    if (orderNumberSightContract != -1)
+                    {
+                        if (orderNumberSightContract <= bsd_ordernumber && oe.Contains("bsd_signedcontractdate"))
+                        {
+                            numberOfDays2 = -100599;
                         }
-                        traceService.Trace("interest: " + interest.ToString());
+                        else if (orderNumberSightContract > bsd_ordernumber)
+                        {
+                            if (oe.Contains("bsd_signeddadate"))
+                            {
+                                DateTime bsd_signeddadate = RetrieveLocalTimeFromUTCTime((DateTime)oe["bsd_signeddadate"], service);
+                                TimeSpan difference2 = dateCalculate - bsd_signeddadate;
+                                numberOfDays2 = difference2.Days;
+                                numberOfDays2 = numberOfDays2 < 0 ? 0 : numberOfDays2;
+                                traceService.Trace("bsd_signeddadate " + bsd_signeddadate);
+                            }
+                        }
+                        else numberOfDays2 = -100599;
                     }
+                    if (numberOfDays2 != -100599 && numberOfDays2 < bsd_latedays) bsd_latedays = numberOfDays2;
+                    traceService.Trace("bsd_latedays " + bsd_latedays);
+                    balance = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
+                    decimal Newinterest = CalculateNewInterest(balance, lateDays, interestPercent);
+                    interest = interest + Newinterest;
+                    traceService.Trace("interest: " + interest.ToString());
                 }
             }
             return interest;
         }
-        public bool checkCaseSignAndCalLateDays(Entity enInstallment, Entity enOptionEntry, DateTime bsd_signedcontractdate, DateTime bsd_signeddadate, DateTime receiptdate, ref int lateDays)
+        private int getViTriDotSightContract(Guid idOE)
         {
-            bool result = false;
-            bool isContainDueDate = false;
-            if (enInstallment.Contains("bsd_duedate"))
-                isContainDueDate = true;
-
-            var bsd_duedateFlag = new DateTime();
-            var bsd_duedate = new DateTime();
-            if (isContainDueDate == true)
+            int location = -1;
+            var fetchXml_instalment = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                                        <fetch>
+                                          <entity name=""bsd_paymentschemedetail"">
+                                            <attribute name=""bsd_ordernumber"" />
+                                            <filter>
+                                              <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                                              <condition attribute=""bsd_signcontractinstallment"" operator=""eq"" value=""1"" />
+                                              <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                                            </filter>
+                                          </entity>
+                                        </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml_instalment));
+            foreach (Entity entity in rs.Entities)
             {
-                bsd_duedate = (DateTime)enInstallment["bsd_duedate"];
+                location = entity.Contains("bsd_ordernumber") ? (int)entity["bsd_ordernumber"] : 0;
             }
-            #region lấy ra đợt tích Sign Contract Installment
-            var query_bsd_signcontractinstallment = true;
-
-            var query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet.AllColumns = true;
-            query.Criteria.AddCondition("bsd_signcontractinstallment", ConditionOperator.Equal, query_bsd_signcontractinstallment);
-            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enOptionEntry.Id.ToString());
-            var rs = service.RetrieveMultiple(query);
-            traceService.Trace($"enOptionEntry {enOptionEntry.Id}");
-            traceService.Trace($"enInstallment {enInstallment.Id}");
-            #endregion
-            switch (caseSign)
-            {
-                case 0:
-                    result = false;
-                    break;
-                case 1:
-                    if (rs.Entities.Count > 0)
-                    {
-                        if (rs.Entities[0].Id == enInstallment.Id)
-                        {
-                            result = false;
-                            break;
-                        }
-                        if (isContainDueDate == false)
-                            result = false;
-                        else
-                        {
-                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
-                            if (bsd_duedate < bsd_duedateFlag)
-                            {
-                                result = true;
-                                //tính số ngày trễ hạn 
-                                lateDays = (int)(receiptdate - bsd_signeddadate).TotalDays;
-                            }
-                            else result = false;
-                        }
-                    }
-                    break;
-                case 2:
-
-                    if (rs.Entities.Count > 0)
-                    {
-                        if (isContainDueDate == false)
-                            result = false;
-                        else
-                        {
-                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
-                            if (bsd_duedate >= bsd_duedateFlag)
-                            {
-                                result = true;
-                                lateDays = (int)(receiptdate - bsd_signedcontractdate).TotalDays;
-                            }
-                            else
-                            if (bsd_duedate >= bsd_duedateFlag)
-                            {
-                                result = true;
-                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
-                            }
-                            else result = false;
-                        }
-                    }
-                    break;
-                case 3:
-                    result = true;
-                    bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
-                    if (bsd_duedate < bsd_duedateFlag)
-                    {
-                        //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_signeddadate).TotalDays;
-                    }
-                    else
-                    {
-                        //tính số ngày trễ hạn 
-                        lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
-                    }
-                    break;
-                case 4:
-
-                    if (rs.Entities.Count > 0)
-                    {
-                        if (isContainDueDate == false)
-                            result = false;
-                        else
-                        {
-                            bsd_duedateFlag = (DateTime)rs.Entities[0]["bsd_duedate"];
-                            traceService.Trace("bsd_duedate >= bsd_duedateFlag: " + (bsd_duedate >= bsd_duedateFlag).ToString());
-                            if (bsd_duedate >= bsd_duedateFlag)
-                            {
-                                result = true;
-                                lateDays = (int)(receiptdate - bsd_duedate).TotalDays;
-                            }
-                            else result = false;
-                        }
-                    }
-                    break;
-                default:
-                    result = false;
-                    break;
-            }
-            traceService.Trace($"start caseSign {caseSign}");
-            traceService.Trace($"rs.Entities.Count {rs.Entities.Count}");
-            traceService.Trace("resultCaseSign:" + result);
-            return result;
+            return location;
         }
         private decimal CalculateNewInterest(decimal balance, int lateDays, decimal interestPercent)
         {
             decimal interest = balance * lateDays * (interestPercent / 100);
             return interest;
-        }
-        private decimal DailyInterest(IOrganizationService crmservices, EntityReference oe)
-        {
-            string fetchXml =
-                  @"<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='true' >
-                    <entity name='bsd_dailyinterestrate'>
-                    <attribute name='bsd_dailyinterestrateid' />
-                    <attribute name='bsd_interestrate' />
-                    <attribute name='bsd_date' />
-                    <order attribute='bsd_date' descending='true' />
-                    <link-entity name='bsd_project' from='bsd_projectid' to='bsd_project' alias='ae'>
-                      <link-entity name='salesorder' from='bsd_project' to='bsd_projectid' alias='af'>
-                        <filter type='and'>
-                          <condition attribute='salesorderid' operator='eq' uitype='salesorder' value='{0}' />
-                        </filter>
-                      </link-entity>
-                    </link-entity>
-                  </entity>
-                </fetch>    ";
-            fetchXml = string.Format(fetchXml, oe.Id);
-            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
-            if (entc.Entities.Count > 0 && (entc.Entities[0].Contains("bsd_interestrate")))
-            {
-                return (decimal)entc.Entities[0]["bsd_interestrate"];
-            }
-            return 0;
         }
         private bool CheckExistHandoverNotices(IOrganizationService crmservices, EntityReference oe, EntityReference ins)
         {
@@ -716,34 +533,6 @@ namespace Action_HandoverNotices_GenerateHandoverNotices
             var response = (LocalTimeFromUtcTimeResponse)service.Execute(request);
 
             return response.LocalTime;
-        }
-        private EntityCollection fect_paymentcheme(IOrganizationService crmservices, Entity oe)
-        {
-            string fetchXml =
-                  @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-              <entity name='salesorder'>
-                <attribute name='name' />
-                <attribute name='customerid' />
-                <attribute name='statuscode' />
-                <attribute name='totalamount' />
-                <attribute name='bsd_unitnumber' />
-                <attribute name='bsd_project' />
-                <attribute name='bsd_optionno' />
-                <attribute name='createdon' />
-                <attribute name='bsd_paymentscheme' />
-                <attribute name='bsd_contractnumber' />
-                <attribute name='totalamount' />
-                <attribute name='bsd_phaseslaunch' />
-                <attribute name='salesorderid' />
-                <order attribute='createdon' descending='true' />
-                <filter type='and'>
-                  <condition attribute='salesorderid' operator='eq' value='{0}' />
-                </filter>
-              </entity>
-            </fetch>";
-            fetchXml = string.Format(fetchXml, oe.Id);
-            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
-            return entc;
         }
         private EntityCollection CalSum_FeeRemaining(IOrganizationService crmservices, EntityReference oe)
         {

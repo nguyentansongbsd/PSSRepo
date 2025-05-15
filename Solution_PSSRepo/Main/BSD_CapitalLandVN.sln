@@ -151,6 +151,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CreateEmailMessage",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetEmailMessage", "Action\Action_GetEmailMessage\Action_GetEmailMessage.csproj", "{EF9AA4D1-AB12-4F96-A18C-377D71D718E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetParamTransactionPayment", "Action\Action_GetParamTransactionPayment\Action_GetParamTransactionPayment.csproj", "{309944AF-3FFB-46BD-AA2A-6A6670037A9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetParamPaymentNotice", "Action_GetParamPaymentNotice\Action_GetParamPaymentNotice.csproj", "{13C54E7D-BB21-4006-B08F-7DAF68235E77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_UpdateEmail_UpdateBulkSendMailStatus", "Plugin_UpdateEmail_UpdateBulkSendMailStatus\Plugin_UpdateEmail_UpdateBulkSendMailStatus.csproj", "{E4043E05-7094-42DE-A9A8-A02F8B51206B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -510,6 +516,24 @@ Global
 		{EF9AA4D1-AB12-4F96-A18C-377D71D718E3}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{EF9AA4D1-AB12-4F96-A18C-377D71D718E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF9AA4D1-AB12-4F96-A18C-377D71D718E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -584,6 +608,9 @@ Global
 		{3E2EB99A-1298-44E7-9906-367F50F37CDB} = {9D9A632C-3372-4DAE-8275-FC4B481A7820}
 		{3466D596-64FB-4B4C-A977-ABE2ACF24405} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
 		{EF9AA4D1-AB12-4F96-A18C-377D71D718E3} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
+		{309944AF-3FFB-46BD-AA2A-6A6670037A9E} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
+		{13C54E7D-BB21-4006-B08F-7DAF68235E77} = {E2E9F0E0-0EBD-4467-A2B6-FC9D50E7EAE3}
+		{E4043E05-7094-42DE-A9A8-A02F8B51206B} = {ADEE3F94-9E4B-46DD-A437-283E0B339563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

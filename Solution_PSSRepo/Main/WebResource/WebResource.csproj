@@ -46,7 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="HTML\bsd_searchcustomer.html" />
-    <Content Include="HTML\compoent\bsd_Entityview_SelectReport.html" />
+    <Content Include="HTML\compoent\bsd_bsd_Entityview_SelectReport.html" />
+    <Content Include="HTML\compoent\bsd_bsd_Entityview_SelectReport_Email.html" />
     <Content Include="HTML\compoent\bsd_Handover_Notice_SelectProject.html" />
     <Content Include="HTML\compoent\bsd_Payment_Notices.html" />
     <Content Include="HTML\compoent\bsd_terminateletter_option_filter_generate.html" />

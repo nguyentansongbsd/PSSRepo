@@ -1,4 +1,5 @@
 ﻿if (window.$ == null) window.$ = window.parent.$;
+var confirmOptions = { height: 200, width: 450 };
 function GenerateEnableRule() {
     return true;
 }
@@ -68,48 +69,122 @@ function RegisterModal() {
 
 }
 ready();
-function UpdateStatus_SendMail(item) {
-    var listid = "";
-    for (var j = 0, len = item.length; j < len; j++) {
-        if (j < (len - 1))
-            result.list_id += j;
-        else result.list_id += j + ",";
+function fetchWithTimeout(url, options, timeout = 1800000) {
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timed out')), timeout)
+        )
+    ]);
+}
+//function UpdateStatus_SendMail(item) {
+//    var listid = "";
 
-    }
-    countListid = list_id.split(',').length;
-    var data = {
-        listId: lstid,
-    }; var fetchData = {
-        "activityid": list_id.split(',')[0];
-    };
-    var fetchXml = [
-        "<fetch>",
-        "  <entity name='email'>",
-        "    <attribute name='bsd_entityname'/>",
-        "    <filter>",
-        "      <condition attribute='activityid' operator='eq' value='", fetchData.activityid/*ec1d2309-fc1f-f011-9989-0022485654ef*/, "'/>",
-        "    </filter>",
-        "  </entity>",
-        "</fetch>"
-    ].join("");
-    Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml).then(function (resutl) {
+//    countListid = listid.split(',').length;
+//    var fetchXml =
+//        "<fetch>" +
+//        "  <entity name='queueitem'>" +
+//        "    <filter>" +
+//        "      <condition attribute='queueitemid' operator='in'>";
+//    for (var j = 0, len = item.length; j < len; j++) {
+//        if (j < (len - 1))
+//            listid += item[j].Id + ",";
+//        else listid += item[j].Id;
+//        fetchXml += "        <value>" + item[j].Id + "</value>";
+//    }
+//    fetchXml +=
+//        "      </condition>" +
+//        "    </filter>" +
+//        "    <link-entity name='email' from='activityid' to='objectid' alias='email'>" +
+//        "      <attribute name='activityid' alias='id'/>" +
+//        "      <attribute name='bsd_entityname'/>" +
+//        "    </link-entity>" +
+//        "  </entity>" +
+//        "</fetch>";
+//    Xrm.WebApi.retrieveMultipleRecords("queueitem", "?fetchXml=" + fetchXml).then(function (result) {
+//        var filenameroot = "";
+//        var count = 1;
+//        result.entities.forEach(function (email) {
+//            Xrm.Utility.showProgressIndicator("sending " + count + "/" + countListid);
+//            if (email["email.bsd_entityname"]) {
+//                switch (email["email.bsd_entityname"]) {
+//                    case "bsd_payment":
+//                        filenameroot = "ConfirmPayment";
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                if (filenameroot != "") {
+//                    var data = {
+//                        listId: listid,
+//                        filennameroot: filenameroot
+//                    };
+//                    var url = "https://prod-49.southeastasia.logic.azure.com:443/workflows/320497af4dc74d849cea21649907c4c6/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WsFNxxj9AyfRyyj9fPGSbCoB5_jNHxwaQx6QbiQySzc"
+//                    fetchWithTimeout(url, {
+//                        method: "POST",
+//                        headers: {
+//                            "OData-MaxVersion": "4.0",
+//                            "OData-Version": "4.0",
+//                            "Accept": "application/json",
+//                            "Content-Type": "application/json; charset=utf-8"
+//                        },
+//                        body: JSON.stringify(data)
+//                    }).then(response => {
+//                        debugger;
+//                        if (response.status == 200) {
+//                            Xrm.Utility.closeProgressIndicator()
+//                        }
+//                    }).then(data => {
+//                        Xrm.Utility.closeProgressIndicator();
+//                        count++;
+//                    }).
+//                        catch(error => {
+//                            debugger;
+//                            Xrm.Utility.closeProgressIndicator()
+//                            console.log(error); count++;
+
+//                        });
+//                }
+//            }
+//        });
+//    })
+
+//}
+function UpdateStatus_SendMail() {
+    var fetchXml =
+        "<fetch>" +
+        "  <entity name='email'>" +
+        "    <attribute name='bsd_entityname'/>" +
+        "    <attribute name='activityid'/>" +
+        "    <filter type='and'>" +
+        "      <condition attribute='bsd_bulksendmailmanager' operator='eq' value='" + Xrm.Page.data.entity.getId() + "'/>"+
+        "      <condition attribute='statuscode' operator='eq' value='" + 1 + "'/>";
+
+    fetchXml +=
+        "    </filter>" +
+        "  </entity>" +
+        "</fetch>";
+    Xrm.WebApi.retrieveMultipleRecords("email", "?fetchXml=" + fetchXml).then(function (result) {
         var filenameroot = "";
+        var count = 1;
+        var url = "https://prod-49.southeastasia.logic.azure.com:443/workflows/320497af4dc74d849cea21649907c4c6/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WsFNxxj9AyfRyyj9fPGSbCoB5_jNHxwaQx6QbiQySzc"
+
         result.entities.forEach(function (email) {
-            window.parent.processingDlg.show();
+            Xrm.Utility.showProgressIndicator("sending " + count + "/" + result.entities.length);
             if (email.bsd_entityname) {
                 switch (email.bsd_entityname) {
                     case "bsd_payment":
                         filenameroot = "ConfirmPayment";
                         break;
-                    default:
+                    case "bsd_customernotices":
+                        filenameroot = "NoticePayment";
                         break;
                 }
                 if (filenameroot != "") {
                     var data = {
-                        listId: lstid,
+                        listId: email.activityid,
                         filennameroot: filenameroot
                     };
-                    var url = "https://prod-49.southeastasia.logic.azure.com:443/workflows/320497af4dc74d849cea21649907c4c6/triggers/manual/paths/invoke?api-version=2016-06-01"
                     fetchWithTimeout(url, {
                         method: "POST",
                         headers: {
@@ -122,28 +197,19 @@ function UpdateStatus_SendMail(item) {
                     }).then(response => {
                         debugger;
                         if (response.status == 200) {
-                            window.parent.processingDlg.hide();
-
+                            Xrm.Utility.closeProgressIndicator()
                         }
                     }).then(data => {
-
-                        var confirmStrings = {
-                            text: "Sending" + (countListid - data) + "/error" + data,
-                            title: "Notice"
-                        };
-                        Xrm.Navigation.openConfirmDialog(confirmStrings, confirmOptions).then(
-                            function (success) {
-                            }
-                        );
+                        Xrm.Utility.closeProgressIndicator();
+                        count++;
                     }).
                         catch(error => {
                             debugger;
-                            Xrm.Utility.closeProgressIndicator();
-                            console.log(error);
+                            Xrm.Utility.closeProgressIndicator()
+                            console.log(error); count++;
                         });
                 }
             }
         });
     })
-    
 }

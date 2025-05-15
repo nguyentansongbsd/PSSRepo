@@ -1,4 +1,4 @@
-﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,7 @@ namespace Action_GetEmailMessage
         string mailBCC = "";
         string mailTo = "";
         string mailFrom = "";
+        Entity enEmailMessage = null;
         public void Execute(IServiceProvider serviceProvider)
         {
             // Lấy context
@@ -33,17 +34,45 @@ namespace Action_GetEmailMessage
             service = serviceFactory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             string idEmailMessage= context.InputParameters["id"].ToString();
-            Entity enEmailMessage = service.Retrieve("email", new Guid(idEmailMessage), new ColumnSet(true));
+            tracingService.Trace(idEmailMessage);
+            enEmailMessage = service.Retrieve("email", new Guid(idEmailMessage), new ColumnSet(true));
+            
             GetMail_To_CC_BCC(idEmailMessage);
-            context.OutputParameters["mailFrom"] = mailFrom;
+            tracingService.Trace("ok");
+            context.OutputParameters["mailFrom"] = GetMailForm();
             context.OutputParameters["mailTo"] = mailTo;
             context.OutputParameters["mailCC"] = mailCC;
             context.OutputParameters["mailBCC"] = mailBCC;
             context.OutputParameters["bodymail"] = enEmailMessage["description"].ToString();
             context.OutputParameters["subject"] = enEmailMessage["subject"].ToString();
             context.OutputParameters["fileNameAttach"] = enEmailMessage["subject"].ToString().Replace("/","-")+".pdf";
-            Entity enUpdate=new Entity(enEmailMessage.LogicalName, enEmailMessage.Id); enUpdate["state"] = new OptionSetValue(6);
-            service.Update(enUpdate);
+            //Entity enUpdate=new Entity(enEmailMessage.LogicalName, enEmailMessage.Id); enUpdate["statuscode"] = new OptionSetValue(6);
+            //service.Update(enUpdate);
+        }
+        private string GetMailForm()
+        {
+            var regardingobjectid =(EntityReference) enEmailMessage["regardingobjectid"];
+            var en=service.Retrieve(regardingobjectid.LogicalName, regardingobjectid.Id,new ColumnSet(true));
+            var enProjectRef = new EntityReference();
+            var enProject = new Entity();
+            var enUserRef=new EntityReference();
+            var enUser=new Entity();
+            switch (regardingobjectid.LogicalName)
+            {
+                case "bsd_customernotices":
+                    enProjectRef = (EntityReference)en["bsd_project"];
+                    enProject=service.Retrieve(enProjectRef.LogicalName,enProjectRef.Id,new ColumnSet(true));
+                    enUserRef = (EntityReference)enProject["bsd_senderconfigsystem"];
+                    enUser = service.Retrieve(enUserRef.LogicalName, enUserRef.Id, new ColumnSet(true));
+                    return enUser["internalemailaddress"].ToString();
+                case "bsd_payment":
+                    enProjectRef = (EntityReference)en["bsd_project"];
+                    enProject = service.Retrieve(enProjectRef.LogicalName, enProjectRef.Id, new ColumnSet(true));
+                    enUserRef = (EntityReference)enProject["bsd_senderconfigsystem"];
+                    enUser = service.Retrieve(enUserRef.LogicalName, enUserRef.Id, new ColumnSet(true));
+                    return enUser["internalemailaddress"].ToString();
+            }    
+            return "";
         }
         private string GetMail_To_CC_BCC(string idEmailMessage)
         {
@@ -70,9 +99,11 @@ namespace Action_GetEmailMessage
                 "versionnumber");
             query.Criteria.AddCondition("activityid", ConditionOperator.Equal, query_activityid);
             var rs = service.RetrieveMultiple(query);
+            tracingService.Trace(rs.Entities.Count().ToString());
             foreach(var item in rs.Entities)
             {
-                switch (((int)item["participationtypemask"]))
+                tracingService.Trace($"@participationtypemask {((OptionSetValue)item["participationtypemask"]).Value}");
+                switch (((OptionSetValue)item["participationtypemask"]).Value)
                 {
                     case 1:
                         mailFrom = item["addressused"].ToString();
