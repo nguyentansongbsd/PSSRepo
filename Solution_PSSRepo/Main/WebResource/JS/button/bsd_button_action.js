@@ -379,7 +379,7 @@ function addModelShareTeam() {
               </table>
 
               <div class="align-right mt-12">
-                  <button id="saveToMultipleTeam" class="button-7" onclick="btnSaveMulti()">Lưu</button>
+                  <button id="saveToMultipleTeam" class="button-7" >Lưu</button>
               </div>
           </div>
       </div>
@@ -389,63 +389,69 @@ function addModelShareTeam() {
     
 }
 function btnSaveLAC() {
-    if (Xrm.Page.ui.getFormType() != 1)
-        return;
-    Xrm.Page.data.entity.addOnPostSave(function () {
-        $('#closeModal').click(function () {
-            $("#modalForm").css("display", "none");
-        });
-        $('#saveToMultipleTeam').click(btnSaveMulti);
-        window.top.processingDlg.show();
-        var id = Xrm.Page.data.entity.getId();
-        var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
-        ExecuteAction(
-            null, null, "bsd_Action_ShareCustomerToTeam", [
-            {
-                name: 'type',
-                type: 'int',
-                value: radioValue
-            },
-            {
-                name: 'id',
-                type: 'string',
-                value: id
-            }
-        ],
-            function (result) {
-                window.top.processingDlg.hide();
-                if (result != null && result.status != null) {
-                    if (result.status == "error") alertdialogConfirm(result.data);
-                    else if (result.status == "success") {
+    hasTeamAccess(Xrm.Page.data.entity.getEntityName(), Xrm.Page.data.entity.getId()).then(function (rss) {
+        if (!rss) {
+           
 
-                        if (result.data.entityColl.value == "")
-                            alertdialogConfirm("Done!");
-                        else {
-                            arrID = id;
-                            var data = JSON.parse(result.data.entityColl.value);
+                $('#closeModal').click(function () {
+                    $("#modalForm").css("display", "none");
+                });
+                $('#saveToMultipleTeam').unbind('click');
+                $('#saveToMultipleTeam').click(btnSaveMulti);
 
-                            $('#bodyTableTeam').empty();
-                            for (let i = 0; i < data.length; i++) {
-                                const item = data[i];
-                                $("#bodyTableTeam").append(`
+                window.top.processingDlg.show();
+                var id = Xrm.Page.data.entity.getId();
+                var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
+                ExecuteAction(
+                    null, null, "bsd_Action_ShareCustomerToTeam", [
+                    {
+                        name: 'type',
+                        type: 'int',
+                        value: radioValue
+                    },
+                    {
+                        name: 'id',
+                        type: 'string',
+                        value: id
+                    }
+                ],
+                    function (result) {
+                        window.top.processingDlg.hide();
+                        if (result != null && result.status != null) {
+                            if (result.status == "error") alertdialogConfirm(result.data);
+                            else if (result.status == "success") {
+
+                                if (result.data.entityColl.value == "")
+                                    alertdialogConfirm("Done!");
+                                else {
+                                    arrID = id;
+                                    var data = JSON.parse(result.data.entityColl.value);
+
+                                    $('#bodyTableTeam').empty();
+                                    for (let i = 0; i < data.length; i++) {
+                                        const item = data[i];
+                                        $("#bodyTableTeam").append(`
                                       <tr>
                                           <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
                                           <td>${i + 1}</td>
                                           <td>${item.TeamName}</td>
                                       </tr>
                                   `);
+                                    }
+                                    $("#modalForm").css("display", "block");
+                                }
                             }
-                            $("#modalForm").css("display", "block");
                         }
-                    }
-                }
-            }, true);
+                    }, true);
+            
+        }
     })
+    
    
 }
 function btnSaveMulti() {
     debugger;
-    window.top.processingDlg.hide();
+    window.top.processingDlg.show();
     var id = "";
     $("table input[name='choose-ckb-team']:checked").each(function (index) {
         id = id + $(this).data('id') + ",";
@@ -475,11 +481,12 @@ function btnSaveMulti() {
         }
     ],
         function (result) {
-            window.top.processingDlg.hide();
             if (result != null && result.status != null) {
                 if (result.status == "error") alertdialogConfirm(result.data);
                 else if (result.status == "success") {
                     alert("Thao tác thành công !");
+
+                    window.top.processingDlg.hide();
                     //crmcontrol.openAlertDialog("Thao tác thành công !","Notices");
                     $("#modalForm").css("display", "none");
                 }
@@ -493,4 +500,52 @@ function alertdialogConfirm(content, titless) {
     var alertStrings = { confirmButtonLabel: "OK", text: content, title: "Notices" };
     var alertOptions = { height: 200, width: 600 };
     Xrm.Navigation.openAlertDialog(alertStrings, alertOptions);
+}
+function hasTeamAccess(entityName, recordId) {
+    return new Promise((resolve, reject) => {
+        try {
+            // Đảm bảo các tham số được truyền vào
+            if (!entityName || !recordId) {
+                throw new Error("Entity name và Record ID là bắt buộc");
+            }
+
+            // Đảm bảo recordId có định dạng đúng (không có dấu ngoặc nhọn)
+            recordId = recordId.replace(/[{}]/g, "");
+
+            // FetchXML để kiểm tra xem có team nào có quyền truy cập hay không
+            var fetchData = {
+                "principaltypecode": "9",
+                "objecttypecode": entityName == "lead" ? 4 : entityName=="account"?1:2,
+                "objectid": recordId,
+                "accessrightsmask": "0"
+            };
+            var fetchXml = [
+                "<fetch top='50'>",
+                "  <entity name='principalobjectaccess'>",
+                "    <filter>",
+                "      <condition attribute='principaltypecode' operator='eq' value='", fetchData.principaltypecode/*9*/, "'/>",
+                "      <condition attribute='objecttypecode' operator='eq' value='", fetchData.objecttypecode/*4*/, "'/>",
+                "      <condition attribute='objectid' operator='eq' value='", fetchData.objectid/*a42ecf6b-7430-f011-8c4d-6045bd1d2e19*/, "'/>",
+                "      <condition attribute='accessrightsmask' operator='ne' value='", fetchData.accessrightsmask/*0*/, "'/>",
+                "    </filter>",
+                "  </entity>",
+                "</fetch>"
+            ].join("");
+
+            // Mã hóa FetchXML để sử dụng trong URL
+            const encodedFetch = encodeURIComponent(fetchXml);
+
+            // Thực hiện truy vấn để kiểm tra sự tồn tại của team access
+            Xrm.WebApi.retrieveMultipleRecords("principalobjectaccess", `?fetchXml=${encodedFetch}`)
+                .then(function (results) {
+                    // Nếu có ít nhất một kết quả, trả về true
+                    resolve(results.entities.length > 0);
+                })
+                .catch(function (error) {
+                    reject(new Error(`Error checking team access: ${error.message}`));
+                });
+        } catch (error) {
+            reject(error);
+        }
+    });
 }

@@ -176,35 +176,39 @@ function CheckEnable_Condition(tyle) {
         case "salesorder-form-InterestSimulation":
             if (getStatusCodeValueByName("Terminated") == status) return false;
             break;
+        case "quote-form-PrintRevervationForm":
+            if (getStatusCodeValueByName("Won") == status) return false;
 
+        case "quote-form-FULTerminate":
+            if (getStatusCodeValueByName("Terminated") == status) return false;
         case "quote-form-CreateOrder":
             if (getStatusCodeValueByName("Terminated") == status) return false;
         case "quote-form-PrintQuotaionFinal":
-            if (getStatusCodeValueByName("Terminated") == status) return false;
+            if (getStatusCodeValueByName("Terminated") == status || getStatusCodeValueByName("Won") == status) return false;
         case "quote-form-ConvertToOption":
-            if (getStatusCodeValueByName("Terminated") == status) return false;
+            if (getStatusCodeValueByName("Terminated") == status ) return false;
             break
         case "quote-form-FUL":
-            if (getStatusCodeValueByName("Terminated") == status) return false;
+            if (getStatusCodeValueByName("Terminated") == status ) return false;
             break;
         case "quote-form-Recalculator":
-            if (getStatusCodeValueByName("Terminated") == status) return false;
+            if (getStatusCodeValueByName("Terminated") == status || getStatusCodeValueByName("Won") == status) return false;
             break;
 
         case "bsd_discount-form-Approved":
-            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")) return false;
             break;
         case "bsd_confirmpayment-form-Confirm":
-            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
             break;
         case "bsd_payment-form-Confirm":
-            //if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
             break;
         case "bsd_packageselling-form-Approved":
-            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")) return false;
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")&& !CheckRoleForUser("System Administrator")) return false;
             break;
         case "bsd_advancepayment-form-ConfirmCollect":
-            if (!CheckRoleForUser("CLVN_FIN_Finance Manager")) return false;
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
             break;
         case "bsd_bankingloan-form-Mortgage":
             if (getStatusCodeValueByName("Terminated")) return false;

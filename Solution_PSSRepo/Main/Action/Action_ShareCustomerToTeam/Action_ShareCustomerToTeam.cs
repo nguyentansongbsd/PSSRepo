@@ -137,12 +137,10 @@ namespace Action_ShareCustomerToTeam
                             var fetchXml = $@"
                             <fetch>
                               <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_representative' />
                                 <attribute name='bsd_contact' />
                                 <filter>
                                   <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
                                   <condition attribute='statecode' operator='eq' value='0'/>
-                                  <condition attribute='bsd_history' operator='eq' value='0'/>
                                 </filter>
                               </entity>
                             </fetch>";
@@ -186,12 +184,10 @@ namespace Action_ShareCustomerToTeam
                                 var fetchXml = $@"
                             <fetch>
                               <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_representative' />
                                 <attribute name='bsd_contact' />
                                 <filter>
                                   <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
                                   <condition attribute='statecode' operator='eq' value='0'/>
-                                  <condition attribute='bsd_history' operator='eq' value='0'/>
                                 </filter>
                               </entity>
                             </fetch>";
@@ -264,7 +260,6 @@ namespace Action_ShareCustomerToTeam
                                 <filter>
                                   <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
                                   <condition attribute='statecode' operator='eq' value='0'/>
-                                  <condition attribute='bsd_history' operator='eq' value='0'/>
                                 </filter>
                               </entity>
                             </fetch>";
@@ -308,12 +303,10 @@ namespace Action_ShareCustomerToTeam
                             var fetchXml = $@"
                             <fetch>
                               <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_representative' />
                                 <attribute name='bsd_contact' />
                                 <filter>
                                   <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
                                   <condition attribute='statecode' operator='eq' value='0'/>
-                                  <condition attribute='bsd_history' operator='eq' value='0'/>
                                 </filter>
                               </entity>
                             </fetch>";

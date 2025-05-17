@@ -988,6 +988,29 @@
           ]
         },
         {
+          "Name": "Plugin_Create_TerminationLetter.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_TerminationLetter.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "335b404d-8368-47c7-9ba9-2a5153333e7b",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_TerminationLetter.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -1049,6 +1072,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Create_UpdateLandValueUnits.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_CreateEmail_UpdateInforToEntity.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_CreateEmail_UpdateInforToEntity.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c7f8b143-f5e2-4ce1-aad7-1ba2e4ac30cf",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreateEmail_UpdateInforToEntity.dll",
                 "SourceType": 0
               }
             }
@@ -1118,22 +1164,7 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Update_Email_MapInforToPayment.dll",
-                "SourceType": 0,
-                "StepConfigs": [
-                  {
-                    "DeleteAsyncOperationAfterCompletion": false,
-                    "DeploymentType": 0,
-                    "ExecutionOrder": 1,
-                    "Id": "98cd800f-fcd1-4025-9835-8d24c69091fe",
-                    "IsDisabled": false,
-                    "Mode": 0,
-                    "Name": "Update - Email - Post-operation",
-                    "PluginTypeId": "d1037ec5-9a05-43d3-a3a7-0c1d40491808",
-                    "SdkMessageFilterId": "3fc9bb1b-ea3e-db11-86a7-000a3a5473e8",
-                    "SdkMessageId": "20bebb1b-ea3e-db11-86a7-000a3a5473e8",
-                    "Stage": 40
-                  }
-                ]
+                "SourceType": 0
               }
             }
           ]
@@ -1273,6 +1304,11 @@
               "CrmId": "275d4275-dcb3-e711-811f-c4346bac5238",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\bsd_HandoverNotice.js"
+            },
+            {
+              "CrmId": "ccf01ecd-3760-e611-80ee-3863bb36bc80",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_packageselling.js"
             },
             {
               "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
