@@ -116,14 +116,13 @@ namespace Plugin_AutoShareRecord
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
 
-                EntityReference refTeam = null;
                 bool hasWriteShare = false;
                 foreach (Entity team in rs.Entities)
                 {
                     if (teamShares != null)
                     {
                         if (teamShares.Contains((string)team["name"]))
-                            ShareTeams(target.ToEntityReference(), refTeam, hasWriteShare);
+                            ShareTeams(target.ToEntityReference(), team.ToEntityReference(), hasWriteShare);
                     }
                 }
             }

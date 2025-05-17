@@ -105,18 +105,9 @@ function onLoad() {
         crmcontrol.setDisabled("ownerid", true);
         crmcontrol.setDisabled("bsd_approvedate", true);
         crmcontrol.setDisabled("bsd_approver", true);
-        if (CheckRoleForUser("CLVN_S&M_Sales Manager") || CheckRoleForUser("System Administrator")) {
-
-            crmcontrol.setDisabled("statuscode", false);
-            crmcontrol.setDisabled("header_statuscode", false);
-        }
+       
     }
-    else {
-        
-
-            crmcontrol.setDisabled("statuscode", true);
-            crmcontrol.setDisabled("header_statuscode", true);
-    }
+    
 }
 function CheckRoleForUser(rolename) {
     var userRoles = Xrm.Utility.getGlobalContext().userSettings.roles;
