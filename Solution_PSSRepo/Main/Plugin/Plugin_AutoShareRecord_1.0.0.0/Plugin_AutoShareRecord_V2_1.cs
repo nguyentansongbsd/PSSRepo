@@ -149,6 +149,10 @@ namespace Plugin_AutoShareRecord
             switch (target.LogicalName)
             {
                 case "bsd_phaseslaunch":
+                    enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+                    if (!enTarget.Contains("bsd_projectid")) return projectCode;
+                    refProject = (EntityReference)enTarget["bsd_projectid"];
+                    break;
                 case "quote":
                     enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_projectid" }));
                     if (!enTarget.Contains("bsd_projectid")) return projectCode;
