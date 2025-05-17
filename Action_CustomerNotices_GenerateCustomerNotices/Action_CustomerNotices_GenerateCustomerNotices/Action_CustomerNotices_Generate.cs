@@ -42,6 +42,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             if (l_PS.Entities.Count > 0)//bsd_paymentnoticesdate đã khác null
             {
                 PN_Date = (int)l_PS[0]["bsd_paymentnoticesdate"];
+                traceService.Trace("PN_Date: " + PN_Date);
                 EntityCollection l_PSD = findPaymentSchemeDetail(service, OE);
                 #region Customernotices
                 foreach (Entity PSD in l_PSD.Entities)
@@ -88,7 +89,6 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                 customerNotices["bsd_units"] = orderPro["productid"];
                             }
                             Guid id = service.Create(customerNotices);
-
                             Entity ins = new Entity(PSD.LogicalName);
                             ins.Id = PSD.Id;
                             ins["bsd_paymentnotices"] = true;
