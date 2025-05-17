@@ -97,6 +97,35 @@ namespace Action_BulkChangeManaFee_Approve
                         ["bsd_numberofmonthspaidmf"] = bsd_numberofmonthspaidmfnew,
                         ["bsd_managementfee"] = new Money(bsd_managementfeenew)
                     });
+                    var fetchXml = $@"
+                    <fetch top=""1"">
+                      <entity name='salesorder'>
+                        <filter>
+                          <condition attribute='salesorderid' operator='eq' value='{enOE.Id}'/>
+                          <condition attribute='quoteid' operator='not-null'/>
+                        </filter>
+                      </entity>
+                    </fetch>";
+                    EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                    foreach (Entity item in list.Entities)
+                    {
+                        service.Update(new Entity(((EntityReference)item["quoteid"]).LogicalName)
+                        {
+                            Id = ((EntityReference)item["quoteid"]).Id,
+                            ["bsd_numberofmonthspaidmf"] = bsd_numberofmonthspaidmfnew,
+                            ["bsd_managementfee"] = new Money(bsd_managementfeenew)
+                        });
+                    }
+                }
+                else if (en_detail.Contains("bsd_reservation"))
+                {
+                    EntityReference enOE = (EntityReference)en_detail["bsd_reservation"];
+                    service.Update(new Entity(enOE.LogicalName)
+                    {
+                        Id = enOE.Id,
+                        ["bsd_numberofmonthspaidmf"] = bsd_numberofmonthspaidmfnew,
+                        ["bsd_managementfee"] = new Money(bsd_managementfeenew)
+                    });
                 }
                 if (en_detail.Contains("bsd_units"))
                 {

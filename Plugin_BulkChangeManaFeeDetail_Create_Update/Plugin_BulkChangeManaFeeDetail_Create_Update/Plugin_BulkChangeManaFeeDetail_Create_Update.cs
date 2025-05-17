@@ -91,6 +91,66 @@ namespace Plugin_BulkChangeManaFeeDetail_Create_Update
                         checkUp = true;
                     }
                 }
+                else if (enTarget.Contains("bsd_reservation"))
+                {
+                    var fetchXml2 = $@"
+                        <fetch>
+                          <entity name='quote'>
+                            <attribute name=""bsd_managementfee"" />
+                            <attribute name=""bsd_numberofmonthspaidmf"" />
+                            <attribute name=""bsd_unitno"" />
+                            <attribute name=""bsd_projectid"" />
+                            <filter>
+                              <condition attribute='quoteid' operator='eq' value='{((EntityReference)enTarget["bsd_reservation"]).Id}'/>
+                            </filter>
+                          </entity>
+                        </fetch>";
+                    EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
+                    foreach (Entity entity in list2.Entities)
+                    {
+                        enUp["bsd_project"] = (EntityReference)entity["bsd_projectid"];
+                        enUp["bsd_numberofmonthspaidmfcurrent"] = entity.Contains("bsd_numberofmonthspaidmf") ? (int)entity["bsd_numberofmonthspaidmf"] : 0;
+                        enUp["bsd_managementfeecurrent"] = entity.Contains("bsd_managementfee") ? (Money)entity["bsd_managementfee"] : new Money(0);
+                        if (!enTarget.Contains("bsd_units"))
+                        {
+                            var fetchXml21 = $@"
+                            <fetch>
+                              <entity name='product'>
+                                <attribute name=""bsd_managementamountmonth"" />
+                                <attribute name=""bsd_netsaleablearea"" />
+                                <attribute name=""productid"" />
+                                <filter>
+                                  <condition attribute='productid' operator='eq' value='{((EntityReference)entity["bsd_unitno"]).Id}'/>
+                                </filter>
+                              </entity>
+                            </fetch>";
+                            EntityCollection list21 = service.RetrieveMultiple(new FetchExpression(fetchXml21));
+                            foreach (Entity entity1 in list21.Entities)
+                            {
+                                decimal bsd_netsaleablearea = entity1.Contains("bsd_netsaleablearea") ? (decimal)entity1["bsd_netsaleablearea"] : 0;
+                                enUp["bsd_managementfeenew"] = bsd_netsaleablearea * bsd_numberofmonthspaidmfnew * bsd_managementamountmonth_new;
+                                enUp["bsd_units"] = entity1.ToEntityReference();
+                                enUp["bsd_managementamountmonth_current"] = entity1.Contains("bsd_managementamountmonth") ? (Money)entity1["bsd_managementamountmonth"] : new Money(0);
+                            }
+                        }
+                        var fetchXml212 = $@"
+                            <fetch>
+                              <entity name='bsd_paymentschemedetail'>
+                                <attribute name=""bsd_paymentschemedetailid"" />
+                                <filter>
+                                  <condition attribute='bsd_reservation' operator='eq' value='{((EntityReference)enTarget["bsd_reservation"]).Id}'/>
+                                  <condition attribute='bsd_managementfee' operator='eq' value='1'/>
+                                </filter>
+                              </entity>
+                            </fetch>";
+                        EntityCollection list212 = service.RetrieveMultiple(new FetchExpression(fetchXml212));
+                        foreach (Entity entity12 in list212.Entities)
+                        {
+                            enUp["bsd_installment"] = entity12.ToEntityReference();
+                        }
+                        checkUp = true;
+                    }
+                }
                 if (enTarget.Contains("bsd_units"))
                 {
                     var fetchXml2 = $@"
