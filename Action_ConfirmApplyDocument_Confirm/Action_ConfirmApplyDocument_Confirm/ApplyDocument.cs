@@ -99,7 +99,7 @@ namespace Action_ConfirmApplyDocument_Confirm
         }
         public void createCOA(Entity en_app, decimal totalapplyamout, ArrayList s_eachAdv, ArrayList s_amAdv)
         {
-            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, ((EntityReference)en_app["bsd_project"]).Id);
+            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id);
             foreach (Entity en_Adv in ecAdvance.Entities)
             {
                 decimal totalavancedamount = en_Adv.Contains("bsd_amount") ? ((Money)en_Adv["bsd_amount"]).Value : 0;
