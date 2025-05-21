@@ -111,9 +111,19 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
             },
             {
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
+            },
+            {
               "CrmId": "1623cfc4-34d9-ef11-8ee9-000d3ac84358",
               "FileType": 1,
               "RelativeFilePath": "\\HTML\\compoent\\select_date_simulation_optionEntryForm.html"
+            },
+            {
+              "CrmId": "6384cc50-1e20-f011-998a-6045bd21931e",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnEmailView.js"
             },
             {
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
@@ -406,6 +416,21 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_CreateEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_CustomerNotices_GenerateCustomerNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "7c0ca728-1c4b-4cf8-8872-23bafc5c22e3",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
                 "SourceType": 0
               }
             }

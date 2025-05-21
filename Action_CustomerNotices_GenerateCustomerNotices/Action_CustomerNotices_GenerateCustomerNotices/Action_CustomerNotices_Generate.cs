@@ -22,7 +22,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             service = factory.CreateOrganizationService(context.UserId);
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             traceService.Trace(string.Format("Context Depth {0}", context.Depth));
-            
+
             string date = "";
             if (context.InputParameters["Date"] != null)
             {
@@ -36,7 +36,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             if (string.IsNullOrWhiteSpace(OEId)) return;
             Entity OE = this.service.Retrieve("salesorder", Guid.Parse(OEId), new ColumnSet(new string[] { "salesorderid", "bsd_paymentscheme",
                 "bsd_project","name","customerid"}));
-            
+
             EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
             int PN_Date;
             if (l_PS.Entities.Count > 0)//bsd_paymentnoticesdate đã khác null
@@ -48,6 +48,19 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 foreach (Entity PSD in l_PSD.Entities)
                 {
                     Entity PSDetail = service.Retrieve(PSD.LogicalName, PSD.Id, new ColumnSet(true));
+                    #region check bsd_miscellaneous nếu là đợt cuối nếu notpaid thì check bsd_miscellaneous 
+                    if (PSD.Contains("bsd_lastinstallment")&&(bool)PSD["bsd_lastinstallment"]==true&& ((OptionSetValue) PSD["bsd_lastinstallment"]).Value== 100000001)
+                    {
+                        var query_bsd_installment = PSD.Id.ToString();
+                        var query = new QueryExpression("bsd_miscellaneous");
+                        query.TopCount = 1; query.ColumnSet.AllColumns = true;
+                        query.Criteria.AddCondition("bsd_installment", ConditionOperator.Equal, query_bsd_installment);
+                        query.Criteria.AddCondition("statuscode", ConditionOperator.Equal, 1);
+                        var resmiscellaneous = service.RetrieveMultiple(query);
+                        if (resmiscellaneous.Entities==null|| resmiscellaneous.Entities.Count == 0)
+                            continue;
+                    }    
+                    #endregion
 
                     decimal bsd_percentforcustomer = PSDetail.Contains("bsd_percentforcustomer") ? (decimal)PSDetail["bsd_percentforcustomer"] : 0;
                     decimal bsd_percentforbank = PSDetail.Contains("bsd_percentforbank") ? (decimal)PSDetail["bsd_percentforbank"] : 0;
@@ -55,6 +68,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     decimal bsd_amountforcustomer = bsd_amountofthisphase * bsd_percentforcustomer / 100;
                     decimal bsd_amountforbank = bsd_amountofthisphase * bsd_percentforbank / 100;
                     int nday = (int)(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date.Subtract(DateTime.Now.AddHours(7).Date).TotalDays);
+                    traceService.Trace("nday");
                     #region Custom
                     if (nday >= 0 && nday <= PN_Date)
                     {
@@ -88,6 +102,25 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                 Entity orderPro = list_orderproduct.Entities[0];
                                 customerNotices["bsd_units"] = orderPro["productid"];
                             }
+                            #region xử lý OdernumberE
+                            if (((int)PSDetail["bsd_ordernumber"]) == 1)
+                            {
+                                customerNotices["bsd_odernumber_e"] = "1st";
+                            }
+                            else if (((int)PSDetail["bsd_ordernumber"]) == 2)
+                            {
+                                customerNotices["bsd_odernumber_e"] = "2nd";
+                            }
+                            else if (((int)PSDetail["bsd_ordernumber"]) == 3)
+                            {
+                                customerNotices["bsd_odernumber_e"] = "3rd";
+
+                            }
+                            else {
+                                customerNotices["bsd_odernumber_e"] =$"{((int)PSDetail["bsd_ordernumber"])}th";
+                            }
+                            #endregion
+                           
                             Guid id = service.Create(customerNotices);
                             Entity ins = new Entity(PSD.LogicalName);
                             ins.Id = PSD.Id;
@@ -126,11 +159,20 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                   <entity name='bsd_paymentschemedetail'>
                     <attribute name='bsd_paymentschemedetailid' />
                     <attribute name='bsd_duedate' />
+                    <attribute name='bsd_lastinstallment' />
+
                     <order attribute='bsd_duedate' descending='true' />
-                    <filter type='and'>
-                      <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
-                        <condition attribute='statuscode' operator='eq' value='100000000' />
-                      <condition attribute='bsd_duedate' operator='not-null' />
+                    <filter type='or'>
+                        <filter type='and'>
+                            <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
+                            <condition attribute='statuscode' operator='eq' value='100000000' />
+                            <condition attribute='bsd_duedate' operator='not-null' />
+                        </filter>
+                        <filter type='and'>
+                            <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
+                            <condition attribute='bsd_lastinstallment' operator='eq' value='1' />
+
+                        </filter>
                     </filter>
                   </entity>
                 </fetch>";
@@ -403,7 +445,33 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                                 if (graceday != -1)
                                                     warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
                                             }
+                                            #region bsd_deadlinewn1-bsd_deadlinewn2
+                                            if (PSD.Contains("bsd_duedate"))
+                                            {
+                                                warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
+                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                            }
 
+                                            #endregion
+                                            #region xử lý OdernumberE
+                                            if (((int)PSD["bsd_ordernumber"]) == 1)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "1st";
+                                            }
+                                            else if (((int)PSD["bsd_ordernumber"]) == 2)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "2nd";
+                                            }
+                                            else if (((int)PSD["bsd_ordernumber"]) == 3)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "3rd";
+
+                                            }
+                                            else
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
+                                            }
+                                            #endregion
                                             service.Create(warningNotices);
                                             Entity ins = new Entity(PSD.LogicalName);
                                             ins.Id = PSD.Id;
@@ -457,6 +525,33 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                         if (graceday != -1)
                                             warningNotices["bsd_estimateduedate"] = ((DateTime)PSD["bsd_duedate"]).AddDays(graceday);
                                     }
+                                    #region bsd_deadlinewn1-bsd_deadlinewn2
+                                    if (PSD.Contains("bsd_duedate"))
+                                    {
+                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
+                                        warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                    }
+
+                                    #endregion
+                                    #region xử lý OdernumberE
+                                    if (((int)PSD["bsd_ordernumber"]) == 1)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "1st";
+                                    }
+                                    else if (((int)PSD["bsd_ordernumber"]) == 2)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "2nd";
+                                    }
+                                    else if (((int)PSD["bsd_ordernumber"]) == 3)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "3rd";
+
+                                    }
+                                    else
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
+                                    }
+                                    #endregion
                                     service.Create(warningNotices);
 
                                     Entity ins = new Entity(PSD.LogicalName);

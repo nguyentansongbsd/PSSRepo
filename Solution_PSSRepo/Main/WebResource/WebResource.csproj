@@ -91,6 +91,7 @@
     <None Include="HTML\compoent\.editorconfig" />
     <None Include="RDL\LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />
     <None Include="RDL\Lumi_Xac Nhan CDT%28account%29_Lan 2_VN_4112022.rdl" />
+    <None Include="RDL\rp52_SM_Purchaser Info_CCR_Final.rdl" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms">

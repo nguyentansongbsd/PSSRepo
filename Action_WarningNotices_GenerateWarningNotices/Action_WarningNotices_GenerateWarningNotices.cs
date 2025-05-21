@@ -112,6 +112,33 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 traceService.Trace("owner: " + owner);
                                                 warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                             }
+                                            #region bsd_deadlinewn1-bsd_deadlinewn2
+                                            if (PSD.Contains("bsd_duedate"))
+                                            {
+                                                warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
+                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                            }
+
+                                            #endregion
+                                            #region xử lý OdernumberE
+                                            if (((int)PSD["bsd_ordernumber"]) == 1)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "1st";
+                                            }
+                                            else if (((int)PSD["bsd_ordernumber"]) == 2)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "2nd";
+                                            }
+                                            else if (((int)PSD["bsd_ordernumber"]) == 3)
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = "3rd";
+
+                                            }
+                                            else
+                                            {
+                                                warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
+                                            }
+                                            #endregion
                                             var id = service.Create(warningNotices);
                                             var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
                                             dem++;
@@ -174,6 +201,33 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                         traceService.Trace("owner: " + owner);
                                         warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                     }
+                                    #region bsd_deadlinewn1-bsd_deadlinewn2
+                                    if (PSD.Contains("bsd_duedate"))
+                                    {
+                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
+                                        warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                    }
+
+                                    #endregion
+                                    #region xử lý OdernumberE
+                                    if (((int)PSD["bsd_ordernumber"]) == 1)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "1st";
+                                    }
+                                    else if (((int)PSD["bsd_ordernumber"]) == 2)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "2nd";
+                                    }
+                                    else if (((int)PSD["bsd_ordernumber"]) == 3)
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = "3rd";
+
+                                    }
+                                    else
+                                    {
+                                        warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
+                                    }
+                                    #endregion
                                     var id = service.Create(warningNotices);
                                     var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
 

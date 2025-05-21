@@ -54,6 +54,7 @@
     <Report Include="LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />
     <Report Include="Lumi_Xac Nhan CDT(contact)_Lan 2_VN_29112024.rdl" />
     <Report Include="Lumi_Xac Nhan CDT(contact)_VN_29112024.rdl" />
+    <Report Include="rp52_SM_Purchaser Info_CCR_Final.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>

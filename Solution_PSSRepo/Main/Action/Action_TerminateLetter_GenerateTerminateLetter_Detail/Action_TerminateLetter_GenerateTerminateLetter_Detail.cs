@@ -193,6 +193,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     else
                     {
                         entity3["bsd_penaty"] =new Money( (bsd_spforfeiture/100) * ((Money)entity1["bsd_totalamountlessfreight"]).Value);
+                                            
                     }
                     #endregion
                     #region  Overdue Interest
@@ -239,7 +240,9 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     {
                         tracingService.Trace($"resCheckCaseSign:true");
                         entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage/100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
-                    }    
+                        entity3["bsd_overdue_interest_money"] = new Money((decimal)entity3["bsd_overdue_interest"]);
+
+                    }
                     tracingService.Trace($"bsd_termsinterestpercentage: {bsd_termsinterestpercentage}");
                     tracingService.Trace($"bsd_gracedays: {bsd_gracedays}");
                     tracingService.Trace($"bsd_duedate:{bsd_duedate}");

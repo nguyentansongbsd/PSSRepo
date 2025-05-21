@@ -30,7 +30,7 @@ namespace Plugin_CreateEmail_UpdateInforToEntity
             {
                 var enMap = service.Retrieve(enTarget["bsd_entityname"].ToString(), new Guid(enTarget["bsd_entityid"].ToString()), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
                 var enUpdate = new Entity(enMap.LogicalName, enMap.Id);
-                enUpdate["sd_emailstatus"] = enTarget["statecode"];
+                enUpdate["bsd_emailstatus"] = enTarget["statuscode"];
                 enUpdate["bsd_createmaildate"] = DateTime.Now;
                 enUpdate["bsd_emailcreator"] = enTarget["bsd_emailcreator"];
                 service.Update(enUpdate);
