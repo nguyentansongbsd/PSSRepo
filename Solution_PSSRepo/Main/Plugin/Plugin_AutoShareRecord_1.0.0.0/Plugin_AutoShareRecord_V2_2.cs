@@ -78,7 +78,11 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkchangemanagementfee":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    break;
+                case "bsd_bulkchangemanagementfeedetail":
+                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_terminateletter":

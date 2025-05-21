@@ -182,6 +182,8 @@ namespace Plugin_Create_TerminationLetter
                 tracingService.Trace($"today:{DateTime.UtcNow.AddHours(7)}");
                 tracingService.Trace($"totalday: {((int)((DateTime.UtcNow.AddHours(7) - bsd_duedate).TotalDays) - bsd_gracedays)}");
                 tracingService.Trace($"bsd_overdue_interest: {bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1)}");
+                tracingService.Trace($"bsd_overdue_interest1: {((Money)enupdate["bsd_overdue_interest"]).Value}");
+                tracingService.Trace($"bsd_overdue_interest_money:{((Money)enupdate["bsd_overdue_interest_money"]).Value}");
                 tracingService.Trace($"bsd_balance:{((Money)installment["bsd_balance"]).Value}");
                 #endregion
             }

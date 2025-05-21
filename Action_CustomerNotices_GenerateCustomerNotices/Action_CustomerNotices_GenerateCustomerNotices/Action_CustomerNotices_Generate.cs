@@ -49,19 +49,20 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 {
                     Entity PSDetail = service.Retrieve(PSD.LogicalName, PSD.Id, new ColumnSet(true));
                     #region check bsd_miscellaneous nếu là đợt cuối nếu notpaid thì check bsd_miscellaneous 
-                    if (PSD.Contains("bsd_lastinstallment")&&(bool)PSD["bsd_lastinstallment"]==true&& ((OptionSetValue) PSD["bsd_lastinstallment"]).Value== 100000001)
+                    traceService.Trace("PSD[\"bsd_lastinstallment\"] " + ((bool)PSD["bsd_lastinstallment"]).ToString());
+                    if (PSD.Contains("bsd_lastinstallment")&&((bool)PSD["bsd_lastinstallment"])==true&& ((OptionSetValue) PSD["statuscode"]).Value== 100000001)
                     {
                         var query_bsd_installment = PSD.Id.ToString();
                         var query = new QueryExpression("bsd_miscellaneous");
-                        query.TopCount = 1; query.ColumnSet.AllColumns = true;
+                        query.ColumnSet.AllColumns = true;
                         query.Criteria.AddCondition("bsd_installment", ConditionOperator.Equal, query_bsd_installment);
                         query.Criteria.AddCondition("statuscode", ConditionOperator.Equal, 1);
                         var resmiscellaneous = service.RetrieveMultiple(query);
                         if (resmiscellaneous.Entities==null|| resmiscellaneous.Entities.Count == 0)
                             continue;
-                    }    
+                    }
                     #endregion
-
+                    traceService.Trace("step1");
                     decimal bsd_percentforcustomer = PSDetail.Contains("bsd_percentforcustomer") ? (decimal)PSDetail["bsd_percentforcustomer"] : 0;
                     decimal bsd_percentforbank = PSDetail.Contains("bsd_percentforbank") ? (decimal)PSDetail["bsd_percentforbank"] : 0;
                     decimal bsd_amountofthisphase = PSDetail.Contains("bsd_amountofthisphase") ? ((Money)PSDetail["bsd_amountofthisphase"]).Value : 0;
@@ -160,7 +161,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     <attribute name='bsd_paymentschemedetailid' />
                     <attribute name='bsd_duedate' />
                     <attribute name='bsd_lastinstallment' />
-
+                    <attribute name='statuscode' />
                     <order attribute='bsd_duedate' descending='true' />
                     <filter type='or'>
                         <filter type='and'>
