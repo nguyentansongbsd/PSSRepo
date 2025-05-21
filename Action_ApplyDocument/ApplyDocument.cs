@@ -20,6 +20,7 @@ namespace Action_ApplyDocument
         StringBuilder strMess = new StringBuilder();
         StringBuilder strMess1 = new StringBuilder();
         IServiceProvider serviceProvider;
+        ITracingService traceService = null;
         decimal d_oe_bsd_totalamountpaid = 0;
         public ApplyDocument(IServiceProvider serviceProvider)
         {
@@ -27,6 +28,7 @@ namespace Action_ApplyDocument
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
         }
 
         public void checkInput(Entity en_app)
@@ -96,7 +98,10 @@ namespace Action_ApplyDocument
         }
         public void createCOA(Entity en_app, decimal totalapplyamout, ArrayList s_eachAdv, ArrayList s_amAdv)
         {
-            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id, ((EntityReference)en_app["bsd_project"]).Id);
+            EntityCollection ecAdvance = get_ecAdvance(service, ((EntityReference)en_app["bsd_customer"]).Id, ((EntityReference)en_app["bsd_project"]).Id, ((EntityReference)en_app["bsd_optionentry"]).Id);
+            traceService.Trace("count Advan " + ecAdvance.Entities.Count);
+            traceService.Trace("count s_eachAdv " + s_eachAdv.Count);
+            traceService.Trace("count s_amAdv " + s_amAdv.Count);
             foreach (Entity en_Adv in ecAdvance.Entities)
             {
                 decimal totalavancedamount = en_Adv.Contains("bsd_amount") ? ((Money)en_Adv["bsd_amount"]).Value : 0;
@@ -130,6 +135,7 @@ namespace Action_ApplyDocument
                     // Tính remaining
                     totalapplyamout -= apply;
                 }
+                traceService.Trace("apply " + apply);
                 create_Applydocument_RemainingCOA(service, en_app, en_Adv, totalavancedamount, apply, remain, bsd_avPMPaid);
             }
         }

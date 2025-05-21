@@ -14,12 +14,14 @@ namespace Action_ApplyDocument
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         ApplyDocument applyDocument;
+        ITracingService traceService = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             EntityReference target = (EntityReference)context.InputParameters["Target"];
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             applyDocument = new ApplyDocument(serviceProvider);
             if (target.LogicalName == "bsd_applydocument")
             {
@@ -61,11 +63,12 @@ namespace Action_ApplyDocument
                     if (totalapplyamout != 0) totalapplyamout = bsd_advancepaymentamount - totalapplyamout;
                     else totalapplyamout = bsd_advancepaymentamount;
                 }
-
+                traceService.Trace("totalapplyamout " + totalapplyamout);
                 // Create Applydocument Remaining COA By Thạnh Đỗ
                 applyDocument.createCOA(en_app, totalapplyamout, s_eachAdv, s_amAdv);
                 //Tạo Applydocument Remaining COA
                 applyDocument.updateApplyDocument(en_app, totalapplyamout, s_eachAdv, s_amAdv);
+                //throw new InvalidPluginExecutionException("hải đang check 19/05/2024 2:30pm");
             }
         }
         public void processApplyDocument(Entity EnCallFrom, string str1, string str2, string str3, string str4, ArrayList listCheckFee)
