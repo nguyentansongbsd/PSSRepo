@@ -23,6 +23,8 @@ namespace Plugin_Payment_Import
             Entity target = context.InputParameters["Target"] as Entity;
             if (context.MessageName == "Create")
             {
+                decimal bsd_assignamount = target.Contains("bsd_assignamount") ? ((Money)target["bsd_assignamount"]).Value : 0;
+                if (bsd_assignamount < 0) throw new InvalidPluginExecutionException("Assign Amount is less than 0. Please check again.");
                 traceService.Trace("Vào Plugin_Payment_Import");
                 if (!target.Contains("bsd_checkimport"))
                 {
@@ -518,6 +520,11 @@ namespace Plugin_Payment_Import
 
 
                 }
+            }
+            else if (context.MessageName == "Update")
+            {
+                decimal bsd_assignamount = target.Contains("bsd_assignamount") ? ((Money)target["bsd_assignamount"]).Value : 0;
+                if (bsd_assignamount < 0) throw new InvalidPluginExecutionException("Assign Amount is less than 0. Please check again.");
             }
         }
         private int getViTriDotSightContract(Guid idOE)
