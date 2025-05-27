@@ -50,7 +50,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     Entity PSDetail = service.Retrieve(PSD.LogicalName, PSD.Id, new ColumnSet(true));
                     #region check bsd_miscellaneous nếu là đợt cuối nếu notpaid thì check bsd_miscellaneous 
                     traceService.Trace("PSD[\"bsd_lastinstallment\"] " + ((bool)PSD["bsd_lastinstallment"]).ToString());
-                    if (PSD.Contains("bsd_lastinstallment")&&((bool)PSD["bsd_lastinstallment"])==true&& ((OptionSetValue) PSD["statuscode"]).Value== 100000001)
+                    if (PSD.Contains("bsd_lastinstallment") && ((bool)PSD["bsd_lastinstallment"]) == true && ((OptionSetValue)PSD["statuscode"]).Value == 100000001)
                     {
                         var query_bsd_installment = PSD.Id.ToString();
                         var query = new QueryExpression("bsd_miscellaneous");
@@ -58,7 +58,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                         query.Criteria.AddCondition("bsd_installment", ConditionOperator.Equal, query_bsd_installment);
                         query.Criteria.AddCondition("statuscode", ConditionOperator.Equal, 1);
                         var resmiscellaneous = service.RetrieveMultiple(query);
-                        if (resmiscellaneous.Entities==null|| resmiscellaneous.Entities.Count == 0)
+                        if (resmiscellaneous.Entities == null || resmiscellaneous.Entities.Count == 0)
                             continue;
                     }
                     #endregion
@@ -68,6 +68,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     decimal bsd_amountofthisphase = PSDetail.Contains("bsd_amountofthisphase") ? ((Money)PSDetail["bsd_amountofthisphase"]).Value : 0;
                     decimal bsd_amountforcustomer = bsd_amountofthisphase * bsd_percentforcustomer / 100;
                     decimal bsd_amountforbank = bsd_amountofthisphase * bsd_percentforbank / 100;
+                    if (PSD.Contains("bsd_duedate") == false) continue;
                     int nday = (int)(((DateTime)PSD["bsd_duedate"]).AddHours(7).Date.Subtract(DateTime.Now.AddHours(7).Date).TotalDays);
                     traceService.Trace("nday");
                     #region Custom
@@ -117,11 +118,12 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                 customerNotices["bsd_odernumber_e"] = "3rd";
 
                             }
-                            else {
-                                customerNotices["bsd_odernumber_e"] =$"{((int)PSDetail["bsd_ordernumber"])}th";
+                            else
+                            {
+                                customerNotices["bsd_odernumber_e"] = $"{((int)PSDetail["bsd_ordernumber"])}th";
                             }
                             #endregion
-                           
+
                             Guid id = service.Create(customerNotices);
                             Entity ins = new Entity(PSD.LogicalName);
                             ins.Id = PSD.Id;
@@ -449,8 +451,11 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
-                                                warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
-                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                                if (PSD.Contains("bsd_gracedays"))
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                                else
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays(14);
+                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                             }
 
                                             #endregion

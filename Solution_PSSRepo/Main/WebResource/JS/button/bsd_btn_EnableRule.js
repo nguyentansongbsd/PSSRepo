@@ -178,7 +178,8 @@ function CheckEnable_Condition(tyle) {
             break;
         case "quote-form-PrintRevervationForm":
             if (getStatusCodeValueByName("Won") == status) return false;
-
+        case "quote-form-Applydocument":
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")) return false;
         case "quote-form-FULTerminate":
             if (getStatusCodeValueByName("Terminated") == status) return false;
         case "quote-form-CreateOrder":

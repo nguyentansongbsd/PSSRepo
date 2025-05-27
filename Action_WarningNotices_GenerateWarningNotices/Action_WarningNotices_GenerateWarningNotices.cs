@@ -115,10 +115,13 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
-                                                warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
-                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                                if (PSD.Contains("bsd_gracedays"))
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                                else
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays(14);
+                                                warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                             }
-
+                                            traceService.Trace("11111: ");
                                             #endregion
                                             #region xử lý OdernumberE
                                             if (((int)PSD["bsd_ordernumber"]) == 1)
@@ -204,8 +207,8 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                     #region bsd_deadlinewn1-bsd_deadlinewn2
                                     if (PSD.Contains("bsd_duedate"))
                                     {
-                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
-                                        warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
+                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                        warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                     }
 
                                     #endregion
@@ -273,6 +276,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
                     <attribute name='bsd_paymentschemedetailid' />
                     <attribute name='bsd_duedate' />
                     <attribute name='bsd_balance' />
+                    <attribute name='bsd_ordernumber' />
+                    <attribute name='bsd_gracedays' />
+
+
+
                     <order attribute='bsd_duedate' descending='false' />
                     <filter type='and'>
                       <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />

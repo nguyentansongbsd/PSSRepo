@@ -99,7 +99,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_OP_MapField",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_AutoShare_All_1.0.0.0", "Plugin\Plugin_AutoShare_All_1.0.0.0\Plugin_AutoShare_All_1.0.0.0.csproj", "{C270878D-AF06-46D0-94C5-FAA7D0FB3FE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_AutoShareRecord_1.0.0.0", "Plugin\Plugin_AutoShareRecord_1.0.0.0\Plugin_AutoShareRecord_1.0.0.0.csproj", "{BF90D0DC-197B-402B-8FF0-336A5BDA6AF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_AutoShareRecord", "Plugin\Plugin_AutoShareRecord_1.0.0.0\Plugin_AutoShareRecord.csproj", "{BF90D0DC-197B-402B-8FF0-336A5BDA6AF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_PaymentNotices", "Plugin_Create_PaymentNotices\Plugin_Create_PaymentNotices.csproj", "{920B6EBF-A6E8-4272-83A9-44EAC6769F0F}"
 EndProject
@@ -160,6 +160,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_TerminationLetter", "Plugin\Create Entity\Plugin_Create_TerminationLetter\Plugin_Create_TerminationLetter.csproj", "{181AC944-BDE1-4F73-8E74-F9223BEAE769}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CustomerNotices_GenerateCustomerNotices", "..\..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices.csproj", "{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetDataSyncInstallment", "Action\Action_GetDataSyncInstallment\Action_GetDataSyncInstallment.csproj", "{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -550,6 +552,12 @@ Global
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -629,6 +637,7 @@ Global
 		{E4043E05-7094-42DE-A9A8-A02F8B51206B} = {ADEE3F94-9E4B-46DD-A437-283E0B339563}
 		{181AC944-BDE1-4F73-8E74-F9223BEAE769} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
+		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}
