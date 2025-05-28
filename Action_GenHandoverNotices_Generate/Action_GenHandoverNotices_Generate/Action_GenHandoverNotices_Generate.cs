@@ -304,7 +304,8 @@ namespace Action_GenHandoverNotices_Generate
             q1.Criteria = new FilterExpression(LogicalOperator.And);
             q1.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, oe.Id));
             q1.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, "100000000"));//NOT PAID
-            q1.Criteria.AddCondition(new ConditionExpression("bsd_duedate", ConditionOperator.OnOrBefore, dateCalculate));//Duedate <= simulation date
+            q1.Criteria.AddCondition(new ConditionExpression("bsd_duedate", ConditionOperator.NotNull));
+            //q1.Criteria.AddCondition(new ConditionExpression("bsd_duedate", ConditionOperator.OnOrBefore, dateCalculate));//Duedate <= simulation date
             EntityCollection listInstallment = service.RetrieveMultiple(q1);
             if (listInstallment.Entities.Count > 0)
             {
@@ -376,6 +377,7 @@ namespace Action_GenHandoverNotices_Generate
                     }
                     if (numberOfDays2 != -100599 && numberOfDays2 < bsd_latedays) bsd_latedays = numberOfDays2;
                     traceService.Trace("bsd_latedays " + bsd_latedays);
+                    lateDays = bsd_latedays;
                     balance = ins.Contains("bsd_balance") ? ((Money)ins["bsd_balance"]).Value : decimal.Zero;
                     decimal Newinterest = CalculateNewInterest(balance, lateDays, interestPercent);
                     interest = interest + Newinterest;
