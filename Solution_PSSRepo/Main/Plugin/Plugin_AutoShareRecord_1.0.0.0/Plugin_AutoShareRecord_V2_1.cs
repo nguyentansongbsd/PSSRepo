@@ -54,21 +54,23 @@ namespace Plugin_AutoShareRecord
 
             switch (target.LogicalName)
             {
-                case "bsd_followuplist":
                 case "salesorder":
-                case "quote":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
+                    ShareTeams_OE(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-MGT", 1 } });
                     break;
+                case "quote":
+                case "bsd_followuplist":
                 case "opportunity":
                 case "bsd_quotation":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
+                case "bsd_advancepayment":
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-MGT", 1 } });
                     break;
+                //case "bsd_capnhatphiquanly":
+                //    ShareTeams_OneEntity(new Dictionary<string, int> { { "SALE-TEAM", 1 } });
+                //    break;
                 case "bsd_updateactualarea":
-                case "bsd_capnhatphiquanly":
                 case "bsd_updateactualareaapprove":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "SALE-TEAM", 1 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "SALE-MGT", 1 } });
                     break;
-                case "bsd_termination":
                 case "bsd_appendixcontract":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 } });
                     break;
@@ -77,9 +79,6 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_paymentschemedetail":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 } });
-                    break;
-                case "bsd_advancepayment":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_transfermoney":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 }, { "SALE-MGT", 0 } });
@@ -98,11 +97,12 @@ namespace Plugin_AutoShareRecord
                 case "bsd_invoice":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 }, { "SALE-MGT", 0 } });
                     break;
+                case "bsd_termination":
                 case "bsd_updateduedate":
                 case "bsd_updateduedatedetail":
                 case "bsd_updateduedateoflastinstallmentapprove":
                 case "bsd_updateduedateoflastinstallment":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 }, { "SALE-TEAM", 1 }, { "SALE-MGT", 0 } });
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 }, { "SALE-MGT", 1 } });
                     break;
             }
 
@@ -442,6 +442,40 @@ namespace Plugin_AutoShareRecord
                         refTeam = tmpTeam.ToEntityReference();
                         ShareTeams(refTarget, refTeam, teamRights.Value);
                     }
+                }
+            }
+        }
+
+        public static void ShareTeams_OE(Dictionary<string, int> listTeamRights)
+        {
+            traceService.Trace("ShareTeams_OE");
+
+            string projectCode = GetProjectCode();
+            EntityCollection rs = GetTeams(projectCode);
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                EntityReference refOE = enTarget.ToEntityReference();
+                EntityReference refTeam = null;
+
+                Dictionary<string, Entity> allTeams = rs.Entities.ToDictionary(e => (string)e["name"], e => e);
+                foreach (var teamRights in listTeamRights)
+                {
+                    if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
+                    {
+                        refTeam = tmpTeam.ToEntityReference();
+                        ShareTeams(refOE, refTeam, teamRights.Value);
+                    }
+                }
+
+                Entity enOE = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "quoteid" }));
+                if (enOE.Contains("quoteid"))
+                {
+                    EntityReference refQuote = (EntityReference)enOE["quoteid"];
+                    Entity enQuote = service.Retrieve(refQuote.LogicalName, refQuote.Id, new ColumnSet(new string[] { "ownerid" }));
+                    if (!enQuote.Contains("ownerid")) return;
+
+                    EntityReference refOwnerQuote = (EntityReference)enQuote["ownerid"];
+                    ShareTeams(refOE, refOwnerQuote, 0);
                 }
             }
         }
