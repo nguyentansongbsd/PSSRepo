@@ -44,6 +44,15 @@ namespace Plugin_AutoShareRecord
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                 //    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                 //    break;//
+                case "bsd_bulksendmailmanager":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
+                    var rs = GetDetailBulkMailManager();
+                    foreach (var item in rs.Entities)
+                    {
+                        Run_ShareTemProject(false, new List<string> { "SALE-TEAM" },item);
+                    }
+                    //share email detail luôn.
+                    break;
                 case "bsd_bankingloan":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
                     break;
@@ -100,7 +109,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null)
+        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null,Entity enShare=null)
         {
             traceService.Trace($"Run_ShareTemProject {target.LogicalName}");
 
@@ -109,6 +118,11 @@ namespace Plugin_AutoShareRecord
             projectCode = GetProjectCode(refProject);
             rs = GetTeams(projectCode);
             traceService.Trace(target.LogicalName);
+            
+            if(enShare==null)
+            {
+                enShare = target;
+            }    
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
 
@@ -117,7 +131,7 @@ namespace Plugin_AutoShareRecord
                     if (teamShares != null)
                     {
                         if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-","")))
-                            ShareTeams(target.ToEntityReference(), team.ToEntityReference(), hasWrite);
+                            ShareTeams(enShare.ToEntityReference(), team.ToEntityReference(), hasWrite);
                     }
                 }
             }
@@ -186,6 +200,16 @@ namespace Plugin_AutoShareRecord
             traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
             return rs;
         }
+        private static EntityCollection GetDetailBulkMailManager()
+        {
+            traceService.Trace("GetDetailBulkMailManager");
+            var query = new QueryExpression("email");
+            query.ColumnSet.AllColumns = true;
+            query.Criteria.AddCondition("bsd_bulksendmailmanager", ConditionOperator.Equal, en.Id);
+            EntityCollection rs = service.RetrieveMultiple(query);
+            traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
+            return rs;
+        }
         public static EntityReference GetProject()
         {
             EntityReference enProjectRef2 = null;
@@ -195,6 +219,9 @@ namespace Plugin_AutoShareRecord
             switch (target.LogicalName)
             {
 
+                case "bsd_bulksendmailmanager":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
                 case "bsd_documents":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;

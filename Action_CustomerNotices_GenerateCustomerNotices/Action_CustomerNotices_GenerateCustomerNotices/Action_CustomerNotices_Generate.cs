@@ -483,6 +483,15 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                             ins.Id = PSD.Id;
                                             string field = "bsd_warningnotices" + (numberofWarning + 1);
                                             ins[field] = true;
+
+                                            traceService.Trace("step1");
+                                            string field2 = "bsd_warningdate" + (numberofWarning + 1);
+                                            ins[field2] = ((DateTime)warningNotices["bsd_date"]).AddHours(7);
+                                            traceService.Trace("step2");
+
+                                            string field3 = "bsd_w_noticesnumber" + (numberofWarning + 1);
+                                            ins[field3] = warningNotices["bsd_noticesnumber"];
+                                            traceService.Trace("step3");
                                             service.Update(ins);
                                         }
                                     }

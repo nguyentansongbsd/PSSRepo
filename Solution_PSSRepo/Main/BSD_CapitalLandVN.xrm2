@@ -110,6 +110,21 @@
           ]
         },
         {
+          "Name": "Action_CustomerNotices_GenerateCustomerNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "7c0ca728-1c4b-4cf8-8872-23bafc5c22e3",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_GetDataSyncInstallment.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -187,6 +202,11 @@
               "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
+            },
+            {
+              "CrmId": "5d3d8873-c888-e811-8153-3863bb367d20",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Due_Date_Detail.js"
             }
           ]
         }
