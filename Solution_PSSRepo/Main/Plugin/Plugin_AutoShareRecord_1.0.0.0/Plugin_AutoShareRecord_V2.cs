@@ -38,8 +38,8 @@ namespace Plugin_AutoShareRecord
             List<string> stringList = new List<string>();
             //stringList.Add("bsd_payment");
             //stringList.Add("bsd_advancepayment");
-            stringList.Add("bsd_customernotices");
-            stringList.Add("bsd_warningnotices");
+            //stringList.Add("bsd_customernotices");
+            //stringList.Add("bsd_warningnotices");
             //stringList.Add("bsd_handovernotice");
             ////stringList.Add("bsd_terminateletter");
             //stringList.Add("bsd_applydocument");

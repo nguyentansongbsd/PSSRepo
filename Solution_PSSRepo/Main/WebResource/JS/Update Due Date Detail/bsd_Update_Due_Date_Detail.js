@@ -482,7 +482,7 @@ function Filter_quote(executionContextObj) {
     //Filteroe += "<condition attribute='statuscode' operator='neq' value='100000006'/>";
     if (bsd_project != null) {
         Filteroe += "<condition attribute='bsd_projectid' operator='eq' value='" + bsd_project[0].id + "'/>";
-        Filteroe += "      <condition attribute='statuscode' operator='in'>" + "        <value>" + 100000004 + "</value>" + "        <value>" + 100000007 + "</value>" + "        <value>" + 100000000 + "</value>" + "        <value>" + 100000006 + "</value>" + "      </condition>";
+        Filteroe += "      <condition attribute='statuscode' operator='in'>" + "        <value>" + 3 + "</value>" + "        <value>" + 100000004 + "</value>" + "        <value>" + 100000007 + "</value>" + "        <value>" + 100000000 + "</value>" + "        <value>" + 100000006 + "</value>" + "      </condition>";
     }
     Filteroe += "</filter>";
     var customerAccountFilter = Filteroe;
