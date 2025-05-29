@@ -56,9 +56,6 @@ namespace Plugin_AutoShareRecord
                 case "bsd_bankingloan":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
                     break;
-                case "bsd_documents":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "CCR-TEAM", "SALE-TEAM", "SALE-MGT" });
-                    break;
                 case "bsd_landvalue":
                     Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
