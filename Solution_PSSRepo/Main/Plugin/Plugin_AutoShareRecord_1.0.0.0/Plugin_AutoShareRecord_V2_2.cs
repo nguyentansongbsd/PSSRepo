@@ -45,25 +45,23 @@ namespace Plugin_AutoShareRecord
                 //    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                 //    break;//
                 case "bsd_bankingloan":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
                     break;
                 case "bsd_documents":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "CCR-TEAM", "SALE-TEAM", "SALE-MGT" });
                     break;
                 case "bsd_landvalue":
-                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_updatelandvalue":
-                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_applybankaccountunits":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_waiverapproval":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_updateestimatehandoverdate":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
@@ -74,36 +72,25 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkwaiver":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkchangemanagementfee":
-                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkchangemanagementfeedetail":
-                    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
-                    break;
-                case "bsd_terminateletter":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_interestsimulation":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_transactionpayment":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_waiverapprovaldetail":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_interestsimulationdetail":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
 
                 case "bsd_customernotices":
@@ -125,13 +112,12 @@ namespace Plugin_AutoShareRecord
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
 
-                bool hasWriteShare = false;
                 foreach (Entity team in rs.Entities)
                 {
                     if (teamShares != null)
                     {
                         if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-","")))
-                            ShareTeams(target.ToEntityReference(), team.ToEntityReference(), hasWriteShare);
+                            ShareTeams(target.ToEntityReference(), team.ToEntityReference(), hasWrite);
                     }
                 }
             }

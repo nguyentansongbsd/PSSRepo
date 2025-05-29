@@ -114,6 +114,7 @@ namespace Action_ShareCustomerToTeam
                 EntityReference enRef = new EntityReference(fieldName, Guid.Parse(item));
                 EntityCollection rs = GetListTeamOfCurrentUser(CurrentUser);
                 traceService.Trace("step2");
+                traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
                 if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("Người dùng hiện tại chưa tham gia vào bất kỳ team nào !");
                 if (rs.Entities.Count == 1)
                 {
@@ -272,11 +273,16 @@ namespace Action_ShareCustomerToTeam
                     }
                     traceService.Trace("@@@@@1");
                     var team = service.Retrieve("team", new Guid(t), new ColumnSet(true));
+                    string projectCode = team["name"].ToString().Split('-')[0];
                     var fetchXml2 = $@"
                 <fetch>
                   <entity name='team'>
                     <filter>
-                      <condition attribute='name' operator='like' value='%{team["name"].ToString().Split('-')[0]}-%'/>
+                      <condition attribute='name' operator='in'>
+                        <value>{projectCode}-CCR-TEAM</value>
+                        <value>{projectCode}-FINANCE-TEAM</value>
+                        <value>{projectCode}-SALE-MGT</value>
+                      </condition>
                     </filter>
                   </entity>
                 </fetch>";
