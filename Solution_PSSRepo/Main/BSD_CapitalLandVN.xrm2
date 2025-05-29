@@ -3,6 +3,86 @@
   "Organizations": [
     {
       "ConnectionProtocol": 3072,
+      "OrganizationDisplayName": "CapitaLand Limited",
+      "OrganizationName": "cl",
+      "OrganizationUrl": "https://pss-vn.crm5.dynamics.com",
+      "UserFriendlyName": "https://pss-vn.crm5.dynamics.com/",
+      "CurrentSolution": {
+        "Id": "fd140aaf-4df4-11dd-bd17-0019b9312238",
+        "Name": "Default Solution",
+        "UniqueName": "Default"
+      },
+      "Projects": [
+        {
+          "Name": "Plugin_CreateEmail_UpdateInforToEntity.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c7f8b143-f5e2-4ce1-aad7-1ba2e4ac30cf",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreateEmail_UpdateInforToEntity.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        }
+      ],
+      "Settings": [
+        {
+          "CssMinification": 1,
+          "JavaScriptMinification": 1,
+          "SettingType": 6
+        },
+        {
+          "AddDebuggerNonUserCodeAttribute": true,
+          "AddExcludeFromCodeCoverageAttribute": true,
+          "AddStringLengthAttribute": false,
+          "BaseProxyClassFileName": "BaseProxyClass",
+          "CustomProxyNamingServiceDllPath": "",
+          "EnumsFileName": "OptionSetEnums",
+          "GeneratedCodeAttributeVersionPrecision": 4,
+          "GenerateProxyEnumsInSeparateClasses": true,
+          "MakeAllPropertiesEditable": false,
+          "ProxyEntityClassPath": "\\ProxyClasses",
+          "ProxyEntityNamingConvention": 1,
+          "ProxyEntityNamingPattern": "{0}",
+          "ProxyEnumPath": "\\ProxyClasses\\Enums",
+          "ProxyGenerationMethod": 1,
+          "ProxyMessagesPath": "\\ProxyClasses\\Messages",
+          "ProxyNamingMethod": 0,
+          "ProxyTypesThatShouldUseExistingNamesWhenRegenerating": 511,
+          "ServiceContextName": "CrmServiceContext",
+          "SettingType": 4,
+          "UseStronglyTypedNameForProxyRelatedEntities": true
+        },
+        {
+          "ChartPath": "\\Charts",
+          "CssPath": "\\Web",
+          "CustomAssemblyConfigPath": "\\AssemblyConfig",
+          "EmailTemplatePath": "\\EmailTemplates",
+          "EntityMetadataPath": "\\EntityMetadata",
+          "HtmlPath": "\\Web",
+          "ImagePath": "\\Web",
+          "JavaScriptPath": "\\Web",
+          "PluginConfigurationsPath": "\\PluginConfigurations",
+          "ProcessPath": "\\Processes",
+          "ResourcePath": "\\Web",
+          "SettingType": 5,
+          "SilverlightPath": "\\Xap",
+          "SitemapPath": "\\Sitemap",
+          "TypeScriptIntellisensePath": "\\Web\\IntellisenseFiles",
+          "TypeScriptPath": "\\Web",
+          "ViewPath": "\\Views",
+          "XmlPath": "\\Web",
+          "XslPath": "\\Web"
+        }
+      ]
+    },
+    {
+      "ConnectionProtocol": 3072,
       "OrganizationDisplayName": "CapitaLand Preview",
       "OrganizationName": "pssvn-preview",
       "OrganizationUrl": "https://pssvn-preview.crm5.dynamics.com",
@@ -13,6 +93,22 @@
         "UniqueName": "Default"
       },
       "Projects": [
+        {
+          "Name": "Action_CreateEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "015eda85-19f2-42bc-80d3-51d836de1581",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_CreateEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
         {
           "Name": "Action_GetDataSyncInstallment.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
@@ -47,6 +143,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_CreateDocuments.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_CreateEmail_UpdateInforToEntity.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c7f8b143-f5e2-4ce1-aad7-1ba2e4ac30cf",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreateEmail_UpdateInforToEntity.dll",
                 "SourceType": 0
               }
             }

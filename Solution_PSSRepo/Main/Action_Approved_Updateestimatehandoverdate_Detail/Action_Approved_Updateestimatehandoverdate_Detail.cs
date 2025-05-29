@@ -137,17 +137,17 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         }
         public bool CheckConditionRun(Entity item)
         {
-            var enMasterRef = (EntityReference)item["bsd_updateestimatehandoverdate"];
-            var enMaster = service.Retrieve(masterName, enMasterRef.Id, new ColumnSet(true));
-            if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-
+            //var enMasterRef = (EntityReference)item["bsd_updateestimatehandoverdate"];
+            //var enMaster = service.Retrieve(masterName, enMasterRef.Id, new ColumnSet(true));
+            //if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
+            //{
+            //    return false;
+            //}
+            //else
+            //{
+            //    return true;
+            //}
+            return true;
         }
         public void HandleError(Entity item, string error)
         {

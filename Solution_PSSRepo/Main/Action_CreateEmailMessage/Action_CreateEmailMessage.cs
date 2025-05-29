@@ -314,7 +314,8 @@ namespace Action_CreateEmailMessage
         }
         private string GenFileNameAttach()
         {
-            if(entityMain.LogicalName== "bsd_payment")
+            tracingService.Trace("GenFileNameAttach");
+            if (entityMain.LogicalName== "bsd_payment")
             {
                 return $"{enUnit["name"]}_{GetFullNameCustomer()}_{GetPaymentName()}";
             }
@@ -327,6 +328,7 @@ namespace Action_CreateEmailMessage
         }
         private string GetPaymentName()
         {
+            tracingService.Trace("GetPaymentName");
             string res = "";
             switch (((OptionSetValue)entityMain["bsd_paymenttype"]).Value)
             {
@@ -356,6 +358,7 @@ namespace Action_CreateEmailMessage
         }
         private string GetFullNameCustomer()
         {
+            tracingService.Trace("GetFullNameCustomer");
             string fullname = "";
             switch (enCus.LogicalName)
             {
@@ -378,6 +381,7 @@ namespace Action_CreateEmailMessage
             var rs = service.RetrieveMultiple(query);
             if (rs.Entities.Count > 0)
             {
+                tracingService.Trace(rs.Entities[0]["safehtml"].ToString());
                 return rs.Entities[0]["safehtml"].ToString();
             }
             else return "";
