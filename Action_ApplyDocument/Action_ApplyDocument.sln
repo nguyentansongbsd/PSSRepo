@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33214.272
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_ApplyDocument", "Action_ApplyDocument.csproj", "{84A66969-5E46-4003-A196-1F6C10090E6B}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Update_Installment", "..\Solution_PSSRepo\Main\Plugin_Update_Installment\Plugin_Update_Installment.csproj", "{AF7B9608-EFC2-418A-83E9-520388DE854D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Approve", "..\Solution_PSSRepo\Main\Plugin_Approve\Plugin_Approve.csproj", "{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Approved_Updateduedate_Detail", "..\Solution_PSSRepo\Main\Action_Approved_Updateduedate_Detail\Action_Approved_Updateduedate_Detail.csproj", "{1A7C6FE1-3B25-46AA-9FFB-DFD182571FE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B4AB50B-771A-488E-B7B1-7E0D0D11F7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A7C6FE1-3B25-46AA-9FFB-DFD182571FE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7C6FE1-3B25-46AA-9FFB-DFD182571FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A7C6FE1-3B25-46AA-9FFB-DFD182571FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A7C6FE1-3B25-46AA-9FFB-DFD182571FE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
