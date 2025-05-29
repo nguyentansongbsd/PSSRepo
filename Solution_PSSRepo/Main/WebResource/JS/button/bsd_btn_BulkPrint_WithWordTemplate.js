@@ -62,42 +62,63 @@ function RegisterModal() {
 ready();
 function btnBulkPrint_WordTemplate(item) {
     debugger;
-    // Lấy lên danh sách id
-    var result = {};
-    result.entityname = "";
-    result.typecode = "";
-    result.list_id = [];
-    for (var j = 0, len = item.length; j < len; j++) {
-        if (result.entityname == "") {
-            var entityname = item[j].TypeName;
-            console.log(entityname);
-            result.entityname = entityname;
-            window.top.entityname = entityname
-            result.typecode = item[j].TypeCode;
-            window.top.entityTypeCode = item[j].TypeCode;
-        }
-        var id = item[j].Id;
-        result.list_id.push(id);
-    }
-    // gọi report html chọn mẫu
-    var pageInput = {
-        pageType: "webresource",
-        webresourceName: "bsd_bsd_Entityview_SelectReport.html",
-        data: result.list_id.join(",")
-    };
-    var navigationOptions = {
-        target: 2,
-        // 2 is for opening the page as a dialog.
-        width: 520,
-        // default is px. can be specified in % as well.
-        height: 400,
-        // default is px. can be specified in % as well.
-        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
-    };
-    Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
-        function success() { },
-        function error(e) { });
-    // Xrm.Utility.openDialog(Xrm.Page.context.getClientUrl() + "/webresources/bsd_selectreport_customernotices.html?data=" + result.list_id.join(","), { width: 410, height: 345 }, null, null);
-    var nameReport = "Option Entry Form";
-    // window.open(urlreport, nameReport, "resizable=1,width=380,height=344");
+    var fetchXml =
+        "<fetch top='1'>" +
+        "  <entity name='" + item[0].TypeName + "'>" +
+        "    <attribute name='bsd_name'/>" +
+        "    <attribute name='bsd_project'/>" +
+        "    <filter>" +
+        "      <condition attribute='" + item[0].TypeName + "id'  operator='eq' value='" + item[0].Id +"'/>" +
+        "    </filter>" +
+        "    <order attribute='createdon' descending='true'/>" +
+        "    <link-entity name='bsd_project' from='bsd_projectid' to='bsd_project' alias='pro'>" +
+        "      <attribute name='bsd_projectcode'/>" +
+        "    </link-entity>" +
+        "  </entity>" +
+        "</fetch>";
+    // Gọi API để thực hiện truy vấn FetchXML
+    Xrm.WebApi.retrieveMultipleRecords(item[0].TypeName, "?fetchXml=" + fetchXml).then(
+        function (results)
+        {
+            // Lấy lên danh sách id
+            var result = {};
+            result.entityname = "";
+            result.typecode = "";
+            result.list_id = [];
+            window.top.projectCode = results.entities[0]["pro.bsd_projectcode"]
+            for (var j = 0, len = item.length; j < len; j++) {
+                if (result.entityname == "") {
+                    var entityname = item[j].TypeName;
+                    console.log(entityname);
+                    result.entityname = entityname;
+                    window.top.entityname = entityname
+                    result.typecode = item[j].TypeCode;
+                    window.top.entityTypeCode = item[j].TypeCode;
+                }
+                var id = item[j].Id;
+                result.list_id.push(id);
+            }
+            // gọi report html chọn mẫu
+            var pageInput = {
+                pageType: "webresource",
+                webresourceName: "bsd_bsd_Entityview_SelectReport.html",
+                data: result.list_id.join(",")
+            };
+            var navigationOptions = {
+                target: 2,
+                // 2 is for opening the page as a dialog.
+                width: 520,
+                // default is px. can be specified in % as well.
+                height: 400,
+                // default is px. can be specified in % as well.
+                position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+            };
+            Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
+                function success() { },
+                function error(e) { });
+            // Xrm.Utility.openDialog(Xrm.Page.context.getClientUrl() + "/webresources/bsd_selectreport_customernotices.html?data=" + result.list_id.join(","), { width: 410, height: 345 }, null, null);
+            var nameReport = "Option Entry Form";
+            // window.open(urlreport, nameReport, "resizable=1,width=380,height=344");
+        });
+    
 }

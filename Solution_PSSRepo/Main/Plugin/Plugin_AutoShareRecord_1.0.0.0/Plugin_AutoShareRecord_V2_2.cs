@@ -105,6 +105,11 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
+
+                case "bsd_customernotices":
+                    break;
+                case "bsd_handovernotice":
+                    break;
             }
         }
 
@@ -125,7 +130,7 @@ namespace Plugin_AutoShareRecord
                 {
                     if (teamShares != null)
                     {
-                        if (teamShares.Contains((string)team["name"]))
+                        if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-","")))
                             ShareTeams(target.ToEntityReference(), team.ToEntityReference(), hasWriteShare);
                     }
                 }
@@ -271,9 +276,12 @@ namespace Plugin_AutoShareRecord
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_interestsimulationdetail":
-                    enMasterRef = (EntityReference) en["bsd_interestsimulation"];
+                    enMasterRef = (EntityReference) en["bsd_optionentry"];
                     enMaster=service.Retrieve(enMasterRef.LogicalName,enMasterRef.Id,new ColumnSet(true));
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
+                    break;
+                case "bsd_bulkchangemanagementfeedetail":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
 
 

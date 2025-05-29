@@ -30,18 +30,51 @@
           ]
         },
         {
-          "Name": "Plugin_AutoShareRecord.csproj",
+          "Name": "Plugin_CreateDocuments.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
             {
-              "CrmId": "3c05347c-7a61-465c-91eb-6dc67b820454",
-              "FileType": 25,
-              "RelativeFilePath": "\\PluginConfigurations\\Plugin_AutoShareRecord.pluginconfig"
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_CreateDocuments.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "12540d12-b02b-43e5-88df-ce9eec4de3e7",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreateDocuments.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "WebResource.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
             },
             {
-              "CrmId": "cdfd14f8-ae15-418b-ac06-c7ff417f642a",
-              "FileType": 25,
-              "RelativeFilePath": "\\PluginConfigurations\\Plugin_AutoShareRecord.pluginconfig"
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
+            },
+            {
+              "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"
+            },
+            {
+              "CrmId": "5b5c7af4-fef7-ef11-bae2-0022485654ef",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkPrint_WithWordTemplate.js"
             }
           ]
         }
@@ -94,6 +127,10 @@
           "ViewPath": "\\Views",
           "XmlPath": "\\Web",
           "XslPath": "\\Web"
+        },
+        {
+          "PluginStepNameTemplate": "{messageDisplayName} - {primaryEntityDisplayName} - {pipelineStageDisplayName}",
+          "SettingType": 1
         }
       ]
     }

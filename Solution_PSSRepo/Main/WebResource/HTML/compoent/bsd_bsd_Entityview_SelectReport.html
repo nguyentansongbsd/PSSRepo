@@ -145,15 +145,18 @@
             var typecode = window.top.entityTypeCode;
             console.log(typecode);
             var fetchXml = `
-                                <fetch>
-                                  <entity name="documenttemplate">
-                                    <attribute name="name" />
-                                    <attribute name="documenttemplateid" />
-                                    <filter>
-                                      <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
-                                    </filter>
-                                  </entity>
-                                </fetch>`;
+                                    <fetch>
+                                      <entity name="documenttemplate">
+                                        <attribute name="name" />
+                                        <attribute name="documenttemplateid" />
+                                        <filter>
+                                          <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
+                                           <condition attribute="name" operator="like" value="%${window.top.projectCode}-%" />
+                                            <condition attribute="name" operator="like" value="%-email%" />
+
+                                           </filter>
+                                      </entity>
+                                    </fetch>`;
             // Gọi API để thực hiện truy vấn FetchXML
             Xrm.WebApi.retrieveMultipleRecords("documenttemplate", "?fetchXml=" + fetchXml).then(
                 function (result) {
@@ -245,15 +248,15 @@
             // Lưu giá trị hiện tại của i
             var currentIndex = index;
             var fetchXml = `
-                                <fetch>
-                                  <entity name="bsd_documents">
-                                    <attribute name="bsd_name" />
-                                    <attribute name="bsd_documentsid" />
-                                    <filter>
-                                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
-                                    </filter>
-                                  </entity>
-                                </fetch>`;
+                                    <fetch>
+                                      <entity name="bsd_documents">
+                                        <attribute name="bsd_name" />
+                                        <attribute name="bsd_documentsid" />
+                                        <filter>
+                                          <condition attribute="bsd_name" operator="eq" value="${data.text}" />
+                                        </filter>
+                                      </entity>
+                                    </fetch>`;
 
             // Xử lý phần tử hiện tại
             return Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml)
@@ -319,15 +322,15 @@
             }
             Xrm.Utility.showProgressIndicator("Please Wait!...");
             var fetchXml = `
-                                <fetch>
-                                  <entity name="bsd_documents">
-                                    <attribute name="bsd_name" />
-                                    <attribute name="bsd_documentsid" />
-                                    <filter>
-                                      <condition attribute="bsd_name" operator="eq" value="${data.text}" />
-                                    </filter>
-                                  </entity>
-                                </fetch>`;
+                                    <fetch>
+                                      <entity name="bsd_documents">
+                                        <attribute name="bsd_name" />
+                                        <attribute name="bsd_documentsid" />
+                                        <filter>
+                                          <condition attribute="bsd_name" operator="eq" value="${data.text}" />
+                                        </filter>
+                                      </entity>
+                                    </fetch>`;
             var templateid = "";
             var arrlstId = lstid.split(',');
             var bulkManagerId = "";
@@ -346,7 +349,7 @@
         var countCallPA = 0;
         function downloadFileFromPowerAutomate(lstid, templateid, entityid, base64) {
             //var url = "https://prod-53.southeastasia.logic.azure.com:443/workflows/9d4b4fb80d394481a23bddcafdd74fa4/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-O1cJvocQjwm2ULYbaBGHAYVk0G1zsudBgOx4aqmGmc";
-            var url ="https://prod-46.southeastasia.logic.azure.com:443/workflows/0b294680618b486b8cc329b391d0514d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RD7NEksiD61KA9LS6INQSGS6wV2FEfXhbe7ZyU1pbdA"
+            var url = "https://prod-46.southeastasia.logic.azure.com:443/workflows/0b294680618b486b8cc329b391d0514d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RD7NEksiD61KA9LS6INQSGS6wV2FEfXhbe7ZyU1pbdA"
             Xrm.Utility.showProgressIndicator("Please Wait!...");
 
             // Tạo đối tượng dữ liệu để gửi

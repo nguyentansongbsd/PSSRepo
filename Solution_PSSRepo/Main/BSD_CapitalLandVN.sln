@@ -163,6 +163,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CustomerNotices_Gene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_GetDataSyncInstallment", "Action\Action_GetDataSyncInstallment\Action_GetDataSyncInstallment.csproj", "{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_CreateDocuments", "Plugin_CreateDocuments\Plugin_CreateDocuments.csproj", "{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -558,6 +560,12 @@ Global
 		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -638,6 +646,7 @@ Global
 		{181AC944-BDE1-4F73-8E74-F9223BEAE769} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
 		{1ADFA2AC-1807-489F-BD2B-35D8AAFD1060} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
+		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

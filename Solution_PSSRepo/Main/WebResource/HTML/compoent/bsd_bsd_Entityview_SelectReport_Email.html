@@ -152,6 +152,9 @@
                                     <attribute name="documenttemplateid" />
                                     <filter>
                                       <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
+                                      <condition attribute="name" operator="like" value="%${window.top.projectCode}-%" />
+                                      <condition attribute="name" operator="like" value="%-print%" />
+
                                     </filter>
                                   </entity>
                                 </fetch>`;
