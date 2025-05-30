@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -92,7 +93,35 @@ namespace Plugin_SubSale_Update_Coowner
                         service.Update(enUP);
                     }
                 }
+                EntityCollection l_co_owner_Subsale = findCo_owner_subsale2(service, target.Id);
+                int dem = 0;
+                foreach (Entity co in l_co_owner_Subsale.Entities)
+                {
+                    dem++;
+                    Entity co_owner = new Entity(co.LogicalName);
+                    co_owner.Id = co.Id;
+                    co_owner["bsd_stt"] = dem;
+                    service.Update(co_owner);
+                }
             }
+        }
+        private EntityCollection findCo_owner_subsale2(IOrganizationService crmservices, Guid id)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+                  <entity name='bsd_coowner'>
+                    <attribute name='bsd_coownerid' />
+                    <attribute name='bsd_name' />
+                    <filter type='and'>
+                      <condition attribute='bsd_subsale' operator='eq'  uitype='bsd_assign' value='{0}' />
+                      <condition attribute='statecode' operator='eq' value='0' />
+                      <condition attribute='bsd_current' operator='eq' value='0' />
+                    </filter>
+                  </entity>
+                </fetch>";
+            fetchXml = string.Format(fetchXml, id);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
         }
         private EntityCollection findCo_owner_subsale(IOrganizationService crmservices, Guid id)
         {
