@@ -15,25 +15,24 @@ namespace Action_Payment
         IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
-        StringBuilder strMess = new StringBuilder();
+        ITracingService TracingSe = null;
 
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
-            strMess.AppendLine("2222222222222222222222222222222222222");
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             EntityReference target = (EntityReference)context.InputParameters["Target"];
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
-            strMess.AppendLine("abcdef");
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             //try
             //{
             if (target.LogicalName == "bsd_payment")
             {
-                strMess.AppendLine("vào 111111111111111");
+                TracingSe.Trace("vào 111111111111111");
                 DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
                 DateTime pm_ReceiptDate = d_now;
                 DateTime i_intereststartdate = d_now;
-                strMess.AppendLine("vào action");
+                TracingSe.Trace("vào action");
                 // --- Retrieve Payment ---
                 Entity paymentEn = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
                 if (((OptionSetValue)paymentEn["statuscode"]).Value == 100000000)  // payment = paid
@@ -91,7 +90,7 @@ namespace Action_Payment
                 d_bsd_assignamountmaster = paymentEn.Contains("bsd_assignamount") ? ((Money)paymentEn["bsd_assignamount"]).Value : 0;
                 if (pm_statuscode == 100000000) throw new InvalidPluginExecutionException("This payment has been paid!");
 
-                strMess.AppendLine("type: " + type.ToString());
+                TracingSe.Trace("type: " + type.ToString());
                 if (pm_statuscode == 1)  // payment = active
                 {
                     if (type != 100000004)
@@ -104,11 +103,11 @@ namespace Action_Payment
                     }
                     decimal d_inter = 0;
                     int i_lateday = 0;
-                    Payment payment = new Payment(serviceProvider, strMess);
+                    Payment payment = new Payment(serviceProvider);
 
                     //>>> Test trace =======??????????.
                     info_Error info = new info_Error();
-                    strMess.AppendLine(string.Format("Type: {0}", type));
+                    TracingSe.Trace(string.Format("Type: {0}", type));
                     //throw new Exception(info.message);
 
                     switch (type)
@@ -116,20 +115,20 @@ namespace Action_Payment
                         case 100000000://Queuing fee
                             break;
                         case 100000001://Reservation - Deposit
-                            strMess.AppendLine("Reservation - Deposit");
+                            TracingSe.Trace("Reservation - Deposit");
                             payment.deposit(paymentEn); // check payment contain field fees
                             break;
                         case 100000002://Installment
-                            strMess.AppendLine("Installment");
+                            TracingSe.Trace("Installment");
                             checkPmsDtl(paymentEn); // check payment contain field fees
                             checkPaidInstalment(paymentEn); // check đớt trước đã thanh toán paid chưa
-                            strMess.AppendLine("checkPmsDtl complete");
+                            TracingSe.Trace("checkPmsDtl complete");
                             payment.intallment(paymentEn, ref pm_balancemaster, ref d_bsd_assignamountmaster, ref pm_differentamountmaster);
                             break;
                         case 100000003://Interest Charge
-                            strMess.AppendLine("Interest Charge");
+                            TracingSe.Trace("Interest Charge");
                             checkPmsDtl(paymentEn); // check payment contain field fees
-                            strMess.AppendLine("checkPmsDtl complete");
+                            TracingSe.Trace("checkPmsDtl complete");
                             payment.interestCharge(paymentEn);
                             break;
                         case 100000004://Fees
@@ -138,11 +137,11 @@ namespace Action_Payment
                             break;
                         case 100000005://Other
                             checkPmsDtl(paymentEn); // check payment contain field fees
-                            strMess.AppendLine("checkPmsDtl complete");
+                            TracingSe.Trace("checkPmsDtl complete");
                             payment.miscellaneous(paymentEn);
                             break;
                     }
-                    strMess.AppendLine("16 Update payment");
+                    TracingSe.Trace("16 Update payment");
                     if (type == 100000002)
                     {
                         if (paymentEn.Contains("bsd_optionentry"))
@@ -151,9 +150,9 @@ namespace Action_Payment
                         }
                     }
                     payment.update(paymentEn, pm_amountpay, pm_sotiendot, pm_sotiendatra, d_now, pm_balancemaster, pm_differentamountmaster, d_inter, i_lateday, type, d_bsd_assignamountmaster);
-                    strMess.AppendLine("18");
+                    TracingSe.Trace("18");
                     //service.Update(paymentEn);
-                    strMess.AppendLine("19 End Update payment");
+                    TracingSe.Trace("19 End Update payment");
                     // -------------------- 1st Installment & Signcontract & OE ---------------------
                     Entity PaymentDetailEn = new Entity("bsd_paymentschemedetail");
                     if (paymentEn.Contains("bsd_paymentschemedetail"))
@@ -166,11 +165,11 @@ namespace Action_Payment
                     int psd_statuscode = PaymentDetailEn.Contains("statuscode") ? ((OptionSetValue)PaymentDetailEn["statuscode"]).Value : 100000000;
                     int phaseNum = PaymentDetailEn.Contains("bsd_ordernumber") ? (int)PaymentDetailEn["bsd_ordernumber"] : 0;
 
-                    strMess.AppendLine("20");
+                    TracingSe.Trace("20");
                     Entity optionentryEn = paymentEn.Contains("bsd_optionentry") ? service.Retrieve("salesorder", ((EntityReference)paymentEn["bsd_optionentry"]).Id, new ColumnSet(true)) : null;
                     if (optionentryEn != null)
                     {
-                        strMess.AppendLine("21");
+                        TracingSe.Trace("21");
                         var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
                         string optionentryID = optionentryEn.Id.ToString();
                         EntityReference customerRef = (EntityReference)optionentryEn["customerid"];
@@ -194,10 +193,10 @@ namespace Action_Payment
                         int sttOE = 100000001; // statuscode of OE= 1st installment
                         int sttUnit = 100000001; // statuscode of unit= 1st installment
                         Entity Unit = service.Retrieve("product", ((EntityReference)optionentryEn["bsd_unitnumber"]).Id, new ColumnSet(true));
-                        strMess.AppendLine("22");
+                        TracingSe.Trace("22");
                         if (phaseNum == 1)
                         {
-                            strMess.AppendLine("23");
+                            TracingSe.Trace("23");
                             if (optionentryEn.Contains("bsd_signedcontractdate"))
                             {
                                 sttOE = 100000002; // sign contract OE
@@ -222,7 +221,7 @@ namespace Action_Payment
                         }
                         else
                         {
-                            strMess.AppendLine("24");
+                            TracingSe.Trace("24");
                             if (!optionentryEn.Contains("bsd_signedcontractdate"))
                             {
                                 sttOE = 100000001; // if OE not signcontract - status code still is 1st Installment
@@ -238,7 +237,7 @@ namespace Action_Payment
                                     sttOE = 100000004; //Complete Payment
                             }
                         }
-                        strMess.AppendLine("25");
+                        TracingSe.Trace("25");
                         Unit["statuscode"] = new OptionSetValue(sttUnit); // Unit statuscode = 1st Installment
                         service.Update(Unit);
                         Entity oe_tmp = new Entity(optionentryEn.LogicalName);
@@ -251,13 +250,13 @@ namespace Action_Payment
                         // -------------------- check FUL - OE -------------------------------
                         // check if FUL exist Unit in this PM
                         EntityCollection ec_FUL = payment.get_ecFUL(service, ((EntityReference)optionentryEn["bsd_unitnumber"]).Id);
-                        strMess.AppendLine("8");
+                        TracingSe.Trace("8");
 
                         if (ec_FUL.Entities.Count > 0)
                         {
                             // check type of FUL is OE or RESV
                             int i_FULtype = ec_FUL.Entities[0].Contains("bsd_type") ? ((OptionSetValue)ec_FUL.Entities[0]["bsd_type"]).Value : 0;
-                            strMess.AppendLine("9");
+                            TracingSe.Trace("9");
                             if (i_FULtype == 100000004)
                             {
 
@@ -278,7 +277,7 @@ namespace Action_Payment
                                     service.Update(en_FUL_up);
                                 }
                             }
-                            strMess.AppendLine("10");
+                            TracingSe.Trace("10");
                             // check total late day of all INS compair with termination date and total late day on PMScheme ( if pass condition - create FUL )
                             // -----------------------check next INS ----------------------------------
                             Entity en_PMS = service.Retrieve(((EntityReference)optionentryEn["bsd_paymentscheme"]).LogicalName, ((EntityReference)optionentryEn["bsd_paymentscheme"]).Id,
@@ -290,46 +289,46 @@ namespace Action_Payment
                             // get next Ins - if next INS have duedate and over duedate
                             Entity en_pro = service.Retrieve(((EntityReference)optionentryEn["bsd_project"]).LogicalName, ((EntityReference)optionentryEn["bsd_project"]).Id,
                                                  new ColumnSet(true));
-                            strMess.AppendLine("11");
-                            strMess.AppendLine("bsd_lastinstallment1: " + PaymentDetailEn.Contains("bsd_lastinstallment").ToString());
+                            TracingSe.Trace("11");
+                            TracingSe.Trace("bsd_lastinstallment1: " + PaymentDetailEn.Contains("bsd_lastinstallment").ToString());
 
                             bool islastinstallment = PaymentDetailEn.Contains("bsd_lastinstallment") ? (bool)PaymentDetailEn["bsd_lastinstallment"] : false;
                             //if (!PaymentDetailEn.Contains("bsd_lastinstallment") && (bool)PaymentDetailEn["bsd_lastinstallment"] == false)
                             if (islastinstallment == false && PaymentDetailEn.Contains("bsd_name"))
                             {
-                                strMess.AppendLine("11.1");
+                                TracingSe.Trace("11.1");
                                 int i_nextOrderNumber = phaseNum + 1;
-                                strMess.AppendLine("11.2");
-                                strMess.AppendLine("optionentryEn: " + optionentryEn.Id.ToString());
+                                TracingSe.Trace("11.2");
+                                TracingSe.Trace("optionentryEn: " + optionentryEn.Id.ToString());
                                 //thanhdovan
                                 EntityCollection ec_nextINS = get_nextINS(service, i_nextOrderNumber, optionentryEn.Id);
-                                strMess.AppendLine("11.3");
+                                TracingSe.Trace("11.3");
                                 if (ec_nextINS.Entities.Count > 0)
                                 {
-                                    strMess.AppendLine("11.4");
+                                    TracingSe.Trace("11.4");
                                     if (ec_nextINS.Entities[0].Contains("bsd_duedate"))
                                     {
-                                        strMess.AppendLine("11.5");
+                                        TracingSe.Trace("11.5");
                                         DateTime d_Ins_duedate = new DateTime();
                                         d_Ins_duedate = (DateTime)ec_nextINS.Entities[0]["bsd_duedate"];
                                         int i_late = (int)DateTime.Now.Date.Subtract(d_Ins_duedate.Date).TotalDays;
-                                        strMess.AppendLine("11.6");
-                                        strMess.AppendLine("PaymentDetailEn: " + PaymentDetailEn.Id.ToString());
+                                        TracingSe.Trace("11.6");
+                                        TracingSe.Trace("PaymentDetailEn: " + PaymentDetailEn.Id.ToString());
                                         if (i_late > i_bsd_latedaysforeachinstallment)
                                         {
-                                            strMess.AppendLine("11.7");
+                                            TracingSe.Trace("11.7");
                                             string s_proCode = en_pro.Contains("bsd_projectcode") ? (string)en_pro["bsd_projectcode"] : "";
                                             if (check_Ins_FUL(service, optionentryEn.Id, 100000004, PaymentDetailEn.ToEntityReference()) == false)
                                             {
-                                                strMess.AppendLine("11.8");
+                                                TracingSe.Trace("11.8");
                                                 create_FUL_Installment(optionentryEn, 100000004, (EntityReference)optionentryEn["bsd_unitnumber"], PaymentDetailEn, s_proCode, service, d_now, en_pro.ToEntityReference());
-                                                strMess.AppendLine("11.8.1");
+                                                TracingSe.Trace("11.8.1");
                                                 Entity e_tmpOE = new Entity(optionentryEn.LogicalName);
-                                                strMess.AppendLine("11.8.2");
+                                                TracingSe.Trace("11.8.2");
                                                 e_tmpOE.Id = optionentryEn.Id;
-                                                strMess.AppendLine("11.8.3");
+                                                TracingSe.Trace("11.8.3");
                                                 e_tmpOE["bsd_followuplist"] = true;
-                                                strMess.AppendLine("11.9");
+                                                TracingSe.Trace("11.9");
                                                 service.Update(e_tmpOE);
                                             }
 
@@ -337,7 +336,7 @@ namespace Action_Payment
                                     }
                                 } //end of  if (ec_nextINS.Entities.Count > 0)
                             } // end of if (!PaymentDetailEn.Contains("bsd_lastinstallment") && (bool)PaymentDetailEn["bsd_lastinstallment"] == false)
-                            strMess.AppendLine("12");
+                            TracingSe.Trace("12");
                             // ---------------- end check next INS over duedate --------------------------------
 
                             // check total late day
@@ -370,7 +369,7 @@ namespace Action_Payment
                                 }
 
                             }
-                            strMess.AppendLine("13");
+                            TracingSe.Trace("13");
                             /// create FUL when sumlate day > late day of each INS
                             i_sumLate += i_latedayEachIns;
                             // tong so ngay tre all INS so sanh voi so ngya quy dinh tren PMScheme
@@ -389,7 +388,7 @@ namespace Action_Payment
 
                             }// end of if i_sum_Lateday >= totalLateday
                              // ------------------- end check total late day of all INS of OE --------------------
-                            strMess.AppendLine("14");
+                            TracingSe.Trace("14");
                         }
                         //  ---------------- end check FUL --------------------------
                     }
@@ -398,7 +397,7 @@ namespace Action_Payment
             // }
             // catch (Exception ex)
             // {
-            //    strMess.AppendLine(ex.Message);
+            //    TracingSe.Trace(ex.Message);
             //    throw new InvalidPluginExecutionException(strMess.ToString());
             //}
         }
@@ -430,7 +429,7 @@ namespace Action_Payment
         private void checkPmsDtl(Entity paymentEn)
         {
             int bsd_paymenttype = paymentEn.Contains("bsd_paymenttype") ? ((OptionSetValue)paymentEn["bsd_paymenttype"]).Value : 0;
-            strMess.AppendLine("bsd_paymenttype: " + bsd_paymenttype.ToString());
+            TracingSe.Trace("bsd_paymenttype: " + bsd_paymenttype.ToString());
             if (bsd_paymenttype != 100000003 && bsd_paymenttype != 100000005)
             {
                 if (!paymentEn.Contains("bsd_paymentschemedetail"))
@@ -474,7 +473,7 @@ namespace Action_Payment
                   </entity>
             </fetch>";
             fetchXml = string.Format(fetchXml, oeID, i_order);
-            strMess.AppendLine("fetchXml: " + fetchXml);
+            TracingSe.Trace("fetchXml: " + fetchXml);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
@@ -509,7 +508,7 @@ namespace Action_Payment
                 Entity en_U = serv.Retrieve(en_Unit.LogicalName, en_Unit.Id, new ColumnSet(new string[] { "name" }));
                 Entity tmp = new Entity("bsd_followuplist");
                 Entity customer = new Entity();
-                strMess.AppendLine("en_installment: " + en_installment.Id.ToString());
+                TracingSe.Trace("en_installment: " + en_installment.Id.ToString());
                 if (((EntityReference)e_OE["customerid"]).LogicalName == "contact")
                 {
                     customer = service.Retrieve(((EntityReference)e_OE["customerid"]).LogicalName, ((EntityReference)e_OE["customerid"]).Id,
@@ -536,7 +535,7 @@ namespace Action_Payment
                 tmp["bsd_project"] = er_pro;
                 tmp["bsd_expiredate"] = d_date;
                 tmp["bsd_owneroptionreservation"] = (EntityReference)e_OE["ownerid"];
-                strMess.AppendLine("create_FUL_Installment");
+                TracingSe.Trace("create_FUL_Installment");
                 service.Create(tmp);
             }
             else

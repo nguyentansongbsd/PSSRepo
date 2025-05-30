@@ -16,20 +16,20 @@ namespace Action_Payment
         IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
         IServiceProvider serviceProvider;
-        StringBuilder strMess = new StringBuilder();
-        public Payment(IServiceProvider serviceProvider, StringBuilder strMess1)
+        ITracingService TracingSe = null;
+        public Payment(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
-            strMess = strMess1;
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
         }
         public void deposit(Entity paymentEn)
         {
             Entity en_payment = new Entity(paymentEn.LogicalName);
             en_payment.Id = paymentEn.Id;
-            strMess.AppendLine("vào deposit");
+            TracingSe.Trace("vào deposit");
 
             if (paymentEn.Contains("bsd_reservation"))
             {
@@ -284,31 +284,31 @@ namespace Action_Payment
             DateTime pm_ReceiptDate = RetrieveLocalTimeFromUTCTime((DateTime)paymentEn["bsd_paymentactualtime"]);
             //  if (!paymentEn.Contains("bsd_miscellaneous")) throw new InvalidPluginExecutionException("Please check field Miscellaneous!");
             // if (psd_statuscode != 100000001) throw new InvalidPluginExecutionException("Installment " + (string)PaymentDetailEn["bsd_name"] + " has not been paid, cannot excute this payment!");
-            strMess.AppendLine("1");
+            TracingSe.Trace("1");
             if (s_bsd_arraymicellaneousid == "") throw new InvalidPluginExecutionException("You must check at least one row on Miscellaneous sub-grid!");
-            strMess.AppendLine("2");
+            TracingSe.Trace("2");
             if (s_bsd_arraymicellaneousid != "")
             {
-                strMess.AppendLine("2.1");
+                TracingSe.Trace("2.1");
                 string missID = paymentEn.Contains("bsd_arraymicellaneousid") ? (string)paymentEn["bsd_arraymicellaneousid"] : "";
                 string missAM = paymentEn.Contains("bsd_arraymicellaneousamount") ? (string)paymentEn["bsd_arraymicellaneousamount"] : "";
                 decimal pm_balance = paymentEn.Contains("bsd_balance") ? ((Money)paymentEn["bsd_balance"]).Value : 0;
                 Entity Product = service.Retrieve("product", ((EntityReference)optionentryEn["bsd_unitnumber"]).Id, new ColumnSet(true));
-                strMess.AppendLine("2.2");
+                TracingSe.Trace("2.2");
                 if (missID != "")
                 {
-                    strMess.AppendLine("2.3");
+                    TracingSe.Trace("2.3");
                     string[] arrId = missID.Split(',');
                     string[] arrMissAmount = missAM.Split(',');
-                    strMess.AppendLine("2.4");
+                    TracingSe.Trace("2.4");
                     for (int i = 0; i < arrId.Length; i++)
                     {
                         string[] arr = arrId[i].Split('_');
                         string micellaneousid = arr[0];
-                        strMess.AppendLine("2.5");
+                        TracingSe.Trace("2.5");
                         decimal miss = decimal.Parse(arrMissAmount[i].ToString());
-                        strMess.AppendLine("miss: " + miss.ToString());
-                        strMess.AppendLine("micellaneousid: " + micellaneousid.ToString());
+                        TracingSe.Trace("miss: " + miss.ToString());
+                        TracingSe.Trace("micellaneousid: " + micellaneousid.ToString());
                         Entity enMiss = getMiscellaneous(service, micellaneousid);
                         check_ins_notpaid(((EntityReference)enMiss["bsd_installment"]).Id, optionentryEn.Id);
                         decimal d_MI_paid = enMiss.Contains("bsd_paidamount") ? ((Money)enMiss["bsd_paidamount"]).Value : 0;
@@ -316,25 +316,25 @@ namespace Action_Payment
 
                         int f_MIS_status = enMiss.Contains("statuscode") ? ((OptionSetValue)enMiss["statuscode"]).Value : 1;
                         if (f_MIS_status == 100000000) throw new InvalidPluginExecutionException("Miscellaneous " + (string)enMiss["bsd_name"] + " has been paid!");
-                        strMess.AppendLine("f_MIS_status: " + f_MIS_status.ToString());
+                        TracingSe.Trace("f_MIS_status: " + f_MIS_status.ToString());
                         Entity en_MIS_up = new Entity(enMiss.LogicalName, enMiss.Id);
 
-                        strMess.AppendLine("2.6");
+                        TracingSe.Trace("2.6");
                         decimal tiendu = pm_amountpay - pm_balance;
                         if (miss == d_MI_balance)
                         {
-                            strMess.AppendLine("2.6.1");
+                            TracingSe.Trace("2.6.1");
                             f_MIS_status = 100000000;
                             d_MI_balance = 0;
                             d_MI_paid += miss;
                             tiendu -= miss;
-                            strMess.AppendLine("2.6.1.1");
+                            TracingSe.Trace("2.6.1.1");
                             createTransPMMiss(paymentEn, optionentryEn, 100000003, enMiss, miss, d_now.Date, service, (string)Product["name"], 0, 0);
 
                         } // end d_amp == d_MI_balance
                         else if (miss < d_MI_balance)
                         {
-                            strMess.AppendLine("2.6.2");
+                            TracingSe.Trace("2.6.2");
                             f_MIS_status = 1;
                             d_MI_balance -= miss;
                             d_MI_paid += miss;
@@ -546,7 +546,7 @@ namespace Action_Payment
                 DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
                 if (s_fees != "")
                 {
-                    strMess.AppendLine("5");
+                    TracingSe.Trace("5");
                     string[] arrId = s_fees.Split(',');
                     string[] arrFeeAmount = s_feesAM.Split(',');
                     for (int i = 0; i < arrId.Length; i++)
@@ -556,9 +556,9 @@ namespace Action_Payment
                         string type1 = arr[1];
 
                         decimal fee = decimal.Parse(arrFeeAmount[i].ToString());
-                        strMess.AppendLine("6.6");
+                        TracingSe.Trace("6.6");
                         Entity enInstallment = getInstallment(service, installmentid);
-                        strMess.AppendLine("enInstallment: " + enInstallment.Id.ToString());
+                        TracingSe.Trace("enInstallment: " + enInstallment.Id.ToString());
                         bool f_mains = (enInstallment.Contains("bsd_maintenancefeesstatus")) ? (bool)enInstallment["bsd_maintenancefeesstatus"] : false;
                         bool f_manas = (enInstallment.Contains("bsd_managementfeesstatus")) ? (bool)enInstallment["bsd_managementfeesstatus"] : false;
 
@@ -575,7 +575,7 @@ namespace Action_Payment
                         decimal manaBL = bsd_managementamount - bsd_managementfeepaid - bsd_managementfeewaiver;
                         Entity en_INS_update = new Entity(enInstallment.LogicalName);
                         en_INS_update.Id = enInstallment.Id;
-                        strMess.AppendLine("en_INS_update: " + en_INS_update.Id.ToString());
+                        TracingSe.Trace("en_INS_update: " + en_INS_update.Id.ToString());
                         switch (type1)
                         {
                             case "main":
@@ -642,7 +642,7 @@ namespace Action_Payment
         {
             info_Error info = new info_Error();
             info.index = 1;
-            strMess.AppendLine(String.Format("#.Trace function intallment: "));
+            TracingSe.Trace(String.Format("#.Trace function intallment: "));
             DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
             decimal d_inter = 0;
             int i_lateday = 0;
@@ -689,15 +689,15 @@ namespace Action_Payment
                 if (isCheck.count != 0)
                 {
                     info.createMessageNew("The Installment you are paying has no due date.");
-                    strMess.AppendLine("Please update due date before confirming payment!");
-                    throw new InvalidPluginExecutionException(strMess.ToString());
+                    TracingSe.Trace("Please update due date before confirming payment!");
+                    throw new InvalidPluginExecutionException("Please update due date before confirming payment!");
                 }
                 else if (!isCheck.result)
                 {
                     info.createMessageNew("The Installment you are paying has no due date.");
-                    strMess.AppendLine("Please update due date before confirming payment!");
+                    TracingSe.Trace("Please update due date before confirming payment!");
                     info.count = -1000;
-                    throw new InvalidPluginExecutionException(strMess.ToString());
+                    throw new InvalidPluginExecutionException("Please update due date before confirming payment!");
                 }
             }
             #endregion
@@ -730,13 +730,13 @@ namespace Action_Payment
                 throw new InvalidPluginExecutionException((string)PaymentDetailEn["bsd_name"] + " has been Paid!");
             if (pm_differentamount <= 0 && f_bsd_latepayment == true)
                 throw new InvalidPluginExecutionException("The difference amount is " + (pm_differentamount == 0 ? " equal 0" : " less than 0") + ". Cannot payment for Intesrest charge amount. PLease uncheck field 'Late payment'!");
-            strMess.AppendLine("6.9");
+            TracingSe.Trace("6.9");
             decimal tiendu = 0;
             // --------------- difference AM = 0 -------------------
             if (pm_amountpay == pm_balance)
             {
                 info.index = 5;
-                strMess.AppendLine(String.Format("- Case: pm_amountpay == pm_balance"));
+                TracingSe.Trace(String.Format("- Case: pm_amountpay == pm_balance"));
                 #region --- pm_amountpay == pm_balance ---
                 psd_statuscode = 100000001;  // paid
                 psd_amountPaid += pm_balance;
@@ -746,15 +746,15 @@ namespace Action_Payment
                 psd_bsd_balance = 0;
                 // interst charge amount for this INS
 
-                strMess.AppendLine(String.Format("+ CheckInterestCharge"));
+                TracingSe.Trace(String.Format("+ CheckInterestCharge"));
                 CheckInterestCharge(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
                 decimal d_sumTmp_IC_amount = psd_bsd_interestchargeamount + Convert.ToDecimal(d_inter); // Intest charge amount moi + IC san co trong INS
 
                 //>>> Trace Test ===================================================================================
-                strMess.AppendLine(String.Format(string.Format("+ d_sumTmp_IC_amount: {0}", d_sumTmp_IC_amount)));
+                TracingSe.Trace(String.Format(string.Format("+ d_sumTmp_IC_amount: {0}", d_sumTmp_IC_amount)));
                 var result = CheckInterestCharge_New(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
-                strMess.AppendLine(String.Format(string.Format("####. result function CheckInterestCharge_New")));
-                strMess.AppendLine(result.message);
+                TracingSe.Trace(String.Format(string.Format("####. result function CheckInterestCharge_New")));
+                TracingSe.Trace(result.message);
                 //==================================================================================================
 
 
@@ -763,7 +763,7 @@ namespace Action_Payment
                 if (i_lateday < psd_actualgracedays) i_lateday = psd_actualgracedays;
                 i_bsd_previousdelays = i_lateday;
 
-                strMess.AppendLine(String.Format(string.Format("#. Begin update PaymentDetailEn")));
+                TracingSe.Trace(String.Format(string.Format("#. Begin update PaymentDetailEn")));
                 Entity en_INS_up = new Entity(PaymentDetailEn.LogicalName);
                 en_INS_up.Id = PaymentDetailEn.Id;
 
@@ -774,7 +774,7 @@ namespace Action_Payment
                 //en_INS_up["bsd_balance"] = new Money(psd_amountPhase - (psd_amountPaid + psd_deposit) - psd_waiverIns);
                 //en_INS_up["bsd_balance"] = new Money(psd_amountPhase - psd_amountPaid - psd_waiverIns);
                 en_INS_up["statuscode"] = new OptionSetValue(psd_statuscode);
-                strMess.AppendLine("6.9.5");
+                TracingSe.Trace("6.9.5");
                 // Han_28072018: Khong can payment sts = paid moi update
                 //if (psd_statuscode == 100000001)
                 en_INS_up["bsd_paiddate"] = pm_ReceiptDate; //  d_now;  // update ngay paid cua INS
@@ -783,22 +783,22 @@ namespace Action_Payment
                 en_INS_up["bsd_previousdelays"] = i_lateday;
                 en_INS_up["bsd_interestchargeamount"] = new Money(d_sumTmp_IC_amount);
                 en_INS_up["bsd_interestchargestatus"] = new OptionSetValue(100000000); // not paid
-                strMess.AppendLine("6.9.6");
+                TracingSe.Trace("6.9.6");
                 //Han_28072018: Update Interest Start Date khi thanh toan
                 DateTime psd_intereststartdate = RetrieveLocalTimeFromUTCTime(i_intereststartdate);
                 en_INS_up["bsd_intereststartdate"] = psd_intereststartdate;
 
-                strMess.AppendLine(String.Format(string.Format("saving ...")));
+                TracingSe.Trace(String.Format(string.Format("saving ...")));
                 service.Update(en_INS_up);
-                strMess.AppendLine(String.Format(string.Format("Saved. Done")));
+                TracingSe.Trace(String.Format(string.Format("Saved. Done")));
                 #endregion
             }
             if (pm_amountpay < pm_balance)
             {
                 info.index = 6;
-                strMess.AppendLine(String.Format("- Case: pm_amountpay < pm_balance"));
+                TracingSe.Trace(String.Format("- Case: pm_amountpay < pm_balance"));
                 #region --- pm_amountpay < pm_balance ---
-                strMess.AppendLine("6.10");
+                TracingSe.Trace("6.10");
                 psd_statuscode = 100000000;  // not paid
                 psd_amountPaid += pm_amountpay;
 
@@ -806,7 +806,7 @@ namespace Action_Payment
                                                           // update installment & OE
                                                           //psd_bsd_balance -= (pm_amountpay+ psd_deposit);
                 psd_bsd_balance -= (pm_amountpay);
-                strMess.AppendLine("6.10.1");
+                TracingSe.Trace("6.10.1");
                 #region -------------- interest charge amount for this payment & INS -----------------
                 CheckInterestCharge(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
                 decimal d_sumTmp_IC_amount = psd_bsd_interestchargeamount + Convert.ToDecimal(d_inter); // Intest charge amount moi + IC san co trong INS
@@ -814,7 +814,7 @@ namespace Action_Payment
                 // check outstanding day
                 if (i_lateday < psd_actualgracedays) i_lateday = psd_actualgracedays;
                 i_bsd_previousdelays = i_lateday;
-                strMess.AppendLine("6.10.2");
+                TracingSe.Trace("6.10.2");
 
                 Entity en_INS_up = new Entity(PaymentDetailEn.LogicalName);
                 en_INS_up.Id = PaymentDetailEn.Id;
@@ -829,44 +829,44 @@ namespace Action_Payment
                 en_INS_up["bsd_previousdelays"] = i_lateday;
                 en_INS_up["bsd_interestchargeamount"] = new Money(d_sumTmp_IC_amount);
                 en_INS_up["bsd_interestchargestatus"] = new OptionSetValue(100000000); // not paid
-                strMess.AppendLine("6.10.3");
+                TracingSe.Trace("6.10.3");
                 //Han_28072018: Update Interest Start Date khi thanh toan
                 DateTime psd_intereststartdate = RetrieveLocalTimeFromUTCTime(i_intereststartdate);
                 en_INS_up["bsd_intereststartdate"] = psd_intereststartdate;
-                strMess.AppendLine("6.10.4");
+                TracingSe.Trace("6.10.4");
                 service.Update(en_INS_up);
-                strMess.AppendLine("6.10.5");
+                TracingSe.Trace("6.10.5");
                 #endregion
                 #endregion
             }
             if (pm_amountpay > pm_balance)
             {
                 info.index = 7;
-                strMess.AppendLine(String.Format("- Case: pm_amountpay > pm_balance"));
+                TracingSe.Trace(String.Format("- Case: pm_amountpay > pm_balance"));
                 #region --- pm_amountpay > pm_balance ---
-                strMess.AppendLine("pm_amountpay > pm_balance");
-                strMess.AppendLine("7");
+                TracingSe.Trace("pm_amountpay > pm_balance");
+                TracingSe.Trace("7");
                 tiendu = pm_amountpay - pm_balance;
                 psd_statuscode = 100000001;  //  paid
                 psd_amountPaid += pm_balance;
-                strMess.AppendLine("7.1");
+                TracingSe.Trace("7.1");
                 d_oe_bsd_totalamountpaid += pm_balance; // deposit payment had updated total AM of Quote - already had deposit amount
                                                         // update installment & OE
                 psd_bsd_balance = 0;
-                strMess.AppendLine("7.2");
+                TracingSe.Trace("7.2");
                 #region -------------- interest charge amount for this payment & INS -----------------
-                strMess.AppendLine("CheckInterestCharge");
-                strMess.AppendLine("pm_balance: " + pm_balance.ToString());
+                TracingSe.Trace("CheckInterestCharge");
+                TracingSe.Trace("pm_balance: " + pm_balance.ToString());
                 CheckInterestCharge(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_balance, optionentryEn, ref i_intereststartdate);
                 decimal d_sumTmp_IC_amount = psd_bsd_interestchargeamount + Convert.ToDecimal(d_inter); // Intest charge amount moi + IC san co trong INS
-                strMess.AppendLine("8");
+                TracingSe.Trace("8");
                 if (d_sumTmp_IC_amount < 0) d_sumTmp_IC_amount = 0;
                 // check outstanding day
                 if (i_lateday < psd_actualgracedays) i_lateday = psd_actualgracedays;
                 i_bsd_previousdelays = i_lateday;
                 Entity en_INS_up = new Entity(PaymentDetailEn.LogicalName);
                 en_INS_up.Id = PaymentDetailEn.Id;
-                strMess.AppendLine("9");
+                TracingSe.Trace("9");
                 en_INS_up["bsd_interestchargeamount"] = new Money(d_sumTmp_IC_amount);
                 //en_INS_up["bsd_amountwaspaid"] = new Money(psd_amountPaid+ psd_deposit);
                 en_INS_up["bsd_amountwaspaid"] = new Money(psd_amountPaid);
@@ -878,7 +878,7 @@ namespace Action_Payment
                 en_INS_up["bsd_previousdelays"] = i_lateday;
 
                 en_INS_up["bsd_interestchargestatus"] = new OptionSetValue(100000000); // not paid
-                strMess.AppendLine("10");
+                TracingSe.Trace("10");
                 //Han_28072018: Update Interest Start Date khi thanh toan
                 DateTime psd_intereststartdate = RetrieveLocalTimeFromUTCTime(i_intereststartdate);
                 en_INS_up["bsd_intereststartdate"] = psd_intereststartdate;
@@ -886,7 +886,7 @@ namespace Action_Payment
                 service.Update(en_INS_up);
 
                 #endregion -------------------
-                strMess.AppendLine("11");
+                TracingSe.Trace("11");
                 // difference amount > 0
                 #region ---------------------- Late payment & Transaction AM  -------------------------
                 //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -958,16 +958,16 @@ namespace Action_Payment
 
                     } // end if f_bsd_latepayment =  true
                     #endregion-----------
-                    strMess.AppendLine("12");
+                    TracingSe.Trace("12");
                     #region ----- Late pm = false -----------
                     if (f_bsd_latepayment == false)
                     {
                         //thanh---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-                        strMess.AppendLine("13");
+                        TracingSe.Trace("13");
                         if (s_bsd_arrayamountpay != "" || s_bsd_arrayinstallmentinterest != "" || s_bsd_arrayfees != "" || s_bsd_arraymicellaneousid != "")
                         {
-                            strMess.AppendLine("14");
+                            TracingSe.Trace("14");
                             if (tiendu < d_bsd_totalapplyamount)
                                 throw new InvalidPluginExecutionException("The remaining amount is not enough to pay for transaction payments have been selected!");
 
@@ -977,7 +977,7 @@ namespace Action_Payment
                                 //transactionPM_INS(service, s_bsd_arraypsdid, s_bsd_arrayamountpay, s_bsd_arrayinstallmentinterest, s_bsd_arrayinterestamount,
                                 //s_bsd_arrayfees, s_bsd_arrayfeesamount, tiendu, ref d_oe_bsd_totalamountpaid, paymentEn, optionentryEn, Product, pm_ReceiptDate, customerRef,
                                 // s_bsd_arraymicellaneousid, s_bsd_arraymicellaneousamount);
-                                strMess.AppendLine("14.1");
+                                TracingSe.Trace("14.1");
                                 transactionPM_INS(
                                     service,
                                     s_bsd_arraypsdid,
@@ -996,7 +996,7 @@ namespace Action_Payment
                                     s_bsd_arraymicellaneousid,
                                     s_bsd_arraymicellaneousamount
                                 );
-                                strMess.AppendLine("14.2");
+                                TracingSe.Trace("14.2");
 
                             }
 
@@ -1014,10 +1014,10 @@ namespace Action_Payment
                                 create_AdvPM(optionentryEn, customerRef, paymentEn, tiendu, (EntityReference)optionentryEn["bsd_project"], pm_ReceiptDate);
                             }
                         }
-                        strMess.AppendLine("14.3");
+                        TracingSe.Trace("14.3");
                     }
                     #endregion-----------------------------
-                    strMess.AppendLine("15");
+                    TracingSe.Trace("15");
                 } // end if tiendu > 0
 
                 #endregion -------------- end late pm & transaction am ----------------- 
@@ -1025,11 +1025,11 @@ namespace Action_Payment
             }
 
             //>>> Trace Test
-            strMess.AppendLine(String.Format("- pm_amountpay: {0}", pm_amountpay));
-            strMess.AppendLine(String.Format("- pm_balance: {0}", pm_balance));
-            strMess.AppendLine(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
-            strMess.AppendLine(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
-            strMess.AppendLine(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
+            TracingSe.Trace(String.Format("- pm_amountpay: {0}", pm_amountpay));
+            TracingSe.Trace(String.Format("- pm_balance: {0}", pm_balance));
+            TracingSe.Trace(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
+            TracingSe.Trace(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
+            TracingSe.Trace(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
 
             //Throw #######################################
             //throw new Exception(strMess.ToString());
@@ -1113,14 +1113,14 @@ namespace Action_Payment
             decimal psd_bsd_interestwaspaid = PaymentDetailEn.Contains("bsd_interestwaspaid") ? ((Money)PaymentDetailEn["bsd_interestwaspaid"]).Value : 0;
             int psd_bsd_interestchargestatus = PaymentDetailEn.Contains("bsd_interestchargestatus") ? ((OptionSetValue)PaymentDetailEn["bsd_interestchargestatus"]).Value : 0;
 
-            strMess.AppendLine("Load option entry");
+            TracingSe.Trace("Load option entry");
             Entity optionentryEn = service.Retrieve("salesorder", ((EntityReference)paymentEn["bsd_optionentry"]).Id, new ColumnSet(true));
             decimal d_oe_bsd_totalamountpaid = optionentryEn.Contains("bsd_totalamountpaid") ? ((Money)optionentryEn["bsd_totalamountpaid"]).Value : 0;
             EntityReference customerRef = (EntityReference)optionentryEn["customerid"];
 
             Entity Product = service.Retrieve("product", ((EntityReference)optionentryEn["bsd_unitnumber"]).Id, new ColumnSet(true));
             decimal tiendu = 0;
-            strMess.AppendLine("7");
+            TracingSe.Trace("7");
 
             if (psd_bsd_interestchargestatus == 100000001)
             {
@@ -1199,7 +1199,7 @@ namespace Action_Payment
         public void update(Entity paymentEn, decimal pm_amountpay, decimal pm_sotiendot, decimal pm_sotiendatra, DateTime d_now, decimal pm_balance, decimal pm_differentamount, decimal d_inter, int i_lateday, int type, decimal d_bsd_assignamountmaster)
         {
             info_Error info = new info_Error();
-            strMess.AppendLine("16 Update payment");
+            TracingSe.Trace("16 Update payment");
             Entity enUpPay = new Entity(paymentEn.LogicalName, paymentEn.Id);
             enUpPay["bsd_amountpay"] = new Money(pm_amountpay);
             enUpPay["bsd_totalamountpayablephase"] = new Money(pm_sotiendot);
@@ -1207,16 +1207,16 @@ namespace Action_Payment
             enUpPay["statuscode"] = new OptionSetValue(100000000);
             enUpPay["bsd_confirmeddate"] = d_now;
             enUpPay["bsd_confirmperson"] = new EntityReference("systemuser", context.UserId);
-            strMess.AppendLine("17");
+            TracingSe.Trace("17");
             enUpPay["bsd_balance"] = new Money(pm_balance);
             enUpPay["bsd_differentamount"] = new Money(pm_differentamount);
             if (type == 100000002)
             {
                 enUpPay["bsd_assignamount"] = new Money(d_bsd_assignamountmaster);
             }
-            strMess.AppendLine("18");
+            TracingSe.Trace("18");
             service.Update(enUpPay);
-            strMess.AppendLine("19 End Update payment");
+            TracingSe.Trace("19 End Update payment");
         }
         public EntityCollection Get1st_Resv(string resvID)
         {
@@ -1382,7 +1382,7 @@ namespace Action_Payment
                 </entity>
                 </fetch>";
             fetchXml = string.Format(fetchXml, unit_id.ToString());
-            strMess.AppendLine("fetch: " + fetchXml);
+            TracingSe.Trace("fetch: " + fetchXml);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
@@ -1409,7 +1409,7 @@ namespace Action_Payment
                 </entity>
                 </fetch>";
             fetchXml = string.Format(fetchXml, miscellaneousid);
-            strMess.AppendLine(fetchXml);
+            TracingSe.Trace(fetchXml);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             if (entc.Entities.Count > 0)
             {
@@ -1427,19 +1427,19 @@ namespace Action_Payment
             // transaction type :Other
             Entity en_pro = serv.Retrieve(((EntityReference)optionEntry["bsd_project"]).LogicalName, ((EntityReference)optionEntry["bsd_project"]).Id,
                 new ColumnSet(new string[] { "bsd_name" }));
-            strMess.AppendLine("2.6.1.1.2");
+            TracingSe.Trace("2.6.1.1.2");
             Entity en_TransPM = new Entity("bsd_transactionpayment");
             en_TransPM["bsd_name"] = (string)en_pro["bsd_name"] + "-" + producName + "-" + (string)optionEntry["name"] + "-" + (string)payment["bsd_name"];
             en_TransPM["statuscode"] = new OptionSetValue(100000000); // confirm
             en_TransPM["bsd_payment"] = payment.ToEntityReference();
             en_TransPM["bsd_transactiontype"] = new OptionSetValue(i_transactionType);
             en_TransPM["bsd_installment"] = (EntityReference)enMiss["bsd_installment"];
-            strMess.AppendLine("2.6.1.1.3");
+            TracingSe.Trace("2.6.1.1.3");
             en_TransPM["bsd_miscellaneous"] = enMiss.ToEntityReference();
-            strMess.AppendLine("2.6.1.1.4");
+            TracingSe.Trace("2.6.1.1.4");
             en_TransPM["bsd_amount"] = new Money(amount);
             en_TransPM["createdon"] = d_now;
-            strMess.AppendLine("2.6.1.1.5");
+            TracingSe.Trace("2.6.1.1.5");
             serv.Create(en_TransPM);
         }
         public void create_AdvPM(Entity optionentryEn, EntityReference customerRef, Entity paymentEn, decimal tiendu, EntityReference project, DateTime d_transDate)
@@ -1532,18 +1532,18 @@ namespace Action_Payment
             //<condition attribute='bsd_duedatecalculatingmethod' operator='eq' value='100000002' />
 
             fetchXml = string.Format(fetchXml, installmentid);
-            strMess.AppendLine("getInstallment");
-            strMess.AppendLine(fetchXml);
+            TracingSe.Trace("getInstallment");
+            TracingSe.Trace(fetchXml);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc.Entities[0];
         }
 
         public void CheckInterestCharge(IOrganizationService serv, ref decimal d_inter, ref int i_late, Entity PaymentDetailEn, Entity paymentEn, decimal pm_amountpay, Entity optionentryEn, ref DateTime i_intereststartdate)
         {
-            strMess.AppendLine("pm_amountpay: " + pm_amountpay.ToString());
-            strMess.AppendLine("CheckInterestCharge");
-            strMess.AppendLine("Input d_inter: " + d_inter);
-            strMess.AppendLine("Input i_late: " + i_late);
+            TracingSe.Trace("pm_amountpay: " + pm_amountpay.ToString());
+            TracingSe.Trace("CheckInterestCharge");
+            TracingSe.Trace("Input d_inter: " + d_inter);
+            TracingSe.Trace("Input i_late: " + i_late);
             if (!PaymentDetailEn.Contains("bsd_duedate"))  // if pmsdtl not contain duedate( last or ES installment )
             {
                 d_inter = 0;
@@ -1553,8 +1553,8 @@ namespace Action_Payment
             {
                 DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
                 DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
-                strMess.AppendLine("d_duedate: " + d_duedate);
-                strMess.AppendLine("d_receiptz: " + d_receipt);
+                TracingSe.Trace("d_duedate: " + d_duedate);
+                TracingSe.Trace("d_receiptz: " + d_receipt);
                 OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
                 //parameter:
                 req["installmentid"] = PaymentDetailEn.Id.ToString();
@@ -1562,10 +1562,12 @@ namespace Action_Payment
                 req["receiptdate"] = d_receipt.ToString("MM/dd/yyyy");
                 //execute the request
                 OrganizationResponse response = service.Execute(req);
+                TracingSe.Trace("response.Results.Count: " + response.Results.Count);
                 foreach (var item in response.Results)
                 {
                     var serializer = new JavaScriptSerializer();
                     var result = serializer.Deserialize<Installment>(item.Value.ToString());
+                    TracingSe.Trace("item.Value: " + item.Value.ToString());
                     i_late = result.LateDays;
                     i_intereststartdate = result.InterestStarDate;
                     if (i_late < 0) i_late = 0;
@@ -1574,12 +1576,12 @@ namespace Action_Payment
                         if (i_late > 0)
                         {
                             decimal d_percent = result.InterestPercent;
-                            strMess.AppendLine("d_percent: " + d_percent.ToString());
+                            TracingSe.Trace("d_percent: " + d_percent.ToString());
                             decimal rangeAmount = result.MaxAmount;
-                            strMess.AppendLine("rangeAmount: " + rangeAmount.ToString());
+                            TracingSe.Trace("rangeAmount: " + rangeAmount.ToString());
                             decimal rangePercent = result.MaxPercent;
                             d_inter = result.InterestCharge;
-                            strMess.AppendLine("installment.calc_InterestCharge: " + d_inter);
+                            TracingSe.Trace("installment.calc_InterestCharge: " + d_inter);
                         }
                     }
                 }
@@ -1590,28 +1592,28 @@ namespace Action_Payment
         {
             info_Error info = new info_Error();
             info.index = 1;
-            strMess.AppendLine("[CheckInterestCharge_New] Tham số đầu vào:");
-            strMess.AppendLine(string.Format(string.Format("- pm_amountpay: {0}", pm_amountpay.ToString())));
-            strMess.AppendLine(string.Format("+ Input d_inter: {0}", d_inter));
-            strMess.AppendLine(string.Format("+ Input i_late: {0}", i_late));
+            TracingSe.Trace("[CheckInterestCharge_New] Tham số đầu vào:");
+            TracingSe.Trace(string.Format(string.Format("- pm_amountpay: {0}", pm_amountpay.ToString())));
+            TracingSe.Trace(string.Format("+ Input d_inter: {0}", d_inter));
+            TracingSe.Trace(string.Format("+ Input i_late: {0}", i_late));
             try
             {
-                strMess.AppendLine("có bsd_signeddadate || bsd_signedcontractdate ");
+                TracingSe.Trace("có bsd_signeddadate || bsd_signedcontractdate ");
                 if (!PaymentDetailEn.Contains("bsd_duedate"))
                 {
-                    strMess.AppendLine("#. Không có bsd_duedate");
+                    TracingSe.Trace("#. Không có bsd_duedate");
                     d_inter = 0;
                     i_late = 0;
                 }
                 else
                 {
-                    strMess.AppendLine("#. Có bsd_duedate");
+                    TracingSe.Trace("#. Có bsd_duedate");
                     DateTime d_duedate = (DateTime)PaymentDetailEn["bsd_duedate"];
                     DateTime d_receipt = (DateTime)paymentEn["bsd_paymentactualtime"];
 
                     //>>> Trace
-                    strMess.AppendLine(string.Format("+ d_duedate: {0}", d_duedate));
-                    strMess.AppendLine(string.Format("+ d_receiptz: {0}", d_receipt));
+                    TracingSe.Trace(string.Format("+ d_duedate: {0}", d_duedate));
+                    TracingSe.Trace(string.Format("+ d_receiptz: {0}", d_receipt));
                     OrganizationRequest req = new OrganizationRequest("bsd_Action_Calculate_Interest");
                     //parameter:
                     req["installmentid"] = PaymentDetailEn.Id.ToString();
@@ -1625,8 +1627,8 @@ namespace Action_Payment
                         var result = serializer.Deserialize<Installment>(item.Value.ToString());
                         i_late = result.LateDays;
                         i_intereststartdate = result.InterestStarDate;
-                        strMess.AppendLine(string.Format("+ i_intereststartdate: {0}", i_intereststartdate));
-                        strMess.AppendLine(string.Format("@. i_late: {0}", i_late));
+                        TracingSe.Trace(string.Format("+ i_intereststartdate: {0}", i_intereststartdate));
+                        TracingSe.Trace(string.Format("@. i_late: {0}", i_late));
 
                         if (i_late < 0) i_late = 0;
                         if (i_late > 0)
@@ -1639,10 +1641,10 @@ namespace Action_Payment
                                 d_inter = result.InterestCharge;
 
                                 //>>> Trace
-                                strMess.AppendLine(string.Format("------------------------------"));
-                                strMess.AppendLine(string.Format("+ d_percent: {0}", d_percent.ToString()));
-                                strMess.AppendLine(string.Format("+ rangeAmount: {0}", rangeAmount.ToString()));
-                                strMess.AppendLine(string.Format("+ installment.calc_InterestCharge: {0}", d_inter.ToString()));
+                                TracingSe.Trace(string.Format("------------------------------"));
+                                TracingSe.Trace(string.Format("+ d_percent: {0}", d_percent.ToString()));
+                                TracingSe.Trace(string.Format("+ rangeAmount: {0}", rangeAmount.ToString()));
+                                TracingSe.Trace(string.Format("+ installment.calc_InterestCharge: {0}", d_inter.ToString()));
                             }
                         }
                     }
@@ -1650,7 +1652,7 @@ namespace Action_Payment
             }
             catch (Exception ex)
             {
-                strMess.AppendLine(string.Format("sys ex: {0}", ex.Message));
+                TracingSe.Trace(string.Format("sys ex: {0}", ex.Message));
             }
             return info;
         }
@@ -1709,7 +1711,7 @@ namespace Action_Payment
             Entity product, DateTime d_now, EntityReference customerRef, string s_bsd_arraymicellaneousid, string s_bsd_arraymicellaneousamount)
         {
             info_Error info = new info_Error();
-            strMess.AppendLine("a");
+            TracingSe.Trace("a");
             string[] s_idINS = { };
             string[] s_amINS = { };
             string[] s_idIC = { };
@@ -1731,14 +1733,14 @@ namespace Action_Payment
                 s_idIC = s_bsd_arrayinstallmentinterest.Split(',');
                 s_amIC = s_bsd_arrayinterestamount.Split(',');
             }
-            strMess.AppendLine("b");
+            TracingSe.Trace("b");
 
             if (tiendu > 0)
             {
                 #region -------------------------- array installment ---------------------------------
                 if (s_bsd_arraypsdid != "")
                 {
-                    strMess.AppendLine("s_bsd_arraypsdid != rỗng");
+                    TracingSe.Trace("s_bsd_arraypsdid != rỗng");
                     EntityCollection ec_INS = get_ecINS(service, s_idINS);
                     if (ec_INS.Entities.Count <= 0) throw new InvalidPluginExecutionException("Cannot find any Installment from Installment list. Please check again!");
                     for (int i = 0; i < ec_INS.Entities.Count; i++)
@@ -1749,7 +1751,7 @@ namespace Action_Payment
 
                         if (!en_pms.Contains("statuscode")) throw new InvalidPluginExecutionException("Please check status code of '" + (string)en_pms["bsd_name"] + "!");
                         int pms_statuscode = ((OptionSetValue)en_pms["statuscode"]).Value;
-                        strMess.AppendLine("1111111111111111");
+                        TracingSe.Trace("1111111111111111");
                         //
                         if (pms_statuscode == 100000001) throw new InvalidPluginExecutionException((string)en_pms["bsd_name"] + " has been Paid!");
 
@@ -1761,7 +1763,7 @@ namespace Action_Payment
                         decimal pms_waiver = en_pms.Contains("bsd_waiveramount") ? ((Money)en_pms["bsd_waiveramount"]).Value : 0;
                         decimal pms_waiverIns = en_pms.Contains("bsd_waiverinstallment") ? ((Money)en_pms["bsd_waiverinstallment"]).Value : 0;
                         decimal pms_bsd_balance = en_pms.Contains("bsd_balance") ? ((Money)en_pms["bsd_balance"]).Value : 0;
-                        strMess.AppendLine("22222222222222");
+                        TracingSe.Trace("22222222222222");
                         bool pms_bsd_maintenancefeesstatus = en_pms.Contains("bsd_maintenancefeesstatus") ? (bool)en_pms["bsd_maintenancefeesstatus"] : false;
                         bool pms_bsd_managementfeesstatus = en_pms.Contains("bsd_managementfeesstatus") ? (bool)en_pms["bsd_managementfeesstatus"] : false;
                         int i_phaseNum = (int)en_pms["bsd_ordernumber"];
@@ -1771,8 +1773,8 @@ namespace Action_Payment
                         decimal pms_IC_amPaid = en_pms.Contains("bsd_interestwaspaid") ? ((Money)en_pms["bsd_interestwaspaid"]).Value : 0;
                         int pms_IC_status = en_pms.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_pms["bsd_interestchargestatus"]).Value : 100000000;
                         int i_pms_bsd_actualgracedays = en_pms.Contains("bsd_actualgracedays") ? (int)en_pms["bsd_actualgracedays"] : 0;
-                        strMess.AppendLine(s_bsd_arraypsdid.ToString());
-                        strMess.AppendLine("3333333333333");
+                        TracingSe.Trace(s_bsd_arraypsdid.ToString());
+                        TracingSe.Trace("3333333333333");
                         #endregion  --------- end retreive INS with id from array -------------
 
                         // k can kiem tra neu installment truoc do da paid hay chua van cho thanh toan installment nay
@@ -1785,16 +1787,16 @@ namespace Action_Payment
                         // get amount of INS ID
                         for (int m = 0; m < s_idINS.Length; m++)
                         {
-                            strMess.AppendLine("vào for");
+                            TracingSe.Trace("vào for");
                             if (en_pms.Id.ToString() == s_idINS[m])
                             {
-                                strMess.AppendLine(s_amINS[0].ToString());
+                                TracingSe.Trace(s_amINS[0].ToString());
                                 d_amp = decimal.Parse(s_amINS[m]);
                                 f_checkIDagain = true;
                                 break;
                             }
                         }
-                        strMess.AppendLine("44444444444444");
+                        TracingSe.Trace("44444444444444");
                         if (f_checkIDagain == false) throw new InvalidPluginExecutionException("Cannot find ID of '" + (string)en_pms["bsd_name"] + "' in Installment array!");
 
                         #region ------------ check balance of INS -----------
@@ -1802,8 +1804,8 @@ namespace Action_Payment
                             pms_bsd_balance = pms_amountPhase - pms_amountPaid - pms_deposit - pms_waiverIns;// psd_balance - psd_deposit
                         else pms_bsd_balance = pms_amountPhase - pms_amountPaid - pms_waiverIns;// psd_balance - psd_deposit
                         #endregion ---------- check balance -----------------
-                        strMess.AppendLine("amount pay: " + d_amp.ToString());
-                        strMess.AppendLine("pms_bsd_balance: " + pms_bsd_balance.ToString());
+                        TracingSe.Trace("amount pay: " + d_amp.ToString());
+                        TracingSe.Trace("pms_bsd_balance: " + pms_bsd_balance.ToString());
                         #region ----------------- d_amp = balance -----------
                         if (d_amp == pms_bsd_balance)
                         {
@@ -1868,39 +1870,39 @@ namespace Action_Payment
                         DateTime psd_intereststartdate = RetrieveLocalTimeFromUTCTime(i_intereststartdate);
                         en_INS_up["bsd_intereststartdate"] = psd_intereststartdate;
                         //
-                        strMess.AppendLine("update en_INS_up");
+                        TracingSe.Trace("update en_INS_up");
                         serv.Update(en_INS_up);
                         #endregion ---------------------------------------------
 
                         #region -------------------- create transaction payment detail -------------
-                        strMess.AppendLine("create transaction payment detail");
+                        TracingSe.Trace("create transaction payment detail");
                         createTransPM(paymentEn, optionentryEn, 100000000, en_pms.Id, d_amp, d_now, serv, (string)product["name"], "", d_IC_amount, i_lateday);
                         #endregion --------------------------------------------
 
                     } // end for each INS in INS array
 
                 } // end if (s_bsd_arrayID !="")
-                strMess.AppendLine("end if (s_bsd_arrayID !=)");
+                TracingSe.Trace("end if (s_bsd_arrayID !=)");
                 #endregion ----------------- end array installment ----------------
 
                 #region ------------------s_bsd_arrayinstallmentinterest!="" -----------------
                 if (s_bsd_arrayinstallmentinterest != "")
                 {
-                    strMess.AppendLine("a.1");
+                    TracingSe.Trace("a.1");
                     EntityCollection ec_INS = get_ecINS(service, s_idIC);
-                    strMess.AppendLine("a.1.2");
+                    TracingSe.Trace("a.1.2");
                     for (int i = 0; i < ec_INS.Entities.Count; i++)
                     {
-                        strMess.AppendLine("a.2");
+                        TracingSe.Trace("a.2");
                         #region ------------------------------- retreive PMSDTL ------------------------------
                         Entity en_pms = ec_INS.Entities[i];
                         en_pms.Id = ec_INS.Entities[i].Id;
-                        strMess.AppendLine("a.3");
+                        TracingSe.Trace("a.3");
                         if (!en_pms.Contains("statuscode")) throw new InvalidPluginExecutionException("Please check status code of '" + (string)en_pms["bsd_name"] + "!");
                         int pms_statuscode = ((OptionSetValue)en_pms["statuscode"]).Value;
                         int pms_IC_status = en_pms.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_pms["bsd_interestchargestatus"]).Value : 100000000;
                         // if statuscode of INS is not paid - can not payment for Interest charge
-                        strMess.AppendLine("a.4");
+                        TracingSe.Trace("a.4");
                         //thanhdo
                         //if (pms_statuscode == 100000000) throw new InvalidPluginExecutionException((string)en_pms["bsd_name"] + " has not Paid yet. Can not payment for Interest charge amount!");
                         if (pms_IC_status == 100000001) throw new InvalidPluginExecutionException(" Interest charge amount of " + (string)en_pms["bsd_name"] + " has been Paid!");
@@ -1909,13 +1911,13 @@ namespace Action_Payment
                         if (!en_pms.Contains("bsd_amountofthisphase")) throw new InvalidPluginExecutionException("Installment " + (string)en_pms["bsd_name"] + " did not contain 'Amount of this phase'!");
 
                         int i_phaseNum = (int)en_pms["bsd_ordernumber"];
-                        strMess.AppendLine("a.5");
+                        TracingSe.Trace("a.5");
                         decimal pms_waiverIC = en_pms.Contains("bsd_waiverinterest") ? ((Money)en_pms["bsd_waiverinterest"]).Value : 0;
                         decimal pms_IC_am = en_pms.Contains("bsd_interestchargeamount") ? ((Money)en_pms["bsd_interestchargeamount"]).Value : 0;
                         decimal pms_IC_amPaid = en_pms.Contains("bsd_interestwaspaid") ? ((Money)en_pms["bsd_interestwaspaid"]).Value : 0;
                         int i_pms_bsd_actualgracedays = en_pms.Contains("bsd_actualgracedays") ? (int)en_pms["bsd_actualgracedays"] : 0;
                         #endregion  --------- end retreive INS with id from array -------------
-                        strMess.AppendLine("a.6");
+                        TracingSe.Trace("a.6");
                         decimal d_amp = 0;
                         bool f_checkIDagain = false;
 
@@ -1986,11 +1988,11 @@ namespace Action_Payment
                 #region  ---------------------------- fees ThanhDo---------------------------------------------
                 if (s_fees != "")
                 {
-                    strMess.AppendLine("s_fees != rỗng");
+                    TracingSe.Trace("s_fees != rỗng");
                     decimal d_oe_bsd_totalamountpaid = optionentryEn.Contains("bsd_totalamountpaid") ? ((Money)optionentryEn["bsd_totalamountpaid"]).Value : 0;
                     //// 170515
                     //// @Han : if Unit contain by payment havent contain field OP date - not allow to payment fees
-                    //strMess.AppendLine("a.2");
+                    //TracingSe.Trace("a.2");
                     //if (!product.Contains("bsd_opdate") || (DateTime)product["bsd_opdate"] == null)
                     //    throw new InvalidPluginExecutionException("Product " + (string)product["name"] + " have not contain OP Date. Cannot Payment fees. Please check again!");
 
@@ -1999,36 +2001,36 @@ namespace Action_Payment
                     ////if (ec_Ins_ES.Entities.Count < 0) throw new InvalidPluginExecutionException("Cannot find Estimate Handover Installment. Please check again!");
                     //bool f_main = (ec_Ins_ES.Entities[0].Contains("bsd_maintenancefeesstatus")) ? (bool)ec_Ins_ES.Entities[0]["bsd_maintenancefeesstatus"] : false;
                     //bool f_mana = (ec_Ins_ES.Entities[0].Contains("bsd_managementfeesstatus")) ? (bool)ec_Ins_ES.Entities[0]["bsd_managementfeesstatus"] : false;
-                    //strMess.AppendLine("a.2.1");
+                    //TracingSe.Trace("a.2.1");
                     //decimal d_bsd_maintenanceamount = ec_Ins_ES.Entities[0].Contains("bsd_maintenanceamount") ? ((Money)ec_Ins_ES.Entities[0]["bsd_maintenanceamount"]).Value : 0;
                     //decimal d_bsd_managementamount = ec_Ins_ES.Entities[0].Contains("bsd_managementamount") ? ((Money)ec_Ins_ES.Entities[0]["bsd_managementamount"]).Value : 0;
-                    //strMess.AppendLine("a.2.2");
+                    //TracingSe.Trace("a.2.2");
                     //decimal d_bsd_maintenancefeepaid = ec_Ins_ES.Entities[0].Contains("bsd_maintenancefeepaid") ? ((Money)ec_Ins_ES.Entities[0]["bsd_maintenancefeepaid"]).Value : 0;
                     //decimal d_bsd_managementfeepaid = ec_Ins_ES.Entities[0].Contains("bsd_managementfeepaid") ? ((Money)ec_Ins_ES.Entities[0]["bsd_managementfeepaid"]).Value : 0;
 
                     //decimal d_mainBL = d_bsd_maintenanceamount - d_bsd_maintenancefeepaid;
                     //decimal d_manaBL = d_bsd_managementamount - d_bsd_managementfeepaid;
                     //#endregion
-                    //strMess.AppendLine("a.2.3");
+                    //TracingSe.Trace("a.2.3");
                     //string s1 = s_fees.Substring(0, 1);
                     //string[] s_am = s_feesAM.Split(',');
                     //decimal d_am1 = decimal.Parse(s_am[0]);
-                    //strMess.AppendLine("a.2.4");
+                    //TracingSe.Trace("a.2.4");
                     //string s2 = "";
                     //decimal d_am2 = 0;
-                    //strMess.AppendLine("a.2.5");
+                    //TracingSe.Trace("a.2.5");
                     //if (s_fees.Length > 1)
                     //{
-                    //    strMess.AppendLine("a.2.6");
+                    //    TracingSe.Trace("a.2.6");
                     //    s2 = s_fees.Substring(2, 1);
-                    //    strMess.AppendLine("a.2.6.1");
+                    //    TracingSe.Trace("a.2.6.1");
                     //    d_am2 = decimal.Parse(s_am[1]);
-                    //    strMess.AppendLine("a.2.6.2");
+                    //    TracingSe.Trace("a.2.6.2");
                     //}
                     //#region ------------------------- Maintenance -----------------
                     //if (s1 == "1") // maintenance fees
                     //{
-                    //    strMess.AppendLine("a.2.7");
+                    //    TracingSe.Trace("a.2.7");
                     //    if (f_main == true) throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
                     //    if (d_am1 < d_mainBL)
                     //    {
@@ -2143,9 +2145,9 @@ namespace Action_Payment
                         string type1 = arr[1];
 
                         decimal fee = decimal.Parse(arrFeeAmount[i].ToString());
-                        strMess.AppendLine("6.6");
+                        TracingSe.Trace("6.6");
                         Entity enInstallment = getInstallment(service, installmentid);
-                        strMess.AppendLine("enInstallment: " + enInstallment.Id.ToString());
+                        TracingSe.Trace("enInstallment: " + enInstallment.Id.ToString());
                         bool f_mains = (enInstallment.Contains("bsd_maintenancefeesstatus")) ? (bool)enInstallment["bsd_maintenancefeesstatus"] : false;
                         bool f_manas = (enInstallment.Contains("bsd_managementfeesstatus")) ? (bool)enInstallment["bsd_managementfeesstatus"] : false;
 
@@ -2162,7 +2164,7 @@ namespace Action_Payment
                         decimal manaBL = bsd_managementamount - bsd_managementfeepaid - bsd_managementfeewaiver;
                         Entity en_INS_update = new Entity(enInstallment.LogicalName);
                         en_INS_update.Id = enInstallment.Id;
-                        strMess.AppendLine("en_INS_update: " + en_INS_update.Id.ToString());
+                        TracingSe.Trace("en_INS_update: " + en_INS_update.Id.ToString());
                         switch (type1)
                         {
                             case "main":
@@ -2216,8 +2218,8 @@ namespace Action_Payment
                 #region  --------------------------- MISCELLINOUS-----------------------------
                 if (s_bsd_arraymicellaneousid != "")
                 {
-                    strMess.AppendLine("s_bsd_arraymicellaneousid:" + s_bsd_arraymicellaneousid);
-                    strMess.AppendLine("s_bsd_arraymicellaneousamount:" + s_bsd_arraymicellaneousamount);
+                    TracingSe.Trace("s_bsd_arraymicellaneousid:" + s_bsd_arraymicellaneousid);
+                    TracingSe.Trace("s_bsd_arraymicellaneousamount:" + s_bsd_arraymicellaneousamount);
                     s_Miss_id = s_bsd_arraymicellaneousid.Split(',');
                     s_Miss_AM = s_bsd_arraymicellaneousamount.Split(',');
                     string[] strSumAmountMis = s_bsd_arraymicellaneousamount.Split(',');
@@ -2225,15 +2227,15 @@ namespace Action_Payment
                     foreach (string amount in strSumAmountMis)
                     {
                         var decimalCovertAmount = Convert.ToDecimal(amount);
-                        strMess.AppendLine("decimalCovertAmount: " + decimalCovertAmount.ToString());
+                        TracingSe.Trace("decimalCovertAmount: " + decimalCovertAmount.ToString());
                         sumMisCheck += decimalCovertAmount;
                     }
                     //decimal amountpayablephaseMis = paymentEn.Contains("bsd_totalamountpayablephase") ? ((Money)paymentEn["bsd_totalamountpayablephase"]).Value : 0;
                     decimal amountpayMis = paymentEn.Contains("bsd_totalapplyamount") ? ((Money)paymentEn["bsd_totalapplyamount"]).Value : 0;
                     //sumMisCheck += amountpayablephaseMis;
                     //throw new InvalidPluginExecutionException("sumMisCheck:" + sumMisCheck.ToString()+ "amountpayMis:"+ amountpayMis.ToString());
-                    strMess.AppendLine("amountpayMis: " + amountpayMis.ToString());
-                    strMess.AppendLine("sumMisCheck: " + sumMisCheck.ToString());
+                    TracingSe.Trace("amountpayMis: " + amountpayMis.ToString());
+                    TracingSe.Trace("sumMisCheck: " + sumMisCheck.ToString());
                     if (amountpayMis < sumMisCheck)
                     {
                         throw new InvalidPluginExecutionException("Invalid amount!");
@@ -2241,27 +2243,27 @@ namespace Action_Payment
 
                     EntityCollection ec_MIS = get_ecMIS(service, s_Miss_id, optionentryEn.Id.ToString());
                     if (ec_MIS.Entities.Count < 0) throw new InvalidPluginExecutionException("There is not any Miscellaneous found!");
-                    strMess.AppendLine(ec_MIS.Entities.Count.ToString());
+                    TracingSe.Trace(ec_MIS.Entities.Count.ToString());
                     for (int i = 0; i < ec_MIS.Entities.Count; i++)
                     {
-                        strMess.AppendLine("i: " + i.ToString());
+                        TracingSe.Trace("i: " + i.ToString());
                         decimal d_amp = 0;
                         bool f_checkIDagain = false;
                         // MISS has been paid
                         int f_paid = ec_MIS.Entities[i].Contains("statuscode") ? ((OptionSetValue)ec_MIS.Entities[i]["statuscode"]).Value : 1;
                         if (f_paid == 100000000)
                             throw new InvalidPluginExecutionException("Miscellaneous " + (string)ec_MIS.Entities[i]["bsd_name"] + " has been paid");
-                        strMess.AppendLine("1");
-                        strMess.AppendLine(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).LogicalName);
-                        strMess.AppendLine(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).Id.ToString());
+                        TracingSe.Trace("1");
+                        TracingSe.Trace(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).LogicalName);
+                        TracingSe.Trace(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).Id.ToString());
                         Entity en_Ins_Mis = serv.Retrieve(((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).LogicalName, ((EntityReference)ec_MIS.Entities[i]["bsd_installment"]).Id,
                             new ColumnSet(true));
 
                         int i_Ins_status = en_Ins_Mis.Contains("statuscode") ? ((OptionSetValue)en_Ins_Mis["statuscode"]).Value : 100000000; // not paid
                                                                                                                                              //if (i_Ins_status == 100000000) throw new InvalidPluginExecutionException("Installment " + (string)en_Ins_Mis["bsd_name"] + " has not been paid, cannot payment for Miscellaneous " + (string)ec_MIS.Entities[i]["bsd_name"] + "!");
-                        strMess.AppendLine("2");
-                        strMess.AppendLine("s_Miss_id: " + string.Join(",", s_Miss_id));
-                        strMess.AppendLine("Miss_id: " + ec_MIS.Entities[i].Id.ToString());
+                        TracingSe.Trace("2");
+                        TracingSe.Trace("s_Miss_id: " + string.Join(",", s_Miss_id));
+                        TracingSe.Trace("Miss_id: " + ec_MIS.Entities[i].Id.ToString());
                         for (int m = 0; m < s_Miss_id.Length; m++)
                         {
 
@@ -2272,12 +2274,12 @@ namespace Action_Payment
                                 break;
                             }
                         }
-                        strMess.AppendLine("3");
+                        TracingSe.Trace("3");
                         if (f_checkIDagain == false) throw new InvalidPluginExecutionException("Cannot find ID of Miscellaneous " + (string)ec_MIS.Entities[i]["bsd_name"] + "' in Miscellaneous array!");
                         decimal d_MI_paid = ec_MIS.Entities[i].Contains("bsd_paidamount") ? ((Money)ec_MIS.Entities[i]["bsd_paidamount"]).Value : 0;
                         decimal d_MI_balance = ec_MIS.Entities[i].Contains("bsd_balance") ? ((Money)ec_MIS.Entities[i]["bsd_balance"]).Value : 0;
                         decimal d_MI_am = ec_MIS.Entities[i].Contains("bsd_totalamount") ? ((Money)ec_MIS.Entities[i]["bsd_totalamount"]).Value : 0;
-                        strMess.AppendLine("4");
+                        TracingSe.Trace("4");
                         if (d_amp == d_MI_balance)
                         {
                             f_paid = 100000000;
@@ -2300,15 +2302,15 @@ namespace Action_Payment
                         // update
                         Entity en_up_MIS = new Entity(ec_MIS.Entities[i].LogicalName);
                         en_up_MIS.Id = ec_MIS.Entities[i].Id;
-                        strMess.AppendLine("d_MI_paid:" + d_MI_paid.ToString());
-                        strMess.AppendLine("d_MI_balance:" + d_MI_balance.ToString());
-                        strMess.AppendLine("f_paid:" + f_paid.ToString());
+                        TracingSe.Trace("d_MI_paid:" + d_MI_paid.ToString());
+                        TracingSe.Trace("d_MI_balance:" + d_MI_balance.ToString());
+                        TracingSe.Trace("f_paid:" + f_paid.ToString());
                         en_up_MIS["bsd_paidamount"] = new Money(d_MI_paid);
                         en_up_MIS["bsd_balance"] = new Money(d_MI_balance);
                         en_up_MIS["statuscode"] = new OptionSetValue(f_paid);
 
                         service.Update(en_up_MIS);
-                        strMess.AppendLine("i: ssssssssssss");
+                        TracingSe.Trace("i: ssssssssssss");
 
                     }// end for
 
@@ -2431,7 +2433,7 @@ namespace Action_Payment
                           </entity>
                         </fetch>";
             fetchXml = string.Format(fetchXml, oeID, s_id);
-            strMess.AppendLine(fetchXml);
+            TracingSe.Trace(fetchXml);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }

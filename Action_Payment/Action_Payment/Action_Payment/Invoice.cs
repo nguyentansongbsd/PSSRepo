@@ -16,16 +16,16 @@ namespace Action_Payment
         IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
         Payment payment;
-        StringBuilder strMess = new StringBuilder();
-        public Invoice(IServiceProvider serviceProvider, StringBuilder strMess1)
+        ITracingService TracingSe = null;
+        public Invoice(IServiceProvider serviceProvider)
         {
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             EntityReference target = (EntityReference)context.InputParameters["Target"];
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
-            payment = new Payment(serviceProvider, strMess1);
-            strMess = strMess1;
-            strMess.AppendLine("vào thiết lập invoice");
+            payment = new Payment(serviceProvider);
+            TracingSe = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            TracingSe.Trace("vào thiết lập invoice");
         }
         public void processPayment(Entity enPayment, Guid InsId)
         {
@@ -34,14 +34,14 @@ namespace Action_Payment
             string strResult2 = "";
             string strResult3 = "";
             var serializer = new JavaScriptSerializer();
-            strMess.AppendLine("vào invoice và type = ");
+            TracingSe.Trace("vào invoice và type = ");
             try
             {
                 if (enPayment.Contains("bsd_paymenttype") && (((OptionSetValue)enPayment["bsd_paymenttype"]).Value == 100000002 || ((OptionSetValue)enPayment["bsd_paymenttype"]).Value == 100000004))
                 {
-                    strMess.AppendLine("vào check");
+                    TracingSe.Trace("vào check");
                     Entity enIns = new Entity();
-                    if (InsId!= new Guid())
+                    if (InsId != new Guid())
                     {
                         enIns = service.Retrieve("bsd_paymentschemedetail", InsId, new ColumnSet(true));
                         //var enOptionEntry = service.Retrieve("salesorder", OptionEntryId, new ColumnSet(true));
@@ -57,16 +57,16 @@ namespace Action_Payment
                             return;
                         }
                     }
-                    strMess.AppendLine("vào check1");
+                    TracingSe.Trace("vào check1");
                     EntityReference ins_ivcoice = enPayment.Contains("bsd_paymentschemedetail") ? (EntityReference)enPayment["bsd_paymentschemedetail"] : null;
                     #region--thành
-                    strMess.AppendLine("vào check4");
+                    TracingSe.Trace("vào check4");
                     string IV_arraypsdid = enPayment.Contains("bsd_arraypsdid") ? (string)enPayment["bsd_arraypsdid"] : "";
-                    strMess.AppendLine("vào check5");
+                    TracingSe.Trace("vào check5");
                     string IV_arrayamountpay = enPayment.Contains("bsd_arrayamountpay") ? (string)enPayment["bsd_arrayamountpay"] : "";
-                    strMess.AppendLine("vào check6");
+                    TracingSe.Trace("vào check6");
                     string IV_arrayfees = enPayment.Contains("bsd_arrayfees") ? (string)enPayment["bsd_arrayfees"] : "";
-                    strMess.AppendLine("vào check7");
+                    TracingSe.Trace("vào check7");
                     string IV_arrayfeesamount = enPayment.Contains("bsd_arrayfeesamount") ? (string)enPayment["bsd_arrayfeesamount"] : "";
                     var fetchXmltaxcode = $@"
                         <fetch>
@@ -80,26 +80,26 @@ namespace Action_Payment
                             <order attribute='createdon' descending='true' />
                           </entity>
                         </fetch>";
-                    strMess.AppendLine("vào check8");
+                    TracingSe.Trace("vào check8");
                     var EnColtaxcode = service.RetrieveMultiple(new FetchExpression(fetchXmltaxcode.ToString()));
-                    strMess.AppendLine("vào check9");
+                    TracingSe.Trace("vào check9");
                     Entity EnTaxcode_1 = null;
                     Entity EnTaxcode10 = null;
                     if (EnColtaxcode == null)
                         throw new InvalidPluginExecutionException("Please check your Taxcode!");
                     foreach (var item in EnColtaxcode.Entities)
                     {
-                        strMess.AppendLine("item: " + item["bsd_name"].ToString());
+                        TracingSe.Trace("item: " + item["bsd_name"].ToString());
                         if (item.Contains("bsd_name") && item["bsd_name"].ToString() == "-1")
                         {
-                            strMess.AppendLine("lấy được tax -1");
+                            TracingSe.Trace("lấy được tax -1");
                             if (EnTaxcode_1 != null)
                                 continue;
                             EnTaxcode_1 = item;
                         }
                         if (item.Contains("bsd_name") && item["bsd_name"].ToString() == "10")
                         {
-                            strMess.AppendLine("lấy được tax 10");
+                            TracingSe.Trace("lấy được tax 10");
                             if (EnTaxcode10 != null)
                                 continue;
                             EnTaxcode10 = item;
@@ -217,10 +217,10 @@ namespace Action_Payment
 
                             if (totaltax >= vat_amout + vatamount_lastins + vatHandoverPayment)
                             {
-                                strMess.AppendLine("case c >= 4");
+                                TracingSe.Trace("case c >= 4");
                                 if (bolThanhToanDu)
                                 {
-                                    strMess.AppendLine("case thanh toán đủ và dư");
+                                    TracingSe.Trace("case thanh toán đủ và dư");
                                     vat_Handover_Installment = Math.Round(land_value / 11, MidpointRounding.AwayFromZero);
                                     invoice["bsd_name"] = "Thu tiền đợt " + chuoi_name + " của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_invoiceamount"] = new Money(amountpay - land_value);
@@ -267,7 +267,7 @@ namespace Action_Payment
                                 }
                                 else
                                 {
-                                    strMess.AppendLine("case thanh toán thiếu");
+                                    TracingSe.Trace("case thanh toán thiếu");
                                     vat_Handover_Installment = 0;
                                     invoice["bsd_type"] = new OptionSetValue(100000000);//Installment
                                     invoice["statuscode"] = new OptionSetValue(100000000);//yêu cầu mới, cứ tạo invoice thì sẽ confirm
@@ -284,11 +284,11 @@ namespace Action_Payment
                             }
                             else
                             {
-                                strMess.AppendLine("case c < 4");
+                                TracingSe.Trace("case c < 4");
                                 vat_amout = Math.Round(d_amp / 11, MidpointRounding.AwayFromZero);
                                 if (bolThanhToanDu)
                                 {
-                                    strMess.AppendLine("case thanh toán đủ và dư");
+                                    TracingSe.Trace("case thanh toán đủ và dư");
                                     invoice["bsd_name"] = "Giá trị quyền sử dụng đất (không chịu Thuế GTGT) của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_type"] = new OptionSetValue(100000005);//type: Installment Land Value
                                     invoice["statuscode"] = new OptionSetValue(100000000);//yêu cầu mới, cứ tạo invoice thì sẽ confirm
@@ -319,7 +319,7 @@ namespace Action_Payment
                                 }
                                 else
                                 {
-                                    strMess.AppendLine("case thanh toán thiếu");
+                                    TracingSe.Trace("case thanh toán thiếu");
                                     vat_Handover_Installment = 0;
                                     invoice["bsd_name"] = "Giá trị quyền sử dụng đất (không chịu Thuế GTGT) của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_type"] = new OptionSetValue(100000005);//type: Installment Land Value
@@ -345,7 +345,7 @@ namespace Action_Payment
                         else
                         {
                             #region Code cũ
-                            strMess.AppendLine("code cũ");
+                            TracingSe.Trace("code cũ");
                             decimal vat_amout = Math.Round(d_amp / 11, MidpointRounding.AwayFromZero);
                             decimal vat_adj = 0;
                             decimal vat_amount_ho = vat_amout - vat_adj;
@@ -385,7 +385,7 @@ namespace Action_Payment
                             ivoid_idINS = IV_arraypsdid.Split(',');
                             ivoid_amINS = IV_arrayamountpay.Split(',');
                         }
-                        strMess.AppendLine("invoice1");
+                        TracingSe.Trace("invoice1");
                         EntityCollection ec_ins = payment.get_ecINS(service, ivoid_idINS);
                         if (ec_ins.Entities.Count <= 0) throw new InvalidPluginExecutionException("Cannot find any Installment from Installment list. Please check again!");
 
@@ -402,12 +402,12 @@ namespace Action_Payment
                         EntityReference ins = (EntityReference)enPayment["bsd_paymentschemedetail"];
                         EntityReference units = (EntityReference)enPayment["bsd_units"];
                         Entity ec_ins_pay = service.Retrieve(ins.LogicalName, ins.Id, new ColumnSet(true));
-                        strMess.AppendLine("invoice2");
+                        TracingSe.Trace("invoice2");
                         DateTime actualtime_iv = (DateTime)enPayment["bsd_paymentactualtime"];
                         int so_pay = ec_ins_pay.Contains("bsd_ordernumber") ? (int)ec_ins_pay["bsd_ordernumber"] : 0;
 
                         #region code cũ
-                        strMess.AppendLine("invoice3");
+                        TracingSe.Trace("invoice3");
                         Entity invoice = new Entity("bsd_invoice");
                         invoice.Id = new Guid();
                         invoice["transactioncurrencyid"] = enCurrency;
@@ -469,7 +469,7 @@ namespace Action_Payment
                         invoice["bsd_type"] = new OptionSetValue(100000000);
                         invoice["bsd_issueddate"] = actualtime_iv;
                         invoice["bsd_units"] = units;
-                        strMess.AppendLine("invoice4");
+                        TracingSe.Trace("invoice4");
                         EntityReference Pay_Perchaser = enPayment.Contains("bsd_purchaser") ? (EntityReference)enPayment["bsd_purchaser"] : null;
                         invoice["bsd_purchaser"] = Pay_Perchaser;
                         if (Pay_Perchaser != null)
@@ -498,14 +498,14 @@ namespace Action_Payment
                             new ColumnSet(new string[] {
                             "bsd_formno","bsd_serialno"
                             }));
-                        strMess.AppendLine("invoice5");
+                        TracingSe.Trace("invoice5");
                         string formno = project_invoive.Contains("bsd_formno") ? (string)project_invoive["bsd_formno"] : "";
                         string serialno = project_invoive.Contains("bsd_serialno") ? (string)project_invoive["bsd_serialno"] : "";
                         invoice["bsd_formno"] = formno;
                         invoice["bsd_serialno"] = serialno;
                         decimal vat_amout = Math.Round(d_amp / 11, MidpointRounding.AwayFromZero);
-                        strMess.AppendLine("d_amp" + d_amp);
-                        strMess.AppendLine("vat_amout" + vat_amout);
+                        TracingSe.Trace("d_amp" + d_amp);
+                        TracingSe.Trace("vat_amout" + vat_amout);
                         decimal vat_adj = 0;
                         decimal vat_amount_ho = vat_amout - vat_adj;
                         decimal invoiamountb4 = d_amp - vat_amount_ho;
@@ -516,7 +516,7 @@ namespace Action_Payment
                         {
                             vat_Handover_Installment = Math.Round(land_value / 11, MidpointRounding.AwayFromZero);
                         }
-                        strMess.AppendLine("invoice6");
+                        TracingSe.Trace("invoice6");
                         invoice["bsd_invoiceamount"] = new Money(d_amp);
                         invoice["bsd_vatamount"] = new Money(vat_amout);
                         invoice["bsd_vatadjamount"] = new Money(vat_Handover_Installment);
@@ -529,7 +529,7 @@ namespace Action_Payment
                         service.Create(invoice);
                         #endregion
                         #region Invoice cho 1st Ins
-                        strMess.AppendLine("bolDot1 " + bolDot1);
+                        TracingSe.Trace("bolDot1 " + bolDot1);
                         if (InsId1st != new Guid())
                         {
                             Entity Invoice1st = new Entity();
@@ -538,7 +538,7 @@ namespace Action_Payment
                             Invoice1st["bsd_depositamount"] = new Money(depositamount);
                             Invoice1st["bsd_type"] = new OptionSetValue(100000003);
                             decimal vat_amout1st = Math.Round(decAmount1st / 11, MidpointRounding.AwayFromZero);
-                            strMess.AppendLine("code tạo invoice đợt 1");
+                            TracingSe.Trace("code tạo invoice đợt 1");
                             decimal vat_adj1st = 0;
                             decimal vat_amount_ho1st = vat_amout1st - vat_adj1st;
                             decimal invoiamountb41st = decAmount1st - vat_amount_ho1st;
@@ -600,10 +600,10 @@ namespace Action_Payment
 
                             if (totaltax >= vat_amout + vatamount_lastins + vatHandoverPayment)
                             {
-                                strMess.AppendLine("case c >= 44444");
+                                TracingSe.Trace("case c >= 44444");
                                 if (bolThanhToanDu)
                                 {
-                                    strMess.AppendLine("case thanh toán đủ và dư");
+                                    TracingSe.Trace("case thanh toán đủ và dư");
                                     vat_Handover_Installment = Math.Round(land_value / 11, MidpointRounding.AwayFromZero);
                                     invoice["bsd_name"] = "Giá trị quyền sử dụng đất (không chịu Thuế GTGT) của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_invoiceamount"] = new Money(amountpay - land_value);
@@ -652,7 +652,7 @@ namespace Action_Payment
                                 }
                                 else
                                 {
-                                    strMess.AppendLine("case thanh toán thiếu");
+                                    TracingSe.Trace("case thanh toán thiếu");
                                     vat_Handover_Installment = 0;
                                     invoice["bsd_type"] = new OptionSetValue(100000000);//Installment
                                     invoice["statuscode"] = new OptionSetValue(100000000);//yêu cầu mới, cứ tạo invoice thì sẽ confirm
@@ -669,10 +669,10 @@ namespace Action_Payment
                             }
                             else
                             {
-                                strMess.AppendLine("case c < 4444444444444444");
+                                TracingSe.Trace("case c < 4444444444444444");
                                 if (bolThanhToanDu)
                                 {
-                                    strMess.AppendLine("case thanh toán đủ và dư");
+                                    TracingSe.Trace("case thanh toán đủ và dư");
                                     invoice["bsd_name"] = "Giá trị quyền sử dụng đất (không chịu Thuế GTGT) của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_type"] = new OptionSetValue(100000005);//type: Installment Land Value
                                     invoice["statuscode"] = new OptionSetValue(100000000);//yêu cầu mới, cứ tạo invoice thì sẽ confirm
@@ -703,7 +703,7 @@ namespace Action_Payment
                                 }
                                 else
                                 {
-                                    strMess.AppendLine("case thanh toán thiếu");
+                                    TracingSe.Trace("case thanh toán thiếu");
                                     vat_Handover_Installment = 0;
                                     invoice["bsd_name"] = "Giá trị quyền sử dụng đất (không chịu Thuế GTGT) của căn hộ " + (string)iv_units["name"];
                                     invoice["bsd_type"] = new OptionSetValue(100000005);//type: Installment Land Value
@@ -748,7 +748,7 @@ namespace Action_Payment
                             string[] arr = arrId_iv[i].Split('_');
                             string installmentid = arr[0];
                             string type1 = arr[1];
-                            strMess.AppendLine("t.1");
+                            TracingSe.Trace("t.1");
                             //Entity enInstallment = getInstallment(service, installmentid);
                             Entity enInstallment = service.Retrieve("bsd_paymentschemedetail", new Guid(installmentid), new ColumnSet(true)); ;
                             //Boolean f_mains_iv = (enInstallment.Contains("bsd_maintenancefeesstatus")) ? (Boolean)enInstallment["bsd_maintenancefeesstatus"] : false;
@@ -870,7 +870,7 @@ namespace Action_Payment
                             string[] arr = arrId_iv[i].Split('_');
                             string installmentid = arr[0];
                             string type1 = arr[1];
-                            strMess.AppendLine("t.1");
+                            TracingSe.Trace("t.1");
                             //Entity enInstallment = getInstallment(service, installmentid);
                             Entity enInstallment = service.Retrieve("bsd_paymentschemedetail", new Guid(installmentid), new ColumnSet(true));
                             //Boolean f_mains_iv = (enInstallment.Contains("bsd_maintenancefeesstatus")) ? (Boolean)enInstallment["bsd_maintenancefeesstatus"] : false;
@@ -973,19 +973,12 @@ namespace Action_Payment
                     #endregion thành
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                strMess.AppendLine(ex.ToString());
-                throw new InvalidPluginExecutionException(strMess.ToString());
+                TracingSe.Trace(ex.ToString());
+                throw new InvalidPluginExecutionException(ex.ToString());
             }
-            
-            //strMess.AppendLine("invoice 1:             ");
-            //strMess.AppendLine(strResult1);
-            //strMess.AppendLine("invoice 2:             ");
-            //strMess.AppendLine(strResult2);
-            //strMess.AppendLine("invoice 3:             ");
-            //strMess.AppendLine(strResult3);
-            
+
         }
 
         public Entity getLastInstallment(IOrganizationService service, Entity optionentry)
