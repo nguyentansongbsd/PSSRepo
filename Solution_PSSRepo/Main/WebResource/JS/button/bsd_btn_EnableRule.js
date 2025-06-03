@@ -20,7 +20,7 @@ function ready() {
 function DisableStatus() {
     switch (Xrm.Page.data.entity.getEntityName()) {
         case "bsd_interestratemaster":
-            if (!CheckRoleForUser("CLVN_CCR Manager"))
+            if (!CheckRoleForUser("CLVN_CCR Manager") && !CheckRoleForUser("CLVN_FIN_Finance Manager"))
                 Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
             break;
         case "bsd_updatelandvalue":
