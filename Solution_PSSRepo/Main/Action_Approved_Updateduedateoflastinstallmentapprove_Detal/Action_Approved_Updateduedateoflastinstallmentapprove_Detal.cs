@@ -255,29 +255,31 @@ namespace Action_Approved_Updateduedateoflastinstallmentapprove_Detal
             var enMaster = new Entity("bsd_updateduedateoflastinstallmentapprove", enMasterRef.Id);
             enMaster["bsd_error"] = true;
             enMaster["bsd_errordetail"] = error;
-            enMaster["bsd_processing_pa"] = false;
-
-            enMaster["statuscode"] = new OptionSetValue(1);
             enMaster["bsd_approvedrejectedperson"] = null;
             enMaster["bsd_approvedrejecteddate"] = null;
             service.Update(enMaster);
+            var enupdate = new Entity(en.LogicalName, en.Id);
+            enupdate["statuscode"] = new OptionSetValue(100000004);
+            enupdate["bsd_errordetail"] = error;
+            service.Update(enupdate);
             tracingService.Trace("error nè");
         }
         public bool CheckConditionRun(Entity item)
         {
-            var enMasterRef = (EntityReference)item["bsd_updateduedateoflastinstapprove"];
-            var enMaster = service.Retrieve("bsd_updateduedateoflastinstallmentapprove", enMasterRef.Id, new ColumnSet(true));
-            tracingService.Trace("CheckConditionRun");
-            if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
-            {
-                tracingService.Trace("error: " + (bool)enMaster["bsd_error"]);
-                return false;
-            }
-            else
-            {
+            return true;
+            //var enMasterRef = (EntityReference)item["bsd_updateduedateoflastinstapprove"];
+            //var enMaster = service.Retrieve("bsd_updateduedateoflastinstallmentapprove", enMasterRef.Id, new ColumnSet(true));
+            //tracingService.Trace("CheckConditionRun");
+            //if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
+            //{
+            //    tracingService.Trace("error: " + (bool)enMaster["bsd_error"]);
+            //    return false;
+            //}
+            //else
+            //{
                 
-                return true;
-            }
+            //    return true;
+            //}
         }
     }
 }

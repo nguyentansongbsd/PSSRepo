@@ -66,7 +66,7 @@ namespace Action_MappingParamToWord
                         foreach (var textElement in body.Descendants<Text>().ToList())
                         {
                             var textValue = textElement.Text;
-
+                            tracingService.Trace($"Processing text: '{textValue}'");
                             // Kiểm tra xem đoạn văn bản có khớp với key trong dictionary không
                             if (replacements.TryGetValue(textValue, out var replacementValue))
                             {

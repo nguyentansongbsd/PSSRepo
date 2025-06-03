@@ -33,6 +33,7 @@ namespace Plugin_AutoShareRecord
             if (!(service1.MessageName == "Create") && !(service1.MessageName == "Update"))
                 return;
             Entity inputParameter = (Entity)service1.InputParameters["Target"];
+            inputParameter=service.Retrieve(inputParameter.LogicalName, inputParameter.Id, new ColumnSet(true));
             string logicalName = inputParameter.LogicalName;
             Entity entity1 = new Entity();
             //List<string> stringList = new List<string>();

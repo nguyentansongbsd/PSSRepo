@@ -7,7 +7,6 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Crm.Sdk.Messages;
 using System.Collections;
 
 namespace Action_Approved_Updateduedate_Detail
@@ -302,7 +301,6 @@ namespace Action_Approved_Updateduedate_Detail
             var enMaster = new Entity("bsd_updateduedate", enMasterRef.Id);
             enMaster["bsd_error"] = true;
             enMaster["bsd_errordetail"] = error;
-            enMaster["bsd_processing_pa"] = false;
             enMaster["statuscode"] = new OptionSetValue(1);
 
             enMaster["bsd_approvedrejecteddate"] = null ;
@@ -316,83 +314,84 @@ namespace Action_Approved_Updateduedate_Detail
         }
         public bool CheckConditionRun(Entity item)
         {
-            var enMasterRef = (EntityReference)item["bsd_updateduedate"];
-            var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
-            if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
-            {
-                var enupdate = new Entity(en.LogicalName, en.Id);
-                enupdate["statuscode"] = new OptionSetValue(1);
-                service.Update(enupdate);
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return true;
+            //var enMasterRef = (EntityReference)item["bsd_updateduedate"];
+            //var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
+            //if ((bool)enMaster["bsd_error"] == true && (bool)enMaster["bsd_processing_pa"] == false)
+            //{
+            //    var enupdate = new Entity(en.LogicalName, en.Id);
+            //    enupdate["statuscode"] = new OptionSetValue(1);
+            //    service.Update(enupdate);
+            //    return false;
+            //}
+            //else
+            //{
+            //    return true;
+            //}
 
         }
-        /// <summary>
-        /// Downloads a file or image
-        /// </summary>
-        /// <param name="service">The service</param>
-        /// <param name="entityReference">A reference to the record with the file or image column</param>
-        /// <param name="attributeName">The name of the file or image column</param>
-        /// <returns></returns>
-        private  void DownloadFile(
-                    )
-        {
-            InitializeFileBlocksDownloadRequest initializeFileBlocksDownloadRequest = new InitializeFileBlocksDownloadRequest()
-            {
-                Target = new EntityReference("bsd_documents",new Guid("757e592a-7ff2-ef11-be20-0022485a0a4f")),
-                FileAttributeName = "bsd_filewordtemplatedocx"
-            };
+        ///// <summary>
+        ///// Downloads a file or image
+        ///// </summary>
+        ///// <param name="service">The service</param>
+        ///// <param name="entityReference">A reference to the record with the file or image column</param>
+        ///// <param name="attributeName">The name of the file or image column</param>
+        ///// <returns></returns>
+        //private  void DownloadFile(
+        //            )
+        //{
+        //    InitializeFileBlocksDownloadRequest initializeFileBlocksDownloadRequest = new InitializeFileBlocksDownloadRequest()
+        //    {
+        //        Target = new EntityReference("bsd_documents",new Guid("757e592a-7ff2-ef11-be20-0022485a0a4f")),
+        //        FileAttributeName = "bsd_filewordtemplatedocx"
+        //    };
 
-            var initializeFileBlocksDownloadResponse =
-                  (InitializeFileBlocksDownloadResponse)service.Execute(initializeFileBlocksDownloadRequest);
+        //    var initializeFileBlocksDownloadResponse =
+        //          (InitializeFileBlocksDownloadResponse)service.Execute(initializeFileBlocksDownloadRequest);
 
-            string fileContinuationToken = initializeFileBlocksDownloadResponse.FileContinuationToken;
-            long fileSizeInBytes = initializeFileBlocksDownloadResponse.FileSizeInBytes;
-            tracingService.Trace(fileContinuationToken);
-            tracingService.Trace(fileSizeInBytes.ToString());
+        //    string fileContinuationToken = initializeFileBlocksDownloadResponse.FileContinuationToken;
+        //    long fileSizeInBytes = initializeFileBlocksDownloadResponse.FileSizeInBytes;
+        //    tracingService.Trace(fileContinuationToken);
+        //    tracingService.Trace(fileSizeInBytes.ToString());
 
-            List<byte> fileBytes = new List<byte>((int)fileSizeInBytes);
+        //    List<byte> fileBytes = new List<byte>((int)fileSizeInBytes);
 
-            long offset = 0;
-            // If chunking is not supported, chunk size will be full size of the file.
-            long blockSizeDownload = !initializeFileBlocksDownloadResponse.IsChunkingSupported ? fileSizeInBytes : 4 * 1024 * 1024;
+        //    long offset = 0;
+        //    // If chunking is not supported, chunk size will be full size of the file.
+        //    long blockSizeDownload = !initializeFileBlocksDownloadResponse.IsChunkingSupported ? fileSizeInBytes : 4 * 1024 * 1024;
 
-            // File size may be smaller than defined block size
-            if (fileSizeInBytes < blockSizeDownload)
-            {
-                blockSizeDownload = fileSizeInBytes;
-            }
-            tracingService.Trace(blockSizeDownload.ToString());
-            while (fileSizeInBytes > 0)
-            {
-                // Prepare the request
-                DownloadBlockRequest downLoadBlockRequest = new DownloadBlockRequest()
-                {
-                    BlockLength = blockSizeDownload,
-                    FileContinuationToken = fileContinuationToken,
-                    Offset = offset
-                };
+        //    // File size may be smaller than defined block size
+        //    if (fileSizeInBytes < blockSizeDownload)
+        //    {
+        //        blockSizeDownload = fileSizeInBytes;
+        //    }
+        //    tracingService.Trace(blockSizeDownload.ToString());
+        //    while (fileSizeInBytes > 0)
+        //    {
+        //        // Prepare the request
+        //        DownloadBlockRequest downLoadBlockRequest = new DownloadBlockRequest()
+        //        {
+        //            BlockLength = blockSizeDownload,
+        //            FileContinuationToken = fileContinuationToken,
+        //            Offset = offset
+        //        };
 
-                // Send the request
-                var downloadBlockResponse =
-                         (DownloadBlockResponse)service.Execute(downLoadBlockRequest);
+        //        // Send the request
+        //        var downloadBlockResponse =
+        //                 (DownloadBlockResponse)service.Execute(downLoadBlockRequest);
 
-                // Add the block returned to the list
-                fileBytes.AddRange(downloadBlockResponse.Data);
+        //        // Add the block returned to the list
+        //        fileBytes.AddRange(downloadBlockResponse.Data);
 
-                // Subtract the amount downloaded,
-                // which may make fileSizeInBytes < 0 and indicate
-                // no further blocks to download
-                fileSizeInBytes -= (int)blockSizeDownload;
-                // Increment the offset to start at the beginning of the next block.
-                offset += blockSizeDownload;
-            }
-            string base64String = Convert.ToBase64String(fileBytes.ToArray());
-            tracingService.Trace(base64String);
-        }
+        //        // Subtract the amount downloaded,
+        //        // which may make fileSizeInBytes < 0 and indicate
+        //        // no further blocks to download
+        //        fileSizeInBytes -= (int)blockSizeDownload;
+        //        // Increment the offset to start at the beginning of the next block.
+        //        offset += blockSizeDownload;
+        //    }
+        //    string base64String = Convert.ToBase64String(fileBytes.ToArray());
+        //    tracingService.Trace(base64String);
+        //}
     }
 }
