@@ -74,7 +74,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_waiverapproval":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdate":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
@@ -85,7 +85,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkwaiver":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bulkchangemanagementfee":
                     Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
@@ -94,16 +94,16 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_interestsimulation":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_transactionpayment":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_waiverapprovaldetail":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_interestsimulationdetail":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
 
                 case "bsd_generatehandovernotices":
