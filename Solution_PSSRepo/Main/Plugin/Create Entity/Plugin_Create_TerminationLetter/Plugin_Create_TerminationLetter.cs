@@ -17,7 +17,13 @@ namespace Plugin_Create_TerminationLetter
         ITracingService tracingService = null;
         Entity en = new Entity();
         int caseSign = 0;
-
+        Entity enCreated = null;
+        EntityCollection dtlFromOpentryId = null;
+        List<string> lstInstallments = new List<string>();
+        int num2 = 0;
+        Entity op = null;
+        bool isMapWN = false;
+        Entity FUL = null;
         public void Execute(IServiceProvider serviceProvider)
         {
 
@@ -30,104 +36,91 @@ namespace Plugin_Create_TerminationLetter
             Entity enCreated = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             tracingService.Trace("Plugin_Create_TerminationLetter" + "id: " + entity.Id.ToString());
             if (!enCreated.Contains("bsd_optionentry")) return;
-            if(enCreated.Contains("bsd_insallment")) return ;
+            if (!enCreated.Contains("bsd_followuplist")) return;
+
             var opRef = (EntityReference)enCreated["bsd_optionentry"];
-            var op=service.Retrieve(opRef.LogicalName,opRef.Id,new ColumnSet(true));
+            op = service.Retrieve(opRef.LogicalName, opRef.Id, new ColumnSet(true));
             var query_bsd_optionentry = opRef.Id.ToString();
+            var FULRef = enCreated.Contains("bsd_followuplist") ? (EntityReference)enCreated["bsd_followuplist"] : null;
+            FUL = FULRef != null ? service.Retrieve(FULRef.LogicalName, FULRef.Id, new ColumnSet(true)) : null;
             tracingService.Trace("Plugin_Create_TerminationLetter" + "opRef.Id: " + opRef.Id.ToString());
 
-            var query = new QueryExpression("bsd_warningnotices");
-            query.TopCount = 2; query.ColumnSet.AllColumns = true;
-            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry);
-            query.AddOrder("createdon", OrderType.Descending);
-            var result = service.RetrieveMultiple(query);
             var enupdate = new Entity("bsd_terminateletter", enCreated.Id);
-            tracingService.Trace($"count {result.Entities.Count}");
-            if (result.Entities.Count > 0)
-            {
-                if (result.Entities.Count > 1)
-                {
-                    enupdate["bsd_warning_notices_1"] = new EntityReference("bsd_warningnotices", result.Entities[1].Id);
-                    enupdate["bsd_warning_notices_2"] = new EntityReference("bsd_warningnotices", result.Entities[0].Id);
-                }
-                else
-                {
-                    enupdate["bsd_warning_notices_1"] = new EntityReference("bsd_warningnotices", result.Entities[0].Id);
 
-                }
-                
-            }
-            EntityCollection dtlFromOpentryId = this.get_pmSchDtl_fromOpentryID(opRef.Id);
+            dtlFromOpentryId = this.get_pmSchDtl_fromOpentryID(opRef.Id);
             tracingService.Trace(dtlFromOpentryId.Entities.Count.ToString());
-            int num2 = 0;
-            for (int index2 = 0; index2 < dtlFromOpentryId.Entities.Count; ++index2)
+            foreach (var item in dtlFromOpentryId.Entities)
             {
-                Entity entity2 = dtlFromOpentryId.Entities[index2];
-                var isbsd_duedate = entity2.Contains("bsd_duedate");
 
-                tracingService.Trace($"step 2 :{entity2.Contains("bsd_duedate")}");
-                tracingService.Trace($"step 2 1:{entity2.LogicalName}:{entity2.Id}");
+                tracingService.Trace($"step 2.4 {item.Id}-------------------------------");
 
-                if (isbsd_duedate)
+
+                tracingService.Trace($"entity bsd_name: {item["bsd_name"]}");
+                if (item.Contains("bsd_gracedays"))
+                    tracingService.Trace($"entity bsd_gracedays: {item["bsd_gracedays"]}");
+                tracingService.Trace($"lstInstallments:{string.Join(",", lstInstallments)}");
+                TinhLai(enupdate);
+            }
+            enupdate["bsd_penaty"] = enCreated["bsd_totalforfeitureamount"];
+            tracingService.Trace("bsd_penaty " + enupdate["bsd_penaty"].ToString());
+
+            enupdate["bsd_terminatefee"] = new Money(((Money)enCreated["bsd_totalforfeitureamount"]).Value - ((Money)enCreated["bsd_terminatefeewaiver"]).Value);
+            service.Update(enupdate);
+        }
+        private void TinhLai(Entity enupdate)
+        {
+            var installment = new Entity("bsd_paymentschemedetail");
+            if (this.check_overDuedate_pmShcDtl(dtlFromOpentryId, ref installment))
+            {
+                if (!isMapWN)
                 {
-
-                    tracingService.Trace($"step 2 1:{entity2.LogicalName}:{entity2.Id}");
-                    if (entity2.Contains("statuscode"))
+                    var query = new QueryExpression("bsd_warningnotices");
+                    query.TopCount = 2; query.ColumnSet.AllColumns = true;
+                    query.Criteria.AddCondition("bsd_paymentschemedeitail", ConditionOperator.Equal, installment.Id.ToString());
+                    query.AddOrder("createdon", OrderType.Descending);
+                    var result = service.RetrieveMultiple(query);
+                    tracingService.Trace($"count {result.Entities.Count}");
+                    if (result.Entities.Count > 0)
                     {
-                        if (((OptionSetValue)entity2["statuscode"]).Value == 100000001)
+                        if (result.Entities.Count > 1)
                         {
-                            ////tracingService.Trace($"step 2.1 ");
-                            //if (entity2.Contains("bsd_actualgracedays"))
-                            //{
-                            //    tracingService.Trace($"step 2.1.1 ");
-                            //    num2 += (int)entity2["bsd_actualgracedays"];
-                            //}    
-                            //else
-                            //    num2 = num2;
-                            continue;
+                            enupdate["bsd_warning_notices_1"] = new EntityReference("bsd_warningnotices", result.Entities[1].Id);
+                            enupdate["bsd_warning_notices_2"] = new EntityReference("bsd_warningnotices", result.Entities[0].Id);
                         }
-                        else if (((OptionSetValue)entity2["statuscode"]).Value == 100000000)
+                        else
                         {
-                            //tracingService.Trace($"step 2.2 ");
-                            DateTime dateTime = DateTime.Now;
-                            dateTime = dateTime.Date;
-                            int num3 = (int)dateTime.Subtract(((DateTime)entity2["bsd_duedate"]).Date).TotalDays;
-                            if (num3 <= 0)
-                                num3 = 0;
-                            num2 += num3;
-                            //tracingService.Trace($"step 2.3 {num2}");
-
+                            enupdate["bsd_warning_notices_1"] = new EntityReference("bsd_warningnotices", result.Entities[0].Id);
                         }
                     }
+                    enupdate["bsd_insallment"] = installment.ToEntityReference();
+                    isMapWN = true;
                 }
-            }
-                Entity installment = null;
-            if (this.check_overDuedate_pmShcDtl(dtlFromOpentryId, ref installment) || num2 > 60)
-            {
-                enupdate["bsd_insallment"]= installment.ToEntityReference();
+
                 #region tính Penaty  
                 var en_bsd_paymentscheme = this.service.Retrieve("bsd_paymentscheme",
                 ((EntityReference)op["bsd_paymentscheme"]).Id, new ColumnSet(true));
                 var bsd_totalpercent = ((decimal)op["bsd_totalpercent"]);
                 var bsd_spforfeiture = (decimal)en_bsd_paymentscheme["bsd_spforfeiture"];
-                if (bsd_totalpercent <= bsd_spforfeiture)
-                {
-                    var bsd_penaty = ((Money)op["bsd_depositamount"]).Value;
-                    var installments = get_all_pmSchDtl_fromOpentryID(op.Id);
-                    for (var i = 0; i < installments.Entities.Count; i++)
-                    {
-                        tracingService.Trace($"{installments[i].Id}");
-                        var bsd_amountwaspaid = installments[i].Contains("bsd_amountwaspaid") ? ((Money)installments[i]["bsd_amountwaspaid"]).Value : 0;
-                        tracingService.Trace($"{bsd_amountwaspaid}");
-                        bsd_penaty += bsd_amountwaspaid;
-                    }
-                    tracingService.Trace("bsd_penaty " + bsd_penaty.ToString());
-                    enupdate["bsd_penaty"] = new Money(bsd_penaty);
-                }
-                else
-                {
-                    enupdate["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)op["bsd_totalamountlessfreight"]).Value);
-                }
+                //if (bsd_totalpercent <= bsd_spforfeiture)
+                //{
+                //    var bsd_penaty = ((Money)op["bsd_depositamount"]).Value;
+                //    var installments = get_all_pmSchDtl_fromOpentryID(op.Id);
+                //    for (var i = 0; i < installments.Entities.Count; i++)
+                //    {
+                //        tracingService.Trace($"{installments[i].Id}");
+                //        var bsd_amountwaspaid = installments[i].Contains("bsd_amountwaspaid") ? ((Money)installments[i]["bsd_amountwaspaid"]).Value : 0;
+                //        tracingService.Trace($"{bsd_amountwaspaid}");
+                //        bsd_penaty += bsd_amountwaspaid;
+                //    }
+                //    tracingService.Trace("bsd_penaty " + bsd_penaty.ToString());
+
+                //    enupdate["bsd_penaty"] = new Money(bsd_penaty);
+                //    tracingService.Trace("bsd_penaty " + bsd_penaty.ToString());
+                //}
+                //else
+                //{
+                //    enupdate["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)op["bsd_totalamountlessfreight"]).Value);
+                //}
                 #endregion
                 #region  Overdue Interest
                 tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
@@ -136,6 +129,9 @@ namespace Plugin_Create_TerminationLetter
                 var bsd_termsinterestpercentage = (decimal)installment["bsd_interestchargeper"];
                 var bsd_gracedays = (int)en_bsd_interestratemaster["bsd_gracedays"];
                 var bsd_duedate = ((DateTime)installment["bsd_duedate"]).AddHours(7);
+                tracingService.Trace(bsd_duedate.ToString());
+                tracingService.Trace(bsd_gracedays.ToString());
+
                 tracingService.Trace("step 4");
                 #region check caseSign
                 var bsd_signedcontractdate = new DateTime();
@@ -163,31 +159,32 @@ namespace Plugin_Create_TerminationLetter
                         caseSign = 4;
                     }
                 }
-
-                var lateDays = ((int)((DateTime.UtcNow.AddHours(7) - bsd_duedate).TotalDays) - bsd_gracedays);
+                tracingService.Trace("4.1");
+                var lateDays = ((int)((((DateTime)FUL["bsd_date"]).AddHours(7) - bsd_duedate).TotalDays) - bsd_gracedays);
                 var latedays2 = lateDays;
-                var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, op, bsd_signedcontractdate, bsd_signeddadate, DateTime.UtcNow.AddHours(7), ref lateDays);
+                var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, op, bsd_signedcontractdate, bsd_signeddadate, (DateTime)FUL["bsd_date"], ref lateDays);
+                tracingService.Trace("step 4.2");
                 lateDays = latedays2 <= lateDays ? latedays2 : lateDays;
+                tracingService.Trace($"lateDays: {lateDays}");
                 #endregion
                 if (resCheckCaseSign)
                 {
                     tracingService.Trace($"resCheckCaseSign:true");
-                    enupdate["bsd_overdue_interest"] = bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
-                    enupdate["bsd_overdue_interest_money"] = new Money((decimal)enupdate["bsd_overdue_interest"]);
+                    if (enupdate.Contains("bsd_overdue_interest") == false)
+                        enupdate["bsd_overdue_interest"] = new decimal(0);
+                    tracingService.Trace("step 4.2.1");
+                    var bsd_overdue_interest = (decimal)enupdate["bsd_overdue_interest"] + (decimal)
+                        (bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : new decimal(1)));
 
+                    tracingService.Trace("step 4.3");
+                    enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
+                    enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
+
+                    tracingService.Trace("bsd_overdue_interest " + ((decimal)enupdate["bsd_overdue_interest"]).ToString());
                 }
-                tracingService.Trace($"bsd_termsinterestpercentage: {bsd_termsinterestpercentage}");
-                tracingService.Trace($"bsd_gracedays: {bsd_gracedays}");
-                tracingService.Trace($"bsd_duedate:{bsd_duedate}");
-                tracingService.Trace($"today:{DateTime.UtcNow.AddHours(7)}");
-                tracingService.Trace($"totalday: {((int)((DateTime.UtcNow.AddHours(7) - bsd_duedate).TotalDays) - bsd_gracedays)}");
-                tracingService.Trace($"bsd_overdue_interest: {bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1)}");
-                tracingService.Trace($"bsd_overdue_interest1: {((Money)enupdate["bsd_overdue_interest"]).Value}");
-                tracingService.Trace($"bsd_overdue_interest_money:{((Money)enupdate["bsd_overdue_interest_money"]).Value}");
-                tracingService.Trace($"bsd_balance:{((Money)installment["bsd_balance"]).Value}");
                 #endregion
             }
-            service.Update(enupdate);
+
         }
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
@@ -203,11 +200,13 @@ namespace Plugin_Create_TerminationLetter
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));
             query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, 100000000));
+            query.AddOrder("bsd_duedate", OrderType.Descending);
             return this.service.RetrieveMultiple((QueryBase)query);
         }
 
         public bool checkCaseSignAndCalLateDays(Entity enInstallment, Entity enOptionEntry, DateTime bsd_signedcontractdate, DateTime bsd_signeddadate, DateTime receiptdate, ref int lateDays)
         {
+            tracingService.Trace("checkCaseSignAndCalLateDays");
             bool result = false;
             bool isContainDueDate = false;
             if (enInstallment.Contains("bsd_duedate"))
@@ -219,6 +218,8 @@ namespace Plugin_Create_TerminationLetter
             {
                 bsd_duedate = (DateTime)enInstallment["bsd_duedate"];
             }
+            tracingService.Trace("checkCaseSignAndCalLateDays 1");
+
             #region lấy ra đợt tích Sign Contract Installment
             var query_bsd_signcontractinstallment = true;
 
@@ -226,6 +227,8 @@ namespace Plugin_Create_TerminationLetter
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_signcontractinstallment", ConditionOperator.Equal, query_bsd_signcontractinstallment);
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enOptionEntry.Id.ToString());
+            tracingService.Trace("checkCaseSignAndCalLateDays 2");
+
             var rs = service.RetrieveMultiple(query);
             tracingService.Trace($"enOptionEntry {enOptionEntry.Id}");
             tracingService.Trace($"enInstallment {enInstallment.Id}");
@@ -240,11 +243,11 @@ namespace Plugin_Create_TerminationLetter
                 case 1:
                     if (rs.Entities.Count > 0)
                     {
-                        if (rs.Entities[0].Id == enInstallment.Id)
-                        {
-                            result = false;
-                            break;
-                        }
+                        //if (rs.Entities[0].Id == enInstallment.Id)
+                        //{
+                        //    result = false;
+                        //    break;
+                        //}
                         if (isContainDueDate == false)
                             result = false;
                         else
@@ -326,17 +329,24 @@ namespace Plugin_Create_TerminationLetter
         }
         private bool check_overDuedate_pmShcDtl(EntityCollection entCll, ref Entity installment)
         {
+            tracingService.Trace("check_overDuedate_pmShcDtl");
             for (int index = 0; index < entCll.Entities.Count; ++index)
             {
 
                 Entity entity = entCll.Entities[index];
+                tracingService.Trace($"{entity["bsd_name"]}");
                 if (entity.Contains("bsd_duedate") == false)
                     continue;
-                DateTime dateTime = DateTime.Now;
+                DateTime dateTime = (DateTime)FUL["bsd_date"];
                 dateTime = dateTime.Date;
-                if ((int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays > 60)
+                tracingService.Trace($"dateTime: {dateTime.ToString()}");
+                if (entity.Contains("bsd_gracedays"))
+                    dateTime = dateTime.AddDays(((int)entity["bsd_gracedays"]));
+                if ((int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays > 0 && (lstInstallments.Contains(entity.Id.ToString()) == false))
                 {
+                    tracingService.Trace(entity.Id.ToString());
                     installment = entity;
+                    lstInstallments.Add(entity.Id.ToString());
                     return true;
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
@@ -110,17 +111,25 @@ namespace Action_WarningNotices_GenerateWarningNotices
 
                                             if (!string.IsNullOrWhiteSpace(owner))
                                             {
-                                                traceService.Trace("owner: " + owner);
+                                                traceService.Trace("owner1: " + owner);
                                                 warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                             }
                                             
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
+                                                traceService.Trace("@@@");
                                                 if (PSD.Contains("bsd_gracedays"))
+                                                {
+                                                    traceService.Trace("1@@@");
                                                     warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                                }
                                                 else
-                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays(14);
+                                                {
+                                                    var bsd_paymentscheme = service.Retrieve("bsd_paymentscheme", ((EntityReference)PSD["bsd_paymentscheme"]).Id, new ColumnSet("bsd_interestratemaster"));
+                                                    var bsd_interestratemaster= service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)bsd_interestratemaster["bsd_gracedays"]);
+                                                }
                                                 warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                             }
                                             traceService.Trace("11111: ");
@@ -204,17 +213,28 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                     }
                                     if (!string.IsNullOrWhiteSpace(owner))
                                     {
-                                        traceService.Trace("owner: " + owner);
+                                        traceService.Trace("owner2: " + owner);
                                         warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                     }
-                                    traceService.Trace("122");
                                     #region bsd_deadlinewn1-bsd_deadlinewn2
                                     if (PSD.Contains("bsd_duedate"))
                                     {
-                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                        if (PSD.Contains("bsd_gracedays"))
+                                        {
+                                            traceService.Trace("1@@@");
+                                            warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                        }
+                                        else
+                                        {
+                                            var bsd_paymentscheme = service.Retrieve("bsd_paymentscheme", ((EntityReference)PSD["bsd_paymentscheme"]).Id, new ColumnSet("bsd_interestratemaster"));
+                                            var bsd_interestratemaster = service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
+                                            warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)bsd_interestratemaster["bsd_gracedays"]);
+                                        }
                                         warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
+
+
                                     }
-                                    traceService.Trace("133");
+
                                     #endregion
                                     #region xử lý OdernumberE
                                     if (((int)PSD["bsd_ordernumber"]) == 1)
@@ -283,6 +303,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                     <attribute name='bsd_ordernumber' />
                     <attribute name='bsd_gracedays' />
 
+                    <attribute name='bsd_paymentscheme' />
 
 
                     <order attribute='bsd_duedate' descending='false' />

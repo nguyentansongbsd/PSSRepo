@@ -152,8 +152,7 @@
                                         <filter>
                                           <condition attribute="associatedentitytypecode" operator="eq" value="${typecode}" />
                                            <condition attribute="name" operator="like" value="%${window.top.projectCode}-%" />
-                                            <condition attribute="name" operator="like" value="%-print%" />
-
+                                            <condition attribute="name" operator="not-like" value="%-Email%" />
                                            </filter>
                                       </entity>
                                     </fetch>`;

@@ -451,10 +451,18 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
+
                                                 if (PSD.Contains("bsd_gracedays"))
+                                                {
+                                                    traceService.Trace("1@@@");
                                                     warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                                }
                                                 else
-                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays(14);
+                                                {
+                                                    var bsd_paymentscheme = service.Retrieve("bsd_paymentscheme", ((EntityReference)PSD["bsd_paymentscheme"]).Id, new ColumnSet("bsd_interestratemaster"));
+                                                    var bsd_interestratemaster = service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
+                                                    warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)bsd_interestratemaster["bsd_gracedays"]);
+                                                }
                                                 warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                             }
 
@@ -543,7 +551,18 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                     #region bsd_deadlinewn1-bsd_deadlinewn2
                                     if (PSD.Contains("bsd_duedate"))
                                     {
-                                        warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddDays((int)PSD["bsd_gracedays"]);
+
+                                        if (PSD.Contains("bsd_gracedays"))
+                                        {
+                                            traceService.Trace("1@@@");
+                                            warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
+                                        }
+                                        else
+                                        {
+                                            var bsd_paymentscheme = service.Retrieve("bsd_paymentscheme", ((EntityReference)PSD["bsd_paymentscheme"]).Id, new ColumnSet("bsd_interestratemaster"));
+                                            var bsd_interestratemaster = service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
+                                            warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)bsd_interestratemaster["bsd_gracedays"]);
+                                        }
                                         warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60);
                                     }
 

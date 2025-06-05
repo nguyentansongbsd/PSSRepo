@@ -44,14 +44,21 @@ namespace Plugin_AutoShareRecord
                 //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                 //    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                 //    break;//
+                case "bsd_documents":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-TEAM" });
+                    break;
                 case "bsd_bulksendmailmanager":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     var rs = GetDetailBulkMailManager();
                     foreach (var item in rs.Entities)
                     {
-                        Run_ShareTemProject(false, new List<string> { "SALE-TEAM" },item);
+                        Run_ShareTemProject(false, new List<string> { "FINANCE-TEAM" },item);
                     }
                     //share email detail luôn.
+                    break;
+                case "email":
+                    if(!target.Contains("bsd_bulksendmailmanager")) return;
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bankingloan":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT" });
@@ -67,7 +74,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_waiverapproval":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdate":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
@@ -78,7 +85,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkwaiver":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bulkchangemanagementfee":
                     Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
@@ -87,19 +94,21 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_interestsimulation":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_transactionpayment":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_waiverapprovaldetail":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_interestsimulationdetail":
-                    Run_ShareTemProject(true, new List<string> { "SALE-MGT" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
 
-                case "bsd_customernotices":
+                case "bsd_generatehandovernotices":
+                    if (!target.Contains("bsd_project")) return;
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_handovernotice":
                     break;
@@ -209,13 +218,21 @@ namespace Plugin_AutoShareRecord
         }
         public static EntityReference GetProject()
         {
+
             EntityReference enProjectRef2 = null;
             EntityReference enMasterRef = null;
 
             Entity enMaster =null;
             switch (target.LogicalName)
             {
-
+                case "email":
+                    enMasterRef = (EntityReference)en["bsd_bulksendmailmanager"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
+                    break;
+                case "bsd_generatehandovernotices":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
                 case "bsd_bulksendmailmanager":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;

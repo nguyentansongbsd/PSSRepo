@@ -66,7 +66,6 @@ namespace Action_MappingParamToWord
                         foreach (var textElement in body.Descendants<Text>().ToList())
                         {
                             var textValue = textElement.Text;
-
                             // Kiểm tra xem đoạn văn bản có khớp với key trong dictionary không
                             if (replacements.TryGetValue(textValue, out var replacementValue))
                             {
@@ -116,6 +115,28 @@ namespace Action_MappingParamToWord
                                                 // Nếu không có xuống dòng, thực hiện thay thế thông thường
                                                 textElement.Text = replacementValue;
                                             }
+                                        }
+
+                                       
+                                    }
+                                }
+                            }
+                        }
+                        // Duyệt qua từng đoạn văn bản (Paragraph) và thay thế từng chuỗi con trong đoạn văn bản
+                        foreach (var paragraph in body.Descendants<Paragraph>())
+                        {
+                            foreach (var run in paragraph.Descendants<Run>())
+                            {
+                                foreach (var textElement in run.Descendants<Text>().ToList())
+                                {
+                                    var textValue = textElement.Text;
+                                    // Duyệt qua từng cặp key-value trong replacements
+                                    foreach (var kvp in replacements)
+                                    {
+                                        if (textValue.Contains(kvp.Key))
+                                        {
+                                            tracingService.Trace($"Replacing substring '{kvp.Key}' in text: '{textValue}' with value: '{kvp.Value}'");
+                                            textElement.Text = textValue.Replace(kvp.Key, kvp.Value);
                                         }
                                     }
                                 }

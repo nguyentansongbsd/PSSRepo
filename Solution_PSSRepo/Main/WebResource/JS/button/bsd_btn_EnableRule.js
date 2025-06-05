@@ -20,7 +20,7 @@ function ready() {
 function DisableStatus() {
     switch (Xrm.Page.data.entity.getEntityName()) {
         case "bsd_interestratemaster":
-            if (!CheckRoleForUser("CLVN_CCR Manager"))
+            if (!CheckRoleForUser("CLVN_CCR Manager") && !CheckRoleForUser("CLVN_FIN_Finance Manager"))
                 Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
             break;
         case "bsd_updatelandvalue":
@@ -142,6 +142,12 @@ function CheckEnable_Condition(tyle) {
         case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
             if (getStatusCodeValueByName("Approved") === status) return false;
             break;
+        case "bsd_bulksendmailmanager-form-Delete":
+            if (getStatusCodeValueByName("Sent") === status) return false;
+            break;
+        case "email-form-Delete":
+            if (getStatusCodeValueByName("Sent") === status) return false;
+            break;
         case "bsd_updatelandvalue-bsd_landvalue-subgriddetail":
             if (getStatusCodeValueByName("Approved") === status) return false;
             break;
@@ -171,7 +177,7 @@ function CheckEnable_Condition(tyle) {
         case "salesorder-form-SubSale":
             if (getStatusCodeValueByName("Terminated") == status) return false;
             break;
-             case "salesorder-form-PrintHOM":
+        case "salesorder-form-PrintHOM":
             if (getStatusCodeValueByName("Terminated") == status) return false;
         case "salesorder-form-InterestSimulation":
             if (getStatusCodeValueByName("Terminated") == status) return false;
@@ -187,10 +193,10 @@ function CheckEnable_Condition(tyle) {
         case "quote-form-PrintQuotaionFinal":
             if (getStatusCodeValueByName("Terminated") == status || getStatusCodeValueByName("Won") == status) return false;
         case "quote-form-ConvertToOption":
-            if (getStatusCodeValueByName("Terminated") == status ) return false;
+            if (getStatusCodeValueByName("Terminated") == status) return false;
             break
         case "quote-form-FUL":
-            if (getStatusCodeValueByName("Terminated") == status ) return false;
+            if (getStatusCodeValueByName("Terminated") == status) return false;
             break;
         case "quote-form-Recalculator":
             if (getStatusCodeValueByName("Terminated") == status || getStatusCodeValueByName("Won") == status) return false;
@@ -205,8 +211,11 @@ function CheckEnable_Condition(tyle) {
         case "bsd_payment-form-Confirm":
             if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
             break;
+        case "bsd_payment-form-VoidPayment":
+            if ((!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator"))) return false;
+            break;
         case "bsd_packageselling-form-Approved":
-            if (!CheckRoleForUser("CLVN_S&M_Sales Manager")&& !CheckRoleForUser("System Administrator")) return false;
+            if (CheckRoleForUser("CLVN_S&M_Senior Sale Staff")) return false;
             break;
         case "bsd_advancepayment-form-ConfirmCollect":
             if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
@@ -222,6 +231,94 @@ function CheckEnable_Condition(tyle) {
     }
     return true;
 }
+function CheckEnable_ConditionView(tyle, item) {
+    switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
+        case "email-View-Delete":
+            //#region check list item có statecode = sent (3)
+            var fetchXml =
+                "<fetch top='1'>" +
+                "  <entity name='" + item[0].TypeName + "'>" +
+                "    <attribute name='bsd_name'/>" +
+                "    <attribute name='bsd_project'/>" +
+                "    <filter>" +
+                "      <condition attribute='activityid'  operator='in' />"
+            for (var i = 0; i < item.length; i++) {
+                fetchXml += "      <value>" + item[i].Id + "</value>";
+            }
+            "      </condition>" +
+                "<condition attribute='statuscode' operator='eq' value='3'/>"
+
+            "    </filter>" +
+                "  </entity>" +
+                "</fetch>";
+            //#endregion
+            rm.WebApi.retrieveMultipleRecords("email", "?fetchXml=" + fetchXml).then(
+                function (results) {
+                    if (results.entities.length > 0) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                });
+        case "email-SubGrid-Delete":
+            //#region check list item có statecode = sent (3)
+            var fetchXml =
+                "<fetch top='1'>" +
+                "  <entity name='" + item[0].TypeName + "'>" +
+                "    <attribute name='bsd_name'/>" +
+                "    <attribute name='bsd_project'/>" +
+                "    <filter>" +
+                "      <condition attribute='activityid'  operator='in' />"
+            for (var i = 0; i < item.length; i++) {
+                fetchXml += "      <value>" + item[i].Id + "</value>";
+            }
+            "      </condition>" +
+                "<condition attribute='statuscode' operator='eq' value='3'/>"
+
+            "    </filter>" +
+                "  </entity>" +
+                "</fetch>";
+            //#endregion
+            rm.WebApi.retrieveMultipleRecords("email", "?fetchXml=" + fetchXml).then(
+                function (results) {
+                    if (results.entities.length > 0) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                });
+        case "bsd_bulksendmailmanager-View-Delete":
+            //#region check list item có statecode = sent (3)
+            var fetchXml =
+                "<fetch top='1'>" +
+                "  <entity name='" + item[0].TypeName + "'>" +
+                "    <attribute name='bsd_name'/>" +
+                "    <attribute name='bsd_project'/>" +
+                "    <filter type='and'>" +
+                "      <condition attribute='bsd_bulksendmailmanagerid'  operator='in' />"
+            for (var i = 0; i < item.length; i++) {
+                fetchXml += "      <value>" + item[i].Id + "</value>";
+            }
+            "      </condition>" +
+                "<condition attribute='statuscode' operator='eq' value='100000001'/>"
+            "    </filter>" +
+                "  </entity>" +
+                "</fetch>";
+            //#endregion
+            rm.WebApi.retrieveMultipleRecords("bsd_bulksendmailmanager", "?fetchXml=" + fetchXml).then(
+                function (results) {
+                    if (results.entities.length > 0) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                });
+    }
+}
+
 function getStatusCodeValueByName(optionName) {
     var statusCodeField = Xrm.Page.getAttribute("statuscode");
     if (statusCodeField) {

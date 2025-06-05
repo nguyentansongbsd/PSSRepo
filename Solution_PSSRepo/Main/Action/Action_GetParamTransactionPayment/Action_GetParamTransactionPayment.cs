@@ -62,7 +62,7 @@ namespace Action_GetParamTransactionPayment
                     {
                         ordernumberName = $"{orderNumber}th";
                     }
-                    nameF= $"{ordernumberName} Installment / Thanh toán đợt {orderNumber}";
+                    nameF= $"{ordernumberName} Installment / Thanh toán lần thứ {orderNumber}";
                     break;
                 case 100000001:
                     ValueInstallment = ((Money)payment["bsd_amountpay"]).Value.ToString("N0");
@@ -132,7 +132,7 @@ namespace Action_GetParamTransactionPayment
                         {
                             orderNumberMap = $"{(int)enInsMap["bsd_ordernumber"]}th";
                         }
-                        resultName += $"{orderNumberMap} Installment / Thanh toán đợt {orderNumberMap}\n";
+                        resultName += $"{orderNumberMap} Installment / Thanh toán lần thứ {(int)enInsMap["bsd_ordernumber"]}\n";
                         resultValue += $"{((Money)item["bsd_amount"]).Value.ToString("N0")}\n";
                         break;
                     case 100000001:

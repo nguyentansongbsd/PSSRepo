@@ -156,9 +156,11 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             var enMaster = new Entity(masterName, enMasterRef.Id);
             enMaster["bsd_error"] = true;
             enMaster["bsd_errordetail"] = error;
-            enMaster["bsd_processing_pa"] = false;
-            enMaster["statuscode"] = new OptionSetValue(1);
             service.Update(enMaster);
+            var enupdate = new Entity(en.LogicalName, en.Id);
+            enupdate["statuscode"] = new OptionSetValue(100000002);
+            enupdate["bsd_errordetail"] = error;
+            service.Update(enupdate);
         }
         /// <summary>
         /// Cập nhật field OP Date [bsd_opdate] trên entity Cha qua field OP Date [bsd_opdate] trêm entity Unit 
