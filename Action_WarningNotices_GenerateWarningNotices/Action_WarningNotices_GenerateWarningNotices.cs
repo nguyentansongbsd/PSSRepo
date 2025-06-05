@@ -66,6 +66,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                             #region Da Generate WN
                             if (L_warning.Entities.Count > 0)
                             {
+                                traceService.Trace("Da gen");
                                 Entity warning = L_warning[0];
                                 int numberofWarning = warning.Contains("bsd_numberofwarning") ? (int)warning["bsd_numberofwarning"] : -1;
                                 if (numberofWarning > 0 && numberofWarning < 4)
@@ -112,6 +113,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 traceService.Trace("owner: " + owner);
                                                 warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                             }
+                                            
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
@@ -168,6 +170,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                             #region Chua Generate WN
                             else
                             {
+                                traceService.Trace("Chua gen");
                                 PN_Date = PS.Contains("bsd_warningnotices1date") ? (int)PS["bsd_warningnotices1date"] : -1;
                                 if (PN_Date >= 0 && nday >= PN_Date)
                                 {
@@ -204,13 +207,14 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                         traceService.Trace("owner: " + owner);
                                         warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                     }
+                                    traceService.Trace("122");
                                     #region bsd_deadlinewn1-bsd_deadlinewn2
                                     if (PSD.Contains("bsd_duedate"))
                                     {
                                         warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)PSD["bsd_gracedays"]);
                                         warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
                                     }
-
+                                    traceService.Trace("133");
                                     #endregion
                                     #region xử lý OdernumberE
                                     if (((int)PSD["bsd_ordernumber"]) == 1)
