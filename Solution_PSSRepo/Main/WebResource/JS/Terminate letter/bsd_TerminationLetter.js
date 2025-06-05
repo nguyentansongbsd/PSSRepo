@@ -74,3 +74,5 @@ function onChange_terminatefeewaiver() {
     var totalforfeitureamount = Xrm.Page.getAttribute("bsd_totalforfeitureamount").getValue() || 0;
     Xrm.Page.getAttribute("bsd_terminatefee").setValue(totalforfeitureamount - terminatefeewaiver);
 }
+
+ấdâd aa ằquaf 

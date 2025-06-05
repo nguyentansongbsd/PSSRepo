@@ -156,6 +156,22 @@
           ]
         },
         {
+          "Name": "Action_GetParamPaymentNotice.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c37f7447-f3ba-4441-a73b-9563fad314cc",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetParamPaymentNotice.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_GetParamTransactionPayment.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
