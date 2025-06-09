@@ -121,6 +121,11 @@ namespace Plugin_AutoShareRecord
 
             en = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
             refProject = GetProject();
+            if (refProject == null)
+            {
+                traceService.Trace("No project found for the target entity.");
+                return;
+            }
             projectCode = GetProjectCode(refProject);
             rs = GetTeams(projectCode);
             traceService.Trace(target.LogicalName);
@@ -202,9 +207,18 @@ namespace Plugin_AutoShareRecord
                 </filter>
               </entity>
             </fetch>";
-            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-            traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
-            return rs;
+            try
+            {
+               
+                EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
+                return rs;
+            }
+            catch (Exception ex)
+            {
+                traceService.Trace("Error in GetTeams: " + fetchXml);
+                return null;
+            }
         }
         private static EntityCollection GetDetailBulkMailManager()
         {
@@ -237,6 +251,7 @@ namespace Plugin_AutoShareRecord
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_documents":
+                    if(!en.Contains("bsd_project")) return null;
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_landvalue":

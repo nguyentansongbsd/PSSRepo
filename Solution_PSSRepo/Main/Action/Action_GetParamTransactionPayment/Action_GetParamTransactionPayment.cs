@@ -22,6 +22,8 @@ namespace Action_GetParamTransactionPayment
             service = serviceFactory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             Entity payment = service.Retrieve("bsd_payment", new Guid(context.InputParameters["id"].ToString()), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+            Entity enProject = service.Retrieve("bsd_project", ((EntityReference)payment["bsd_project"]).Id, new ColumnSet(true));
+            Entity enDev = service.Retrieve("account", ((EntityReference)enProject["bsd_investor"]).Id, new ColumnSet(true));
             string ValueInstallment = "";
             string nameF = "";
             /*
@@ -205,6 +207,23 @@ namespace Action_GetParamTransactionPayment
             context.OutputParameters["resultName"] = resultName;
             context.OutputParameters["resultValue"] = resultValue;
             context.OutputParameters["valueInstallment"] = ValueInstallment;
+
+
+            context.OutputParameters["bsd_accountnameother"] = enDev.Contains("bsd_accountnameother") ? enDev["bsd_accountnameother"] : "_";//1
+            tracingService.Trace("step1");
+            context.OutputParameters["bsd_accountname"] = enDev != null ? enDev["name"] : "_";//2
+            tracingService.Trace("step2");
+            context.OutputParameters["bsd_acountdiachi"] = enDev.Contains
+                ("bsd_diachithuongtru") ? enDev["bsd_diachithuongtru"] : "_";//3
+            tracingService.Trace("step3");
+            context.OutputParameters["bsd_registrationcode1"] = enDev.Contains("bsd_registrationcode") ? enDev["bsd_registrationcode"] : "_";//4
+            tracingService.Trace("step4");
+            context.OutputParameters["bsd_developphone"] = enDev.Contains("telephone1") ? enDev["telephone1"] : "_";//5
+            tracingService.Trace("step5");
+            context.OutputParameters["bsd_developfax"] = enDev.Contains("fax") ? enDev["fax"] : "_";//6
+            tracingService.Trace("step6");
+            context.OutputParameters["bsd_companycode"] = enDev.Contains("bsd_companycode") ? enDev["bsd_companycode"] : "_";//7
+            tracingService.Trace("step7");
         }
     }
 }
