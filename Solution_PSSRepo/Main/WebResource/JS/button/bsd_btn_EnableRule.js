@@ -226,6 +226,12 @@ function CheckEnable_Condition(tyle) {
         case "bsd_bankingloan-form-Demortgage":
             if (getStatusCodeValueByName("CLVN_FIN_Finance Manager")) return false;
             break;
+        case "quote-bsd_packageselling-subgriddetail":
+        case "quote-bsd_promotion-subgriddetail":
+            var isExist = Xrm.Page.getAttribute("bsd_existinstallment").getValue();
+            return !isExist;
+        case "salesorder-bsd_promotion-subgriddetail":
+            return false;
         default:
             return true;
     }
