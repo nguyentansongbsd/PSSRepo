@@ -40,6 +40,9 @@ namespace Plugin_Project_CreateTeam
 
             teamId = CreateTeam(projectCode, "SALE-MGT", enUser);
             ShareTeams(refProject, new EntityReference("team", teamId));
+
+            teamId = CreateTeam(projectCode, "SALE-ADMIN", enUser);
+            ShareTeams(refProject, new EntityReference("team", teamId));
         }
 
         private Guid CreateTeam(string projectCode, string department, Entity enUser)

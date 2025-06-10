@@ -45,19 +45,19 @@ namespace Plugin_AutoShareRecord
                 //    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                 //    break;//
                 case "bsd_documents":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-TEAM" });
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-TEAM", "SALE-ADMIN" });
                     break;
                 case "bsd_bulksendmailmanager":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     var rs = GetDetailBulkMailManager();
                     foreach (var item in rs.Entities)
                     {
-                        Run_ShareTemProject(false, new List<string> { "FINANCE-TEAM" },item);
+                        Run_ShareTemProject(false, new List<string> { "FINANCE-TEAM" }, item);
                     }
                     //share email detail luôn.
                     break;
                 case "email":
-                    if(!target.Contains("bsd_bulksendmailmanager")) return;
+                    if (!target.Contains("bsd_bulksendmailmanager")) return;
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bankingloan":
@@ -78,11 +78,9 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_updateestimatehandoverdate":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    Run_ShareTemProject(false, new List<string> { "SALE-MGT" });
                     break;
                 case "bsd_bulkwaiver":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
@@ -115,7 +113,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null,Entity enShare=null)
+        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null, Entity enShare = null)
         {
             traceService.Trace($"Run_ShareTemProject {target.LogicalName}");
 
@@ -129,11 +127,11 @@ namespace Plugin_AutoShareRecord
             projectCode = GetProjectCode(refProject);
             rs = GetTeams(projectCode);
             traceService.Trace(target.LogicalName);
-            
-            if(enShare==null)
+
+            if (enShare == null)
             {
                 enShare = target;
-            }    
+            }
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
 
@@ -141,7 +139,7 @@ namespace Plugin_AutoShareRecord
                 {
                     if (teamShares != null)
                     {
-                        if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-","")))
+                        if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-", "")))
                             ShareTeams(enShare.ToEntityReference(), team.ToEntityReference(), hasWrite);
                     }
                 }
@@ -154,7 +152,7 @@ namespace Plugin_AutoShareRecord
 
             AccessRights Access_Rights = AccessRights.ReadAccess | AccessRights.AppendAccess | AccessRights.AppendToAccess;
             if (hasWriteShare)
-                Access_Rights |= AccessRights.WriteAccess ;
+                Access_Rights |= AccessRights.WriteAccess;
 
             var grantAccessRequest = new GrantAccessRequest
             {
@@ -203,13 +201,14 @@ namespace Plugin_AutoShareRecord
                     <value>{projectCode}-FINANCE-TEAM</value>
                     <value>{projectCode}-SALE-TEAM</value>
                     <value>{projectCode}-SALE-MGT</value>
+                    <value>{projectCode}-SALE-ADMIN</value>
                   </condition>
                 </filter>
               </entity>
             </fetch>";
             try
             {
-               
+
                 EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
                 traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
                 return rs;
@@ -236,7 +235,7 @@ namespace Plugin_AutoShareRecord
             EntityReference enProjectRef2 = null;
             EntityReference enMasterRef = null;
 
-            Entity enMaster =null;
+            Entity enMaster = null;
             switch (target.LogicalName)
             {
                 case "email":
@@ -251,7 +250,7 @@ namespace Plugin_AutoShareRecord
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_documents":
-                    if(!en.Contains("bsd_project")) return null;
+                    if (!en.Contains("bsd_project")) return null;
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_landvalue":
@@ -318,8 +317,8 @@ namespace Plugin_AutoShareRecord
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_interestsimulationdetail":
-                    enMasterRef = (EntityReference) en["bsd_optionentry"];
-                    enMaster=service.Retrieve(enMasterRef.LogicalName,enMasterRef.Id,new ColumnSet(true));
+                    enMasterRef = (EntityReference)en["bsd_optionentry"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_bulkchangemanagementfeedetail":

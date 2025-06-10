@@ -299,6 +299,7 @@ namespace Action_ShareCustomerToTeam
                         <value>{projectCode}-CCR-TEAM</value>
                         <value>{projectCode}-FINANCE-TEAM</value>
                         <value>{projectCode}-SALE-MGT</value>
+                        <value>{projectCode}-SALE-ADMIN</value>
                       </condition>
                     </filter>
                   </entity>
