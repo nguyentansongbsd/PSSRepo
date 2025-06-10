@@ -327,53 +327,53 @@ namespace Plugin_AutoShareRecord
             }
             if (service1.MessageName == "Update")
             {
-                if (inputParameter.LogicalName == "bsd_discount")
-                {
-                    var en = service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(true));
-                    if (!en.Contains("bsd_applyafterpl") || ((bool)en["bsd_applyafterpl"]) == false)
-                        return;
-                    if (((OptionSetValue)en["statuscode"]).Value == 100000000)
-                    {
-                        // Lấy thông tin của thực thể dự án từ dịch vụ
-                        Entity projectEntity = this.service.Retrieve(
-                            "bsd_project",
-                            ((EntityReference)this.service.Retrieve(
-                                logicalName,
-                                inputParameter.Id,
-                                new ColumnSet("bsd_project")
-                            )["bsd_project"]).Id,
-                            new ColumnSet("bsd_projectcode", "bsd_name")
-                        );
-                        // Kiểm tra xem dự án có chứa mã dự án hay không và gán giá trị cho biến ProjectCode
-                        string projectCode = projectEntity.Contains("bsd_projectcode")
-                            ? (string)projectEntity["bsd_projectcode"]
-                            : "";
-                        int num;
-                        bool FinTeam = (num = 1) != 0;
-                        bool CcrTeam = num != 0;
-                        bool SaleTeam = num != 0;
-                        bool SaleMgtTeam = num != 0;
-                        EntityCollection teamAccess = this.Get_TeamAccess(projectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
-                        foreach (Entity entity in teamAccess.Entities)
-                        {
-                            traceService.Trace($"teams {entity["name"]}");
-                        }
-                        if (teamAccess.Entities.Count > 0)
-                        {
-                            foreach (Entity entity9 in (Collection<Entity>)teamAccess.Entities)
-                            {
+                //if (inputParameter.LogicalName == "bsd_discount")
+                //{
+                //    var en = service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(true));
+                //    if (!en.Contains("bsd_applyafterpl") || ((bool)en["bsd_applyafterpl"]) == false)
+                //        return;
+                //    if (((OptionSetValue)en["statuscode"]).Value == 100000000)
+                //    {
+                //        // Lấy thông tin của thực thể dự án từ dịch vụ
+                //        Entity projectEntity = this.service.Retrieve(
+                //            "bsd_project",
+                //            ((EntityReference)this.service.Retrieve(
+                //                logicalName,
+                //                inputParameter.Id,
+                //                new ColumnSet("bsd_project")
+                //            )["bsd_project"]).Id,
+                //            new ColumnSet("bsd_projectcode", "bsd_name")
+                //        );
+                //        // Kiểm tra xem dự án có chứa mã dự án hay không và gán giá trị cho biến ProjectCode
+                //        string projectCode = projectEntity.Contains("bsd_projectcode")
+                //            ? (string)projectEntity["bsd_projectcode"]
+                //            : "";
+                //        int num;
+                //        bool FinTeam = (num = 1) != 0;
+                //        bool CcrTeam = num != 0;
+                //        bool SaleTeam = num != 0;
+                //        bool SaleMgtTeam = num != 0;
+                //        EntityCollection teamAccess = this.Get_TeamAccess(projectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
+                //        foreach (Entity entity in teamAccess.Entities)
+                //        {
+                //            traceService.Trace($"teams {entity["name"]}");
+                //        }
+                //        if (teamAccess.Entities.Count > 0)
+                //        {
+                //            foreach (Entity entity9 in (Collection<Entity>)teamAccess.Entities)
+                //            {
 
-                                if (entity9.Attributes["name"].ToString().Contains("-CCR") ||
-                                    entity9.Attributes["name"].ToString().Contains(strFIN) ||
-                                    entity9.Attributes["name"].ToString().Contains(strSMGT))
-                                    Plugin_AutoShareRecord_V2_2.ShareTeams(inputParameter.ToEntityReference(), entity9.ToEntityReference(), false);
+                //                if (entity9.Attributes["name"].ToString().Contains("-CCR") ||
+                //                    entity9.Attributes["name"].ToString().Contains(strFIN) ||
+                //                    entity9.Attributes["name"].ToString().Contains(strSMGT))
+                //                    Plugin_AutoShareRecord_V2_2.ShareTeams(inputParameter.ToEntityReference(), entity9.ToEntityReference(), false);
 
-                                if (entity9.Attributes["name"].ToString().Contains(strSM))
-                                    Plugin_AutoShareRecord_V2_2.ShareTeams(inputParameter.ToEntityReference(), entity9.ToEntityReference(), true);
-                            }
-                        }
-                    }
-                }
+                //                if (entity9.Attributes["name"].ToString().Contains(strSM))
+                //                    Plugin_AutoShareRecord_V2_2.ShareTeams(inputParameter.ToEntityReference(), entity9.ToEntityReference(), true);
+                //            }
+                //        }
+                //    }
+                //}
 
                 Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
             }
