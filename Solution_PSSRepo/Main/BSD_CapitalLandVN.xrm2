@@ -14,6 +14,53 @@
       },
       "Projects": [
         {
+          "Name": "Action_CreateEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "015eda85-19f2-42bc-80d3-51d836de1581",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_CreateEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetMailFromAndTo.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "e55eae90-d316-4ea3-b3e6-1bd505759fa0",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetMailFromAndTo.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_ShareCustomerToTeam.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "d277078e-4bc3-45f4-be42-3071dc22c51a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_WarningNotices_GenerateWarningNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -23,6 +70,22 @@
                 "Id": "e8fed5d6-267a-4f2d-bcd9-fc209f152b3c",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_UpdateDueDateDetail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "95137e56-9c0a-413d-915a-de1ba532d41a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateDueDateDetail.dll",
                 "SourceType": 0
               }
             }
@@ -150,6 +213,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Action_GetDataSyncInstallment.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_GetEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "1422eafb-4e5c-4a9c-9577-66df1ea47b03",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_GetEmailMessage.dll",
                 "SourceType": 0
               }
             }
@@ -302,6 +381,21 @@
                   "Name": "System.Xml.Linq"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "Name": "Action_ShareCustomerToTeam.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "d277078e-4bc3-45f4-be42-3071dc22c51a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
             }
           ]
         },

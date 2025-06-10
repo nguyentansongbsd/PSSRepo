@@ -129,10 +129,9 @@ namespace Plugin_Create_UpdateDueDateDetail
                 if (!result) return;
 
                 CheckPaidDetail(ref result, item, enInstallment);
-                tracingService.Trace("CheckDueDate");
-                if (!result) return;
-
-                CheckDueDate(ref result, item, enInstallment, enHD);
+                //tracingService.Trace("CheckDueDate");
+                //if (!result) return;
+                //CheckDueDate(ref result, item, enInstallment, enHD);
                 tracingService.Trace("CheckNewDate");
                 if (!result) return;
 
@@ -325,6 +324,7 @@ namespace Plugin_Create_UpdateDueDateDetail
         }
         public void HandleError(Entity item, string error)
         {
+            tracingService.Trace(error);
             throw new InvalidPluginExecutionException(error);
         }
     }

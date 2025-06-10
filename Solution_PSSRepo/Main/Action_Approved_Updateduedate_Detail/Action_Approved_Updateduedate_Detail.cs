@@ -241,6 +241,9 @@ namespace Action_Approved_Updateduedate_Detail
                     }
                     if (((int)JItem["bsd_ordernumber"]) > ((int)enInstallment["bsd_ordernumber"]))//nhở hơn đợt phí sau?
                     {
+                        #region lấy item trong list detail nếu có
+
+                        #endregion
                         if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
                         {
                             var mess = "The new due date is later than the previous batch. Please check again.";

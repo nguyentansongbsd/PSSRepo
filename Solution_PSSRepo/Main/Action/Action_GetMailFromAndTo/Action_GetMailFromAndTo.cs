@@ -63,7 +63,7 @@ namespace Action_GetMailFromAndTo
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_projectid", ConditionOperator.Equal, idProject);
             var rs = service.RetrieveMultiple(query);
-            if (rs.Entities[0].Contains("bsd_sendermail")==false)
+            if (rs.Entities[0].Contains("bsd_senderconfigsystem") ==false)
             {
 
                 mess = "not found mail project";
@@ -72,7 +72,7 @@ namespace Action_GetMailFromAndTo
             else
             {
                 tracingService.Trace("@");
-                context.OutputParameters["idQueueFrom"] =((EntityReference) rs.Entities[0]["bsd_sendermail"]).Id.ToString();
+                context.OutputParameters["idQueueFrom"] =((EntityReference) rs.Entities[0]["bsd_senderconfigsystem"]).Id.ToString();
             }
             tracingService.Trace("0");
             //check mail khách hàng

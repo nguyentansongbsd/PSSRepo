@@ -122,11 +122,14 @@ namespace Action_ShareCustomerToTeam
                     {
                         Guid TeamID = Guid.Parse(it["teamid"].ToString());
                         EntityReference refTeam = new EntityReference("team", TeamID);
+                        traceService.Trace("step2.0");
                         ShareTeams(enRef, refTeam);
+                        traceService.Trace("step2.1_");
                         if (fieldName == "contact")
                             ShareDoiTuong_CoOwner(enRef, refTeam);
                         else
                         {
+                            traceService.Trace("step2.1");
                             Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
                             if (enAcc.Contains("primarycontactid"))
                                 ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
@@ -134,6 +137,7 @@ namespace Action_ShareCustomerToTeam
                             //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
                             if (enAcc.Contains("bsd_maincompany"))
                                 ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+                            traceService.Trace("step2.2");
 
                             var fetchXml = $@"
                             <fetch>
@@ -145,24 +149,33 @@ namespace Action_ShareCustomerToTeam
                                 </filter>
                               </entity>
                             </fetch>";
+                            traceService.Trace("step2.3");
+
                             EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
                             foreach (Entity i in rs_.Entities)
                             {
                                 if (i.Contains("bsd_representative"))
                                     ShareTeams((EntityReference)i["bsd_representative"], refTeam);
+                                traceService.Trace("step2.4");
+
                                 if (i.Contains("bsd_contact"))
                                     ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                                traceService.Trace("step2.5");
+
                             }
                         }
                         var team = it;
+                        Entity enTeam = service.Retrieve("team", Guid.Parse(it["teamid"].ToString()), new ColumnSet(new string[] { "name", "teamid" }));
                         var fetchXml2 = $@"
-                <fetch>
-                  <entity name='team'>
-                    <filter>
-                      <condition attribute='name' operator='like' value='%{team["name"].ToString().Split('_')[0]}%'/>
-                    </filter>
-                  </entity>
-                </fetch>";
+                                        <fetch>
+                                          <entity name='team'>
+                                            <filter>
+                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('_')[0]}%'/>
+                                            </filter>
+                                          </entity>
+                                        </fetch>";
+                        traceService.Trace("step2.6");
+
                         EntityCollection rs1 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
                         foreach (Entity entity in rs1.Entities)
                         {
@@ -177,6 +190,8 @@ namespace Action_ShareCustomerToTeam
                                 Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
                                 if (enAcc.Contains("primarycontactid"))
                                     ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                                traceService.Trace("step2.7");
+
                                 //if(enAcc.Contains("bsd_chudautu"))
                                 //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
                                 if (enAcc.Contains("bsd_maincompany"))
@@ -192,6 +207,8 @@ namespace Action_ShareCustomerToTeam
                                 </filter>
                               </entity>
                             </fetch>";
+                                traceService.Trace("step2.8");
+
                                 EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
                                 foreach (Entity i in rs_.Entities)
                                 {

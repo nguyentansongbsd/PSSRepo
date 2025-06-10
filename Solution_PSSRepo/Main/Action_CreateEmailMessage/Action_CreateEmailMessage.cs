@@ -333,22 +333,22 @@ namespace Action_CreateEmailMessage
             switch (((OptionSetValue)entityMain["bsd_paymenttype"]).Value)
             {
                 case 100000000:
-                    res = "Phí giữ chỗ";
+                    res = "Queuing fee";
                     break;
                 case 100000001:
-                    res = "Đặt cọc";
+                    res = "Deposit fee";
                     break;
                 case 100000002:
-                    res = "Đợt thanh toán ";
+                    res = "Installment";
                     var enInsMapRef = (EntityReference)entityMain["bsd_paymentschemedetail"];
                     var enInsMap = service.Retrieve(enInsMapRef.LogicalName, enInsMapRef.Id, new ColumnSet(true));
                     res += ((int)enInsMap["bsd_ordernumber"]).ToString();
                     break;
                 case 100000003:
-                    res = "Lãi đợt";
+                    res = "Interest charge";
                     break;
                 case 100000004:
-                    res = "Phí";
+                    res = "Fees";
                     break;
                 default:
                     res = "Other";
@@ -371,8 +371,9 @@ namespace Action_CreateEmailMessage
                 default:
                     break;
             }
-            return fullname;
+            return RemoveVietnameseDiacritics(fullname);
         }
+
         private string GetSignMail()
         {
             var query = new QueryExpression("emailsignature");
@@ -386,6 +387,39 @@ namespace Action_CreateEmailMessage
             }
             else return "";
 
+        }
+        private string RemoveVietnameseDiacritics(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            string[] vietnameseChars = new string[]
+            {
+                "aAeEoOuUiIdDyY",
+                "áàạảãâấầậẩẫăắằặẳẵ",
+                "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ",
+                "éèẹẻẽêếềệểễ",
+                "ÉÈẸẺẼÊẾỀỆỂỄ",
+                "óòọỏõôốồộổỗơớờợởỡ",
+                "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ",
+                "úùụủũưứừựửữ",
+                "ÚÙỤỦŨƯỨỪỰỬỮ",
+                "íìịỉĩ",
+                "ÍÌỊỈĨ",
+                "đ",
+                "Đ",
+                "ýỳỵỷỹ",
+                "ÝỲỴỶỸ"
+            };
+
+            for (int i = 1; i < vietnameseChars.Length; i++)
+            {
+                for (int j = 0; j < vietnameseChars[i].Length; j++)
+                {
+                    input = input.Replace(vietnameseChars[i][j], vietnameseChars[0][i - 1]);
+                }
+            }
+            return input;
         }
     }
 }
