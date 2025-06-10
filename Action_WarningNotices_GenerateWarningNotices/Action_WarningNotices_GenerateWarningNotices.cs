@@ -47,12 +47,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
             Entity OE = service.Retrieve("salesorder", Guid.Parse(optionEntryId), new ColumnSet(new string[] { "bsd_paymentscheme", "name",
                 "customerid","bsd_project","bsd_unitnumber"}));
             int dem = 0;
-            EntityCollection l_PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
+            Entity PS = findPaymentScheme(service, (EntityReference)OE["bsd_paymentscheme"]);
             traceService.Trace("2");
             int PN_Date = -1;
-            if (l_PS.Entities.Count > 0)
+            if (PS != null)
             {
-                Entity PS = l_PS[0];
                 if (PS.Contains("bsd_warningnotices1date") || PS.Contains("bsd_warningnotices2date") || PS.Contains("bsd_warningnotices3date") || PS.Contains("bsd_warningnotices4date"))
                 {
                     traceService.Trace("3");
@@ -114,7 +113,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 traceService.Trace("owner1: " + owner);
                                                 warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                             }
-                                            
+
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
                                             if (PSD.Contains("bsd_duedate"))
                                             {
@@ -127,7 +126,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 else
                                                 {
                                                     var bsd_paymentscheme = service.Retrieve("bsd_paymentscheme", ((EntityReference)PSD["bsd_paymentscheme"]).Id, new ColumnSet("bsd_interestratemaster"));
-                                                    var bsd_interestratemaster= service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
+                                                    var bsd_interestratemaster = service.Retrieve("bsd_interestratemaster", ((EntityReference)bsd_paymentscheme["bsd_interestratemaster"]).Id, new ColumnSet("bsd_gracedays"));
                                                     warningNotices["bsd_deadlinewn1"] = ((DateTime)PSD["bsd_duedate"]).AddHours(7).AddDays((int)bsd_interestratemaster["bsd_gracedays"]);
                                                 }
                                                 warningNotices["bsd_deadlinewn2"] = ((DateTime)PSD["bsd_duedate"]).AddDays(60).AddHours(7);
@@ -154,7 +153,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                             }
                                             #endregion
                                             var id = service.Create(warningNotices);
-                                            var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true));
+                                            var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet("bsd_date", "bsd_noticesnumber"));
                                             dem++;
 
                                             Entity ins = new Entity(PSD.LogicalName);
@@ -256,7 +255,8 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                     }
                                     #endregion
                                     var id = service.Create(warningNotices);
-                                    var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet(true)); dem++;
+                                    var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet("bsd_date", "bsd_noticesnumber"));
+                                    dem++;
 
                                     Entity ins = new Entity(PSD.LogicalName);
                                     ins.Id = PSD.Id;
@@ -342,25 +342,12 @@ namespace Action_WarningNotices_GenerateWarningNotices
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-        private EntityCollection findPaymentScheme(IOrganizationService crmservices, EntityReference ps)
+        private Entity findPaymentScheme(IOrganizationService crmservices, EntityReference ps)
         {
-            string fetchXml =
-              @"<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>
-              <entity name='bsd_paymentscheme'>
-                <attribute name='bsd_paymentschemeid' />
-                <attribute name='bsd_warningnotices4date' />
-                <attribute name='bsd_warningnotices3date' />
-                <attribute name='bsd_warningnotices2date' />
-                <attribute name='bsd_warningnotices1date' />
-                <order attribute='bsd_warningnotices4date' descending='false' />
-                <filter type='and'>
-                  <condition attribute='bsd_paymentschemeid' operator='eq' uitype='bsd_paymentscheme' value='{0}' />
-                </filter>
-              </entity>
-            </fetch>";
-            fetchXml = string.Format(fetchXml, ps.Id);
-            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
-            return entc;
+            Entity enPaymentScheme = service.Retrieve(ps.LogicalName, ps.Id, new ColumnSet("bsd_paymentschemeid", "bsd_warningnotices4date",
+                "bsd_warningnotices3date", "bsd_warningnotices2date", "bsd_warningnotices1date"));
+            return enPaymentScheme;
+
         }
         private EntityCollection findOptionEntry(IOrganizationService crmservices, string project, string block, string floor, string units)
         {
