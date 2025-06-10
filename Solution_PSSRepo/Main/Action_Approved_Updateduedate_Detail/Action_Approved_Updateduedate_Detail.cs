@@ -21,6 +21,7 @@ namespace Action_Approved_Updateduedate_Detail
         Entity en = new Entity();
         string enHD_name = "";
         string enIntalments_fieldNameHD = "";
+        Entity enMaster = new Entity();
         public void Execute(IServiceProvider serviceProvider)
         {
 
@@ -126,7 +127,7 @@ namespace Action_Approved_Updateduedate_Detail
         {
             var enMasterRef = (EntityReference)item["bsd_updateduedate"];
 
-            var enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
+            enMaster = service.Retrieve("bsd_updateduedate", enMasterRef.Id, new ColumnSet(true));
             if (((EntityReference)enMaster["bsd_project"]).Id != ((EntityReference)item["bsd_project"]).Id)
             {
                 var mess = "The project in the Master and Detail entities does not match. Please check again.";
