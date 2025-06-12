@@ -41,7 +41,7 @@ namespace Plugin_AutoShareRecord
                 //    Run_PriceList();
                 //    break;
                 case "bsd_discount":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 1 }, { "SALE-ADMIN", 0 } }, 100000000);
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 0 } }, 100000000);
                     break;
             }
 
@@ -400,7 +400,7 @@ namespace Plugin_AutoShareRecord
                     {
                         refTeam = team.ToEntityReference();
                         hasWrite = $"{projectCode}-CCR-TEAM".Equals((string)team["name"]);
-                        accessType = hasWrite ? 1 : 0;
+                        accessType = hasWrite ? 2 : 0;
 
                         ShareTeams(refPS, refTeam, accessType);
 
