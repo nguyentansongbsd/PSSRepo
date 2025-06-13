@@ -100,8 +100,6 @@ namespace Plugin_AutoShareRecord
                 case "bsd_payment":
                 case "bsd_miscellaneous":
                 case "bsd_invoice":
-                case "bsd_confirmpayment":
-                case "bsd_confirmapplydocument":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 }, { "SALE-MGT", 0 } });
                     break;
                 case "bsd_termination":
@@ -114,6 +112,14 @@ namespace Plugin_AutoShareRecord
                 case "bsd_updateduedateoflastinstallmentapprove":
                 case "bsd_updateduedateoflastinstallment":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 1 } });
+                    break;
+                case "bsd_confirmpayment":
+                case "bsd_confirmapplydocument":
+                    enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_project" }));
+                    if (enTarget.Contains("bsd_project"))
+                        ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 }, { "SALE-MGT", 0 } });
+                    else
+                        ShareTeams_ConfirmPayment(_context);
                     break;
             }
 
@@ -488,6 +494,144 @@ namespace Plugin_AutoShareRecord
 
                     EntityReference refOwnerQuote = (EntityReference)enQuote["ownerid"];
                     ShareTeams(refOE, refOwnerQuote, 0);
+                }
+            }
+        }
+
+        private static List<string> GetProjectCodes_ConfirmPayment(Guid userId)
+        {
+            traceService.Trace("GetProjectCodes_ConfirmPayment");
+
+            List<string> listCode = new List<string>();
+
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch distinct=""true"">
+              <entity name=""team"">
+                <attribute name=""name"" />
+                <attribute name=""isdefault"" />
+                <filter>
+                  <condition attribute=""isdefault"" operator=""eq"" value=""0"" />
+                </filter>
+                <order attribute=""name"" />
+                <link-entity name=""teammembership"" from=""teamid"" to=""teamid"" intersect=""true"">
+                  <filter>
+                    <condition attribute=""systemuserid"" operator=""eq"" value=""{userId}"" />
+                  </filter>
+                </link-entity>
+              </entity>
+            </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                listCode.AddRange(rs.Entities
+                        .Select(x => (string)x["name"])
+                        .Select(name => string.Join("-", name.Split('-').Reverse().Skip(2).Reverse()))
+                        .Distinct()
+                        .ToList());
+            }
+            return listCode;
+        }
+
+        private static EntityCollection GetTeam_ConfirmPayment(Guid userId)
+        {
+            traceService.Trace("GetTeam_ConfirmPayment");
+
+            List<string> listCode = GetProjectCodes_ConfirmPayment(userId);
+            EntityCollection listTeam = new EntityCollection();
+
+            if (listCode.Count > 0)
+            {
+                foreach (var projectCode in listCode)
+                {
+                    var fetchXmlTeam = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch>
+                      <entity name=""team"">
+                        <attribute name=""name"" />
+                        <filter>
+                          <condition attribute=""name"" operator=""in"">
+                            <value>{projectCode}-FINANCE-TEAM</value>
+                            <value>{projectCode}-SALE-MGT</value>
+                          </condition>
+                        </filter>
+                        <order attribute=""name"" />
+                      </entity>
+                    </fetch>";
+                    EntityCollection rsTeam = service.RetrieveMultiple(new FetchExpression(fetchXmlTeam));
+                    if (rsTeam != null && rsTeam.Entities != null && rsTeam.Entities.Count > 0)
+                    {
+                        listTeam.Entities.AddRange(rsTeam.Entities.ToList());
+                    }
+                }
+            }
+
+            return listTeam;
+        }
+
+        private static bool IsSystemAdmin(Guid userId)
+        {
+            traceService.Trace("IsSystemAdmin");
+
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch distinct=""true"">
+              <entity name=""systemuser"">
+                <attribute name=""systemuserid"" />
+                <attribute name=""fullname"" />
+                <filter>
+                  <condition attribute=""systemuserid"" operator=""eq"" value=""{userId}"" />
+                </filter>
+                <link-entity name=""systemuserroles"" from=""systemuserid"" to=""systemuserid"" intersect=""true"">
+                  <link-entity name=""role"" from=""roleid"" to=""roleid"" alias=""role"" intersect=""true"">
+                    <attribute name=""name"" />
+                    <filter>
+                      <condition attribute=""name"" operator=""eq"" value=""System Administrator"" />
+                    </filter>
+                  </link-entity>
+                </link-entity>
+              </entity>
+            </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return (rs != null && rs.Entities != null && rs.Entities.Count > 0);
+        }
+
+        private static EntityCollection GetTeam_ConfirmPayment_All(Guid userId)
+        {
+            traceService.Trace("GetTeam_ConfirmPayment");
+
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch distinct=""true"">
+              <entity name=""team"">
+                <attribute name=""teamid"" />
+                <attribute name=""name"" />
+                <attribute name=""isdefault"" />
+                <filter type=""or"">
+                  <condition attribute=""name"" operator=""ends-with"" value=""-FINANCE-TEAM"" />
+                  <condition attribute=""name"" operator=""ends-with"" value=""-SALE-MGT"" />
+                </filter>
+                <order attribute=""name"" />
+              </entity>
+            </fetch>";
+            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return rs;
+        }
+
+        public static void ShareTeams_ConfirmPayment(IPluginExecutionContext _context)
+        {
+            traceService.Trace("ShareTeams_ConfirmPayment");
+
+            EntityCollection rs = new EntityCollection();
+            if (IsSystemAdmin(_context.UserId))
+                rs = GetTeam_ConfirmPayment_All(_context.UserId);
+            else
+                rs = GetTeam_ConfirmPayment(_context.UserId);
+
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                EntityReference refTarget = enTarget.ToEntityReference();
+                int accessType = 0;
+                foreach (var team in rs.Entities)
+                {
+                    accessType = ((string)team["name"]).EndsWith("-FINANCE-TEAM") ? 2 : 0;
+                    ShareTeams(refTarget, team.ToEntityReference(), accessType);
                 }
             }
         }
