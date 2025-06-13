@@ -78,7 +78,7 @@ namespace Plugin_SubSale_Update_Coowner
             }
             else if (context.MessageName == "Update")
             {
-                if (statuscode == 100000001)
+                if (statuscode == 100000001 && target.Contains("statuscode"))
                 {
                     var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     <fetch>
@@ -129,28 +129,25 @@ namespace Plugin_SubSale_Update_Coowner
                         service.Update(co_owner);
                     }
                 }
-                else if (statuscode == 1)
+                Entity enUp = new Entity(SubSale.LogicalName, SubSale.Id);
+                if (SubSale.Contains("bsd_optionentry"))
                 {
-                    Entity enUp = new Entity(SubSale.LogicalName, SubSale.Id);
-                    if (SubSale.Contains("bsd_optionentry"))
-                    {
-                        EntityReference erf = (EntityReference)SubSale["bsd_optionentry"];
-                        setInforTax(erf.Id, enUp);
-                    }
-                    if (SubSale.Contains("bsd_currentcustomer"))
-                    {
-                        EntityReference erf = (EntityReference)SubSale["bsd_currentcustomer"];
-                        if (erf.LogicalName == "contact") setInforContact_Customer(erf.Id, erf.LogicalName, enUp, true);
-                        else setInforAccount_Customer(erf.Id, erf.LogicalName, enUp, true);
-                    }
-                    if (SubSale.Contains("bsd_newcustomer"))
-                    {
-                        EntityReference erf = (EntityReference)SubSale["bsd_newcustomer"];
-                        if (erf.LogicalName == "contact") setInforContact_Customer(erf.Id, erf.LogicalName, enUp, false);
-                        else setInforAccount_Customer(erf.Id, erf.LogicalName, enUp, false);
-                    }
-                    service.Update(enUp);
+                    EntityReference erf = (EntityReference)SubSale["bsd_optionentry"];
+                    setInforTax(erf.Id, enUp);
                 }
+                if (SubSale.Contains("bsd_currentcustomer"))
+                {
+                    EntityReference erf = (EntityReference)SubSale["bsd_currentcustomer"];
+                    if (erf.LogicalName == "contact") setInforContact_Customer(erf.Id, erf.LogicalName, enUp, true);
+                    else setInforAccount_Customer(erf.Id, erf.LogicalName, enUp, true);
+                }
+                if (SubSale.Contains("bsd_newcustomer"))
+                {
+                    EntityReference erf = (EntityReference)SubSale["bsd_newcustomer"];
+                    if (erf.LogicalName == "contact") setInforContact_Customer(erf.Id, erf.LogicalName, enUp, false);
+                    else setInforAccount_Customer(erf.Id, erf.LogicalName, enUp, false);
+                }
+                service.Update(enUp);
             }
         }
         private void setInforTax(Guid id, Entity enUp)
