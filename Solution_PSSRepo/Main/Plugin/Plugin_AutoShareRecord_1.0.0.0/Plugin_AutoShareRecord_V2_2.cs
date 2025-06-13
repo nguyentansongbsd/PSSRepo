@@ -83,6 +83,7 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bulkwaiver":
+                case "bsd_bulkwaiverdetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bulkchangemanagementfee":
@@ -295,6 +296,7 @@ namespace Plugin_AutoShareRecord
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
                 case "bsd_bulkwaiver":
+                case "bsd_bulkwaiverdetail":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
                 case "bsd_bulkchangemanagementfee":
