@@ -55,6 +55,7 @@ namespace Plugin_Updateestimatehandoverdate
             var query = new QueryExpression("bsd_updateestimatehandoverdatedetail");
             query.ColumnSet.AllColumns = true;
             query.Criteria.AddCondition("bsd_updateestimatehandoverdate", ConditionOperator.Equal, en.Id.ToString());
+
             var rs = service.RetrieveMultiple(query);
             if (rs.Entities.Count == 0)
             {

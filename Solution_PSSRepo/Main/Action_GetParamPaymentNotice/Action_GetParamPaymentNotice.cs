@@ -110,6 +110,11 @@ namespace Action_GetParamPaymentNotice
             context.OutputParameters["bsd_contractnumber"]=enOP.Contains("bsd_contractnumber") ? enOP["bsd_contractnumber"] : "_";//17
             context.OutputParameters["bsd_contractdate"]=enOP.Contains("bsd_contractdate") ? ((DateTime)enOP["bsd_contractdate"]).AddHours(7).ToString("dd/MM/yyyy") : "_";//18
 
+            context.OutputParameters["bsd_developerthuongtruVN"] = enDev.Contains("bsd_permanentaddress1") ? enDev["bsd_permanentaddress1"] : "_";//19
+            tracingService.Trace("step19");
+            context.OutputParameters["bsd_developthuongtruEg"] = enDev.Contains("bsd_diachithuongtru") ? enDev["bsd_diachithuongtru"] : "_";//20
+            tracingService.Trace("step20");
+
         }
     }
 }

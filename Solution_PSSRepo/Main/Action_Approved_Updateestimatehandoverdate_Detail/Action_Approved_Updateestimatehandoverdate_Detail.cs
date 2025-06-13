@@ -18,7 +18,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         Entity en = new Entity();
         string masterName = "bsd_updateestimatehandoverdate";
         string detailName = "bsd_updateestimatehandoverdatedetail";
-
+        Entity item = null;
         public void Execute(IServiceProvider serviceProvider)
         {
 
@@ -34,7 +34,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             EntityReference enMasterRef = (EntityReference)en["bsd_updateestimatehandoverdate"];
             Entity enMaster = service.Retrieve(masterName, enMasterRef.Id, new ColumnSet(true));
             
-            Entity item = en;
+            item = en;
             bool result = true;
             if (!CheckConditionRun(en))
             {
@@ -168,8 +168,8 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         public void UpdateOPDateFromMasterToUnit(ref bool result, Entity master, Entity enUnit)
         {
             Entity enUnitUpdate = new Entity(enUnit.LogicalName, enUnit.Id);
-            if (!master.Contains("bsd_opdate")) return;
-            enUnitUpdate["bsd_opdate"] = master["bsd_opdate"];
+            if (!item.Contains("bsd_estimatehandoverdatenew")) return;
+            enUnitUpdate["bsd_opdate"] = item["bsd_estimatehandoverdatenew"];
             service.Update(enUnitUpdate);
         }
         /// <summary>

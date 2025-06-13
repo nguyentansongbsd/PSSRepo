@@ -257,7 +257,7 @@
         <div id="searchForm" class="search-form">
             <div class="d-flex-row" id="search-form-kh">
                 <div>
-                    <label for="cmnd" class="mr-10">CMND:</label>
+                    <label for="cmnd" class="mr-10">Identity Carnumber (ID):</label>
                     <input type="text" id="cmnd">
                 </div>
 
@@ -267,7 +267,7 @@
                 </div>-->
 
                 <div>
-                    <label for="passport" class="mr-10">Hộ Chiếu:</label>
+                    <label for="passport" class="mr-10">Passport:</label>
                     <input type="text" id="passport">
                 </div>
 
@@ -297,28 +297,28 @@
                 </div>
 
                 <div>
-                    <label for="registrationCode" class="mr-10">Giấy Phép Kinh Doanh:</label>
+                    <label for="registrationCode" class="mr-10">Registration Code:</label>
                     <input type="text" id="registrationCode" disabled>
                 </div>
             </div>
 
             <div class="d-flex-row row-radio">
                 <div>
-                    <label for="khcn" class="mr-10">Khách Hàng Cá Nhân</label>
+                    <label for="khcn" class="mr-10">Contacts</label>
                     <input type="radio" id="khcn" name="khachhang" value="0" checked>
                 </div>
 
                 <div>
-                    <label for="khdn" class="mr-10">Khách Hàng Doanh Nghiệp</label>
+                    <label for="khdn" class="mr-10">Accounts</label>
                     <input type="radio" id="khdn" name="khachhang" value="1">
                 </div>
 
-                <div class="align-flex-center">
-                    <a class="search" href="javascript:search()"></a>
-                </div>
+                
 
                 <div class="align-right">
-                    <button id="saveToTeam" class="button-7" onclick="btnSave()">Lưu về Team</button>
+                    
+                    <button class="button-7" style="margin-right:5px"><a class="search" href="javascript:search()"></a></button>
+                    <button id="saveToTeam" class="button-7" onclick="btnSave()">Sharing</button>
                 </div>
             </div>
         </div>
@@ -330,10 +330,10 @@
                         <tr>
                             <th class="w-30"></th>
                             <th>STT</th>
-                            <th>Họ và tên</th>
-                            <th>Giới tính</th>
-                            <th>Địa chỉ liên lạc</th>
-                            <th>Số điện thoại</th>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>Contact Address</th>
+                            <th>Telephone</th>
                             <th>Email</th>
                         </tr>
                     </thead>

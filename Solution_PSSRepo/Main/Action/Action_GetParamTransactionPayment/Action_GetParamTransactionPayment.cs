@@ -224,6 +224,11 @@ namespace Action_GetParamTransactionPayment
             tracingService.Trace("step6");
             context.OutputParameters["bsd_companycode"] = enDev.Contains("bsd_companycode") ? enDev["bsd_companycode"] : "_";//7
             tracingService.Trace("step7");
+
+            context.OutputParameters["bsd_developerthuongtruVN"] = enDev.Contains("bsd_permanentaddress1") ? enDev["bsd_permanentaddress1"] : "_";//8
+            tracingService.Trace("step8");
+            context.OutputParameters["bsd_developthuongtruEg"] = enDev.Contains("bsd_diachithuongtru") ? enDev["bsd_diachithuongtru"] : "_";//9
+            tracingService.Trace("step9");
         }
     }
 }

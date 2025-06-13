@@ -220,6 +220,7 @@ namespace Action_Approved_Updateduedate_Detail
             query.Criteria.AddCondition("bsd_paymentschemedetailid", ConditionOperator.NotEqual, enInstallment.Id.ToString());
             var rs_ = service.RetrieveMultiple(query);
             tracingService.Trace($"enInstallment:{enInstallment.Id.ToString()}");
+            var lstDetail=GetListDetail();
             foreach (var JItem in rs_.Entities)
             {
                 tracingService.Trace($"JItem:{JItem.Id.ToString()}");
@@ -231,32 +232,65 @@ namespace Action_Approved_Updateduedate_Detail
                     tracingService.Trace($"bsd_ordernumber:{(int)JItem["bsd_ordernumber"]}");
                     if (((int)JItem["bsd_ordernumber"]) < ((int)enInstallment["bsd_ordernumber"]))//lớn hơn đợt phí trước?
                     {
-                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
+                        #region lấy item trong list detail nếu có
+                        var itemDetail = lstDetail.Entities.FirstOrDefault(x => x.Id == JItem.Id);
+                        if(itemDetail != null)
+                        {
+                            if ((newDate - (((DateTime)itemDetail["bsd_duedatenew"])).AddHours(7)).TotalDays <= 0)
+                            {
+                                var mess = "The new due date is earlier than the next batch. Please check again.";
+                                HandleError(item, mess);
+                                result = false;
+                                break;
+                            }
+                        }
+                        else if((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
                         {
                             var mess = "The new due date is earlier than the next batch. Please check again.";
                             HandleError(item, mess);
-
                             result = false;
                             break;
                         }
+                        #endregion
+
                     }
                     if (((int)JItem["bsd_ordernumber"]) > ((int)enInstallment["bsd_ordernumber"]))//nhở hơn đợt phí sau?
                     {
                         #region lấy item trong list detail nếu có
-
-                        #endregion
-                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
+                        var itemDetail = lstDetail.Entities.FirstOrDefault(x => x.Id == JItem.Id);
+                        if (itemDetail != null)
+                        {
+                            if ((newDate - (((DateTime)itemDetail["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
+                            {
+                                var mess = "The new due date is earlier than the next batch. Please check again.";
+                                HandleError(item, mess);
+                                result = false;
+                                break;
+                            }
+                        }
+                        else if((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
                         {
                             var mess = "The new due date is later than the previous batch. Please check again.";
                             HandleError(item, mess);
                             result = false;
                             break;
                         }
+
+                        #endregion
                     }
                 }
 
             }
             
+        }
+        public EntityCollection GetListDetail()
+        {
+            var query = new QueryExpression("bsd_updateduedatedetail");
+            query.ColumnSet.AllColumns = true;
+            query.Criteria.AddCondition("statuscode", ConditionOperator.NotEqual, 100000003);
+            query.Criteria.AddCondition("bsd_updateduedate", ConditionOperator.Equal, enMaster.Id.ToString());
+            var rs_ = service.RetrieveMultiple(query);
+            return rs_;
         }
         /// <summary>
         /// CNNDH 04.3
