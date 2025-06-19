@@ -74,7 +74,7 @@ namespace Action_Resv_GenPMS
                 traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
                 factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                 service = factory.CreateOrganizationService(context.UserId);
-                traceService.Trace("1");
+                traceService.Trace("1 " + target.Id);
                 Entity QO = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] {
                         "name",
                         "statuscode",
