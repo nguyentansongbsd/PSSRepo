@@ -139,6 +139,18 @@ function CheckEnable_Condition(tyle) {
     debugger;
     let status = Xrm.Page.getAttribute("statuscode").getValue();
     switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
+        case "bsd_sharecustomers-FormApprove":
+            if ((getStatusCodeValueByName("Approved") === status) || ((!CheckRoleForUser("CLVN_S&M_Head of Sale") && !CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")))) return false;
+            break;
+        case "bsd_sharecustomers-ViewApprove":
+            if ((!CheckRoleForUser("CLVN_S&M_Head of Sale") && !CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator"))) return false;
+            break;
+        case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
+        case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
+            if (getStatusCodeValueByName("Approved") === status) return false;
+            break;
         case "bsd_updateduedateoflastinstallmentapprove-subgriddetail":
             if (getStatusCodeValueByName("Approved") === status) return false;
             break;

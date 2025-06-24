@@ -205,6 +205,10 @@
                     <th style="text-align:left">Units</th>
                     <th><select id="sp-units" style="width:150px;text-align:center;"></select></th>
                 </tr>
+                <tr>
+                    <th style="text-align:left">Date</th>
+                    <th><input type="date" id="paymentNotice_date" name="paymentNotice_date" style="padding-left: 35px;"></th>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -461,7 +465,8 @@
             var block = document.getElementById("sp-block").value;
             var floors = document.getElementById("sp-floor").value;
             var units = document.getElementById("sp-units").value;
-            window.top.paymentnotices(project != null ? project : null, block != null ? block : null, floors != null ? floors : null, units != null ? units : null);
+            var payment_notice_date = document.getElementById("paymentNotice_date").value;
+            window.top.paymentnotices(project != null ? project : null, block != null ? block : null, floors != null ? floors : null, units != null ? units : null, payment_notice_date != null ? payment_notice_date : null);
             closeWindow();
         }
 

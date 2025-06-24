@@ -67,6 +67,7 @@
     <Content Include="JS\bsd_HandoverNotice.js" />
     <Content Include="JS\bsd_packageselling.js" />
     <Content Include="JS\button\bsd_btnQuoteReservationForm.js" />
+    <Content Include="JS\button\bsd_btnShareCustomer.js" />
     <Content Include="JS\button\bsd_btn_BulkEmail_WithWordTemplate.js" />
     <Content Include="JS\button\bsd_btn_BulkPrint_WithWordTemplate.js" />
     <Content Include="JS\button\bsd_btn_EnableRule.js" />

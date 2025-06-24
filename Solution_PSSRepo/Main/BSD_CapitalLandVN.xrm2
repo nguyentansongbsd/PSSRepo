@@ -14,6 +14,22 @@
       },
       "Projects": [
         {
+          "Name": "Action_Approved_Updateduedate_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a011561f-581e-44a7-a5cd-aff34186133d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Approved_Updateduedate_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_CreateEmailMessage.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -61,6 +77,22 @@
           ]
         },
         {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_WarningNotices_GenerateWarningNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -70,6 +102,22 @@
                 "Id": "e8fed5d6-267a-4f2d-bcd9-fc209f152b3c",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_TerminationLetter.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "335b404d-8368-47c7-9ba9-2a5153333e7b",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_TerminationLetter.dll",
                 "SourceType": 0
               }
             }
@@ -115,6 +163,16 @@
               "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
+            },
+            {
+              "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
+            },
+            {
+              "CrmId": "ad8500b1-f58a-e811-814c-3863bb360c48",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Due Date Detail\\bsd_Update_Dua_Date.js"
             }
           ]
         }
@@ -182,6 +240,22 @@
         "UniqueName": "Default"
       },
       "Projects": [
+        {
+          "Name": "Action_Action_UpdateLandValue.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "342dd899-a93a-44db-8a76-0551387de569",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_Action_UpdateLandValue.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
         {
           "Name": "Action_Approved_Updateduedate_Detail.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
@@ -443,6 +517,38 @@
           ]
         },
         {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "9efcc9a5-8626-4fc4-9bc8-36afbad5d3de",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_WarningNotices_GenerateWarningNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -529,6 +635,45 @@
           ]
         },
         {
+          "Name": "Plugin_Delete_MailDraff.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Delete_MailDraff.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "ffb8db6d-00ac-4d3f-8307-4f3ba28063f0",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Delete_MailDraff.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Delete_PaymentNotices.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "8e524f07-cd8c-48aa-902e-3b267786d1ba",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Delete_PaymentNotices.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Updateestimatehandoverdate.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -564,6 +709,16 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
             },
             {
+              "CrmId": "8def959d-4e5b-e811-8148-3863bb367e08",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_Payment_Notices.html"
+            },
+            {
+              "CrmId": "74703e83-90cd-ef11-8ee9-002248591b4a",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_terminateletter_option_filter_generate.html"
+            },
+            {
               "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"
@@ -582,6 +737,16 @@
               "CrmId": "ca40ebbf-6b3e-e511-80e3-3863bb344a68",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btnQuoteReservationForm.js"
+            },
+            {
+              "CrmId": "17625946-274b-f011-877b-6045bd1d2e19",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btnShareCustomer.js"
+            },
+            {
+              "CrmId": "2f8026c4-5238-e611-80e7-3863bb36bc80",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Terminate letter\\bsd_btnTerminateLetterView,js.js"
             },
             {
               "CrmId": "3f04438d-3b39-e711-8110-5065f38a7bc1",

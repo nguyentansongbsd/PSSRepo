@@ -108,7 +108,7 @@ ready();
 //        window.top.$ui.Dialog("Error", e.message, null);
 //    }
 //}
-window.top.generateTerminateletter2 = function (project, block, floor, units) {
+window.top.generateTerminateletter2 = function (project, block, floor, units,_date) {
     try {
         debugger;
         if (project == null) {
@@ -123,10 +123,13 @@ window.top.generateTerminateletter2 = function (project, block, floor, units) {
                 ""
                 , ""
                 , "bsd_Action_TerminateLetter_GenerateTerminateLetter"
-                , [{ name: 'Project', type: 'string', value: project != null ? project : "" },
-                { name: 'Block', type: 'string', value: block != null ? block : "" },
-                { name: 'Floor', type: 'string', value: floor != null ? floor : "" },
-                { name: 'Units', type: 'string', value: units != null ? units : "" }]
+                , [
+                    { name: 'Project', type: 'string', value: project != null ? project : "" },
+                    { name: 'Block', type: 'string', value: block != null ? block : "" },
+                    { name: 'Floor', type: 'string', value: floor != null ? floor : "" },
+                    { name: 'Units', type: 'string', value: units != null ? units : "" },
+                    { name: '_date', type: 'string', value: _date != null ? _date.toString() : "" },
+                  ]
                 , function (result) {
                     window.parent.processingDlg.hide();
                     if (result != null && result.status != null) {

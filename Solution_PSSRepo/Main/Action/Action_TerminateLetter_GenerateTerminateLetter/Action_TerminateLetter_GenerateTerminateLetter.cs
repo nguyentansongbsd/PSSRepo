@@ -49,8 +49,11 @@ namespace Action_TerminateLetter_GenerateTerminateLetter
             var enProcess = new Entity("bsd_process", rs.Entities[0].Id);
             enProcess["statuscode"] = new OptionSetValue(100000000);
             this.service.Update(enProcess);
-            // lấy số điện thoại của khách để gửi            
+            // lấy số điện thoại của khách để gửi
+            // 
+            request["_date"] =context.InputParameters.Contains("_date")?context.InputParameters["_date"].ToString():"";
             request["list_id"] = lst_id;
+
             this.service.Execute(request);
             //int num1 = 0;
             //for (int index1 = 0; index1 < paymentScheme.Entities.Count; ++index1)

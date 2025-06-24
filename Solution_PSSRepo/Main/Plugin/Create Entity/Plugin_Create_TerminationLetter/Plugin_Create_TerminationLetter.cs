@@ -35,6 +35,14 @@ namespace Plugin_Create_TerminationLetter
             Guid recordId = entity.Id;
             Entity enCreated = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             tracingService.Trace("Plugin_Create_TerminationLetter" + "id: " + entity.Id.ToString());
+            #region mapping 
+            tracingService.Trace("step mapping");
+            Entity enPro=service.Retrieve("bsd_project", ((EntityReference)enCreated["bsd_project"]).Id, new ColumnSet(true));
+            Entity enDev=service.Retrieve("account", ((EntityReference)enPro["bsd_investor"]).Id, new ColumnSet(true));
+            Entity enUpdate = new Entity("bsd_terminateletter",enCreated.Id);
+            enUpdate["bsd_accountnameother_develop"] = enDev["bsd_accountnameother"];
+            service.Update(enUpdate);
+            #endregion
             if (!enCreated.Contains("bsd_optionentry")) return;
             if (!enCreated.Contains("bsd_followuplist")) return;
 
