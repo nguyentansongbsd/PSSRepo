@@ -74,7 +74,7 @@ namespace Action_Resv_GenPMS
                 traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
                 factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                 service = factory.CreateOrganizationService(context.UserId);
-                traceService.Trace("1");
+                traceService.Trace("1 " + target.Id);
                 Entity QO = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] {
                         "name",
                         "statuscode",
@@ -147,6 +147,41 @@ namespace Action_Resv_GenPMS
                 traceService.Trace("3");
                 GenPaymentScheme(ref QO, ref date, traceService);
                 traceService.Trace("4");
+
+                traceService.Trace("check duedate");
+                #region check duedate
+                var fetchXmlCheckTDTT = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_paymentschemedetail"">
+                    <attribute name=""bsd_name"" />
+                    <attribute name=""bsd_ordernumber"" />
+                    <attribute name=""bsd_duedate"" />
+                    <filter>
+                      <condition attribute=""bsd_reservation"" operator=""eq"" value=""{QO.Id}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                      <condition attribute=""bsd_lastinstallment"" operator=""ne"" value=""1"" />
+                      <condition attribute=""bsd_duedate"" operator=""not-null"" />
+                    </filter>
+                    <order attribute=""bsd_ordernumber"" descending=""true"" />
+                  </entity>
+                </fetch>";
+                EntityCollection rsCheckTDTT = service.RetrieveMultiple(new FetchExpression(fetchXmlCheckTDTT));
+                if (rsCheckTDTT != null && rsCheckTDTT.Entities.Count > 0)
+                {
+                    for (int i = 0; i < rsCheckTDTT.Entities.Count - 1; i++)
+                    {
+                        traceService.Trace("i " + i + " bsd_ordernumber" + (rsCheckTDTT[i].Contains("bsd_ordernumber") ? rsCheckTDTT[i]["bsd_ordernumber"] : ""));
+                        traceService.Trace("bsd_duedate " + (DateTime)rsCheckTDTT[i]["bsd_duedate"]);
+
+                        if (((DateTime)rsCheckTDTT[i]["bsd_duedate"]).Date < ((DateTime)rsCheckTDTT[i + 1]["bsd_duedate"]).Date)
+                        {
+                            throw new InvalidPluginExecutionException("The due date of one or more batches is invalid. Please check again.");
+                        }
+                    }
+                }
+                #endregion
+                traceService.Trace("done check duedate");
+
                 //Cập nhật tiên thừ vào đợt kế cuối
                 updateRemainMoney(QO);
 
