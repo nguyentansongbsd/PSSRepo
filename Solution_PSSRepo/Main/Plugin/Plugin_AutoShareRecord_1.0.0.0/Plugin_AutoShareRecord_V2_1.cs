@@ -83,7 +83,7 @@ namespace Plugin_AutoShareRecord
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 0 } });
                     break;
                 case "bsd_paymentschemedetail":
-                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 2 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 2 } });
+                    ShareTeams_Ins(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 2 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 2 } });
                     break;
                 case "bsd_transfermoney":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 } });
@@ -632,6 +632,40 @@ namespace Plugin_AutoShareRecord
                 {
                     accessType = ((string)team["name"]).EndsWith("-FINANCE-TEAM") ? 2 : 0;
                     ShareTeams(refTarget, team.ToEntityReference(), accessType);
+                }
+            }
+        }
+
+        public static void ShareTeams_Ins(Dictionary<string, int> listTeamRights)
+        {
+            traceService.Trace("ShareTeams_Ins");
+
+            string projectCode = GetProjectCode();
+            EntityCollection rs = GetTeams(projectCode);
+            if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+            {
+                EntityReference refIns = enTarget.ToEntityReference();
+                EntityReference refTeam = null;
+
+                Dictionary<string, Entity> allTeams = rs.Entities.ToDictionary(e => (string)e["name"], e => e);
+                foreach (var teamRights in listTeamRights)
+                {
+                    if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
+                    {
+                        refTeam = tmpTeam.ToEntityReference();
+                        ShareTeams(refIns, refTeam, teamRights.Value);
+                    }
+                }
+
+                Entity enIns = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_reservation" }));
+                if (enIns.Contains("bsd_reservation"))
+                {
+                    EntityReference refQuote = (EntityReference)enIns["bsd_reservation"];
+                    Entity enQuote = service.Retrieve(refQuote.LogicalName, refQuote.Id, new ColumnSet(new string[] { "ownerid" }));
+                    if (!enQuote.Contains("ownerid")) return;
+
+                    EntityReference refOwnerQuote = (EntityReference)enQuote["ownerid"];
+                    ShareTeams(refIns, refOwnerQuote, 2);
                 }
             }
         }
