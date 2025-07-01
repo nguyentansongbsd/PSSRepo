@@ -11,10 +11,10 @@ namespace Action_ConfirmPayment_Confirm
 {
     public class Action_ConfirmPayment_Confirm : IPlugin
     {
-        public static IOrganizationService service = null;
-        public static decimal pm_balancemaster = 0;
-        public static decimal d_bsd_assignamountmaster = 0;
-        public static decimal pm_differentamountmaster = 0;
+        public IOrganizationService service = null;
+        public decimal pm_balancemaster = 0;
+        public decimal d_bsd_assignamountmaster = 0;
+        public decimal pm_differentamountmaster = 0;
         IOrganizationServiceFactory factory = null;
         ITracingService TracingSe = null;
         StringBuilder strMess = new StringBuilder();
@@ -453,6 +453,7 @@ namespace Action_ConfirmPayment_Confirm
                         service.Execute(request);
                     }
                 } // end if payment status = active 
+                TracingSe.Trace(strMess.ToString());
                 //throw new InvalidPluginExecutionException("test confirm payment 13h 14/01/2025");
                 ////}
                 ////catch (Exception ex)
@@ -1362,7 +1363,7 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
             strMess.AppendLine(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
             strMess.AppendLine(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
-            TracingSe.Trace(strMess.ToString());
+            //TracingSe.Trace(strMess.ToString());
             //Throw #######################################
             //throw new Exception(strMess.ToString());
         }
