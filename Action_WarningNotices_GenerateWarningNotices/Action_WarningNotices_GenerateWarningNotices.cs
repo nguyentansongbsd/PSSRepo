@@ -17,6 +17,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
         ITracingService traceService = null;
 
         private string owner = null;
+        private string genWNId = null;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
 
@@ -42,6 +43,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
             {
                 owner = context.InputParameters["Owner"].ToString().Replace("{", "").Replace("}", "");
             }
+            if (context.InputParameters["GenWNId"] != null)
+            {
+                genWNId = context.InputParameters["GenWNId"].ToString().Replace("{", "").Replace("}", "");
+            }
+            traceService.Trace("date: " + date);
             //EntityCollection l_OptionEntry = findOptionEntry(service, pro, blo, flo, units);
             traceService.Trace("1");
             Entity OE = service.Retrieve("salesorder", Guid.Parse(optionEntryId), new ColumnSet(new string[] { "bsd_paymentscheme", "name",
@@ -112,6 +118,11 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                             {
                                                 traceService.Trace("owner1: " + owner);
                                                 warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
+                                            }
+                                            if (!string.IsNullOrWhiteSpace(genWNId))
+                                            {
+                                                traceService.Trace("Gen WN Id: " + genWNId);
+                                                warningNotices["bsd_generatewarningnotices"] = new EntityReference("bsd_genaratewarningnotices", Guid.Parse(genWNId));
                                             }
 
                                             #region bsd_deadlinewn1-bsd_deadlinewn2
@@ -215,6 +226,12 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                         traceService.Trace("owner2: " + owner);
                                         warningNotices["ownerid"] = new EntityReference("systemuser", Guid.Parse(owner));
                                     }
+                                    if (!string.IsNullOrWhiteSpace(genWNId))
+                                    {
+                                        traceService.Trace("Gen WN Id: " + genWNId);
+                                        warningNotices["bsd_generatewarningnotices"] = new EntityReference("bsd_genaratewarningnotices", Guid.Parse(genWNId));
+                                    }
+
                                     #region bsd_deadlinewn1-bsd_deadlinewn2
                                     if (PSD.Contains("bsd_duedate"))
                                     {
