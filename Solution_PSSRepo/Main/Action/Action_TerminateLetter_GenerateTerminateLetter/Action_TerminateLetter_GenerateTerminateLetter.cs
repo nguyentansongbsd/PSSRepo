@@ -39,22 +39,23 @@ namespace Action_TerminateLetter_GenerateTerminateLetter
             if (paymentScheme.Entities.Count == 0)
                 throw new InvalidPluginExecutionException("No payments found!");
             string lst_id = string.Join(",", paymentScheme.Entities.Select(x => x.Id.ToString()).ToList());
+
+            Entity enMaster = new Entity("bsd_genterminationletter");
+            enMaster["bsd_date"] = context.InputParameters.Contains("_date") ? Convert.ToDateTime(context.InputParameters["_date"].ToString()) : DateTime.Now;
+            enMaster["bsd_project"] = new EntityReference("bsd_project", new Guid(bsd_projectcode));
+            enMaster["bsd_floor"] = bsd_floor != "" ? new EntityReference("bsd_floor", new Guid(bsd_floor)) : null;
+            enMaster["bsd_block"] = bsd_blocknumber != "" ? new EntityReference("bsd_block", new Guid(bsd_blocknumber)) : null;
+            enMaster["bsd_product"] = bsd_unit != "" ? new EntityReference("product", new Guid(bsd_unit)) : null;
+            enMaster["bsd_processing_pa"] = true;
+            enMaster["statuscode"] = new OptionSetValue(100000001);
+            var id = this.service.Create(enMaster);
+
             var request = new OrganizationRequest("bsd_Action_Active_GenerateTerminateLetter");
-            var query_bsd_name = "GENTerminationLetter";
-
-            var query = new QueryExpression("bsd_process");
-            query.TopCount = 50; query.ColumnSet.AllColumns = true;
-            query.Criteria.AddCondition("bsd_name", ConditionOperator.Equal, query_bsd_name);
-            var rs = this.service.RetrieveMultiple(query);
-            var enProcess = new Entity("bsd_process", rs.Entities[0].Id);
-            enProcess["statuscode"] = new OptionSetValue(100000000);
-            this.service.Update(enProcess);
-            // lấy số điện thoại của khách để gửi
-            // 
-            request["_date"] =context.InputParameters.Contains("_date")?context.InputParameters["_date"].ToString():"";
+            request["bsd_generate_termination_letter"] = id.ToString();
+            request["_date"] = context.InputParameters.Contains("_date") ? context.InputParameters["_date"].ToString() : "";
             request["list_id"] = lst_id;
-
             this.service.Execute(request);
+            context.OutputParameters["idmaster"]= id;
             //int num1 = 0;
             //for (int index1 = 0; index1 < paymentScheme.Entities.Count; ++index1)
             //{

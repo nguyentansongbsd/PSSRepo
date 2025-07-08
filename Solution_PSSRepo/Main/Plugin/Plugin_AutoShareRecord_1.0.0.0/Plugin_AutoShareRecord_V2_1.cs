@@ -15,7 +15,7 @@ namespace Plugin_AutoShareRecord
         static ITracingService traceService = null;
         static Entity target = null;
         static Entity enTarget = null;
-
+        static int checkz=0;
         public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
@@ -143,18 +143,32 @@ namespace Plugin_AutoShareRecord
 
         public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, int accessType)
         {
-            traceService.Trace($"ShareTeams {shareTeams.Name} {shareTeams.Id}");
-
-            var grantAccessRequest = new GrantAccessRequest
+            try
             {
-                PrincipalAccess = new PrincipalAccess
+                traceService.Trace($"ShareTeams {shareTeams.Name} {shareTeams.Id}");
+                if (checkz == 1)
                 {
-                    AccessMask = GetAccessRights(accessType),
-                    Principal = shareTeams
-                },
-                Target = sharedRecord
-            };
-            service.Execute(grantAccessRequest);
+                    traceService.Trace($"Target {sharedRecord.Name} {sharedRecord.Id} not found2.");
+                    throw new InvalidPluginExecutionException($"Target {sharedRecord.Name} {sharedRecord.Id} not found2.");
+
+                }
+                var grantAccessRequest = new GrantAccessRequest
+                {
+                    PrincipalAccess = new PrincipalAccess
+                    {
+                        AccessMask = GetAccessRights(accessType),
+                        Principal = shareTeams
+                    },
+                    Target = sharedRecord
+                };
+                service.Execute(grantAccessRequest);
+            }
+            catch(Exception ex)
+            {
+                traceService.Trace("ShareTeams Exception: " + ex.Message);
+                return;
+            }
+           
         }
 
         public static string GetProjectCode()
@@ -455,15 +469,23 @@ namespace Plugin_AutoShareRecord
                 Dictionary<string, Entity> allTeams = rs.Entities.ToDictionary(e => (string)e["name"], e => e);
                 foreach (var teamRights in listTeamRights)
                 {
+                    checkz++;
+                    var checkExist = service.Retrieve(refTarget.LogicalName,refTarget.Id,new ColumnSet(true));
+                    if(checkExist==null)
+                    {
+                        traceService.Trace($"Target {refTarget.Name} {refTarget.Id} not found.");
+                        return;
+                    }
                     if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
                     {
+                        
                         refTeam = tmpTeam.ToEntityReference();
                         ShareTeams(refTarget, refTeam, teamRights.Value);
                     }
                 }
             }
         }
-
+     
         public static void ShareTeams_OE(Dictionary<string, int> listTeamRights)
         {
             traceService.Trace("ShareTeams_OE");

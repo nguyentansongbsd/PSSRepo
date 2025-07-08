@@ -136,8 +136,15 @@ window.top.generateTerminateletter2 = function (project, block, floor, units,_da
                         if (result.status == "error")
                             window.top.$ui.Dialog("Message", result.data);
                         else if (result.status == "success") {
-                            isShowNoti = 0;
-                            btn_GenerateEnableRule(1);
+                           
+                            if (result && result.data && result.data.idmaster && result.data.idmaster.value) {
+                                var entityId = result.data.idmaster.value;
+                                var entityName = "bsd_genterminationletter";
+                                // Open the entity form in a new tab
+                                Xrm.Utility.openEntityForm(entityName, entityId, null, { openInNewWindow: true });
+                            } else {
+                                window.top.$ui.Dialog("Error", "Cannot open Termination Letter form. Invalid result data.", null);
+                            }
                         }
                         else {
                             console.log(JSON.stringify(result));

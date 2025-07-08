@@ -169,6 +169,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Delete_MailDraff", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Termination_Refund", "Action\Action_Termination_Refund\Action_Termination_Refund.csproj", "{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_Invoice_Payment", "..\..\Plugin_Create_Invoice_Payment\Plugin_Create_Invoice_Payment\Plugin_Create_Invoice_Payment\Plugin_Create_Invoice_Payment.csproj", "{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Payment_Import", "..\..\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import.csproj", "{7045C87F-60A9-4852-B4A2-510224D24972}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -582,6 +586,18 @@ Global
 		{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7045C87F-60A9-4852-B4A2-510224D24972}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -665,6 +681,8 @@ Global
 		{FC7FB250-92CC-4A4C-B71D-AC9E48BFE312} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 		{284027C4-70B2-4EF2-96A8-DAAA366F1FEA} = {60A27F70-08AB-4A30-869E-7D313D3760AE}
 		{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
+		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
+		{7045C87F-60A9-4852-B4A2-510224D24972} = {ADEE3F94-9E4B-46DD-A437-283E0B339563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

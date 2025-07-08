@@ -40,7 +40,7 @@ namespace Plugin_Create_TerminationLetter
             Entity enPro=service.Retrieve("bsd_project", ((EntityReference)enCreated["bsd_project"]).Id, new ColumnSet(true));
             Entity enDev=service.Retrieve("account", ((EntityReference)enPro["bsd_investor"]).Id, new ColumnSet(true));
             Entity enUpdate = new Entity("bsd_terminateletter",enCreated.Id);
-            enUpdate["bsd_accountnameother_develop"] = enDev["bsd_accountnameother"];
+            enUpdate["bsd_accountnameother_develop"] = enDev.Contains("bsd_accountnameother") ?enDev["bsd_accountnameother"]:enDev["bsd_name"];
             service.Update(enUpdate);
             #endregion
             if (!enCreated.Contains("bsd_optionentry")) return;

@@ -78,6 +78,7 @@
     <Content Include="JS\Payments\Report\bsd_payment_report_05_08_2020.js" />
     <Content Include="JS\Quotation Reservation\bsd_quote_form.js" />
     <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
+    <Content Include="JS\Terminate letter\bsd_GenTerminationLetter_form.js" />
     <Content Include="JS\Terminate letter\bsd_TerminationLetter.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Dua_Date.js" />
     <Content Include="JS\Update Due Date Detail\bsd_Update_Due_Date_Detail.js" />
