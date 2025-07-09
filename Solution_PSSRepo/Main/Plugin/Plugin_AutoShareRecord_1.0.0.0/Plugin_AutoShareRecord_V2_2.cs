@@ -257,6 +257,14 @@ namespace Plugin_AutoShareRecord
                 case "bsd_bulksendmailmanager":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
                     break;
+
+                case "bsd_genaratewarningnotices":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+                case "bsd_genpaymentnotices":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+
                 case "bsd_documents":
                     if (!en.Contains("bsd_project")) return null;
                     enProjectRef2 = (EntityReference)en["bsd_project"];

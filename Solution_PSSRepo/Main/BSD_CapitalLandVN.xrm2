@@ -761,6 +761,21 @@
               "RelativeFilePath": "\\JS\\bsd_btnPhaseLaunchForm.js"
             },
             {
+              "CrmId": "2fdc298f-9a28-e611-80e8-3863bb352d28",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnPriceListForm.js"
+            },
+            {
+              "CrmId": "1b4577aa-9bee-ef11-9342-002248589987",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnUpdatePriceList.js"
+            },
+            {
+              "CrmId": "3448b6ea-2089-ea11-a811-000d3a085b2b",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_bulkchangemanagementfee.js"
+            },
+            {
               "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"

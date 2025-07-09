@@ -215,7 +215,7 @@ function CheckEnable_Condition(tyle) {
             break;
 
         case "bsd_discount-form-Approved":
-            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")) return false;
+            if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator") && !CheckRoleForUser("CLVN_S&M_Head of Sale")) return false;
             break;
         case "bsd_confirmpayment-form-Confirm":
             if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("System Administrator")) return false;
