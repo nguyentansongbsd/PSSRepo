@@ -15,7 +15,6 @@ namespace Plugin_AutoShareRecord
         static ITracingService traceService = null;
         static Entity target = null;
         static Entity enTarget = null;
-        static int checkz = 0;
         public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
@@ -146,12 +145,6 @@ namespace Plugin_AutoShareRecord
             try
             {
                 traceService.Trace($"ShareTeams {shareTeams.Name} {shareTeams.Id}");
-                if (checkz == 1)
-                {
-                    traceService.Trace($"Target {sharedRecord.Name} {sharedRecord.Id} not found2.");
-                    throw new InvalidPluginExecutionException($"Target {sharedRecord.Name} {sharedRecord.Id} not found2.");
-
-                }
                 var grantAccessRequest = new GrantAccessRequest
                 {
                     PrincipalAccess = new PrincipalAccess
