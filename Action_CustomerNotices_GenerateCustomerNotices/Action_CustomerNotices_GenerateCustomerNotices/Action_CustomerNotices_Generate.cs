@@ -206,7 +206,26 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 Entity enUp = new Entity("bsd_genpaymentnotices");
                 enUp.Id = Guid.Parse(input02);
                 enUp["bsd_powerautomate"] = false;
-                enUp["statuscode"] = new OptionSetValue(100000000);
+                string fetchXml =
+                  @"<fetch top='1'>
+                  <entity name='bsd_customernotices'>
+                    <attribute name='bsd_customernoticesid' />
+                    <filter type='and'>
+                      <condition attribute='bsd_genpaymentnotices' operator='eq' value='{0}' />
+                    </filter>
+                  </entity>
+                </fetch>";
+                fetchXml = string.Format(fetchXml, enUp.Id);
+                EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (entc.Entities.Count == 0)
+                {
+                    enUp["bsd_notices"] = "No record was created. Please check again.";
+                }
+                else
+                {
+                    enUp["statuscode"] = new OptionSetValue(100000000);
+                    enUp["bsd_notices"] = "";
+                }
                 service.Update(enUp);
             }
         }
