@@ -470,7 +470,6 @@ namespace Plugin_AutoShareRecord
                 Dictionary<string, Entity> allTeams = rs.Entities.ToDictionary(e => (string)e["name"], e => e);
                 foreach (var teamRights in listTeamRights)
                 {
-                    checkz++;
                     var checkExist = service.Retrieve(refTarget.LogicalName, refTarget.Id, new ColumnSet(true));
                     if (checkExist == null)
                     {
