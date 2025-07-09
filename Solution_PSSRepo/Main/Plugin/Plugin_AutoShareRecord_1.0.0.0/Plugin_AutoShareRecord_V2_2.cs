@@ -47,6 +47,13 @@ namespace Plugin_AutoShareRecord
                 case "bsd_documents":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-TEAM", "SALE-ADMIN" });
                     break;
+
+                case "bsd_genpaymentnotices":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    break;
+                case "bsd_genaratewarningnotices":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    break;
                 case "bsd_bulksendmailmanager":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     var rs = GetDetailBulkMailManager();

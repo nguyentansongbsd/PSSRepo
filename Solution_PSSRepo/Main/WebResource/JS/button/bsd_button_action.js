@@ -76,9 +76,20 @@ function disableFormFields(onOff) {
         }
     });
 }
+function updateSaveButtonVisibility() {
+    debugger;
+    var anyChecked = $("table input[name='choose-ckb-team']:checked").length > 0;
+    console.log("anyChecked:" + anyChecked);
+    if (anyChecked) {
+        $("#saveToMultipleTeam").show();
+    } else {
+        $("#saveToMultipleTeam").hide();
+    }
+}
 function addModelShareTeam() {
     var modalShare = `
   <script>
+   
   function btnSaveMulti() {
   debugger;
   var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 3 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 2 : 4);
@@ -386,68 +397,81 @@ function addModelShareTeam() {
 
   </div>`
     $('body').append(modalShare);
-    
+    // Thêm logic ẩn/hiện nút "Lưu" khi chưa có checkbox nào được chọn
+
+    // Gọi hàm này sau khi render bảng team (sau khi append các dòng vào #bodyTableTeam)
+   
+
+    // Gắn sự kiện khi checkbox thay đổi trạng thái
+   
+
+    // Khi mở modal, ẩn nút lưu nếu chưa có checkbox nào được chọn
+    // Thêm vào cuối đoạn xử lý success trong btnSaveLAC, sau khi append các dòng vào #bodyTableTeam:
+
 }
 function btnSaveLAC() {
     hasTeamAccess(Xrm.Page.data.entity.getEntityName(), Xrm.Page.data.entity.getId()).then(function (rss) {
         if (!rss) {
-           
 
-                $('#closeModal').click(function () {
-                    $("#modalForm").css("display", "none");
-                });
-                $('#saveToMultipleTeam').unbind('click');
-                $('#saveToMultipleTeam').click(btnSaveMulti);
 
-                window.top.processingDlg.show();
-                var id = Xrm.Page.data.entity.getId();
-                var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
-                ExecuteAction(
-                    null, null, "bsd_Action_ShareCustomerToTeam", [
-                    {
-                        name: 'type',
-                        type: 'int',
-                        value: radioValue
-                    },
-                    {
-                        name: 'id',
-                        type: 'string',
-                        value: id
-                    }
-                ],
-                    function (result) {
-                        window.top.processingDlg.hide();
-                        if (result != null && result.status != null) {
-                            if (result.status == "error") alertdialogConfirm(result.data);
-                            else if (result.status == "success") {
+            $('#closeModal').click(function () {
+                $("#modalForm").css("display", "none");
+            });
+            $('#saveToMultipleTeam').unbind('click');
+            $('#saveToMultipleTeam').click(btnSaveMulti);
+            window.top.processingDlg.show();
+            var id = Xrm.Page.data.entity.getId();
+            var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
+            ExecuteAction(
+                null, null, "bsd_Action_ShareCustomerToTeam", [
+                {
+                    name: 'type',
+                    type: 'int',
+                    value: radioValue
+                },
+                {
+                    name: 'id',
+                    type: 'string',
+                    value: id
+                }
+            ],
+                function (result) {
+                    window.top.processingDlg.hide();
+                    if (result != null && result.status != null) {
+                        if (result.status == "error") alertdialogConfirm(result.data);
+                        else if (result.status == "success") {
 
-                                if (result.data.entityColl.value == "")
-                                    alertdialogConfirm("Done!");
-                                else {
-                                    arrID = id;
-                                    var data = JSON.parse(result.data.entityColl.value);
+                            if (result.data.entityColl.value == "")
+                                alertdialogConfirm("Done!");
+                            else {
+                                arrID = id;
+                                var data = JSON.parse(result.data.entityColl.value);
 
-                                    $('#bodyTableTeam').empty();
-                                    for (let i = 0; i < data.length; i++) {
-                                        const item = data[i];
-                                        $("#bodyTableTeam").append(`
+                                $('#bodyTableTeam').empty();
+                                for (let i = 0; i < data.length; i++) {
+                                    const item = data[i];
+                                    $("#bodyTableTeam").append(`
                                       <tr>
-                                          <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
+                                          <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}'  /></td>
                                           <td>${i + 1}</td>
                                           <td>${item.TeamName}</td>
                                       </tr>
                                   `);
-                                    }
-                                    $("#modalForm").css("display", "block");
                                 }
+                                $("#modalForm").css("display", "block");
+                                $('input[name="choose-ckb-team"]').click(updateSaveButtonVisibility);
+
+                                
+                               
                             }
                         }
-                    }, true);
-            
+                    }
+                }, true);
+
         }
     })
-    
-   
+
+
 }
 function btnSaveMulti() {
     debugger;
@@ -515,7 +539,7 @@ function hasTeamAccess(entityName, recordId) {
             // FetchXML để kiểm tra xem có team nào có quyền truy cập hay không
             var fetchData = {
                 "principaltypecode": "9",
-                "objecttypecode": entityName == "lead" ? 4 : entityName=="account"?1:2,
+                "objecttypecode": entityName == "lead" ? 4 : entityName == "account" ? 1 : 2,
                 "objectid": recordId,
                 "accessrightsmask": "0"
             };

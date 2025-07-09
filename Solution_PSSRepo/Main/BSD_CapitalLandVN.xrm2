@@ -751,6 +751,16 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_terminateletter_option_filter_generate.html"
             },
             {
+              "CrmId": "c11cbf28-622c-e611-80e7-3863bb347a58",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_account.js"
+            },
+            {
+              "CrmId": "0de6f1e6-0e3f-e511-80eb-3863bb345bf8",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnPhaseLaunchForm.js"
+            },
+            {
               "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_BulkEmail_WithWordTemplate.js"
@@ -774,6 +784,11 @@
               "CrmId": "17625946-274b-f011-877b-6045bd1d2e19",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btnShareCustomer.js"
+            },
+            {
+              "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
             },
             {
               "CrmId": "2f8026c4-5238-e611-80e7-3863bb36bc80",

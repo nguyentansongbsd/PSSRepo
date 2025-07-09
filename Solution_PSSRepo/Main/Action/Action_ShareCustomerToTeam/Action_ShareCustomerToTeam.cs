@@ -252,8 +252,114 @@ namespace Action_ShareCustomerToTeam
                         TeamReturn i = new TeamReturn();
                         i.TeamID = enTeam.Id.ToString();
                         i.TeamName = enTeam["name"].ToString().Split('-').ToList()[0];
+                        if (i.TeamName == "pssvn") continue;
                         if (list.Any(x => x.TeamName == i.TeamName) == false)
                             list.Add(i);
+                    }
+                    if(list.Count == 1)
+                    {
+                        var it = list.FirstOrDefault();
+                        #region share cho các team project
+                        Guid TeamID = Guid.Parse(it.TeamID.ToString());
+                        EntityReference refTeam = new EntityReference("team", TeamID);
+                        traceService.Trace("step2.0");
+                        ShareTeams(enRef, refTeam);
+                        traceService.Trace("step2.1_");
+                        if (fieldName == "contact")
+                            ShareDoiTuong_CoOwner(enRef, refTeam);
+                        else
+                        {
+                            traceService.Trace("step2.1");
+                            Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
+                            if (enAcc.Contains("primarycontactid"))
+                                ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                            //if(enAcc.Contains("bsd_chudautu"))
+                            //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
+                            if (enAcc.Contains("bsd_maincompany"))
+                                ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+                            traceService.Trace("step2.2");
+
+                            var fetchXml = $@"
+                            <fetch>
+                              <entity name='bsd_mandatorysecondary'>
+                                <attribute name='bsd_contact' />
+                                <filter>
+                                  <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
+                                  <condition attribute='statecode' operator='eq' value='0'/>
+                                </filter>
+                              </entity>
+                            </fetch>";
+                            traceService.Trace("step2.3");
+
+                            EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                            foreach (Entity i in rs_.Entities)
+                            {
+                                if (i.Contains("bsd_representative"))
+                                    ShareTeams((EntityReference)i["bsd_representative"], refTeam);
+                                traceService.Trace("step2.4");
+
+                                if (i.Contains("bsd_contact"))
+                                    ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                                traceService.Trace("step2.5");
+
+                            }
+                        }
+                        var team = it;
+                        Entity enTeam = service.Retrieve("team", Guid.Parse(it.TeamID.ToString()), new ColumnSet(new string[] { "name", "teamid" }));
+                        var fetchXml2 = $@"
+                                        <fetch>
+                                          <entity name='team'>
+                                            <filter>
+                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('_')[0]}%'/>
+                                            </filter>
+                                          </entity>
+                                        </fetch>";
+                        traceService.Trace("step2.6");
+
+                        EntityCollection rs1 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
+                        foreach (Entity entity in rs1.Entities)
+                        {
+                            traceService.Trace("team" + entity["name"].ToString());
+                            TeamID = entity.Id;
+                            refTeam = new EntityReference("team", TeamID);
+                            ShareTeams(enRef, refTeam);
+                            if (fieldName == "contact")
+                                ShareDoiTuong_CoOwner(enRef, refTeam);
+                            else
+                            {
+                                Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
+                                if (enAcc.Contains("primarycontactid"))
+                                    ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                                traceService.Trace("step2.7");
+
+                                //if(enAcc.Contains("bsd_chudautu"))
+                                //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
+                                if (enAcc.Contains("bsd_maincompany"))
+                                    ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+
+                                var fetchXml = $@"
+                            <fetch>
+                              <entity name='bsd_mandatorysecondary'>
+                                <attribute name='bsd_contact' />
+                                <filter>
+                                  <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
+                                  <condition attribute='statecode' operator='eq' value='0'/>
+                                </filter>
+                              </entity>
+                            </fetch>";
+                                traceService.Trace("step2.8");
+
+                                EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                                foreach (Entity i in rs_.Entities)
+                                {
+                                    if (i.Contains("bsd_representative"))
+                                        ShareTeams((EntityReference)i["bsd_representative"], refTeam);
+                                    if (i.Contains("bsd_contact"))
+                                        ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                                }
+                            }
+                        }
+                        #endregion
                     }
                     var serializer = new JavaScriptSerializer();
                     context.OutputParameters["entityColl"] = serializer.Serialize(list);
