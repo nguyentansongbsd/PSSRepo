@@ -44,15 +44,18 @@ function callFlow3(Output01, id, Output02, flowURL, Output03) {
 	req.setRequestHeader("Content-Type", "application/json");
 	req.send(JSON.stringify(body));
 }
-function btnVis_btnGenerate() {
-	if (Xrm.Page.getAttribute("statuscode").getValue() == 1 && Xrm.Page.getAttribute("bsd_powerautomate").getValue() == true) {
+function btnVis_btnGenerate() 
+	{
+		var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager");
+		if (Xrm.Page.getAttribute("statuscode").getValue() == 1 && Xrm.Page.getAttribute("bsd_powerautomate").getValue() == true) {
+			return false;
+		}
+		if (role && Xrm.Page.getAttribute("statuscode").getValue() == 1 && Xrm.Page.ui.getFormType() != 1) {
+			return true;
+		}
 		return false;
 	}
-	if (Xrm.Page.getAttribute("statuscode").getValue() == 1 && Xrm.Page.ui.getFormType() != 1) {
-		return true;
-	}
-	return false;
-}
+
 //-------------------------------------- Release ---------------------------------------
 
 function btnRelease() {
