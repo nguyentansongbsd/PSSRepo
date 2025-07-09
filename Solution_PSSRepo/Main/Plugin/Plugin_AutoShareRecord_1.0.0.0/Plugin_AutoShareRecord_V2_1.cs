@@ -15,7 +15,7 @@ namespace Plugin_AutoShareRecord
         static ITracingService traceService = null;
         static Entity target = null;
         static Entity enTarget = null;
-        static int checkz=0;
+        static int checkz = 0;
         public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
         {
             service = _service;
@@ -34,9 +34,9 @@ namespace Plugin_AutoShareRecord
                 case "bsd_event":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 0 } }, 100000000);
                     break;
-                //case "bsd_updatepricelist":
-                //    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 1 } }, 100000000);
-                //    break;
+                case "bsd_updatepricelist":
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "SALE-ADMIN", 0 }, { "SALE-MGT", 1 } }, 100000000);
+                    break;
                 //case "pricelevel":
                 //    Run_PriceList();
                 //    break;
@@ -163,12 +163,12 @@ namespace Plugin_AutoShareRecord
                 };
                 service.Execute(grantAccessRequest);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 traceService.Trace("ShareTeams Exception: " + ex.Message);
                 return;
             }
-           
+
         }
 
         public static string GetProjectCode()
@@ -470,22 +470,22 @@ namespace Plugin_AutoShareRecord
                 foreach (var teamRights in listTeamRights)
                 {
                     checkz++;
-                    var checkExist = service.Retrieve(refTarget.LogicalName,refTarget.Id,new ColumnSet(true));
-                    if(checkExist==null)
+                    var checkExist = service.Retrieve(refTarget.LogicalName, refTarget.Id, new ColumnSet(true));
+                    if (checkExist == null)
                     {
                         traceService.Trace($"Target {refTarget.Name} {refTarget.Id} not found.");
                         return;
                     }
                     if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
                     {
-                        
+
                         refTeam = tmpTeam.ToEntityReference();
                         ShareTeams(refTarget, refTeam, teamRights.Value);
                     }
                 }
             }
         }
-     
+
         public static void ShareTeams_OE(Dictionary<string, int> listTeamRights)
         {
             traceService.Trace("ShareTeams_OE");
