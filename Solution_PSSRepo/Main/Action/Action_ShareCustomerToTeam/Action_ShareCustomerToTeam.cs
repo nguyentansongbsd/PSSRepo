@@ -190,7 +190,7 @@ namespace Action_ShareCustomerToTeam
                                         <fetch>
                                           <entity name='team'>
                                             <filter>
-                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('_')[0]}%'/>
+                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('-')[0]}%'/>
                                             </filter>
                                           </entity>
                                         </fetch>";
@@ -256,7 +256,8 @@ namespace Action_ShareCustomerToTeam
                         if (list.Any(x => x.TeamName == i.TeamName) == false)
                             list.Add(i);
                     }
-                    if(list.Count == 1)
+                    traceService.Trace("step4 list.Count:"+ list.Count);
+                    if (list.Count == 1)
                     {
                         var it = list.FirstOrDefault();
                         #region share cho các team project
@@ -310,7 +311,7 @@ namespace Action_ShareCustomerToTeam
                                         <fetch>
                                           <entity name='team'>
                                             <filter>
-                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('_')[0]}%'/>
+                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('-')[0]}%'/>
                                             </filter>
                                           </entity>
                                         </fetch>";
@@ -361,8 +362,12 @@ namespace Action_ShareCustomerToTeam
                         }
                         #endregion
                     }
-                    var serializer = new JavaScriptSerializer();
-                    context.OutputParameters["entityColl"] = serializer.Serialize(list);
+                    else
+                    {
+
+                        var serializer = new JavaScriptSerializer();
+                        context.OutputParameters["entityColl"] = serializer.Serialize(list);
+                    }
                 }
             }
         }

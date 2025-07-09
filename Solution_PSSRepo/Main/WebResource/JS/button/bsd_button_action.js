@@ -413,7 +413,6 @@ function btnSaveLAC() {
     hasTeamAccess(Xrm.Page.data.entity.getEntityName(), Xrm.Page.data.entity.getId()).then(function (rss) {
         if (!rss) {
 
-
             $('#closeModal').click(function () {
                 $("#modalForm").css("display", "none");
             });
@@ -460,6 +459,7 @@ function btnSaveLAC() {
                                 }
                                 $("#modalForm").css("display", "block");
                                 $('input[name="choose-ckb-team"]').click(updateSaveButtonVisibility);
+                                updateSaveButtonVisibility();
 
                                 
                                

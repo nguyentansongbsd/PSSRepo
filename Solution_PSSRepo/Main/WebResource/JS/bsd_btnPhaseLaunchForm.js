@@ -105,7 +105,7 @@ function callFlow(Output01, Output02, flowURL) {
 	req.send(JSON.stringify(body));
 }
 function btnVis_Release() {
-	var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager");
+	var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") ? true : false;
 	if (Xrm.Page.getAttribute("statuscode").getValue() == 1 && Xrm.Page.getAttribute("bsd_powerautomate").getValue() == true) {
 		return false;
 	}
@@ -153,7 +153,9 @@ function callFlow2(Output01, id, flowURL) {
 	req.send(JSON.stringify(body));
 }
 function btnVis_Recovery() {
-	if (Xrm.Page.getAttribute("statuscode").getValue() == 100000000) {
+	var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") ? true : false;
+
+	if (role&&Xrm.Page.getAttribute("statuscode").getValue() == 100000000) {
 		return true;
 	}
 	return false;
@@ -185,7 +187,7 @@ function btnUnitRecovery() {
 }
 
 function btnVis_UnitRecovery() {
-	if (Xrm.Page.getAttribute("statuscode").getValue() == 100000000) {
+	if (role &&Xrm.Page.getAttribute("statuscode").getValue() == 100000000) {
 		return true;
 	}
 	return false;

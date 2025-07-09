@@ -458,9 +458,10 @@ namespace Plugin_AutoShareRecord
 
             if (status != -999 && (!target.Contains("statuscode") || ((OptionSetValue)target["statuscode"]).Value != status))
                 return;
-
             string projectCode = GetProjectCode();
             EntityCollection rs = GetTeams(projectCode);
+            traceService.Trace($"GetTeams {rs.Entities.Count}");
+
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
                 EntityReference refTarget = enTarget.ToEntityReference();
@@ -476,6 +477,7 @@ namespace Plugin_AutoShareRecord
                         traceService.Trace($"Target {refTarget.Name} {refTarget.Id} not found.");
                         return;
                     }
+                    traceService.Trace($"ShareTeams {teamRights.Key} {teamRights.Value}");
                     if (allTeams.TryGetValue($"{projectCode}-{teamRights.Key}", out var tmpTeam))
                     {
                         
