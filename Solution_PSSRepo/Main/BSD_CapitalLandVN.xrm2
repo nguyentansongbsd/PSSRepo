@@ -756,6 +756,11 @@
               "RelativeFilePath": "\\JS\\bsd_account.js"
             },
             {
+              "CrmId": "047d19df-b847-e511-80e5-3863bb36ef98",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnDiscountSpecialForm.js"
+            },
+            {
               "CrmId": "0de6f1e6-0e3f-e511-80eb-3863bb345bf8",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\bsd_btnPhaseLaunchForm.js"
