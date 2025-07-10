@@ -62,17 +62,18 @@ namespace Action_ConfirmPayment_Confirm
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = true;
+                enConfirmPayment["bsd_confirm"] = true;
                 service.Update(enConfirmPayment);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Confirm");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Confirm");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
             }
             else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
             {
@@ -481,6 +482,7 @@ namespace Action_ConfirmPayment_Confirm
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = false;
+                enConfirmPayment["bsd_confirm"] = false;
                 enConfirmPayment["statuscode"] = new OptionSetValue(100000000);
                 service.Update(enConfirmPayment);
             }
