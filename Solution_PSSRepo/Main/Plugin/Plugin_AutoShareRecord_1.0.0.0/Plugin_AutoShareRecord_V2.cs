@@ -322,8 +322,9 @@ namespace Plugin_AutoShareRecord
                 //            }
                 //        }
                 //    }
-
-                Plugin_AutoShareRecord_V2_1.Run_Create(service, traceService, inputParameter, service1);
+                Plugin_AutoShareRecord_V2_1 tmp = new Plugin_AutoShareRecord_V2_1(service, traceService, inputParameter);
+                tmp.Run_Create(service1);
+                //Plugin_AutoShareRecord_V2_1.Run_Create(service, traceService, inputParameter, service1);
             }
             if (service1.MessageName == "Update")
             {
@@ -374,10 +375,13 @@ namespace Plugin_AutoShareRecord
                 //        }
                 //    }
                 //}
-
-                Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
+                Plugin_AutoShareRecord_V2_1 tmp = new Plugin_AutoShareRecord_V2_1(service, traceService, inputParameter);
+                tmp.Run_Update(service1);
+                //Plugin_AutoShareRecord_V2_1.Run_Update(service, traceService, inputParameter, service1);
             }
-            Plugin_AutoShareRecord_V2_2.Run_ProcessShareTeam(service, traceService, inputParameter, service1);
+            Plugin_AutoShareRecord_V2_2 tmpv2 = new Plugin_AutoShareRecord_V2_2(service, traceService, inputParameter);
+            tmpv2.Run_ProcessShareTeam(service1);
+            //Plugin_AutoShareRecord_V2_2.Run_ProcessShareTeam(service, traceService, inputParameter, service1);
 
 
         }

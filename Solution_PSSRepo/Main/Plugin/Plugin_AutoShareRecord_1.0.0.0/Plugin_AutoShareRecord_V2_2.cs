@@ -11,18 +11,22 @@ namespace Plugin_AutoShareRecord
 {
     class Plugin_AutoShareRecord_V2_2
     {
-        static IOrganizationService service = null;
-        static ITracingService traceService = null;
-        static Entity target = null;
-        static Entity en = null;
-        static EntityReference refProject = null;
-        static string projectCode = "";
-        static EntityCollection rs = null;
-        public static void Run_ProcessShareTeam(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
+        IOrganizationService service = null;
+        ITracingService traceService = null;
+        Entity target = null;
+        Entity en = null;
+        EntityReference refProject = null;
+        string projectCode = "";
+        EntityCollection rs = null;
+        public Plugin_AutoShareRecord_V2_2(IOrganizationService _service, ITracingService _traceService, Entity _target)
         {
             service = _service;
             traceService = _traceService;
             target = _target;
+        }
+
+        public void Run_ProcessShareTeam(IPluginExecutionContext _context)
+        {
             traceService.Trace("Plugin_AutoShareRecord_V2_2");
 
 
@@ -121,7 +125,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null, Entity enShare = null)
+        public void Run_ShareTemProject(bool hasWrite = false, List<string> teamShares = null, Entity enShare = null)
         {
             traceService.Trace($"Run_ShareTemProject {target.LogicalName}");
 
@@ -154,7 +158,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, bool hasWriteShare)
+        public void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, bool hasWriteShare)
         {
             traceService.Trace("ShareTeams");
 
@@ -174,7 +178,7 @@ namespace Plugin_AutoShareRecord
             service.Execute(grantAccessRequest);
         }
 
-        public static string GetProjectCode(EntityReference refProject)
+        public string GetProjectCode(EntityReference refProject)
         {
             traceService.Trace("GetProjectCode");
 
@@ -196,7 +200,7 @@ namespace Plugin_AutoShareRecord
             return string.Empty;
         }
 
-        public static EntityCollection GetTeams(string projectCode)
+        public EntityCollection GetTeams(string projectCode)
         {
             traceService.Trace("GetTeam");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -227,7 +231,7 @@ namespace Plugin_AutoShareRecord
                 return null;
             }
         }
-        private static EntityCollection GetDetailBulkMailManager()
+        private EntityCollection GetDetailBulkMailManager()
         {
             traceService.Trace("GetDetailBulkMailManager");
             var query = new QueryExpression("email");
@@ -237,7 +241,7 @@ namespace Plugin_AutoShareRecord
             traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
             return rs;
         }
-        public static EntityReference GetProject()
+        public EntityReference GetProject()
         {
 
             EntityReference enProjectRef2 = null;
