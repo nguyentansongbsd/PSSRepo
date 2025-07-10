@@ -60,6 +60,7 @@
     <Content Include="HTML\report\bsd_Senique_Total_Payment_Confirmation_SPA.html" />
     <Content Include="HTML\report\bsd_Simulation_Report_InOptionEntryForm.html" />
     <Content Include="JS\bsd_account.js" />
+    <Content Include="JS\bsd_btnDiscountSpecialForm.js" />
     <Content Include="JS\bsd_btnEmailView.js" />
     <Content Include="JS\bsd_btnHandoverNoticeView.js" />
     <Content Include="JS\bsd_btnPhaseLaunchForm.js" />
