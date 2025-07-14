@@ -272,7 +272,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         enGenDetail["bsd_errordetail"]=ex.Message;
                         enGenDetail["statuscode"] = new OptionSetValue(100000001); // Error
                         this.service.Create(enGenDetail);
-                        throw;
+                        
                     }
                    
                 }
