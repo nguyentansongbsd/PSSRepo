@@ -47,17 +47,18 @@ namespace Action_ConfirmPayment_Generate
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = true;
+                enConfirmPayment["bsd_generate"] = true;
                 service.Update(enConfirmPayment);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Generate");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Generate");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
             }
             else if (input01 == "Bước 02" && input02 != "" && input03 != "")
             {
@@ -94,8 +95,8 @@ namespace Action_ConfirmPayment_Generate
                 if (enConfirmPayment.Contains("bsd_project")) q.Criteria.AddCondition(new ConditionExpression("bsd_project", ConditionOperator.Equal, ((EntityReference)enConfirmPayment["bsd_project"]).Id));
                 if (enConfirmPayment.Contains("bsd_user")) q.Criteria.AddCondition(new ConditionExpression("ownerid", ConditionOperator.Equal, ((EntityReference)enConfirmPayment["bsd_user"]).Id));
                 if (enConfirmPayment.Contains("bsd_paymenttype")) q.Criteria.AddCondition(new ConditionExpression("bsd_paymenttype", ConditionOperator.Equal, ((OptionSetValue)enConfirmPayment["bsd_paymenttype"]).Value));
-                if(Receipt_Date) q.Criteria.AddCondition(new ConditionExpression("bsd_paymentactualtime", ConditionOperator.NotNull));
-                if(Created_Date) q.Criteria.AddCondition(new ConditionExpression("createdon", ConditionOperator.NotNull));
+                if (Receipt_Date) q.Criteria.AddCondition(new ConditionExpression("bsd_paymentactualtime", ConditionOperator.NotNull));
+                if (Created_Date) q.Criteria.AddCondition(new ConditionExpression("createdon", ConditionOperator.NotNull));
                 EntityCollection entc = service.RetrieveMultiple(q);
                 List<string> list = new List<string>();
                 foreach (Entity item in entc.Entities)
@@ -139,6 +140,7 @@ namespace Action_ConfirmPayment_Generate
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = false;
+                enConfirmPayment["bsd_generate"] = false;
                 service.Update(enConfirmPayment);
             }
         }

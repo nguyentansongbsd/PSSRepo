@@ -11,15 +11,20 @@ namespace Plugin_AutoShareRecord
 {
     class Plugin_AutoShareRecord_V2_1
     {
-        static IOrganizationService service = null;
-        static ITracingService traceService = null;
-        static Entity target = null;
-        static Entity enTarget = null;
-        public static void Run_Update(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
+        IOrganizationService service = null;
+        ITracingService traceService = null;
+        Entity target = null;
+        Entity enTarget = null;
+
+        public Plugin_AutoShareRecord_V2_1(IOrganizationService _service, ITracingService _traceService, Entity _target)
         {
             service = _service;
             traceService = _traceService;
             target = _target;
+        }
+
+        public void Run_Update(IPluginExecutionContext _context)
+        {
             traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Update " + target.LogicalName + " " + target.Id);
 
             switch (target.LogicalName)
@@ -47,11 +52,8 @@ namespace Plugin_AutoShareRecord
 
         }
 
-        public static void Run_Create(IOrganizationService _service, ITracingService _traceService, Entity _target, IPluginExecutionContext _context)
+        public void Run_Create(IPluginExecutionContext _context)
         {
-            service = _service;
-            traceService = _traceService;
-            target = _target;
             traceService.Trace("Plugin_AutoShareRecord_V2_1 Run_Create " + target.LogicalName + " " + target.Id);
 
             switch (target.LogicalName)
@@ -124,7 +126,7 @@ namespace Plugin_AutoShareRecord
 
         }
 
-        private static AccessRights GetAccessRights(int accessType)
+        private AccessRights GetAccessRights(int accessType)
         {
             AccessRights Access_Rights = AccessRights.ReadAccess | AccessRights.AppendAccess | AccessRights.AppendToAccess;
             switch (accessType)
@@ -140,11 +142,11 @@ namespace Plugin_AutoShareRecord
             return Access_Rights;
         }
 
-        public static void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, int accessType)
+        public void ShareTeams(EntityReference sharedRecord, EntityReference shareTeams, int accessType)
         {
             try
             {
-                traceService.Trace($"ShareTeams {shareTeams.Name} {shareTeams.Id}");
+                traceService.Trace($"ShareTeams {shareTeams.Id}");
                 var grantAccessRequest = new GrantAccessRequest
                 {
                     PrincipalAccess = new PrincipalAccess
@@ -164,7 +166,7 @@ namespace Plugin_AutoShareRecord
 
         }
 
-        public static string GetProjectCode()
+        public string GetProjectCode()
         {
             traceService.Trace("GetProjectCode");
             string projectCode = string.Empty;
@@ -250,7 +252,7 @@ namespace Plugin_AutoShareRecord
             return projectCode;
         }
 
-        public static EntityCollection GetTeams(string projectCode)
+        public EntityCollection GetTeams(string projectCode)
         {
             traceService.Trace("GetTeam " + projectCode);
             if (string.IsNullOrEmpty(projectCode))
@@ -276,7 +278,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private static void Run_PhasesLaunch()
+        private void Run_PhasesLaunch()
         {
             traceService.Trace("Run_PhasesLaunch");
 
@@ -341,7 +343,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        private static EntityCollection GetDiscounts(EntityReference refDiscountList)
+        private EntityCollection GetDiscounts(EntityReference refDiscountList)
         {
             traceService.Trace("GetDiscounts");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -359,7 +361,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private static EntityCollection GetPromotions(EntityReference refPhasesLaunch)
+        private EntityCollection GetPromotions(EntityReference refPhasesLaunch)
         {
             traceService.Trace("GetPromotions");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -375,7 +377,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private static EntityCollection GetHandoverCondition(EntityReference refPhasesLaunch)
+        private EntityCollection GetHandoverCondition(EntityReference refPhasesLaunch)
         {
             traceService.Trace("GetHandoverCondition");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -393,7 +395,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private static void Run_PaymentScheme()
+        private void Run_PaymentScheme()
         {
             traceService.Trace("Run_PaymentScheme");
 
@@ -429,7 +431,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        private static EntityCollection GetPaymentSchemeDetails(EntityReference refPS)
+        private EntityCollection GetPaymentSchemeDetails(EntityReference refPS)
         {
             traceService.Trace("GetPaymentSchemeDetails");
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -445,7 +447,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        public static void ShareTeams_OneEntity(Dictionary<string, int> listTeamRights, int status = -999)
+        public void ShareTeams_OneEntity(Dictionary<string, int> listTeamRights, int status = -999)
         {
             traceService.Trace("ShareTeams_OneEntity");
 
@@ -475,7 +477,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void ShareTeams_OE(Dictionary<string, int> listTeamRights)
+        public void ShareTeams_OE(Dictionary<string, int> listTeamRights)
         {
             traceService.Trace("ShareTeams_OE");
 
@@ -509,7 +511,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        private static List<string> GetProjectCodes_ConfirmPayment(Guid userId)
+        private List<string> GetProjectCodes_ConfirmPayment(Guid userId)
         {
             traceService.Trace("GetProjectCodes_ConfirmPayment");
 
@@ -543,7 +545,7 @@ namespace Plugin_AutoShareRecord
             return listCode;
         }
 
-        private static EntityCollection GetTeam_ConfirmPayment(Guid userId)
+        private EntityCollection GetTeam_ConfirmPayment(Guid userId)
         {
             traceService.Trace("GetTeam_ConfirmPayment");
 
@@ -578,7 +580,7 @@ namespace Plugin_AutoShareRecord
             return listTeam;
         }
 
-        private static bool IsSystemAdmin(Guid userId)
+        private bool IsSystemAdmin(Guid userId)
         {
             traceService.Trace("IsSystemAdmin");
 
@@ -604,7 +606,7 @@ namespace Plugin_AutoShareRecord
             return (rs != null && rs.Entities != null && rs.Entities.Count > 0);
         }
 
-        private static EntityCollection GetTeam_ConfirmPayment_All(Guid userId)
+        private EntityCollection GetTeam_ConfirmPayment_All(Guid userId)
         {
             traceService.Trace("GetTeam_ConfirmPayment");
 
@@ -625,7 +627,7 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        public static void ShareTeams_ConfirmPayment(IPluginExecutionContext _context)
+        public void ShareTeams_ConfirmPayment(IPluginExecutionContext _context)
         {
             traceService.Trace("ShareTeams_ConfirmPayment");
 
@@ -647,7 +649,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public static void ShareTeams_Ins(Dictionary<string, int> listTeamRights)
+        public void ShareTeams_Ins(Dictionary<string, int> listTeamRights)
         {
             traceService.Trace("ShareTeams_Ins");
 
@@ -681,7 +683,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        //private static void Run_PriceList()
+        //private void Run_PriceList()
         //{
         //    traceService.Trace("Run_PriceList");
 
@@ -719,7 +721,7 @@ namespace Plugin_AutoShareRecord
         //    }
         //}
 
-        //private static EntityCollection GetPriceListItems(EntityReference refPriceList)
+        //private EntityCollection GetPriceListItems(EntityReference refPriceList)
         //{
         //    traceService.Trace("GetPriceListItems");
         //    var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
