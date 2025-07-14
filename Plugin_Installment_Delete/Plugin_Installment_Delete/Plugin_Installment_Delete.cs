@@ -36,16 +36,19 @@ namespace Plugin_Installment_Delete
                 int currentOrderNumber = (int)enInstallment["bsd_ordernumber"];
                 tracingService.Trace("Current ordernum: " + currentOrderNumber);
                 EntityCollection listPMDs = getPaymentSchemeDetails(((EntityReference)enInstallment["bsd_paymentscheme"]).Id);
+                if (listPMDs.Entities.Count <= 0) return;
                 int lastOrderNumber = (int)listPMDs.Entities.LastOrDefault()["bsd_ordernumber"];
                 tracingService.Trace("Last ordernum: " + lastOrderNumber);
                 if (currentOrderNumber < lastOrderNumber)
                 {
                     tracingService.Trace("Vao update order number");
                     var listPMD_Update = listPMDs.Entities.Where(x => (int)x["bsd_ordernumber"] > currentOrderNumber);
+                    var number = ((OptionSetValue)enInstallment["bsd_duedatecalculatingmethod"]).Value == 100000001 && enInstallment.Contains("bsd_number") ? (int)enInstallment["bsd_number"] : 0;
                     foreach (var item in listPMD_Update)
                     {
-                        int newOrderNumber = ((int)item["bsd_ordernumber"]) - 1;
-                        var newName = item["bsd_name"].ToString().Replace(item["bsd_ordernumber"].ToString(), newOrderNumber.ToString());
+                        int newOrderNumber = number == 0 ? ((int)item["bsd_ordernumber"]) - 1 : ((int)item["bsd_ordernumber"]) - number;
+                        string newName = item["bsd_name"].ToString().Replace(item["bsd_ordernumber"].ToString(), newOrderNumber.ToString());
+                        
                         tracingService.Trace("orderNumber: " + (int)item["bsd_ordernumber"]);
                         tracingService.Trace("newOrderNumber: " + newOrderNumber);
                         tracingService.Trace("newName: " + newName);
@@ -72,6 +75,8 @@ namespace Plugin_Installment_Delete
                   <entity name=""bsd_paymentschemedetail"">
                     <attribute name=""bsd_ordernumber"" />
                     <attribute name=""bsd_name"" />
+                    <attribute name=""bsd_duedatecalculatingmethod"" />
+                    <attribute name=""bsd_number"" />
                     <filter>
                       <condition attribute=""statecode"" operator=""eq"" value=""0"" />
                       <condition attribute=""bsd_paymentscheme"" operator=""eq"" value=""{paymentSchemeId}"" />
