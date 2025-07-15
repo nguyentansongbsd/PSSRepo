@@ -44,6 +44,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                     {
                         line1 += (string)enTarget["bsd_housenumberstreetward"];
                     }
+                    else throw new InvalidPluginExecutionException("Please fill in house number, street, ward.");
                     if (enTarget.Contains("bsd_ward"))
                     {
                         var fetchXml2 = $@"
@@ -70,6 +71,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
+                    else throw new InvalidPluginExecutionException("Please fill in ward information.");
                     if (enTarget.Contains("bsd_province"))
                     {
                         var fetchXml2 = $@"
@@ -96,6 +98,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
+                    else throw new InvalidPluginExecutionException("Please fill in province information.");
                     if (enTarget.Contains("bsd_country"))
                     {
                         var fetchXml2 = $@"
@@ -132,7 +135,6 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                     Entity enUp = new Entity(target.LogicalName, target.Id);
                     string line = "";
                     string line1 = "";
-                    traceServiceClass.Trace("1111");
                     if (enTarget.Contains("bsd_housenumberstreetwardvn"))
                     {
                         line += (string)enTarget["bsd_housenumberstreetwardvn"];
@@ -142,7 +144,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                     {
                         line1 += (string)enTarget["bsd_housenumberstreetward"];
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in house number, street, ward.");
                     if (enTarget.Contains("bsd_ward"))
                     {
                         var fetchXml2 = $@"
@@ -169,7 +171,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in ward information.");
                     if (enTarget.Contains("bsd_province"))
                     {
                         var fetchXml2 = $@"
@@ -196,7 +198,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in province information.");
                     if (enTarget.Contains("bsd_country"))
                     {
                         var fetchXml2 = $@"
@@ -224,7 +226,6 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                         }
                     }
                     else throw new InvalidPluginExecutionException("Please fill in country information.");
-                    traceServiceClass.Trace("1111");
                     enUp["bsd_addressvn"] = line;
                     enUp["bsd_address"] = line1;
                     string line2 = "";
@@ -234,12 +235,11 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                         line2 += (string)enTarget["bsd_permanenthousenumberstreetwardvn"];
                     }
                     else throw new InvalidPluginExecutionException("Please fill in house number, street, ward (VN).");
-                    traceServiceClass.Trace("1111");
                     if (enTarget.Contains("bsd_permanenthousenumberstreetward"))
                     {
                         line3 += (string)enTarget["bsd_permanenthousenumberstreetward"];
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in house number, street, ward.");
                     if (enTarget.Contains("bsd_permanentward"))
                     {
                         var fetchXml2 = $@"
@@ -266,7 +266,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in ward information.");
                     if (enTarget.Contains("bsd_permanentprovince"))
                     {
                         var fetchXml2 = $@"
@@ -293,7 +293,7 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                             }
                         }
                     }
-                    traceServiceClass.Trace("1111");
+                    else throw new InvalidPluginExecutionException("Please fill in province information.");
                     if (enTarget.Contains("bsd_permanentcountry"))
                     {
                         var fetchXml2 = $@"
@@ -321,7 +321,6 @@ namespace Plugin_UpdateAddressDetail_Create_Update
                         }
                     }
                     else throw new InvalidPluginExecutionException("Please fill in country information.");
-                    traceServiceClass.Trace("1111");
                     enUp["bsd_permanentaddressvn"] = line2;
                     enUp["bsd_permanentaddress"] = line3;
                     service.Update(enUp);
