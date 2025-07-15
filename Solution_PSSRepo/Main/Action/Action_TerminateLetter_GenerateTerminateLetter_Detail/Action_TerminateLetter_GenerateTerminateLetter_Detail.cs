@@ -102,7 +102,6 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     #endregion
                     try
                     {
-                       
                         tracingService.Trace($"step 3 ");
                         Entity entity3 = new Entity("bsd_terminateletter");
                         tracingService.Trace($"step 3 2 {entity3.Id}");
@@ -270,6 +269,8 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     {
                         tracingService.Trace($"Error: {ex.Message}");
                         enGenDetail["bsd_errordetail"]=ex.Message;
+                        enGenDetail["bsd_optionentry"] = new EntityReference(entity1.LogicalName, entity1.Id);
+                        enGenDetail["bsd_errordetail"] = ex.Message;
                         enGenDetail["statuscode"] = new OptionSetValue(100000001); // Error
                         this.service.Create(enGenDetail);
                         

@@ -307,11 +307,17 @@ namespace Action_ShareCustomerToTeam
                         }
                         var team = it;
                         Entity enTeam = service.Retrieve("team", Guid.Parse(it.TeamID.ToString()), new ColumnSet(new string[] { "name", "teamid" }));
+                        string projectCode = enTeam["name"].ToString().Split('-')[0];
                         var fetchXml2 = $@"
                                         <fetch>
                                           <entity name='team'>
                                             <filter>
-                                              <condition attribute='name' operator='like' value='%{enTeam["name"].ToString().Split('-')[0]}%'/>
+                                               <condition attribute='name' operator='in'>
+                                                    <value>{projectCode}-CCR-TEAM</value>
+                                                    <value>{projectCode}-FINANCE-TEAM</value>
+                                                    <value>{projectCode}-SALE-MGT</value>
+                                                    <value>{projectCode}-SALE-ADMIN</value>
+                                               </condition>
                                             </filter>
                                           </entity>
                                         </fetch>";

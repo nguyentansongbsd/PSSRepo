@@ -173,6 +173,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_Invoice_Payme
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Payment_Import", "..\..\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import\Plugin_Payment_Import.csproj", "{7045C87F-60A9-4852-B4A2-510224D24972}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_CollectionMeeting_GenerateTermination", "Plugin_CollectionMeeting_GenerateTermination\Plugin_CollectionMeeting_GenerateTermination.csproj", "{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -598,6 +600,12 @@ Global
 		{7045C87F-60A9-4852-B4A2-510224D24972}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{7045C87F-60A9-4852-B4A2-510224D24972}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7045C87F-60A9-4852-B4A2-510224D24972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -683,6 +691,7 @@ Global
 		{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
 		{D56899EB-90F3-4BD5-AEF4-A502B54AECC1} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 		{7045C87F-60A9-4852-B4A2-510224D24972} = {ADEE3F94-9E4B-46DD-A437-283E0B339563}
+		{0911E1BF-4AD1-4CAF-9A57-3FC5083B3268} = {000F12FC-0A81-4323-85B2-85BA366A99BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

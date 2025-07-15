@@ -116,7 +116,7 @@ function btn_view_approve(items) {
 }
 function vis_btn_approve() {
     var sts = crmcontrol.getValue("statuscode");
-    var role = crmcontrol.checkRoles("CLVN_CCR Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") || crmcontrol.checkRoles("System Administrator") ? true : false;
+    var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager") ||crmcontrol.checkRoles("CLVN_CCR Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") || crmcontrol.checkRoles("System Administrator") ? true : false;
 
     if (role&&sts == 1 && Xrm.Page.ui.getFormType() != 1) return true;
     else return false;

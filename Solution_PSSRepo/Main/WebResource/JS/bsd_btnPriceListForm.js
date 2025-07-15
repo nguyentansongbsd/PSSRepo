@@ -125,7 +125,7 @@ function btnVis_btnCopyPL() {
     return false
 }
 function btnVis_Approve() {
-    var role = crmcontrol.checkRoles("CLVN_CCR Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") || crmcontrol.checkRoles("System Administrator") ? true : false;
+    var role = crmcontrol.checkRoles("CLVN_S&M_Sales Manager")|| crmcontrol.checkRoles("CLVN_CCR Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") || crmcontrol.checkRoles("System Administrator") ? true : false;
     var approver = Xrm.Page.getAttribute("bsd_approved").getValue();
     var formtype = Xrm.Page.ui.getFormType();
     if (role && approver == false && formtype != 1) {
