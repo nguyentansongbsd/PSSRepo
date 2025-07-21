@@ -136,7 +136,7 @@ window.top.generateTerminateletter2 = function (project, block, floor, units,_da
                         if (result.status == "error")
                             window.top.$ui.Dialog("Message", result.data);
                         else if (result.status == "success") {
-                           
+
                             if (result && result.data && result.data.idmaster && result.data.idmaster.value) {
                                 var entityId = result.data.idmaster.value;
                                 var entityName = "bsd_genterminationletter";
@@ -160,7 +160,19 @@ window.top.generateTerminateletter2 = function (project, block, floor, units,_da
 function btnView_Generate() {
     debugger;
 
-    openOptionFilter();
+    var entityFormOptions = {};
+    entityFormOptions["entityName"] = "bsd_genterminationletter";
+    entityFormOptions["use"] = true; 
+    // Mở form
+    Xrm.Navigation.openForm(entityFormOptions).then(
+        function (lookup) {
+            console.log("Form bsd_generateterminationletter đã được mở thành công.");
+            // lookup.savedEntityReference trả về thông tin của bản ghi được tạo (nếu có)
+        },
+        function (error) {
+            console.log(error.message);
+        }
+    );
     // Xrm.Utility.openDialog(Xrm.Page.context.getClientUrl() + "/webresources/bsd_WarningNotice_Form.html", { width: 360,height: 270 }, null, null);
 
 }
@@ -171,10 +183,10 @@ function openOptionFilter() {
         data: null
     };
     var navigationOptions = {
-        target: 2, // 2 is for opening the page as a dialog. 
-        width: 520, // default is px. can be specified in % as well. 
-        height: 400, // default is px. can be specified in % as well. 
-        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center). 
+        target: 2, // 2 is for opening the page as a dialog.
+        width: 520, // default is px. can be specified in % as well.
+        height: 400, // default is px. can be specified in % as well.
+        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
     };
     Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
         function success() {

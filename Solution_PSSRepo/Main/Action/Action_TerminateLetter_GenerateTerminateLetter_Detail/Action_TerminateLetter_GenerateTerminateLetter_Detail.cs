@@ -256,13 +256,14 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         tracingService.Trace($"bsd_overdue_interest: {bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1)}");
                         tracingService.Trace($"bsd_balance:{((Money)installment["bsd_balance"]).Value}");
                         #endregion
+                        entity3["bsd_generateterminationletter"] = enGenDetail["bsd_genterminationletter"];
                         var id =this.service.Create(entity3);
                         #region map và create entity generate letter detail
-                        tracingService.Trace("bsd_terminateletter:"+id.ToString());
-                        enGenDetail["bsd_optionentry"] = new EntityReference(entity1.LogicalName, entity1.Id);
-                        enGenDetail["statuscode"] = new OptionSetValue(100000002); // Error
-                        enGenDetail["bsd_teminationletter"] = new EntityReference("bsd_terminateletter", id);
-                        this.service.Create(enGenDetail);
+                        //tracingService.Trace("bsd_terminateletter:"+id.ToString());
+                        //enGenDetail["bsd_optionentry"] = new EntityReference(entity1.LogicalName, entity1.Id);
+                        //enGenDetail["statuscode"] = new OptionSetValue(100000002); // Error
+                        //enGenDetail["bsd_teminationletter"] = new EntityReference("bsd_terminateletter", id);
+                        //this.service.Create(enGenDetail);
                         #endregion
                     }
                     catch (Exception ex)

@@ -380,7 +380,9 @@ function generateTerminateletter2() {
 function vis_Genbtn() {
     var formContext = Xrm.Page;
     const status = formContext.getAttribute("statuscode").getValue();
-    if (status != 1) {
+    var formType = formContext.ui.getFormType(); // Đối với Client API hiện đại (Unified Interface)
+
+    if (status != 1 || formType==1) {
         return false
     } else {
         return true;
