@@ -17,11 +17,11 @@ namespace Action_AgingSimulation_GenerateUnit
 {
     public class Action_AgingSimulation_GenerateUnit : IPlugin
     {
-        public static IOrganizationService service = null;
-        static IOrganizationServiceFactory factory = null;
+        public IOrganizationService service = null;
+        IOrganizationServiceFactory factory = null;
         ITracingService traceService = null;
-        static StringBuilder strMess = new StringBuilder();
-        static StringBuilder strMess2 = new StringBuilder();
+        StringBuilder strMess = new StringBuilder();
+        StringBuilder strMess2 = new StringBuilder();
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
