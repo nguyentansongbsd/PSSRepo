@@ -11,13 +11,13 @@ namespace Action_AgingSimulation_Calculation
 {
     public class Action_AgingSimulation_Calculation : IPlugin
     {
-        public static IOrganizationService service = null;
-        static IOrganizationServiceFactory factory = null;
-        public static ITracingService traceService = null;
-        static StringBuilder strMess = new StringBuilder();
-        static StringBuilder strMess2 = new StringBuilder();
-        //public static Installment objIns = new Installment();
-        //public static Entity enInstallment;
+        public IOrganizationService service = null;
+        IOrganizationServiceFactory factory = null;
+        public ITracingService traceService = null;
+        StringBuilder strMess = new StringBuilder();
+        StringBuilder strMess2 = new StringBuilder();
+        //public  Installment objIns = new Installment();
+        //public  Entity enInstallment;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
             IPluginExecutionContext context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -200,7 +200,7 @@ namespace Action_AgingSimulation_Calculation
             updateAdvantPayment(enOptionEntry1, aginginterestsimulationoptionid);
             #endregion
         }
-        public static DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
+        public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
             int? timeZoneCode = RetrieveCurrentUsersSettings(service);
             if (!timeZoneCode.HasValue)
@@ -216,7 +216,7 @@ namespace Action_AgingSimulation_Calculation
             //var utcTime = utcTime.ToString("MM/dd/yyyy HH:mm:ss");
             //var localDateOnly = response.LocalTime.ToString("dd-MM-yyyy");
         }
-        private static int? RetrieveCurrentUsersSettings(IOrganizationService service)
+        private int? RetrieveCurrentUsersSettings(IOrganizationService service)
         {
             var currentUserSettings = service.RetrieveMultiple(
             new QueryExpression("usersettings")
@@ -230,7 +230,7 @@ namespace Action_AgingSimulation_Calculation
 
             return (int?)currentUserSettings.Attributes["timezonecode"];
         }
-        private static void createAgingInterestSimulationDetail(Entity oe, Entity UnitsEn, Entity enInterestSimulation, Entity ins, Entity simulationoptions, DateTime simulationDate, DateTime dateCalculate, decimal interestProjectDaily, int SimuType)
+        private void createAgingInterestSimulationDetail(Entity oe, Entity UnitsEn, Entity enInterestSimulation, Entity ins, Entity simulationoptions, DateTime simulationDate, DateTime dateCalculate, decimal interestProjectDaily, int SimuType)
         {
             try
             {
@@ -414,7 +414,7 @@ namespace Action_AgingSimulation_Calculation
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(xml.ToString()));
             return entc;
         }
-        private static decimal getInterestCap(Entity enOptionEntry)
+        private decimal getInterestCap(Entity enOptionEntry)
         {
             decimal lim = -100599;
             decimal totalamount = enOptionEntry.Contains("totalamount") ? ((Money)enOptionEntry["totalamount"]).Value : 0;
@@ -449,7 +449,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return lim;
         }
-        private static void updateNewInterestAmount(Entity enOptionEntry, Entity enInterestSimulateOption, int reportype)
+        private void updateNewInterestAmount(Entity enOptionEntry, Entity enInterestSimulateOption, int reportype)
         {
             Entity optionEntry = service.Retrieve(enOptionEntry.LogicalName, enOptionEntry.Id, new ColumnSet(true));
 
@@ -539,26 +539,26 @@ namespace Action_AgingSimulation_Calculation
             }
         }
 
-        private static decimal CalculateNewInterest(decimal balance, int lateDays, decimal interestPercent)
+        private decimal CalculateNewInterest(decimal balance, int lateDays, decimal interestPercent)
         {
             decimal interest = balance * lateDays * interestPercent / 100;
             return interest;
         }
-        private static decimal CalculateInterestNotPaid(Entity ins)
+        private decimal CalculateInterestNotPaid(Entity ins)
         {
             decimal interestamount = ins.Contains("bsd_amountofthisphase") ? ((Money)ins["bsd_amountofthisphase"]).Value : decimal.Zero;
             decimal interestamountpaid = ins.Contains("bsd_amountwaspaid") ? ((Money)ins["bsd_amountwaspaid"]).Value : decimal.Zero;
             decimal waiverinterest = ins.Contains("bsd_waiverinstallment") ? ((Money)ins["bsd_waiverinstallment"]).Value : decimal.Zero;
             return interestamount - interestamountpaid - waiverinterest;
         }
-        private static decimal CalculateInterestAmount(Entity ins)
+        private decimal CalculateInterestAmount(Entity ins)
         {
             decimal interestamount = ins.Contains("bsd_interestchargeamount") ? ((Money)ins["bsd_interestchargeamount"]).Value : decimal.Zero;
             decimal interestamountpaid = ins.Contains("bsd_interestwaspaid") ? ((Money)ins["bsd_interestwaspaid"]).Value : decimal.Zero;
             decimal waiverinterest = ins.Contains("bsd_waiverinterest") ? ((Money)ins["bsd_waiverinterest"]).Value : decimal.Zero;
             return interestamount - interestamountpaid - waiverinterest;
         }
-        private static int CheckGroupAging(decimal i)
+        private int CheckGroupAging(decimal i)
         {
             if (i <= 15)
                 return 100000000;
@@ -572,7 +572,7 @@ namespace Action_AgingSimulation_Calculation
                 return 100000004;
         }
 
-        private static EntityCollection CalSum_AdvancePayment(string OptionID)
+        private EntityCollection CalSum_AdvancePayment(string OptionID)
         {
             StringBuilder xml = new StringBuilder();
             xml.AppendLine("<fetch version='1.0' output-format='xml-platform' mapping='logical' aggregate='true'>");
@@ -586,7 +586,7 @@ namespace Action_AgingSimulation_Calculation
             xml.AppendLine("</fetch>");
             return service.RetrieveMultiple(new FetchExpression(xml.ToString()));
         }
-        private static void updateAdvantPayment(Entity oe, string aginginterestsimulationoption)
+        private void updateAdvantPayment(Entity oe, string aginginterestsimulationoption)
         {
             //Cal Sum Advance Payment
             decimal AdvPayAmt = 0;
@@ -644,7 +644,7 @@ namespace Action_AgingSimulation_Calculation
                 service.Update(enInterestSimulationDetail);
             }
         }
-        private static void getInterestStartDate(Entity enInstallment, Installment objIns)
+        private void getInterestStartDate(Entity enInstallment, Installment objIns)
         {
             try
             {
@@ -679,7 +679,7 @@ namespace Action_AgingSimulation_Calculation
 
 
         }
-        public static int getLateDays(DateTime dateCalculate, Installment objIns)
+        public int getLateDays(DateTime dateCalculate, Installment objIns)
         {
             try
             {
@@ -740,7 +740,7 @@ namespace Action_AgingSimulation_Calculation
                 throw new InvalidPluginExecutionException(ex.ToString());
             }
         }
-        private static int getViTriDotSightContract(Guid idOE)
+        private int getViTriDotSightContract(Guid idOE)
         {
             int location = -1;
             var fetchXml_instalment = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -761,7 +761,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return location;
         }
-        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns, ref decimal interestMasterPercent)
+        public decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay, Entity enInstallment, Installment objIns, ref decimal interestMasterPercent)
         {
             try
             {
@@ -892,7 +892,7 @@ namespace Action_AgingSimulation_Calculation
                 throw new InvalidPluginExecutionException(ex.ToString());
             }
         }
-        public static decimal sumWaiverInterest(Entity enOptionEntry)
+        public decimal sumWaiverInterest(Entity enOptionEntry)
         {
             // Define Condition Values
             var QEbsd_paymentschemedetail_bsd_optionentry = enOptionEntry.Id;
@@ -917,7 +917,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return sum;
         }
-        public static decimal getInterestSimulation(Entity enIns, DateTime dateCalculate, decimal amountpay, Installment objIns)
+        public decimal getInterestSimulation(Entity enIns, DateTime dateCalculate, decimal amountpay, Installment objIns)
         {
             Entity enInstallment = service.Retrieve(enIns.LogicalName, enIns.Id, new ColumnSet(true));
             getInterestStartDate(enInstallment, objIns);
@@ -928,7 +928,7 @@ namespace Action_AgingSimulation_Calculation
             return interestSimulation;
         }
         /// Return tổng lãi phát sinh, không tính đợt hiện tại
-        public static decimal SumInterestAM_OE_New(Guid OEID, DateTime dateCalculate, decimal amountpay, Entity enInstallment, Installment objIns)
+        public decimal SumInterestAM_OE_New(Guid OEID, DateTime dateCalculate, decimal amountpay, Entity enInstallment, Installment objIns)
         {
             decimal result = 0m;
             try
@@ -986,7 +986,7 @@ namespace Action_AgingSimulation_Calculation
             }
 
         }
-        private static bool check_Data_Setup(Entity enInstallment)
+        private bool check_Data_Setup(Entity enInstallment)
         {
             EntityReference OE_ref = enInstallment.Contains("bsd_optionentry") ? (EntityReference)enInstallment["bsd_optionentry"] : null;
             Entity OE = enInstallment.Contains("bsd_optionentry") ? service.Retrieve(OE_ref.LogicalName, OE_ref.Id, new ColumnSet(true)) : null;
@@ -1004,7 +1004,7 @@ namespace Action_AgingSimulation_Calculation
             }
             return false;
         }
-        public static EntityCollection get_ec_bsd_dailyinterestrate(Guid projID)
+        public EntityCollection get_ec_bsd_dailyinterestrate(Guid projID)
         {
             string fetchXml =
               @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -1025,7 +1025,7 @@ namespace Action_AgingSimulation_Calculation
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-        private static void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays, ref decimal interestMasterPercent)
+        private void Calculate_Interest(string installmentid, string stramountpay, string receiptdateimport, Installment objIns, ref int lateDays, ref decimal interestMasterPercent)
         {
             decimal amountpay = Convert.ToDecimal(stramountpay);
 
