@@ -75,7 +75,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 }
                 if (enTarget.Contains("bsd_floor"))
                 {
-                    query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_blocknumber", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_floor"]).Id));
+                    query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_floor", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_floor"]).Id));
                 }
                 if (enTarget.Contains("bsd_units"))
                 {
