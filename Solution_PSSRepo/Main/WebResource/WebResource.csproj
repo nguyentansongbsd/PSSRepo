@@ -79,6 +79,7 @@
     <Content Include="JS\button\bsd_btn_EnableRule.js" />
     <Content Include="JS\button\bsd_button_action.js" />
     <Content Include="JS\Follow up list\bsd_followuplist_formnew.js" />
+    <Content Include="JS\bsd_Main_system_library.js" />
     <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
     <Content Include="HTML\report\bsd_Simulation.html" />
     <Content Include="JS\Payments\Report\bsd_payment_report_05_08_2020.js" />
@@ -92,6 +93,7 @@
     <Content Include="JS\Update Duedate Of Last Installment\bsd_updateduedateoflastinstallmentapprove_form.js" />
     <Content Include="JS\Update Estimate Handover Date\bsd_updateestimatehandoverdate.js" />
     <Content Include="JS\Update Land Value\bsd_bsd_updatelandvalue_form.js" />
+    <Content Include="JS\bsd_collectionmeeting_form.js" />
     <Content Include="JS\Update Land Value\bsd_updatelandvalueofunits.js" />
   </ItemGroup>
   <ItemGroup>

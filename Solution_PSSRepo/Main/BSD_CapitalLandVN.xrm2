@@ -321,6 +321,29 @@
           ]
         },
         {
+          "Name": "Action_CollectionMeeting_Complete_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_CollectionMeeting_Complete_Detail.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "8eee8617-62c3-49a8-8fe3-6eb9dc71cd0c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_CollectionMeeting_Complete_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_CreateEmailMessage.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -779,6 +802,16 @@
               "CrmId": "3448b6ea-2089-ea11-a811-000d3a085b2b",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\bsd_bulkchangemanagementfee.js"
+            },
+            {
+              "CrmId": "2470e3ec-d666-f011-bec3-0022485a0a4f",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_collectionmeeting_form.js"
+            },
+            {
+              "CrmId": "c99308d6-da66-f011-bec3-0022485a0a4f",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_Main_system_library.js"
             },
             {
               "CrmId": "fd1a9f94-4b2f-f011-8c4d-6045bd1d2e19",
