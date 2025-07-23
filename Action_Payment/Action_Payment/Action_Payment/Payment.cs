@@ -1990,151 +1990,6 @@ namespace Action_Payment
                 {
                     TracingSe.Trace("s_fees != rỗng");
                     decimal d_oe_bsd_totalamountpaid = optionentryEn.Contains("bsd_totalamountpaid") ? ((Money)optionentryEn["bsd_totalamountpaid"]).Value : 0;
-                    //// 170515
-                    //// @Han : if Unit contain by payment havent contain field OP date - not allow to payment fees
-                    //TracingSe.Trace("a.2");
-                    //if (!product.Contains("bsd_opdate") || (DateTime)product["bsd_opdate"] == null)
-                    //    throw new InvalidPluginExecutionException("Product " + (string)product["name"] + " have not contain OP Date. Cannot Payment fees. Please check again!");
-
-                    //#region retreive INS es
-                    //EntityCollection ec_Ins_ES = get_Ins_ES(service, optionentryEn.Id.ToString());
-                    ////if (ec_Ins_ES.Entities.Count < 0) throw new InvalidPluginExecutionException("Cannot find Estimate Handover Installment. Please check again!");
-                    //bool f_main = (ec_Ins_ES.Entities[0].Contains("bsd_maintenancefeesstatus")) ? (bool)ec_Ins_ES.Entities[0]["bsd_maintenancefeesstatus"] : false;
-                    //bool f_mana = (ec_Ins_ES.Entities[0].Contains("bsd_managementfeesstatus")) ? (bool)ec_Ins_ES.Entities[0]["bsd_managementfeesstatus"] : false;
-                    //TracingSe.Trace("a.2.1");
-                    //decimal d_bsd_maintenanceamount = ec_Ins_ES.Entities[0].Contains("bsd_maintenanceamount") ? ((Money)ec_Ins_ES.Entities[0]["bsd_maintenanceamount"]).Value : 0;
-                    //decimal d_bsd_managementamount = ec_Ins_ES.Entities[0].Contains("bsd_managementamount") ? ((Money)ec_Ins_ES.Entities[0]["bsd_managementamount"]).Value : 0;
-                    //TracingSe.Trace("a.2.2");
-                    //decimal d_bsd_maintenancefeepaid = ec_Ins_ES.Entities[0].Contains("bsd_maintenancefeepaid") ? ((Money)ec_Ins_ES.Entities[0]["bsd_maintenancefeepaid"]).Value : 0;
-                    //decimal d_bsd_managementfeepaid = ec_Ins_ES.Entities[0].Contains("bsd_managementfeepaid") ? ((Money)ec_Ins_ES.Entities[0]["bsd_managementfeepaid"]).Value : 0;
-
-                    //decimal d_mainBL = d_bsd_maintenanceamount - d_bsd_maintenancefeepaid;
-                    //decimal d_manaBL = d_bsd_managementamount - d_bsd_managementfeepaid;
-                    //#endregion
-                    //TracingSe.Trace("a.2.3");
-                    //string s1 = s_fees.Substring(0, 1);
-                    //string[] s_am = s_feesAM.Split(',');
-                    //decimal d_am1 = decimal.Parse(s_am[0]);
-                    //TracingSe.Trace("a.2.4");
-                    //string s2 = "";
-                    //decimal d_am2 = 0;
-                    //TracingSe.Trace("a.2.5");
-                    //if (s_fees.Length > 1)
-                    //{
-                    //    TracingSe.Trace("a.2.6");
-                    //    s2 = s_fees.Substring(2, 1);
-                    //    TracingSe.Trace("a.2.6.1");
-                    //    d_am2 = decimal.Parse(s_am[1]);
-                    //    TracingSe.Trace("a.2.6.2");
-                    //}
-                    //#region ------------------------- Maintenance -----------------
-                    //if (s1 == "1") // maintenance fees
-                    //{
-                    //    TracingSe.Trace("a.2.7");
-                    //    if (f_main == true) throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
-                    //    if (d_am1 < d_mainBL)
-                    //    {
-                    //        d_bsd_maintenancefeepaid += d_am1;
-                    //        f_main = false;
-                    //        d_totalAM_OE += d_am1;
-
-                    //        createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am1, d_now, serv, (string)product["name"], "", 0, 0);
-
-                    //    }
-                    //    else if (d_am1 == d_mainBL)
-                    //    {
-                    //        d_bsd_maintenancefeepaid += d_am1;
-                    //        f_main = true;
-                    //        d_totalAM_OE += d_am1;
-                    //        createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am1, d_now, serv, (string)product["name"], "", 0, 0);
-                    //    }
-                    //    else if (d_am1 > d_mainBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Maintenance fees amount. Please check again!");
-
-                    //    tiendu -= d_am1;
-                    //}
-                    //#endregion ------------------------- Maintenance -----------------
-
-                    //#region ------------------------- Management -----------------
-                    //else if (s1 == "2") // management
-                    //{
-                    //    if (f_mana == true) throw new InvalidPluginExecutionException("Management fees had been paid. Please check again!");
-                    //    if (d_am1 < d_manaBL)
-                    //    {
-                    //        d_bsd_managementfeepaid += d_am1;
-                    //        f_mana = false;
-                    //        createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am1, d_now, serv, (string)product["name"], "", 0, 0);
-                    //    }
-                    //    else if (d_am1 == d_manaBL)
-                    //    {
-                    //        d_bsd_managementfeepaid += d_am1;
-                    //        f_mana = true;
-                    //        createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am1, d_now, serv, (string)product["name"], "", 0, 0);
-                    //    }
-                    //    else if (d_am1 > d_manaBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Management fees amount. Please check again!");
-
-                    //    tiendu -= d_am1;
-                    //}
-                    //#endregion ------------------------- Management -----------------
-
-                    //#region  ------------------- if s2 !="" ----------------
-                    //if (s2 != "")
-                    //{
-                    //    #region ------------------------- Maintenance -----------------
-                    //    if (s2 == "1") // maintenance fees
-                    //    {
-                    //        if (f_main == true) throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
-                    //        if (d_am2 < d_mainBL)
-                    //        {
-                    //            d_bsd_maintenancefeepaid += d_am2;
-                    //            f_main = false;
-                    //            d_totalAM_OE += d_am2;
-                    //            createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am2, d_now, serv, (string)product["name"], "", 0, 0);
-                    //        }
-                    //        else if (d_am2 == d_mainBL)
-                    //        {
-                    //            d_bsd_maintenancefeepaid += d_am2;
-                    //            f_main = true;
-                    //            d_totalAM_OE += d_am2;
-                    //            createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am2, d_now, serv, (string)product["name"], "", 0, 0);
-                    //        }
-                    //        else if (d_am2 > d_mainBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Maintenance fees amount. Please check again!");
-
-                    //        tiendu -= d_am2;
-                    //    }
-                    //    #endregion ------------------------- Maintenance -----------------
-
-                    //    #region ------------------------- Management -----------------
-                    //    else if (s2 == "2") // management
-                    //    {
-                    //        if (f_mana == true) throw new InvalidPluginExecutionException("Management fees had been paid. Please check again!");
-                    //        if (d_am2 < d_manaBL)
-                    //        {
-                    //            d_bsd_managementfeepaid += d_am2;
-                    //            f_mana = false;
-                    //            createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am2, d_now, serv, (string)product["name"], "", 0, 0);
-                    //        }
-                    //        else if (d_am2 == d_manaBL)
-                    //        {
-                    //            d_bsd_managementfeepaid += d_am2;
-                    //            f_mana = true;
-                    //            createTransPM(paymentEn, optionentryEn, 100000002, ec_Ins_ES.Entities[0].Id, d_am2, d_now, serv, (string)product["name"], "", 0, 0);
-                    //        }
-                    //        else if (d_am2 > d_manaBL) throw new InvalidPluginExecutionException("Amount pay larger than balance of Management fees amount. Please check again!");
-
-                    //        tiendu -= d_am2;
-                    //    }
-                    //    #endregion ------------------------- Management -----------------
-                    //}
-                    //#endregion ---------------------------------------------------------
-
-                    //#region ----------- update INS -------------------------
-                    //Entity en_INS_update = new Entity(ec_Ins_ES.Entities[0].LogicalName);
-                    //en_INS_update.Id = ec_Ins_ES.Entities[0].Id;
-                    //en_INS_update["bsd_maintenancefeesstatus"] = f_main;
-                    //en_INS_update["bsd_managementfeesstatus"] = f_mana;
-                    //en_INS_update["bsd_maintenancefeepaid"] = new Money(d_bsd_maintenancefeepaid);
-                    //en_INS_update["bsd_managementfeepaid"] = new Money(d_bsd_managementfeepaid);
-                    //service.Update(en_INS_update);
                     Entity Product = service.Retrieve("product", ((EntityReference)optionentryEn["bsd_unitnumber"]).Id, new ColumnSet(true));
                     string[] arrId = s_fees.Split(',');
                     string[] arrFeeAmount = s_feesAM.Split(',');
@@ -2171,6 +2026,7 @@ namespace Action_Payment
                                 if (f_mains == true) throw new InvalidPluginExecutionException("Maintenance fees had been paid. Please check again!");
                                 if (fee < mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = false;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2178,6 +2034,7 @@ namespace Action_Payment
                                 }
                                 else if (fee == mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = true;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2192,11 +2049,13 @@ namespace Action_Payment
                                 if (f_manas == true) throw new InvalidPluginExecutionException("Management fees had been paid. Please check again!");
                                 if (fee < manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = false;
                                 }
                                 else if (fee == manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = true;
                                 }

@@ -2354,6 +2354,7 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 if (fee < mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = false;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2361,6 +2362,7 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 else if (fee == mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = true;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2381,11 +2383,13 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 if (fee < manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = false;
                                 }
                                 else if (fee == manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = true;
                                 }
