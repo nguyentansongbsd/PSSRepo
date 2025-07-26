@@ -57,31 +57,88 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 context.OutputParameters["Count"] = url;
 
                 Entity enTarget = service.Retrieve(enUp.LogicalName, enUp.Id, new ColumnSet(true));
-
                 //LAY DANH SACH CAC OE HOP LE
-                QueryExpression query = new QueryExpression("salesorder");
-                query.ColumnSet = new ColumnSet(new string[1] { "salesorderid" });
-                query.Criteria = new FilterExpression(LogicalOperator.And);
-                query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.NotEqual, "100000006"));
-                query.Criteria.AddCondition(new ConditionExpression("totalamount", ConditionOperator.GreaterThan, 0));
-                query.Criteria.AddCondition(new ConditionExpression("bsd_paymentscheme", ConditionOperator.NotNull));
-                query.Criteria.AddCondition(new ConditionExpression("customerid", ConditionOperator.NotNull));
-                query.LinkEntities.Add(new LinkEntity("salesorder", "product", "bsd_unitnumber", "productid", JoinOperator.Inner));
-                query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.And);
-                query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_projectcode", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_project"]).Id));
-                if (enTarget.Contains("bsd_block"))
-                {
-                    query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_blocknumber", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_block"]).Id));
-                }
-                if (enTarget.Contains("bsd_floor"))
-                {
-                    query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_blocknumber", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_floor"]).Id));
-                }
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch>
+                      <entity name=""salesorder"">
+                        <attribute name=""salesorderid"" />
+                        <filter>
+                          <condition attribute=""statuscode"" operator=""ne"" value=""{100000006}"" />
+                          <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
+                          <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
+                          <condition attribute=""customerid"" operator=""not-null"" />
+                        </filter>
+                        <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
+                          <filter>
+                            <condition attribute=""bsd_projectcode"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_project"]).Id}"" />
+                          </filter>
+                        </link-entity>
+                      </entity>
+                    </fetch>";
                 if (enTarget.Contains("bsd_units"))
                 {
-                    query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("productid", ConditionOperator.Equal, ((EntityReference)enTarget["bsd_units"]).Id));
+                    fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch>
+                      <entity name=""salesorder"">
+                        <attribute name=""salesorderid"" />
+                        <filter>
+                          <condition attribute=""statuscode"" operator=""ne"" value=""{100000006}"" />
+                          <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
+                          <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
+                          <condition attribute=""customerid"" operator=""not-null"" />
+                        </filter>
+                        <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
+                          <filter>
+                            <condition attribute=""bsd_projectcode"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_project"]).Id}"" />
+                            <condition attribute=""productid"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_units"]).Id}"" />
+                          </filter>
+                        </link-entity>
+                      </entity>
+                    </fetch>";
                 }
-                EntityCollection list = service.RetrieveMultiple(query);
+                else if (enTarget.Contains("bsd_floor"))
+                {
+                    fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch>
+                      <entity name=""salesorder"">
+                        <attribute name=""salesorderid"" />
+                        <filter>
+                          <condition attribute=""statuscode"" operator=""ne"" value=""{100000006}"" />
+                          <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
+                          <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
+                          <condition attribute=""customerid"" operator=""not-null"" />
+                        </filter>
+                        <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
+                          <filter>
+                            <condition attribute=""bsd_projectcode"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_project"]).Id}"" />
+                            <condition attribute=""bsd_floor"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_floor"]).Id}"" />
+                          </filter>
+                        </link-entity>
+                      </entity>
+                    </fetch>";
+                }
+                else if (enTarget.Contains("bsd_block"))
+                {
+                    fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch>
+                      <entity name=""salesorder"">
+                        <attribute name=""salesorderid"" />
+                        <filter>
+                          <condition attribute=""statuscode"" operator=""ne"" value=""{100000006}"" />
+                          <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
+                          <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
+                          <condition attribute=""customerid"" operator=""not-null"" />
+                        </filter>
+                        <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
+                          <filter>
+                            <condition attribute=""bsd_projectcode"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_project"]).Id}"" />
+                            <condition attribute=""bsd_blocknumber"" operator=""eq"" value=""{((EntityReference)enTarget["bsd_block"]).Id}"" />
+                          </filter>
+                        </link-entity>
+                      </entity>
+                    </fetch>";
+                }
+                EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
                 traceService.Trace("count " + list.Entities.Count);
                 traceService.Trace("url " + url);
                 List<string> listOE = new List<string>();
