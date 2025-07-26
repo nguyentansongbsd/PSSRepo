@@ -604,6 +604,22 @@
           ]
         },
         {
+          "Name": "Action_UpdateLandValue_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "90b57b19-37f2-4b86-b46e-c08a3ba95774",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_UpdateLandValue_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Action_WarningNotices_GenerateWarningNotices.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -613,6 +629,22 @@
                 "Id": "e8fed5d6-267a-4f2d-bcd9-fc209f152b3c",
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_FUL.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "4497dd3b-dd94-4bff-a118-b1b630cfa840",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_FUL.dll",
                 "SourceType": 0
               }
             }
@@ -739,6 +771,22 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Updateestimatehandoverdate.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "679e0237-6ec5-4ef3-be82-9e45f1d15879",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateLandvalueUnit_Approve.dll",
                 "SourceType": 0
               }
             }

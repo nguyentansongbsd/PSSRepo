@@ -28,7 +28,8 @@ namespace Plugin_Create_FUL
             Guid recordId = entity.Id;
             en = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             if (((OptionSetValue)en["bsd_type"]).Value != 100000006&& ((OptionSetValue)en["bsd_type"]).Value!= 100000005) return;
-                
+            if (((OptionSetValue)en["statuscode"]).Value== 100000002)
+                return;
             bool bol1 = true;
             bool bol2 = true;
             if ((en.Contains("bsd_terminateletter")) == false || ((bool)en["bsd_terminateletter"]) == false)

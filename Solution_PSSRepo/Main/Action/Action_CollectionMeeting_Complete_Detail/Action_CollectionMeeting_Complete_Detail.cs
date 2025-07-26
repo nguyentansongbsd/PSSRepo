@@ -23,6 +23,14 @@ namespace Action_CollectionMeeting_Complete_Detail
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            if (context.InputParameters.Contains("userid"))
+            {
+
+                string userid = context.InputParameters["userid"].ToString();
+                tracingService.Trace("user Action:" + userid);
+                EntityReference user = new EntityReference("systemuser", new Guid(userid));
+                service = (IOrganizationService)factory.CreateOrganizationService(user.Id);
+            }
             if (context.InputParameters.Contains("id"))
             {
                 tracingService.Trace("Action_CollectionMeeting_Complete_Detail: Start");

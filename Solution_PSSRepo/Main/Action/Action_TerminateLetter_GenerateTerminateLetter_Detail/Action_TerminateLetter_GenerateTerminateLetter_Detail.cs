@@ -32,7 +32,14 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
             this.service = this.factory.CreateOrganizationService(new Guid?(service.UserId));
             context = serviceProvider.GetService(typeof(IPluginExecutionContext)) as IPluginExecutionContext;
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-
+            if(context.InputParameters.Contains("userid"))
+            {
+                
+                string userid = context.InputParameters["userid"].ToString();
+                tracingService.Trace("user Action:" + userid);
+                EntityReference user = new EntityReference("systemuser", new Guid(userid));
+                this.service = (IOrganizationService)factory.CreateOrganizationService(user.Id);
+            }    
             ((ITracingService)serviceProvider.GetService(typeof(ITracingService))).Trace(string.Format("Context Depth {0}", (object)service.Depth));
             var entity1 = this.service.Retrieve("salesorder", new Guid(this.context.InputParameters["id"].ToString()), new ColumnSet(true));
             if (context.InputParameters.Contains("_date") && context.InputParameters["_date"].ToString()!="")

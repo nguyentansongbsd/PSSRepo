@@ -53,6 +53,7 @@ namespace Plugin_CollectionMeeting_GenerateTermination
                         string listid = string.Join(",", l_FUL.Entities.Select(x => x.Id.ToString()));
                         request["listid"] = listid;
                         request["idmaster"] = tar.Id.ToString();
+                        request["userid"] = context.UserId.ToString();
                         service.Execute(request);
                         //throw new InvalidPluginExecutionException(l_FUL.Entities.Count.ToString());
                         //foreach (Entity ful in l_FUL.Entities)
