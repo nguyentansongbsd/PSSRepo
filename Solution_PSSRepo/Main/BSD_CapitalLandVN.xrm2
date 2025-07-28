@@ -651,6 +651,29 @@
           ]
         },
         {
+          "Name": "Plugin_Create_OP_FillData_DAno.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_Create_OP_FillData_DAno.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c519aa5d-5044-4605-b2b4-a775f7c163e7",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_OP_FillData_DAno.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_Create_TerminationLetter.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [

@@ -1,0 +1,50 @@
+----52 CCR_REPORT_SUBSALE
+
+bsd_assign
+product
+bsd_coowner
+salesorder
+bsd_project
+
+
+----52 SALES_CCR_Purchaser Info_Sales Price by Sqm
+
+salesorder
+quote
+product
+bsd_exchangeratedetail
+account
+contact
+bsd_coowner
+bsd_bankingloan
+bsd_project
+
+
+----52 SALES REPORT
+
+salesorder
+quote
+account 
+product
+bsd_exchangeratedetail
+contact 
+bsd_coowner
+bsd_bankingloan
+bsd_paymentschemedetail
+bsd_packageselling
+bsd_discount
+bsd_discounttype
+bsd_project
+
+----52 FN_Purchaser Info_Final
+
+salesorder
+quote
+product
+bsd_exchangeratedetail
+account
+contact
+bsd_coowner
+bsd_bankingloan
+bsd_project
+
