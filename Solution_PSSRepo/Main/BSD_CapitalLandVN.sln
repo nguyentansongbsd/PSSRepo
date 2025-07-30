@@ -181,6 +181,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CollectionMeeting_Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_AgingSimulation_Calculation", "..\..\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation.csproj", "{D78D1BEB-ABA6-487F-853E-EB54E3A5855D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@README_ROLE", "@README_ROLE", "{6B2928F9-D2ED-408C-BDC4-1C6BF5A160CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report", "Report", "{194B2825-4F92-4042-88B0-4B7E6E199A42}"
+	ProjectSection(SolutionItems) = preProject
+		Report 52.txt = Report 52.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_OP_FillData_DAno", "Plugin_Create_OP_FillData_DAno\Plugin_Create_OP_FillData_DAno.csproj", "{6348E9D2-13AC-4BEB-8193-E43B20674A7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_FollowUpLish_WhenCreateFollowUpLish_1.0.0.0", "Plugin\Create Entity\Plugin_FollowUpLish_WhenCreateFollowUpLish_1.0.0.0\Plugin_FollowUpLish_WhenCreateFollowUpLish_1.0.0.0.csproj", "{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -624,6 +635,18 @@ Global
 		{D78D1BEB-ABA6-487F-853E-EB54E3A5855D}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{D78D1BEB-ABA6-487F-853E-EB54E3A5855D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D78D1BEB-ABA6-487F-853E-EB54E3A5855D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -713,6 +736,9 @@ Global
 		{E67C66D6-09AD-4DF6-A46D-968B4BBC796F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{42AFFD1B-A642-4989-87C2-2BA9CD69F342} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D78D1BEB-ABA6-487F-853E-EB54E3A5855D} = {02252161-F2D2-4C8D-8781-1D80691FB0D6}
+		{194B2825-4F92-4042-88B0-4B7E6E199A42} = {6B2928F9-D2ED-408C-BDC4-1C6BF5A160CF}
+		{6348E9D2-13AC-4BEB-8193-E43B20674A7E} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
+		{F29E6A1D-E34F-4941-992C-A5AF3FA27AEA} = {6DBB064F-C901-4B38-99DD-57E1F19CFABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5DA2E3A-5860-4789-9AC7-1E2A16C8320F}

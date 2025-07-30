@@ -30,6 +30,7 @@ namespace Action_UpdateLandValue_Detail
             string enDetailid = context.InputParameters["id"].ToString();
             string userid = context.InputParameters["userid"].ToString();
             EntityReference user = new EntityReference("systemuser", new Guid(userid));
+            service = (IOrganizationService)factory.CreateOrganizationService(user.Id);
             serviceHelper = new ServiceHelper.ServiceHelper(service, user,tracingService,"Approve_Update_Land_Value");
             en = service.Retrieve("bsd_landvalue", new Guid(enDetailid), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             var item = en;
@@ -151,8 +152,6 @@ namespace Action_UpdateLandValue_Detail
                 HandleError(item, ex.Message);
             }
         }
-       
-       
         public void HandleError(Entity item, string error)
         {
             var enDetailUpdate=new Entity(item.LogicalName, item.Id);

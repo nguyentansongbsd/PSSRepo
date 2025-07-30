@@ -54,6 +54,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter
             request["bsd_generate_termination_letter"] = id.ToString();
             request["_date"] = context.InputParameters.Contains("_date") ? context.InputParameters["_date"].ToString() : "";
             request["list_id"] = lst_id;
+            request["userid"] = context.UserId.ToString();
             this.service.Execute(request);
             context.OutputParameters["idmaster"]= id;
             //int num1 = 0;
