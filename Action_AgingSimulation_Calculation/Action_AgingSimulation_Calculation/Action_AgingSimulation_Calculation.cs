@@ -66,7 +66,9 @@ namespace Action_AgingSimulation_Calculation
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
-                EntityCollection optionEntrys = getOptionEntrys(service, input03);
+                var simulationoptions = service.Retrieve("bsd_interestsimulation", new Guid(input02), new ColumnSet(true));
+                int bsd_type = simulationoptions.Contains("bsd_type") ? ((OptionSetValue)simulationoptions["bsd_type"]).Value : 0;
+                EntityCollection optionEntrys = getOptionEntrys(service, input03, bsd_type);
                 foreach (Entity optionEntry in optionEntrys.Entities)
                 {
                     Entity agInSimOption = new Entity("bsd_aginginterestsimulationoption");
@@ -387,7 +389,7 @@ namespace Action_AgingSimulation_Calculation
             }
 
         }
-        private EntityCollection getOptionEntrys(IOrganizationService crmservices, string idUnit)
+        private EntityCollection getOptionEntrys(IOrganizationService crmservices, string idUnit, int bsd_type)
         {
             StringBuilder xml = new StringBuilder();
             xml.AppendLine("<fetch version='1.0' output-format='xml-platform' mapping='logical'>");
@@ -407,6 +409,7 @@ namespace Action_AgingSimulation_Calculation
             xml.AppendLine(string.Format("<condition attribute='bsd_unitnumber' operator='eq' value='{0}'/>", idUnit));
             xml.AppendLine("<condition attribute='statuscode' operator='ne' value='100000006'/>");
             xml.AppendLine("<condition attribute='statuscode' operator='ne' value='100000007'/>");
+            if (bsd_type == 100000002) xml.AppendLine("<condition attribute='bsd_tobeterminated' operator='ne' value='1'/>");
             xml.AppendLine("</filter>");
             xml.AppendLine("</entity>");
             xml.AppendLine("</fetch>");
