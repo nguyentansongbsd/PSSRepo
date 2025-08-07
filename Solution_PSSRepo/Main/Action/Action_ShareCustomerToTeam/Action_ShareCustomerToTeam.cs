@@ -395,36 +395,36 @@ namespace Action_ShareCustomerToTeam
 
                     Guid TeamID = Guid.Parse(t);
                     EntityReference refTeam = new EntityReference("team", TeamID);
-                    ShareTeams(enRef, refTeam);
-                    if (fieldName == "contact")
-                        ShareDoiTuong_CoOwner(enRef, refTeam);
-                    else
-                    {
-                        Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
-                        if (enAcc.Contains("primarycontactid"))
-                            ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
-                        //if(enAcc.Contains("bsd_chudautu"))
-                        //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
-                        if (enAcc.Contains("bsd_maincompany"))
-                            ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+                    //ShareTeams(enRef, refTeam);
+                    //if (fieldName == "contact")
+                    //    ShareDoiTuong_CoOwner(enRef, refTeam);
+                    //else
+                    //{
+                    //    Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
+                    //    if (enAcc.Contains("primarycontactid"))
+                    //        ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                    //    //if(enAcc.Contains("bsd_chudautu"))
+                    //    //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
+                    //    if (enAcc.Contains("bsd_maincompany"))
+                    //        ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
 
-                        var fetchXml = $@"
-                            <fetch>
-                              <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_contact' />
-                                <filter>
-                                  <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
-                                  <condition attribute='statecode' operator='eq' value='0'/>
-                                </filter>
-                              </entity>
-                            </fetch>";
-                        EntityCollection rs1 = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                        foreach (Entity i in rs1.Entities)
-                        {
-                            if (i.Contains("bsd_contact"))
-                                ShareTeams((EntityReference)i["bsd_contact"], refTeam);
-                        }
-                    }
+                    //    var fetchXml = $@"
+                    //        <fetch>
+                    //          <entity name='bsd_mandatorysecondary'>
+                    //            <attribute name='bsd_contact' />
+                    //            <filter>
+                    //              <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
+                    //              <condition attribute='statecode' operator='eq' value='0'/>
+                    //            </filter>
+                    //          </entity>
+                    //        </fetch>";
+                    //    EntityCollection rs1 = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                    //    foreach (Entity i in rs1.Entities)
+                    //    {
+                    //        if (i.Contains("bsd_contact"))
+                    //            ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                    //    }
+                    //}
                     traceService.Trace("@@@@@1");
                     var team = service.Retrieve("team", new Guid(t), new ColumnSet(true));
                     string projectCode = team["name"].ToString().Split('-')[0];

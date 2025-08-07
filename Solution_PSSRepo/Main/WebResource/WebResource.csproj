@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="HTML\bsd_directsale.html" />
     <Content Include="HTML\bsd_searchcustomer.html" />
     <Content Include="HTML\compoent\bsd_bsd_Entityview_SelectReport.html" />
     <Content Include="HTML\compoent\bsd_bsd_Entityview_SelectReport_Email.html" />
@@ -96,9 +97,7 @@
     <Content Include="JS\bsd_collectionmeeting_form.js" />
     <Content Include="JS\Update Land Value\bsd_updatelandvalueofunits.js" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HTML\main\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="HTML\compoent\.editorconfig" />
     <None Include="RDL\LUMI_Assignment confirmation_Lan2_23022025_contact.rdl" />

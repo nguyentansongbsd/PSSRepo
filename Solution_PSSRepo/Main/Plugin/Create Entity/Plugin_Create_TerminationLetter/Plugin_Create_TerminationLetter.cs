@@ -182,13 +182,17 @@ namespace Plugin_Create_TerminationLetter
                         enupdate["bsd_overdue_interest"] = new decimal(0);
                     tracingService.Trace("step 4.2.1");
                     var bsd_overdue_interest = (decimal)enupdate["bsd_overdue_interest"] + (decimal)
-                        (bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : new decimal(1)));
+                        (bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : new decimal(1))); 
+                    tracingService.Trace(bsd_overdue_interest.ToString());
+                    if (bsd_overdue_interest>=0)
+                    {
+                        tracingService.Trace("step 4.3");
+                        enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
+                        enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
 
-                    tracingService.Trace("step 4.3");
-                    enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
-                    enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
-
-                    tracingService.Trace("bsd_overdue_interest " + ((decimal)enupdate["bsd_overdue_interest"]).ToString());
+                        tracingService.Trace("bsd_overdue_interest " + ((decimal)enupdate["bsd_overdue_interest"]).ToString());
+                    }    
+                  
                 }
                 #endregion
             }

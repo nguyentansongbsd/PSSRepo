@@ -40,23 +40,18 @@ namespace Action_TerminateLetter_GenerateTerminateLetter
                 throw new InvalidPluginExecutionException("No payments found!");
             string lst_id = string.Join(",", paymentScheme.Entities.Select(x => x.Id.ToString()).ToList());
 
-            Entity enMaster = new Entity("bsd_genterminationletter");
-            enMaster["bsd_date"] = context.InputParameters.Contains("_date") ? Convert.ToDateTime(context.InputParameters["_date"].ToString()) : DateTime.Now;
-            enMaster["bsd_project"] = new EntityReference("bsd_project", new Guid(bsd_projectcode));
-            enMaster["bsd_floor"] = bsd_floor != "" ? new EntityReference("bsd_floor", new Guid(bsd_floor)) : null;
-            enMaster["bsd_block"] = bsd_blocknumber != "" ? new EntityReference("bsd_block", new Guid(bsd_blocknumber)) : null;
-            enMaster["bsd_product"] = bsd_unit != "" ? new EntityReference("product", new Guid(bsd_unit)) : null;
+            Entity enMaster = this.service.Retrieve("bsd_genterminationletter",new Guid(context.InputParameters["_idmaster"].ToString()),new ColumnSet(true));
             enMaster["bsd_processing_pa"] = true;
             enMaster["statuscode"] = new OptionSetValue(100000001);
-            var id = this.service.Create(enMaster);
+            this.service.Update(enMaster);
 
             var request = new OrganizationRequest("bsd_Action_Active_GenerateTerminateLetter");
-            request["bsd_generate_termination_letter"] = id.ToString();
+            request["bsd_generate_termination_letter"] = context.InputParameters["_idmaster"].ToString();
             request["_date"] = context.InputParameters.Contains("_date") ? context.InputParameters["_date"].ToString() : "";
             request["list_id"] = lst_id;
             request["userid"] = context.UserId.ToString();
             this.service.Execute(request);
-            context.OutputParameters["idmaster"]= id;
+            context.OutputParameters["idmaster"]= context.InputParameters["_idmaster"];
             //int num1 = 0;
             //for (int index1 = 0; index1 < paymentScheme.Entities.Count; ++index1)
             //{

@@ -352,6 +352,7 @@ function generateTerminateletter2() {
                     { name: 'Floor', type: 'string', value: floor || "" },
                     { name: 'Units', type: 'string', value: units || "" },
                     { name: '_date', type: 'string', value: _date ? _date.toString() : "" },
+                    { name: '_idmaster', type: 'string', value: Xrm.Page.data.entity.getId().replace("{", "").replace("}", "") },
                 ],
                 function (result) {
                     window.parent.processingDlg.hide();
@@ -359,13 +360,7 @@ function generateTerminateletter2() {
                         if (result.status == "error")
                             window.top.$ui.Dialog("Message", result.data);
                         else if (result.status == "success") {
-                            if (result && result.data && result.data.idmaster && result.data.idmaster.value) {
-                                var entityId = result.data.idmaster.value;
-                                var entityName = "bsd_genterminationletter";
-                                Xrm.Utility.openEntityForm(entityName, entityId);
-                            } else {
-                                window.top.$ui.Dialog("Error", "Cannot open Termination Letter form. Invalid result data.", null);
-                            }
+                            window.top.location.reload();
                         } else {
                             console.log(JSON.stringify(result));
                         }

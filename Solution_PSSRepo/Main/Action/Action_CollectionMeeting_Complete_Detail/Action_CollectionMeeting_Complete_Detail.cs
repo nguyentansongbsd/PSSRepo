@@ -266,6 +266,7 @@ namespace Action_CollectionMeeting_Complete_Detail
                                     FollowUpList["bsd_date"] = today;
                                     FollowUpList["bsd_copy"] = true;
                                     FollowUpList["bsd_system"] = true;
+                                    FollowUpList["statuscode"] = new OptionSetValue(1);
                                     service.Create(FollowUpList);
                                 }
                             }
@@ -428,6 +429,8 @@ namespace Action_CollectionMeeting_Complete_Detail
                                 FollowUpList["bsd_date"] = today;
                                 FollowUpList["bsd_copy"] = true;
                                 FollowUpList["bsd_system"] = true;
+                                FollowUpList["statuscode"] = new OptionSetValue(1);
+
                                 service.Create(FollowUpList);
                             }
 
@@ -453,10 +456,21 @@ namespace Action_CollectionMeeting_Complete_Detail
             enMaster["bsd_error"] = true;
             enMaster["bsd_errordetail"] = error;
             service.Update(enMaster);
-            var enupdate = new Entity("bsd_followuplist", ful.Id);
+            var enupdate = new Entity("bsd_followuplist", item.Id);
             enupdate["statuscode"] = new OptionSetValue(100000001);
             enupdate["bsd_errordetail"] = error;
             service.Update(enupdate);
+            DateTime today = RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+            Entity FollowUpList = CloneEntity(item);
+            FollowUpList.Attributes.Remove("bsd_followuplistid");
+            FollowUpList.Attributes.Remove("bsd_collectionmeeting");
+            FollowUpList["bsd_name"] = item["bsd_name"] ;
+            FollowUpList["bsd_date"] = today;
+            FollowUpList["bsd_copy"] = true;
+            FollowUpList["bsd_system"] = true;
+            FollowUpList["statuscode"] = new OptionSetValue(1);
+            tracingService.Trace("Create FollowUpList Copy");
+            service.Create(FollowUpList);
         }
         private EntityCollection find_phase(IOrganizationService service, EntityReference phase)
         {

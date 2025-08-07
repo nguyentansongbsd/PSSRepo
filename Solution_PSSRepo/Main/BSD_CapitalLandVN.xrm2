@@ -192,6 +192,11 @@
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
             {
+              "CrmId": "b7b48a10-5a2f-e511-80e1-3863bb36ef98",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\bsd_directsale.html"
+            },
+            {
               "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
@@ -794,6 +799,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_Updateestimatehandoverdate.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_UpdateEstimateHandoverDateDetail_Create.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_UpdateEstimateHandoverDateDetail_Create.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "d53d258e-b8b3-49c7-9f4c-343a344c490f",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateEstimateHandoverDateDetail_Create.dll",
                 "SourceType": 0
               }
             }
