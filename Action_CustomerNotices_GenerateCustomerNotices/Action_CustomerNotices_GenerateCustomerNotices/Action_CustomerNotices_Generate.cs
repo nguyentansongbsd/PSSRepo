@@ -67,6 +67,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                           <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
                           <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
                           <condition attribute=""customerid"" operator=""not-null"" />
+                          <condition attribute=""bsd_tobeterminated"" operator=""ne"" value=""1"" />
                         </filter>
                         <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
                           <filter>
@@ -86,6 +87,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                           <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
                           <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
                           <condition attribute=""customerid"" operator=""not-null"" />
+                          <condition attribute=""bsd_tobeterminated"" operator=""ne"" value=""1"" />
                         </filter>
                         <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
                           <filter>
@@ -107,6 +109,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                           <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
                           <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
                           <condition attribute=""customerid"" operator=""not-null"" />
+                          <condition attribute=""bsd_tobeterminated"" operator=""ne"" value=""1"" />
                         </filter>
                         <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
                           <filter>
@@ -128,6 +131,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                           <condition attribute=""totalamount"" operator=""gt"" value=""{0}"" />
                           <condition attribute=""bsd_paymentscheme"" operator=""not-null"" />
                           <condition attribute=""customerid"" operator=""not-null"" />
+                          <condition attribute=""bsd_tobeterminated"" operator=""ne"" value=""1"" />
                         </filter>
                         <link-entity name=""product"" from=""productid"" to=""bsd_unitnumber"">
                           <filter>

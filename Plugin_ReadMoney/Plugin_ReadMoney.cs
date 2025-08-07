@@ -44,7 +44,7 @@ namespace Plugin_ReadMoney
                         smoney = (Convert.ToInt64(((Money)target["bsd_detailamount"]).Value)).ToString();
                         dmoney = Convert.ToInt64(((Money)target["bsd_detailamount"]).Value);
 
-                        if(dmoney < 0)
+                        if (dmoney < 0)
                             throw new InvalidPluginExecutionException("Listed Price");
 
                         vn = TienBangChu(smoney);
@@ -65,14 +65,14 @@ namespace Plugin_ReadMoney
                             en = read(dmoney);
                             target["bsd_readmoneyvn"] = vn;
                             target["bsd_readmoneyen"] = en;
-                            
+
                         }
                         //else
                         //{
                         //    throw new InvalidPluginExecutionException("Total Amount");
                         //}
 
-                        
+
                     }
 
                     // Depsoit Fee Received
@@ -155,7 +155,7 @@ namespace Plugin_ReadMoney
                     // 01.03.2018 - Han - Update Management Fee into Installment
                     if (target.Contains("bsd_managementfee") && ((Money)target["bsd_managementfee"]) != null)
                     {
-                        decimal manafee = ((Money)target["bsd_managementfee"]).Value;                     
+                        decimal manafee = ((Money)target["bsd_managementfee"]).Value;
                         EntityCollection GetInstall = get_InstallmentManaFee(service, target.Id, times);
 
                         if (GetInstall.Entities.Count > 0)
@@ -214,7 +214,7 @@ namespace Plugin_ReadMoney
                     target["bsd_readmoneyvn"] = vn;
                     target["bsd_readmoneyen"] = en;
                 }
-                
+
                 else if (target.LogicalName == "opportunity" && target.Contains("bsd_queuingfee") && ((Money)target["bsd_queuingfee"]) == null)
                 {
                     smoney = "0";
@@ -227,7 +227,7 @@ namespace Plugin_ReadMoney
                 #endregion
 
                 #region -- Payment
-                else if (target.LogicalName == "bsd_payment" && (target.Contains("bsd_amountpay")|| target.Contains("bsd_totalamountpayablephase")) /*&& ((OptionSetValue)target["statuscode"]).Value == 100000000*/)
+                else if (target.LogicalName == "bsd_payment" && (target.Contains("bsd_amountpay") || target.Contains("bsd_totalamountpayablephase")) /*&& ((OptionSetValue)target["statuscode"]).Value == 100000000*/)
                 {
                     //Entity pay = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_amountpay", "bsd_totalamountpayablephase" }));
                     if (target != null && target.Contains("bsd_amountpay"))
@@ -262,20 +262,20 @@ namespace Plugin_ReadMoney
                     if (target != null && target.Contains("bsd_totalamountpayablephase"))
                     {
                         var bsd_totalamountpay = (Money)target["bsd_totalamountpayablephase"];
-                        if (bsd_totalamountpay != null) 
-                        { 
-                        smoney = (Convert.ToInt64(((Money)target["bsd_totalamountpayablephase"]).Value)).ToString();
-                        dmoney = Convert.ToInt64(((Money)target["bsd_totalamountpayablephase"]).Value);
-                        if (dmoney > 0)
+                        if (bsd_totalamountpay != null)
                         {
-                            vn = TienBangChu(smoney);
-                            en = read(dmoney);
-                            target["bsd_txtotalamountpayablephasevn"] = vn;
-                            target["bsd_txtotalamountpayablephaseen"] = en;
-                        }
+                            smoney = (Convert.ToInt64(((Money)target["bsd_totalamountpayablephase"]).Value)).ToString();
+                            dmoney = Convert.ToInt64(((Money)target["bsd_totalamountpayablephase"]).Value);
+                            if (dmoney > 0)
+                            {
+                                vn = TienBangChu(smoney);
+                                en = read(dmoney);
+                                target["bsd_txtotalamountpayablephasevn"] = vn;
+                                target["bsd_txtotalamountpayablephaseen"] = en;
+                            }
                         }
                     }
-                    
+
                 }
                 #endregion
 
@@ -304,7 +304,7 @@ namespace Plugin_ReadMoney
                 #endregion
 
                 #region -- Option Entry
-                else if (target.LogicalName=="salesorder")
+                else if (target.LogicalName == "salesorder")
                 {
                     if (target.Contains("bsd_daamount") && ((Money)target["bsd_daamount"]) != null)
                     {
@@ -356,17 +356,17 @@ namespace Plugin_ReadMoney
                         //target["bsd_amountpaiden"] = en;
                     }
                     Entity OE = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
-                      decimal total = 0;
-                        decimal amountnet = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
-                        decimal amounttax = OE.Contains("totaltax") ? ((Money)OE["totaltax"]).Value : 0;
-                        total = amountnet + amounttax;
-                   // throw new InvalidPluginExecutionException("total " + total );
-                        smoney = (Convert.ToInt64(total)).ToString();
-                        dmoney = Convert.ToInt64(total);
-                        vn = TienBangChu(smoney);
-                        en = read(dmoney);
-                        target["bsd_totalafternetvn"] = vn;
-                        target["bsd_totalafterneten"] = en;
+                    decimal total = 0;
+                    decimal amountnet = OE.Contains("bsd_totalamountlessfreight") ? ((Money)OE["bsd_totalamountlessfreight"]).Value : 0;
+                    decimal amounttax = OE.Contains("totaltax") ? ((Money)OE["totaltax"]).Value : 0;
+                    total = amountnet + amounttax;
+                    // throw new InvalidPluginExecutionException("total " + total );
+                    smoney = (Convert.ToInt64(total)).ToString();
+                    dmoney = Convert.ToInt64(total);
+                    vn = TienBangChu(smoney);
+                    en = read(dmoney);
+                    target["bsd_totalafternetvn"] = vn;
+                    target["bsd_totalafterneten"] = en;
                     decimal totalins = 0;
                     var fetchXml = $@"
                             <fetch>
@@ -491,13 +491,19 @@ namespace Plugin_ReadMoney
                 }
                 #endregion
 
-               // service.Update(target);
+                // service.Update(target);
             }
 
         }
 
         public static string TienBangChu(string sSoTienIn)
         {
+            string am = "";
+            if (sSoTienIn.StartsWith("-"))
+            {
+                am = "Âm ";
+                sSoTienIn = sSoTienIn.Remove(0, 1);
+            }
             string sSoTien = sSoTienIn;
             if (sSoTien == "0")
                 return "Không";
@@ -529,12 +535,10 @@ namespace Plugin_ReadMoney
                     id += 1;
                 }
             }
-            //throw new Exception(chuoi);
-            // temp = String.UCase(VB.Left(chuoi, 1));
             temp = chuoi.Substring(0, 1).ToUpper();
 
-            //  return temp + VB.Right(chuoi, Strings.Len(chuoi) - 1);
-            return temp + chuoi.Substring(1, chuoi.Length - 2);
+            return am + temp + chuoi.Substring(1, chuoi.Length - 2);
+
         }
 
         private static string getNum(string sSoTien)
