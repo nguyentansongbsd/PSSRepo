@@ -340,12 +340,12 @@ namespace Action_GenHandoverNotices_Generate
                 //var bsd_signedcontractdate = new DateTime();
                 //var bsd_signeddadate = new DateTime();
                 //CREATE INTEREST SIMULATION DETAIL
+                int Graceday = interestMaster.Contains("bsd_gracedays") ? ((int)interestMaster["bsd_gracedays"]) : 0;
                 foreach (Entity ins in listInstallment.Entities)
                 {
                     int lateDays = 0;
                     decimal balance = 0;
                     decimal interestPercent = ins.Contains("bsd_interestchargeper") ? (decimal)ins["bsd_interestchargeper"] : 0;
-                    int Graceday = ins.Contains("bsd_gracedays") ? ((int)ins["bsd_gracedays"]) : 0;
                     int bsd_ordernumber = ins.Contains("bsd_ordernumber") ? (int)ins["bsd_ordernumber"] : 0;
                     //TINH LAI
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
