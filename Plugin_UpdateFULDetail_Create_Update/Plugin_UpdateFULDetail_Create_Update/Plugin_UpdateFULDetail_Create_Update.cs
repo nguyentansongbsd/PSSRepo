@@ -29,21 +29,29 @@ namespace Plugin_UpdateFULDetail_Create_Update
             {
                 Entity target = (Entity)context.InputParameters["Target"];
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+                string idProject = "";
                 if (enTarget.Contains("bsd_updateful"))
                 {
                     var fetchXml2 = $@"
                         <fetch>
                           <entity name='bsd_updateful'>
                             <attribute name=""bsd_updatefulid"" />
+                            <attribute name=""bsd_project"" />
                             <filter>
                               <condition attribute='bsd_updatefulid' operator='eq' value='{((EntityReference)enTarget["bsd_updateful"]).Id}'/>
-                              <condition attribute='statuscode' operator='ne' value='1'/>
+                              <condition attribute='statuscode' operator='eq' value='1'/>
+                              <condition attribute='bsd_project' operator='not-null'/>
                             </filter>
                           </entity>
                         </fetch>";
                     EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
-                    if (list2.Entities.Count > 0) throw new InvalidPluginExecutionException("Update FUL is invalid. Please check again.");
+                    if (list2.Entities.Count == 0) throw new InvalidPluginExecutionException("Update FUL is invalid. Please check again.");
+                    foreach (Entity item in list2.Entities)
+                    {
+                        idProject = ((EntityReference)item["bsd_project"]).Id.ToString();
+                    }
                 }
+                else throw new InvalidPluginExecutionException("Update FUL is empty. Please check again.");
                 if (enTarget.Contains("bsd_optionentry"))
                 {
                     var fetchXml2 = $@"
@@ -52,6 +60,7 @@ namespace Plugin_UpdateFULDetail_Create_Update
                             <attribute name=""salesorderid"" />
                             <filter>
                               <condition attribute='salesorderid' operator='eq' value='{((EntityReference)enTarget["bsd_optionentry"]).Id}'/>
+                              <condition attribute='bsd_project' operator='eq' value='{idProject}'/>
                               <condition attribute=""statuscode"" operator=""not-in"">
                                 <value>{100000006}</value>
                                 <value>{100001}</value>
