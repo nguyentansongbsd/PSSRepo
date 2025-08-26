@@ -602,6 +602,11 @@
                     name: 'id',
                     type: 'string',
                     value: id
+                },
+                {
+                    name: 'CreateShareCustomer',
+                    type: 'string',
+                    value: "true"
                 }
             ],
                 function (result) {
@@ -619,12 +624,12 @@
                                 for (let i = 0; i < data.length; i++) {
                                     const item = data[i];
                                     $("#bodyTableTeam").append(`
-                                            <tr>
-                                                <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
-                                                <td>${i + 1}</td>
-                                                <td>${item.TeamName}</td>
-                                            </tr>
-                                        `);
+                                                <tr>
+                                                    <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
+                                                    <td>${i + 1}</td>
+                                                    <td>${item.TeamName}</td>
+                                                </tr>
+                                            `);
                                 }
                                 $("#modalForm").css("display", "block");
                             }

@@ -137,8 +137,22 @@ function CheckEnable_Role() {
 
 function CheckEnable_Condition(tyle) {
     debugger;
-    let status = Xrm.Page.getAttribute("statuscode").getValue();
-    switch (Xrm.Page.data.entity.getEntityName() + "-" + tyle) {
+    let status = -1;
+    if (Xrm.Page.getAttribute("statuscode")) {
+
+         status = Xrm.Page.getAttribute("statuscode").getValue();
+    }
+    var key = "";
+    var formType = Xrm.Page.ui.getFormType();
+    if (formType === 1 || formType === 2 || formType === 3) {
+        // Đây là form (Create, Update, Read-Only)
+        key = Xrm.Page.data.entity.getEntityName();
+    } else {
+        // Có thể là view hoặc nơi khác
+        var pageContext = Xrm.Utility.getPageContext();
+        key = pageContext.input.entityName
+    }
+    switch (key + "-" + tyle) {
         case "bsd_sharecustomers-FormApprove":
             if ((getStatusCodeValueByName("Approved") === status) || ((!CheckRoleForUser("CLVN_S&M_Head of Sale") && !CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")))) return false;
             break;

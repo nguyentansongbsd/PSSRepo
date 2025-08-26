@@ -16,6 +16,28 @@ namespace Action_ShareCustomerToTeam
         IPluginExecutionContext context = null;
         ITracingService traceService = null;
         int type = -1;
+        public static bool EndsWithAny(string mainString, List<string> endings)
+        {
+
+            // Kiểm tra đầu vào null để tránh lỗi
+            if (string.IsNullOrEmpty(mainString) || endings == null || endings.Count == 0)
+            {
+                return false;
+            }
+
+            // Lặp qua từng chuỗi trong danh sách endings
+            foreach (string ending in endings)
+            {
+                // Sử dụng phương thức EndsWith của C#
+                // StringComparison.OrdinalIgnoreCase được dùng để so sánh không phân biệt chữ hoa/chữ thường
+                if (mainString.EndsWith(ending, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true; // Trả về true ngay khi tìm thấy kết quả khớp
+                }
+            }
+
+            return false; // Trả về false nếu không có chuỗi nào khớp
+        }
         public void Execute(IServiceProvider serviceProvider)
         {
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -40,10 +62,15 @@ namespace Action_ShareCustomerToTeam
             #region tạo record sharecustomer và sharecustomerproject 
             if (context.InputParameters.Contains("CreateShareCustomer")&& context.InputParameters["CreateShareCustomer"]!=null)
             {
-                traceService.Trace("CreateShareCustomer");
-                traceService.Trace(context.InputParameters["CreateShareCustomer"].ToString());
-                var arrTeamID = context.InputParameters["idTeam"].ToString().TrimEnd(',').Split(',');
-                CreateShareCustomer(arrID, arrTeamID);
+                if (context.InputParameters.Contains("idTeam")&& context.InputParameters["idTeam"] != null&& context.InputParameters["idTeam"].ToString().Length > 10)
+                {
+
+                    traceService.Trace("CreateShareCustomer");
+                    traceService.Trace(context.InputParameters["CreateShareCustomer"].ToString());
+                    var arrTeamID = context.InputParameters["idTeam"].ToString().TrimEnd(',').Split(',');
+                    CreateShareCustomer(arrID, arrTeamID);
+                    return;
+                }
             }
             #endregion
            
@@ -136,54 +163,63 @@ namespace Action_ShareCustomerToTeam
                 traceService.Trace("step2");
                 traceService.Trace("rs.Entities.Count " + rs.Entities.Count);
                 if (rs.Entities.Count == 0) throw new InvalidPluginExecutionException("Người dùng hiện tại chưa tham gia vào bất kỳ team nào !");
-                if (rs.Entities.Count == 1)
+                if (rs.Entities.Count == 1 && (context.InputParameters.Contains("CreateShareCustomer") == false || context.InputParameters["CreateShareCustomer"] == null))
                 {
+
+                    List<string> endingsToCheck = new List<string>{"CCR-TEAM","FINANCE-TEAM","SALE-MGT","SALE-ADMIN"};
                     foreach (Entity it in rs.Entities)
                     {
                         Guid TeamID = Guid.Parse(it["teamid"].ToString());
                         EntityReference refTeam = new EntityReference("team", TeamID);
-                        traceService.Trace("step2.0");
-                        ShareTeams(enRef, refTeam);
-                        traceService.Trace("step2.1_");
-                        if (fieldName == "contact")
-                            ShareDoiTuong_CoOwner(enRef, refTeam);
-                        else
-                        {
-                            traceService.Trace("step2.1");
-                            Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
-                            if (enAcc.Contains("primarycontactid"))
-                                ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
-                            //if(enAcc.Contains("bsd_chudautu"))
-                            //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
-                            if (enAcc.Contains("bsd_maincompany"))
-                                ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
-                            traceService.Trace("step2.2");
+                        Entity enTeam1=service.Retrieve("team", TeamID, new ColumnSet(new string[] { "name", "teamid" }));
+                        traceService.Trace("team" + enTeam1["name"].ToString());
+                        #region
 
-                            var fetchXml = $@"
-                            <fetch>
-                              <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_contact' />
-                                <filter>
-                                  <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
-                                  <condition attribute='statecode' operator='eq' value='0'/>
-                                </filter>
-                              </entity>
-                            </fetch>";
-                            traceService.Trace("step2.3");
+                        //if (!EndsWithAny(enTeam1["name"].ToString(), endingsToCheck)) continue;
+                        //traceService.Trace("step2.0");
+                        //ShareTeams(enRef, refTeam);
+                        //traceService.Trace("step2.1_");
+                        //if (fieldName == "contact")
+                        //    ShareDoiTuong_CoOwner(enRef, refTeam);
+                        //else
+                        //{
+                        //    traceService.Trace("step2.1");
+                        //    Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
+                        //    if (enAcc.Contains("primarycontactid"))
+                        //        ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                        //    //if(enAcc.Contains("bsd_chudautu"))
+                        //    //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
+                        //    if (enAcc.Contains("bsd_maincompany"))
+                        //        ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+                        //    traceService.Trace("step2.2");
 
-                            EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                            foreach (Entity i in rs_.Entities)
-                            {
-                                if (i.Contains("bsd_representative"))
-                                    ShareTeams((EntityReference)i["bsd_representative"], refTeam);
-                                traceService.Trace("step2.4");
+                        //    var fetchXml = $@"
+                        //    <fetch>
+                        //      <entity name='bsd_mandatorysecondary'>
+                        //        <attribute name='bsd_contact' />
+                        //        <filter>
+                        //          <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
+                        //          <condition attribute='statecode' operator='eq' value='0'/>
+                        //        </filter>
+                        //      </entity>
+                        //    </fetch>";
+                        //    traceService.Trace("step2.3");
 
-                                if (i.Contains("bsd_contact"))
-                                    ShareTeams((EntityReference)i["bsd_contact"], refTeam);
-                                traceService.Trace("step2.5");
+                        //    EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                        //    foreach (Entity i in rs_.Entities)
+                        //    {
+                        //        if (i.Contains("bsd_representative"))
+                        //            ShareTeams((EntityReference)i["bsd_representative"], refTeam);
+                        //        traceService.Trace("step2.4");
 
-                            }
-                        }
+                        //        if (i.Contains("bsd_contact"))
+                        //            ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                        //        traceService.Trace("step2.5");
+
+                        //    }
+                        //}
+
+                        #endregion
                         var team = it;
                         Entity enTeam = service.Retrieve("team", Guid.Parse(it["teamid"].ToString()), new ColumnSet(new string[] { "name", "teamid" }));
                         var fetchXml2 = $@"
@@ -200,6 +236,7 @@ namespace Action_ShareCustomerToTeam
                         foreach (Entity entity in rs1.Entities)
                         {
                             traceService.Trace("team" + entity["name"].ToString());
+                            if (!EndsWithAny(enTeam1["name"].ToString(), endingsToCheck)) continue;
                             TeamID = entity.Id;
                             refTeam = new EntityReference("team", TeamID);
                             ShareTeams(enRef, refTeam);
@@ -257,54 +294,57 @@ namespace Action_ShareCustomerToTeam
                             list.Add(i);
                     }
                     traceService.Trace("step4 list.Count:"+ list.Count);
-                    if (list.Count == 1)
+                    if (list.Count == 1 && (context.InputParameters.Contains("CreateShareCustomer") == false || context.InputParameters["CreateShareCustomer"] == null))
                     {
                         var it = list.FirstOrDefault();
                         #region share cho các team project
                         Guid TeamID = Guid.Parse(it.TeamID.ToString());
                         EntityReference refTeam = new EntityReference("team", TeamID);
                         traceService.Trace("step2.0");
-                        ShareTeams(enRef, refTeam);
-                        traceService.Trace("step2.1_");
-                        if (fieldName == "contact")
-                            ShareDoiTuong_CoOwner(enRef, refTeam);
-                        else
-                        {
-                            traceService.Trace("step2.1");
-                            Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
-                            if (enAcc.Contains("primarycontactid"))
-                                ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
-                            //if(enAcc.Contains("bsd_chudautu"))
-                            //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
-                            if (enAcc.Contains("bsd_maincompany"))
-                                ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
-                            traceService.Trace("step2.2");
+                        #region cmt
+                        //ShareTeams(enRef, refTeam);
+                        //traceService.Trace("step2.1_");
+                       
+                        //if (fieldName == "contact")
+                        //    ShareDoiTuong_CoOwner(enRef, refTeam);
+                        //else
+                        //{
+                        //    traceService.Trace("step2.1");
+                        //    Entity enAcc = service.Retrieve(fieldName, enRef.Id, new ColumnSet(true));
+                        //    if (enAcc.Contains("primarycontactid"))
+                        //        ShareTeams((EntityReference)enAcc["primarycontactid"], refTeam);
+                        //    //if(enAcc.Contains("bsd_chudautu"))
+                        //    //    ShareTeams((EntityReference)enAcc["bsd_chudautu"], refTeam);
+                        //    if (enAcc.Contains("bsd_maincompany"))
+                        //        ShareTeams((EntityReference)enAcc["bsd_maincompany"], refTeam);
+                        //    traceService.Trace("step2.2");
 
-                            var fetchXml = $@"
-                            <fetch>
-                              <entity name='bsd_mandatorysecondary'>
-                                <attribute name='bsd_contact' />
-                                <filter>
-                                  <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
-                                  <condition attribute='statecode' operator='eq' value='0'/>
-                                </filter>
-                              </entity>
-                            </fetch>";
-                            traceService.Trace("step2.3");
+                        //    var fetchXml = $@"
+                        //    <fetch>
+                        //      <entity name='bsd_mandatorysecondary'>
+                        //        <attribute name='bsd_contact' />
+                        //        <filter>
+                        //          <condition attribute='bsd_developeraccount' operator='eq' value='{enAcc.Id}'/>
+                        //          <condition attribute='statecode' operator='eq' value='0'/>
+                        //        </filter>
+                        //      </entity>
+                        //    </fetch>";
+                        //    traceService.Trace("step2.3");
 
-                            EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                            foreach (Entity i in rs_.Entities)
-                            {
-                                if (i.Contains("bsd_representative"))
-                                    ShareTeams((EntityReference)i["bsd_representative"], refTeam);
-                                traceService.Trace("step2.4");
+                        //    EntityCollection rs_ = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                        //    foreach (Entity i in rs_.Entities)
+                        //    {
+                        //        if (i.Contains("bsd_representative"))
+                        //            ShareTeams((EntityReference)i["bsd_representative"], refTeam);
+                        //        traceService.Trace("step2.4");
 
-                                if (i.Contains("bsd_contact"))
-                                    ShareTeams((EntityReference)i["bsd_contact"], refTeam);
-                                traceService.Trace("step2.5");
+                        //        if (i.Contains("bsd_contact"))
+                        //            ShareTeams((EntityReference)i["bsd_contact"], refTeam);
+                        //        traceService.Trace("step2.5");
 
-                            }
-                        }
+                        //    }
+                        //}
+                        #endregion
                         var team = it;
                         Entity enTeam = service.Retrieve("team", Guid.Parse(it.TeamID.ToString()), new ColumnSet(new string[] { "name", "teamid" }));
                         string projectCode = enTeam["name"].ToString().Split('-')[0];
@@ -367,12 +407,24 @@ namespace Action_ShareCustomerToTeam
                             }
                         }
                         #endregion
+                        
+
                     }
                     else
                     {
 
                         var serializer = new JavaScriptSerializer();
-                        context.OutputParameters["entityColl"] = serializer.Serialize(list);
+                        if (list.Count == 1)
+                        {
+                            traceService.Trace("step5");
+                            var it = list.FirstOrDefault();
+                            CreateShareCustomer(arrID, new string[] { it.TeamID.ToString() });
+                        }
+                        else
+                        {
+                            traceService.Trace("step6");
+                            context.OutputParameters["entityColl"] = serializer.Serialize(list);
+                        }
                     }
                 }
             }
@@ -618,17 +670,24 @@ namespace Action_ShareCustomerToTeam
                 if(type == 3 || type == 1)
                     shareCustomer["bsd_customer"] = new EntityReference("account", Guid.Parse(customerId));
                 shareCustomer["ownerid"] = new EntityReference("systemuser", context.UserId);
+                shareCustomer["statuscode"]= new OptionSetValue(1); // Chưa chia sẻ
                 Guid shareCustomerId = service.Create(shareCustomer);
                 traceService.Trace($"Đã tạo sharecustomer với Id: {shareCustomerId}");
 
                 foreach (string teamId in arrTeamID)
                 {
                     Guid projectId = teamIdToProjectId.ContainsKey(teamId) ? teamIdToProjectId[teamId] : Guid.Empty;
+                    if(projectId == Guid.Empty)
+                    {
+                        traceService.Trace($"Không tìm thấy dự án cho team {teamId}, bỏ qua.");
+                        continue;
+                    }   
                     traceService.Trace($"Tạo sharecustomerproject cho team {teamId}, projectId: {projectId}");
                     Entity shareCustomerProject = new Entity("bsd_sharecustomerproject");
                     shareCustomerProject["bsd_sharecustomer"] = new EntityReference("bsd_sharecustomers", shareCustomerId);
                     if (projectId != Guid.Empty)
                         shareCustomerProject["bsd_project"] = new EntityReference("bsd_project", projectId);
+                    shareCustomerProject["ownerid"] = new EntityReference("systemuser", context.UserId);
                     service.Create(shareCustomerProject);
                 }
             }
@@ -638,7 +697,7 @@ namespace Action_ShareCustomerToTeam
         {
             traceService.Trace("Bắt đầu ShareCustomerRecordToProjectTeams");
             // Retrieve sharecustomer record
-            Entity shareCustomer = service.Retrieve("bsd_sharecustomers", shareCustomerId, new ColumnSet("bsd_customer", "statuscode"));
+            Entity shareCustomer = service.Retrieve("bsd_sharecustomers", shareCustomerId, new ColumnSet("bsd_customer", "statuscode","ownerid"));
             if (!shareCustomer.Contains("bsd_customer"))
             {
                 traceService.Trace("Không tìm thấy trường customer trong sharecustomer");
@@ -711,7 +770,7 @@ namespace Action_ShareCustomerToTeam
                 {
                     EntityReference teamRef = new EntityReference("team", team.Id);
                     traceService.Trace($"Chia sẻ khách hàng cho team {team["name"]} (Id: {team.Id})");
-                    GrantAccessRequest grantRequest = new GrantAccessRequest
+                    GrantAccessRequest grantRequest2 = new GrantAccessRequest
                     {
                         Target = customerRef,
                         PrincipalAccess = new PrincipalAccess
@@ -720,9 +779,21 @@ namespace Action_ShareCustomerToTeam
                             AccessMask = AccessRights.ReadAccess | AccessRights.WriteAccess | AccessRights.AppendAccess | AccessRights.AppendToAccess
                         }
                     };
-                    service.Execute(grantRequest);
+                    service.Execute(grantRequest2);
                 }
             }
+            #region share cho owner
+            GrantAccessRequest grantRequest = new GrantAccessRequest
+            {
+                Target = customerRef,
+                PrincipalAccess = new PrincipalAccess
+                {
+                    Principal = shareCustomer.GetAttributeValue<EntityReference>("ownerid"),
+                    AccessMask = AccessRights.ReadAccess | AccessRights.WriteAccess | AccessRights.AppendAccess | AccessRights.AppendToAccess
+                }
+            };
+            service.Execute(grantRequest);
+            #endregion
             // Update statuscode to 2
             traceService.Trace("Cập nhật trạng thái sharecustomer sang 2 (đã chia sẻ)");
             Entity updateShareCustomer = new Entity("bsd_sharecustomers", shareCustomerId);

@@ -410,67 +410,68 @@ function addModelShareTeam() {
 
 }
 function btnSaveLAC() {
-    hasTeamAccess(Xrm.Page.data.entity.getEntityName(), Xrm.Page.data.entity.getId()).then(function (rss) {
-        if (!rss) {
+    if (CheckRoleForUser("CLVN_S&M_Head of Sale") || CheckRoleForUser("CLVN_S&M_Senior Sale Staff") || CheckRoleForUser("CLVN_S&M_Sales Manager"))
+    {
+        hasTeamAccess(Xrm.Page.data.entity.getEntityName(), Xrm.Page.data.entity.getId()).then(function (rss) {
+            if (!rss) {
+                $('#closeModal').click(function () {
+                    $("#modalForm").css("display", "none");
+                });
+                $('#saveToMultipleTeam').unbind('click');
+                $('#saveToMultipleTeam').click(btnSaveMulti);
+                window.top.processingDlg.show();
+                var id = Xrm.Page.data.entity.getId();
+                var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
+                ExecuteAction(
+                    null, null, "bsd_Action_ShareCustomerToTeam", [
+                    {
+                        name: 'type',
+                        type: 'int',
+                        value: radioValue
+                    },
+                    {
+                        name: 'id',
+                        type: 'string',
+                        value: id
+                    }
+                ],
+                    function (result) {
+                        window.top.processingDlg.hide();
+                        if (result != null && result.status != null) {
+                            if (result.status == "error") alertdialogConfirm(result.data);
+                            else if (result.status == "success") {
 
-            $('#closeModal').click(function () {
-                $("#modalForm").css("display", "none");
-            });
-            $('#saveToMultipleTeam').unbind('click');
-            $('#saveToMultipleTeam').click(btnSaveMulti);
-            window.top.processingDlg.show();
-            var id = Xrm.Page.data.entity.getId();
-            var radioValue = Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 10);
-            ExecuteAction(
-                null, null, "bsd_Action_ShareCustomerToTeam", [
-                {
-                    name: 'type',
-                    type: 'int',
-                    value: radioValue
-                },
-                {
-                    name: 'id',
-                    type: 'string',
-                    value: id
-                }
-            ],
-                function (result) {
-                    window.top.processingDlg.hide();
-                    if (result != null && result.status != null) {
-                        if (result.status == "error") alertdialogConfirm(result.data);
-                        else if (result.status == "success") {
+                                if (result.data.entityColl.value == "")
+                                    alertdialogConfirm("Done!");
+                                else {
+                                    arrID = id;
+                                    var data = JSON.parse(result.data.entityColl.value);
 
-                            if (result.data.entityColl.value == "")
-                                alertdialogConfirm("Done!");
-                            else {
-                                arrID = id;
-                                var data = JSON.parse(result.data.entityColl.value);
-
-                                $('#bodyTableTeam').empty();
-                                for (let i = 0; i < data.length; i++) {
-                                    const item = data[i];
-                                    $("#bodyTableTeam").append(`
+                                    $('#bodyTableTeam').empty();
+                                    for (let i = 0; i < data.length; i++) {
+                                        const item = data[i];
+                                        $("#bodyTableTeam").append(`
                                       <tr>
                                           <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}'  /></td>
                                           <td>${i + 1}</td>
                                           <td>${item.TeamName}</td>
                                       </tr>
                                   `);
-                                }
-                                $("#modalForm").css("display", "block");
-                                $('input[name="choose-ckb-team"]').click(updateSaveButtonVisibility);
-                                updateSaveButtonVisibility();
+                                    }
+                                    $("#modalForm").css("display", "block");
+                                    $('input[name="choose-ckb-team"]').click(updateSaveButtonVisibility);
+                                    updateSaveButtonVisibility();
 
-                                
-                               
+
+
+                                }
                             }
                         }
-                    }
-                }, true);
+                    }, true);
 
-        }
-    })
-
+            }
+        })
+    }
 
 }
 function btnSaveMulti() {
@@ -572,4 +573,15 @@ function hasTeamAccess(entityName, recordId) {
             reject(error);
         }
     });
+}
+
+function CheckRoleForUser(rolename) {
+    var userRoles = Xrm.Utility.getGlobalContext().userSettings.roles;
+    //PL_INVESTOR, PL_INVERTOR Manager
+    for (var i = 0; i < userRoles.getLength(); i++) {
+        if (userRoles.get(i).name === rolename) {
+            return true; // Hiện nút nếu người dùng có vai trò
+        }
+    }
+    return false; // Ẩn nút nếu không có vai trò
 }
