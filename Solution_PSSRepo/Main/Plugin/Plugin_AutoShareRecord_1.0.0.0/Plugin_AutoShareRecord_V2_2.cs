@@ -120,6 +120,12 @@ namespace Plugin_AutoShareRecord
                     if (!target.Contains("bsd_project")) return;
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
+                case "bsd_updateful":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    break;
+                case "bsd_updatefuldetail":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    break;
                 case "bsd_handovernotice":
                     break;
             }
@@ -344,6 +350,15 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_bulkchangemanagementfeedetail":
                     enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+
+                case "bsd_updateful":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+                case "bsd_updatefuldetail":
+                    enMasterRef = (EntityReference)en["bsd_updateful"];
+                    enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
+                    enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
 
 

@@ -7,9 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Plugin_TerminationLetter_WordTemplate
+namespace Plugin_Termination_WordTemplate
 {
-    public class Plugin_TerminationLetter_WordTemplate : IPlugin
+    public class Plugin_Termination_WordTemplate : IPlugin
     {
         IOrganizationService service = null;
         ITracingService traceService = null;
@@ -24,22 +24,16 @@ namespace Plugin_TerminationLetter_WordTemplate
             if (context.Depth > 4) return;
 
             Entity target = (Entity)context.InputParameters["Target"];
-            Entity enTerminationLetter = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
-            traceService.Trace("enTerminationLetter " + enTerminationLetter.Id);
+            Entity enTermination = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_refundamount", "bsd_receivedamount" }));
+            traceService.Trace("enTermination " + enTermination.Id);
 
-            Entity upTL = new Entity(enTerminationLetter.LogicalName, enTerminationLetter.Id);
-            upTL["bsd_totalforfeitureamounttext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_totalforfeitureamount");
-            upTL["bsd_totalforfeitureamounttexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_totalforfeitureamount");
+            Entity upTermination = new Entity(enTermination.LogicalName, enTermination.Id);
+            upTermination["bsd_refundamounttext"] = GetTienBangChu_VN(enTermination, "bsd_refundamount");
+            upTermination["bsd_refundamounttexten"] = GetTienBangChu_ENG(enTermination, "bsd_refundamount");
 
-            upTL["bsd_terminatefeetext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_terminatefee");
-            upTL["bsd_terminatefeetexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_terminatefee");
-
-            upTL["bsd_penatytext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_penaty");
-            upTL["bsd_penatytexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_penaty");
-
-            upTL["bsd_overdue_interesttext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_overdue_interest_money");
-            upTL["bsd_overdue_interesttexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_overdue_interest_money");
-            service.Update(upTL);
+            upTermination["bsd_receivedamounttext"] = GetTienBangChu_VN(enTermination, "bsd_receivedamount");
+            upTermination["bsd_receivedamounttexten"] = GetTienBangChu_ENG(enTermination, "bsd_receivedamount");
+            service.Update(upTermination);
 
         }
 
