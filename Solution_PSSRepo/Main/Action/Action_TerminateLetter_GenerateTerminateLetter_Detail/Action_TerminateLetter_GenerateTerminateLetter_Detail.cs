@@ -262,6 +262,38 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         tracingService.Trace($"totalday: {((int)((_date - bsd_duedate).TotalDays) - bsd_gracedays)}");
                         tracingService.Trace($"bsd_overdue_interest: {bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1)}");
                         tracingService.Trace($"bsd_balance:{((Money)installment["bsd_balance"]).Value}");
+
+
+                        var bsd_overdue_interest2 = ((Money)entity3["bsd_overdue_interest_money"]).Value;
+                        #region Cộng thêm lãi chưa thanh toán các đợt trước đó nếu có
+                        var query_bsd_ordernumber = (int)installment["bsd_bsd_ordernumber"];
+                        var query_bsd_optionentry = installment.GetAttributeValue<EntityReference>("bsd_optionentry").Id.ToString();
+                        tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber);
+                        tracingService.Trace("query_bsd_optionentry: " + query_bsd_optionentry.ToString());
+                        tracingService.Trace("lấy các đợt trước đó để + thêm lãi chưa thanh toán cho bsd_overdue_interest");
+                        var query2 = new QueryExpression("bsd_paymentschemedetail")
+                        {
+                            ColumnSet = new ColumnSet(true),
+                            Criteria =
+                                    {
+                                        Conditions =
+                                        {
+                                            new ConditionExpression("bsd_ordernumber", ConditionOperator.LessThan, query_bsd_ordernumber),
+                                            new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry)
+                                        }
+                                    }
+                        };
+                        var rsIns = this.service.RetrieveMultiple((QueryBase)query2);
+                        foreach (var rs in rsIns.Entities)
+                        {
+                            tracingService.Trace("ordernumber: " + ((int)rs["bsd_ordernumber"]));
+                            var bsd_interestchargeremaining = rs.Contains("bsd_interestchargeremaining") ? ((Money)rs["bsd_interestchargeremaining"]).Value : 0;
+                            tracingService.Trace("bsd_interestchargeremaining: " + bsd_interestchargeremaining.ToString());
+                            bsd_overdue_interest2 += bsd_interestchargeremaining;
+                        }
+                        entity3["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
+                        tracingService.Trace("bsd_overdue_interest_money " + ((Money)entity3["bsd_overdue_interest_money"]).Value.ToString());
+                        #endregion
                         #endregion
                         entity3["bsd_generateterminationletter"] = enGenDetail["bsd_genterminationletter"];
                         var id =this.service.Create(entity3);

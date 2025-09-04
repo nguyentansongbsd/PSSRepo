@@ -3,6 +3,102 @@
   "Organizations": [
     {
       "ConnectionProtocol": 3072,
+      "OrganizationDisplayName": "CapitaLand Limited",
+      "OrganizationName": "cl",
+      "OrganizationUrl": "https://pss-vn.crm5.dynamics.com",
+      "UserFriendlyName": "https://pss-vn.crm5.dynamics.com/",
+      "CurrentSolution": {
+        "Id": "fd140aaf-4df4-11dd-bd17-0019b9312238",
+        "Name": "Default Solution",
+        "UniqueName": "Default"
+      },
+      "Projects": [
+        {
+          "Name": "Action_SearchCustomer.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "1723e76c-09d7-47fe-876b-931c6b2c46ed",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_SearchCustomer.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "WebResource.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "de85a477-5a42-ee11-bdf3-6045bd1f9d3d",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\bsd_searchcustomer.html"
+            },
+            {
+              "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
+            }
+          ]
+        }
+      ],
+      "Settings": [
+        {
+          "CssMinification": 1,
+          "JavaScriptMinification": 1,
+          "SettingType": 6
+        },
+        {
+          "AddDebuggerNonUserCodeAttribute": true,
+          "AddExcludeFromCodeCoverageAttribute": true,
+          "AddStringLengthAttribute": false,
+          "BaseProxyClassFileName": "BaseProxyClass",
+          "CustomProxyNamingServiceDllPath": "",
+          "EnumsFileName": "OptionSetEnums",
+          "GeneratedCodeAttributeVersionPrecision": 4,
+          "GenerateProxyEnumsInSeparateClasses": true,
+          "MakeAllPropertiesEditable": false,
+          "ProxyEntityClassPath": "\\ProxyClasses",
+          "ProxyEntityNamingConvention": 1,
+          "ProxyEntityNamingPattern": "{0}",
+          "ProxyEnumPath": "\\ProxyClasses\\Enums",
+          "ProxyGenerationMethod": 1,
+          "ProxyMessagesPath": "\\ProxyClasses\\Messages",
+          "ProxyNamingMethod": 0,
+          "ProxyTypesThatShouldUseExistingNamesWhenRegenerating": 511,
+          "ServiceContextName": "CrmServiceContext",
+          "SettingType": 4,
+          "UseStronglyTypedNameForProxyRelatedEntities": true
+        },
+        {
+          "ChartPath": "\\Charts",
+          "CssPath": "\\Web",
+          "CustomAssemblyConfigPath": "\\AssemblyConfig",
+          "EmailTemplatePath": "\\EmailTemplates",
+          "EntityMetadataPath": "\\EntityMetadata",
+          "HtmlPath": "\\Web",
+          "ImagePath": "\\Web",
+          "JavaScriptPath": "\\Web",
+          "PluginConfigurationsPath": "\\PluginConfigurations",
+          "ProcessPath": "\\Processes",
+          "ResourcePath": "\\Web",
+          "SettingType": 5,
+          "SilverlightPath": "\\Xap",
+          "SitemapPath": "\\Sitemap",
+          "TypeScriptIntellisensePath": "\\Web\\IntellisenseFiles",
+          "TypeScriptPath": "\\Web",
+          "ViewPath": "\\Views",
+          "XmlPath": "\\Web",
+          "XslPath": "\\Web"
+        }
+      ]
+    },
+    {
+      "ConnectionProtocol": 3072,
       "OrganizationDisplayName": "CapitaLand Preview",
       "OrganizationName": "pssvn-preview",
       "OrganizationUrl": "https://pssvn-preview.crm5.dynamics.com",
@@ -29,9 +125,62 @@
           ]
         },
         {
+          "Name": "Action_TerminateLetter_GenerateTerminateLetter_Detail.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "624bf9de-928b-42a0-9cd7-4f247545891d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_TerminateLetter_GenerateTerminateLetter_Detail.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_UnShareSaleTeam.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "69283d01-8fae-474e-8efd-54c771ba3fee",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_UnShareSaleTeam.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Create_TerminationLetter.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "335b404d-8368-47c7-9ba9-2a5153333e7b",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_TerminationLetter.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
+            {
+              "CrmId": "de85a477-5a42-ee11-bdf3-6045bd1f9d3d",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\bsd_searchcustomer.html"
+            },
             {
               "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
               "FileType": 3,
