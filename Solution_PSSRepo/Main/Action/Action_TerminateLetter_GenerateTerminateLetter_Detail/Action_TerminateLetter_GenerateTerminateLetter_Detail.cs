@@ -265,8 +265,10 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
 
 
                         var bsd_overdue_interest2 = ((Money)entity3["bsd_overdue_interest_money"]).Value;
-                        #region Cộng thêm lãi chưa thanh toán các đợt trước đó nếu có
-                        var query_bsd_ordernumber = (int)installment["bsd_bsd_ordernumber"];
+                        tracingService.Trace( " bsd_overdue_interest_money: " + bsd_overdue_interest2.ToString());
+                        #region Cộng thêm lãi chưa thanh toán các đợt trước và lãi đợt đang xét đó nếu có
+                        var query_bsd_ordernumber = (int)installment["bsd_ordernumber"];
+                        tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber.ToString());
                         var query_bsd_optionentry = installment.GetAttributeValue<EntityReference>("bsd_optionentry").Id.ToString();
                         tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber);
                         tracingService.Trace("query_bsd_optionentry: " + query_bsd_optionentry.ToString());
@@ -293,6 +295,15 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         }
                         entity3["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
                         tracingService.Trace("bsd_overdue_interest_money " + ((Money)entity3["bsd_overdue_interest_money"]).Value.ToString());
+                        tracingService.Trace("check và cộng thêm lãi đợt đang xét nếu có");
+                        if (resCheckCaseSign && entity3.Contains("bsd_overdue_interest_money"))
+                        {
+                            var bsd_interestchargeremaining_current = installment.Contains("bsd_interestchargeremaining") ? ((Money)installment["bsd_interestchargeremaining"]).Value : 0;
+                            tracingService.Trace("bsd_interestchargeremaining_current: " + bsd_interestchargeremaining_current.ToString());
+                            bsd_overdue_interest2 += bsd_interestchargeremaining_current;
+                            entity3["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
+                            tracingService.Trace("bsd_overdue_interest_money " + ((Money)entity3["bsd_overdue_interest_money"]).Value.ToString());
+                        }
                         #endregion
                         #endregion
                         entity3["bsd_generateterminationletter"] = enGenDetail["bsd_genterminationletter"];
@@ -574,13 +585,13 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[7]
+            query.ColumnSet = new ColumnSet(new string[9]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper"
+        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper","bsd_ordernumber","bsd_optionentry"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));

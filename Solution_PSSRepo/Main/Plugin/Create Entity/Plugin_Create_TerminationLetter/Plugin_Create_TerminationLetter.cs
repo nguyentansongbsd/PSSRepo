@@ -191,7 +191,7 @@ namespace Plugin_Create_TerminationLetter
                         enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
                         var bsd_overdue_interest2 = ((Money)enupdate["bsd_overdue_interest_money"]).Value;
                         #region Cộng thêm lãi chưa thanh toán các đợt trước đó nếu có
-                        var query_bsd_ordernumber = (int)installment["bsd_bsd_ordernumber"];
+                        var query_bsd_ordernumber = (int)installment["bsd_ordernumber"];
                         var query_bsd_optionentry = installment.GetAttributeValue<EntityReference>("bsd_optionentry").Id.ToString();
                         tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber);
                         tracingService.Trace("query_bsd_optionentry: "+query_bsd_optionentry.ToString());
@@ -230,13 +230,13 @@ namespace Plugin_Create_TerminationLetter
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[7]
+            query.ColumnSet = new ColumnSet(new string[9]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper"
+        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper","bsd_ordernumber","bsd_optionentry"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));
