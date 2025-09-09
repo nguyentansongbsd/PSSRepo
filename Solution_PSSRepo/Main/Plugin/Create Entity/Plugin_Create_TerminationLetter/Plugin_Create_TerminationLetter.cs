@@ -129,6 +129,7 @@ namespace Plugin_Create_TerminationLetter
                 //{
                 //    enupdate["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)op["bsd_totalamountlessfreight"]).Value);
                 //}
+                enupdate["bsd_penaty"] = new Money(((Money)op["bsd_totalamountlessfreight"]).Value*(20/100));
                 #endregion
                 #region  Overdue Interest
                 tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
@@ -216,6 +217,14 @@ namespace Plugin_Create_TerminationLetter
                             tracingService.Trace("bsd_interestchargeremaining: " + bsd_interestchargeremaining.ToString());
                             bsd_overdue_interest2 += bsd_interestchargeremaining;
                         }
+                        enupdate["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
+                        tracingService.Trace("bsd_overdue_interest_money " + ((Money)enupdate["bsd_overdue_interest_money"]).Value.ToString());
+
+
+                        tracingService.Trace("check và cộng thêm lãi đợt đang xét nếu có");
+                        var bsd_interestchargeremaining_current = installment.Contains("bsd_interestchargeremaining") ? ((Money)installment["bsd_interestchargeremaining"]).Value : 0;
+                        tracingService.Trace("bsd_interestchargeremaining_current: " + bsd_interestchargeremaining_current.ToString());
+                        bsd_overdue_interest2 += bsd_interestchargeremaining_current;
                         enupdate["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
                         tracingService.Trace("bsd_overdue_interest_money " + ((Money)enupdate["bsd_overdue_interest_money"]).Value.ToString());
                         #endregion
