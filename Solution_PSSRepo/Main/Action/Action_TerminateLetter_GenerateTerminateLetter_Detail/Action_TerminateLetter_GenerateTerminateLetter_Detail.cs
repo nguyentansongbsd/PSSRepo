@@ -211,7 +211,13 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         //    entity3["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)entity1["bsd_totalamountlessfreight"]).Value);
 
                         //}
-                        entity3["bsd_penaty"] = new Money(((Money)entity1["bsd_totalamountlessfreight"]).Value * (20 / 100));
+                        double percent =0.2;
+                        var money = ((Money)entity1["bsd_totalamountlessfreight"]).Value *  (decimal)percent;
+                        tracingService.Trace("(20 / 100 " + money);
+                        tracingService.Trace("bsd_totalamountlessfreight * 20% " + money.ToString());
+                        entity3["bsd_penaty"] = new Money(money);
+                        tracingService.Trace("bsd_totalamountlessfreight " + ((Money)entity1["bsd_totalamountlessfreight"]).Value.ToString());
+                        tracingService.Trace("bsd_penaty " + ((Money)entity3["bsd_penaty"]).Value.ToString());
                         #endregion
                         #region  Overdue Interest
                         tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
@@ -589,13 +595,18 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[9]
+            query.ColumnSet = new ColumnSet(new string[10]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper","bsd_ordernumber","bsd_optionentry"
+        "bsd_amountofthisphase",
+                "bsd_name",
+                "bsd_interestchargeper",
+                "bsd_ordernumber",
+                "bsd_optionentry",
+                "bsd_interestchargeremaining"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));

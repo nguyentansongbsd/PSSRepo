@@ -2,6 +2,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Metadata;
 using System.Linq;
 using System.Text;
@@ -69,7 +70,7 @@ namespace Plugin_Create_TerminationLetter
                 tracingService.Trace($"lstInstallments:{string.Join(",", lstInstallments)}");
                 TinhLai(enupdate);
             }
-            enupdate["bsd_penaty"] = enCreated["bsd_totalforfeitureamount"];
+            //enupdate["bsd_penaty"] = enCreated["bsd_totalforfeitureamount"];
             tracingService.Trace("bsd_penaty " + enupdate["bsd_penaty"].ToString());
 
             enupdate["bsd_terminatefee"] = new Money(((Money)enCreated["bsd_totalforfeitureamount"]).Value - ((Money)enCreated["bsd_terminatefeewaiver"]).Value);
@@ -129,7 +130,15 @@ namespace Plugin_Create_TerminationLetter
                 //{
                 //    enupdate["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)op["bsd_totalamountlessfreight"]).Value);
                 //}
-                enupdate["bsd_penaty"] = new Money(((Money)op["bsd_totalamountlessfreight"]).Value*(20/100));
+                //enupdate["bsd_penaty"] = new Money(((Money)op["bsd_totalamountlessfreight"]).Value*(20/100));
+
+                double percent = 0.2;
+                var money = ((Money)op["bsd_totalamountlessfreight"]).Value * (decimal)percent;
+                tracingService.Trace("(20 / 100 " + money);
+                tracingService.Trace("bsd_totalamountlessfreight * 20% " + money.ToString());
+                enupdate["bsd_penaty"] = new Money(money);
+                tracingService.Trace("bsd_totalamountlessfreight " + ((Money)op["bsd_totalamountlessfreight"]).Value.ToString());
+                tracingService.Trace("bsd_penaty " + ((Money)enupdate["bsd_penaty"]).Value.ToString());
                 #endregion
                 #region  Overdue Interest
                 tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
@@ -239,13 +248,14 @@ namespace Plugin_Create_TerminationLetter
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[9]
+            query.ColumnSet = new ColumnSet(new string[11]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper","bsd_ordernumber","bsd_optionentry"
+        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper","bsd_ordernumber","bsd_optionentry",
+                "bsd_interestchargeremaining","bsd_gracedays"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));
@@ -390,13 +400,20 @@ namespace Plugin_Create_TerminationLetter
                 DateTime dateTime = (DateTime)FUL["bsd_date"];
                 dateTime = dateTime.Date;
                 tracingService.Trace($"dateTime: {dateTime.ToString()}");
+                var graceDays = 0;
                 if (entity.Contains("bsd_gracedays"))
-                    dateTime = dateTime.AddDays(((int)entity["bsd_gracedays"]));
-                if ((int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays > 0 && (lstInstallments.Contains(entity.Id.ToString()) == false))
+                {
+                    tracingService.Trace("gracedays: " + ((int)entity["bsd_gracedays"]).ToString());
+                    graceDays += (int)entity["bsd_gracedays"];
+                }    
+                tracingService.Trace("datẻTime after add graceday: " + dateTime.ToString());
+                tracingService.Trace("totalday: " + (int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays);
+                if ((int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).AddDays(graceDays).Date).TotalDays > 0 && (lstInstallments.Contains(entity.Id.ToString()) == false))
                 {
                     tracingService.Trace(entity.Id.ToString());
                     installment = entity;
                     lstInstallments.Add(entity.Id.ToString());
+                    tracingService.Trace("totalday: " + (int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays);
                     return true;
                 }
             }

@@ -96,6 +96,7 @@
     <Content Include="JS\Update Land Value\bsd_bsd_updatelandvalue_form.js" />
     <Content Include="JS\bsd_collectionmeeting_form.js" />
     <Content Include="JS\Update Land Value\bsd_updatelandvalueofunits.js" />
+    <Content Include="JS\Update Land Value\bsd_btn_updatelandvalue.js" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

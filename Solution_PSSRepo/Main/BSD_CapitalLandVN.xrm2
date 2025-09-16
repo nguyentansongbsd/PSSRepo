@@ -173,6 +173,29 @@
           ]
         },
         {
+          "Name": "Plugin_MailNoti.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_MailNoti.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "87b8d727-902b-4b57-bc19-c7f97f5c9eab",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_MailNoti.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -190,6 +213,11 @@
               "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
+            },
+            {
+              "CrmId": "ff6f75dd-2b92-f011-b4cb-00224859aca2",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Land Value\\bsd_btn_updatelandvalue.js"
             }
           ]
         }
@@ -242,6 +270,10 @@
           "ViewPath": "\\Views",
           "XmlPath": "\\Web",
           "XslPath": "\\Web"
+        },
+        {
+          "PluginStepNameTemplate": "{messageDisplayName} - {primaryEntityDisplayName} - {pipelineStageDisplayName}",
+          "SettingType": 1
         }
       ]
     }
