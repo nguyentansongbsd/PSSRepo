@@ -30,6 +30,21 @@
           ]
         },
         {
+          "Name": "Action_ShareCustomerToTeam.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "d277078e-4bc3-45f4-be42-3071dc22c51a",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "WebResource.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -175,13 +190,6 @@
         {
           "Name": "Plugin_MailNoti.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
-          "Files": [
-            {
-              "CrmId": "00000000-0000-0000-0000-000000000000",
-              "FileType": 26,
-              "RelativeFilePath": "\\Plugin_MailNoti.cs"
-            }
-          ],
           "Properties": [
             {
               "PropertiesType": 1,
@@ -190,6 +198,29 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_MailNoti.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_UpdateLandValueUnit_checkImportv2.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_UpdateLandValueUnit_checkImportv2.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "265f5f73-20c9-47f5-b675-4ee1573b6b8d",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateLandValueUnit_checkImportv2.dll",
                 "SourceType": 0
               }
             }
@@ -213,11 +244,6 @@
               "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
-            },
-            {
-              "CrmId": "ff6f75dd-2b92-f011-b4cb-00224859aca2",
-              "FileType": 3,
-              "RelativeFilePath": "\\JS\\Update Land Value\\bsd_btn_updatelandvalue.js"
             }
           ]
         }

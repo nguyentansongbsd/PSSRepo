@@ -1,4 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
+// Decompiled with JetBrains decompiler
 // Type: Plugin_UpdateLandValueUnit_checkImport.Plugin_UpdateLandValueUnit_checkImport
 // Assembly: Plugin_UpdateLandValueUnit_checkImport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=98548fb0662f9df7
 // MVID: 906C025B-0C0E-4957-A63D-9A12EC071C03
@@ -8,10 +8,9 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 
-#nullable disable
-namespace Plugin_UpdateLandValueUnit_checkImport
+namespace Plugin_UpdateLandValueUnit_checkImportv2
 {
-  public class Plugin_UpdateLandValueUnit_checkImport : IPlugin
+  public class Plugin_UpdateLandValueUnit_checkImportv2 : IPlugin
   {
     private IOrganizationService service = (IOrganizationService) null;
     private IOrganizationServiceFactory factory = (IOrganizationServiceFactory) null;
@@ -25,6 +24,7 @@ namespace Plugin_UpdateLandValueUnit_checkImport
       this.service = this.factory.CreateOrganizationService(new Guid?(this.context.UserId));
       this.traceService = (ITracingService) serviceProvider.GetService(typeof (ITracingService));
       Entity inputParameter = (Entity) this.context.InputParameters["Target"];
+            traceService.Trace("start");
       if (this.context.MessageName == "Create")
       {
         if (inputParameter.Contains("bsd_units"))
@@ -41,8 +41,8 @@ namespace Plugin_UpdateLandValueUnit_checkImport
         }
         if (inputParameter.Contains("bsd_landvaluenew"))
         {
-          Money money = inputParameter.Contains("landvaluenew") ? (Money) inputParameter["landvaluenew"] : new Money(0M);
-          inputParameter["landvaluenew"] = (object) money;
+          Money money = inputParameter.Contains("bsd_landvaluenew") ? (Money) inputParameter["bsd_landvaluenew"] : new Money(0M);
+          inputParameter["bsd_landvaluenew"] = (object) money;
         }
         if (inputParameter.Contains("bsd_type") && ((OptionSetValue) inputParameter["bsd_type"]).Value == 100000000 && inputParameter.Contains("bsd_optionentry"))
         {

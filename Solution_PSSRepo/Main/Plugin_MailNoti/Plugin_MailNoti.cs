@@ -50,17 +50,17 @@ namespace Plugin_MailNoti
                     GetValue("bsd_projectid", "bsd_unitno", "customerid");
                     if (status == 100000000 || status == 100000006)
                     {
-                        tileTemplate = "Reservation_Form";
+                        tileTemplate = "Collected status (Step 2)";
                         teamname = $"{projectCode}-FINANCE-TEAM";
                     }
                     else if (status == 3)
                     {
-                        tileTemplate = "Deposit";
+                        tileTemplate = "Deposited status (Step 3)";
                         teamname = $"{projectCode}-CCR-TEAM";
                     }
                     else if (status == 4)
                     {
-                        tileTemplate = "Convert_Quotation_Reservation";
+                        tileTemplate = "Option status (Step 4)";
                         teamname = $"{projectCode}-FINANCE-TEAM";
                     }
                         break;
@@ -69,7 +69,7 @@ namespace Plugin_MailNoti
                     GetValue("bsd_project", "bsd_unitnumber", "customerid");
                     if (status == 100000001)
                     {
-                        tileTemplate = "1st_installment";
+                        tileTemplate = "1st installment status (Step 5)";
                         teamname = $"{projectCode}-CCR-TEAM";
                     }
                     break;
@@ -113,7 +113,7 @@ namespace Plugin_MailNoti
                 #region create email
                 tracingService.Trace("Bắt đầu tạo email.");
                 string subject = enTemplate.GetAttributeValue<string>("subjectsafehtml").Replace("{bsd_tenda}", bsd_tenduan).Replace("{bsd_tensp}",bsd_tensp).Replace("bsd_tenkh",bsd_tenkh);
-                string content= enTemplate.GetAttributeValue<string>("safehtml").Replace("{bsd_tenda}", bsd_tenduan).Replace("{bsd_tensp}", bsd_tensp).Replace("bsd_tenkh", bsd_tenkh).Replace("{link}",linkRegarding);
+                string content= enTemplate.GetAttributeValue<string>("safehtml").Replace("{bsd_tenda}", bsd_tenduan).Replace("{bsd_tensp}", bsd_tensp).Replace("{bsd_tenkh}", bsd_tenkh).Replace("{link}",linkRegarding);
                 Entity emailMessage = new Entity("email");
                 // Thiết lập các thuộc tính cho email message
                 emailMessage["description"] = content; // Nội dung email

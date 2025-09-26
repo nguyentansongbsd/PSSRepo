@@ -45,11 +45,16 @@ namespace Plugin_Create_TerminationLetter
             service.Update(enUpdate);
             #endregion
             if (!enCreated.Contains("bsd_optionentry")) return;
-            if (!enCreated.Contains("bsd_followuplist")) return;
-
             var opRef = (EntityReference)enCreated["bsd_optionentry"];
             op = service.Retrieve(opRef.LogicalName, opRef.Id, new ColumnSet(true));
             var query_bsd_optionentry = opRef.Id.ToString();
+            #region update temmination letter = yes trên op
+            var opUpdate = new Entity(op.LogicalName, op.Id);
+            opUpdate["bsd_terminationletter"] = true;
+            service.Update(opUpdate);
+            #endregion
+            if (!enCreated.Contains("bsd_followuplist")) return;
+
             var FULRef = enCreated.Contains("bsd_followuplist") ? (EntityReference)enCreated["bsd_followuplist"] : null;
             FUL = FULRef != null ? service.Retrieve(FULRef.LogicalName, FULRef.Id, new ColumnSet(true)) : null;
             tracingService.Trace("Plugin_Create_TerminationLetter" + "opRef.Id: " + opRef.Id.ToString());

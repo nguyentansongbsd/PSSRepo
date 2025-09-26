@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A8C384CF-AB07-4927-B44A-5FB59ECDF297}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Plugin_UpdateLandValueUnit_checkImport</AssemblyName>
+    <AssemblyName>Plugin_UpdateLandValueUnit_checkImportv2</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
-    <RootNamespace>Plugin_UpdateLandValueUnit_checkImport</RootNamespace>
+    <RootNamespace>Plugin_UpdateLandValueUnit_checkImportv2</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,12 +31,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Plugin_UpdateLandValueUnit_checkImport.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xrm.Sdk" />
+    <Reference Include="Microsoft.Xrm.Sdk">
+      <HintPath>..\Plugin_Updateduedateoflastinstallmentapprove\bin\Debug\Microsoft.Xrm.Sdk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugin_UpdateLandValueUnit_checkImport.cs" />
+    <Compile Include="Plugin_UpdateLandValueUnit_checkImportv2.cs" />
     <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Plugin_UpdateLandValueUnit_checkImport.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
