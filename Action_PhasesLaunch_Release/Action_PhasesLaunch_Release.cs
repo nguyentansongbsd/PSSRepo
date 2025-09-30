@@ -81,15 +81,15 @@ namespace Action_PhasesLaunch_Release
                                 service.Update(phaseslaunch);
                                 context.OutputParameters["Output01"] = "output_1_if";
                                 context.OutputParameters["Output02"] = string.Join(";", products2);
-                                string url = "";
-                                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
-                                foreach (Entity item in configGolive.Entities)
-                                {
-                                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                                }
-                                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                                context.OutputParameters["Output03"] = url;
+                                //string url = "";
+                                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
+                                //foreach (Entity item in configGolive.Entities)
+                                //{
+                                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                                //}
+                                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                                //context.OutputParameters["Output03"] = url;
                             }
                             else
                             {
@@ -118,15 +118,15 @@ namespace Action_PhasesLaunch_Release
                                 
                                 context.OutputParameters["Output01"] = "output_1_else";
                                 context.OutputParameters["Output02"] = string.Join(";", productsElse2);
-                                string url = "";
-                                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
-                                foreach (Entity item in configGolive.Entities)
-                                {
-                                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                                }
-                                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                                context.OutputParameters["Output03"] = url;
+                                //string url = "";
+                                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
+                                //foreach (Entity item in configGolive.Entities)
+                                //{
+                                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                                //}
+                                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                                //context.OutputParameters["Output03"] = url;
                             }
                         }
                         else throw new InvalidPluginExecutionException("Please insert Discount List.");

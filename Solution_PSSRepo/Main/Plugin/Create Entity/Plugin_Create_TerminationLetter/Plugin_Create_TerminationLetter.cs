@@ -35,6 +35,14 @@ namespace Plugin_Create_TerminationLetter
             Guid recordId = entity.Id;
             Entity enCreated = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             tracingService.Trace("Plugin_Create_TerminationLetter" + "id: " + entity.Id.ToString());
+            #region mapping 
+            tracingService.Trace("step mapping");
+            Entity enPro=service.Retrieve("bsd_project", ((EntityReference)enCreated["bsd_project"]).Id, new ColumnSet(true));
+            Entity enDev=service.Retrieve("account", ((EntityReference)enPro["bsd_investor"]).Id, new ColumnSet(true));
+            Entity enUpdate = new Entity("bsd_terminateletter",enCreated.Id);
+            enUpdate["bsd_accountnameother_develop"] = enDev.Contains("bsd_accountnameother") ?enDev["bsd_accountnameother"]:enDev["bsd_name"];
+            service.Update(enUpdate);
+            #endregion
             if (!enCreated.Contains("bsd_optionentry")) return;
             if (!enCreated.Contains("bsd_followuplist")) return;
 
@@ -174,13 +182,17 @@ namespace Plugin_Create_TerminationLetter
                         enupdate["bsd_overdue_interest"] = new decimal(0);
                     tracingService.Trace("step 4.2.1");
                     var bsd_overdue_interest = (decimal)enupdate["bsd_overdue_interest"] + (decimal)
-                        (bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : new decimal(1)));
+                        (bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : new decimal(1))); 
+                    tracingService.Trace(bsd_overdue_interest.ToString());
+                    if (bsd_overdue_interest>=0)
+                    {
+                        tracingService.Trace("step 4.3");
+                        enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
+                        enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
 
-                    tracingService.Trace("step 4.3");
-                    enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
-                    enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
-
-                    tracingService.Trace("bsd_overdue_interest " + ((decimal)enupdate["bsd_overdue_interest"]).ToString());
+                        tracingService.Trace("bsd_overdue_interest " + ((decimal)enupdate["bsd_overdue_interest"]).ToString());
+                    }    
+                  
                 }
                 #endregion
             }

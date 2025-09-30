@@ -12,12 +12,12 @@ namespace Action_Calculate_Interest
 {
     public class Action_Calculate_Interest : IPlugin
     {
-        public static IOrganizationService service = null;
+        public IOrganizationService service = null;
         IOrganizationServiceFactory factory = null;
-        public static ITracingService traceService = null;
+        public ITracingService traceService = null;
         ITracingService TracingSe = null;
-        public static Installment objIns = new Installment();
-        private static Entity enInstallment;
+        public Installment objIns = new Installment();
+        private Entity enInstallment;
 
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -46,7 +46,7 @@ namespace Action_Calculate_Interest
             }
 
         }
-        public static void Main(string installmentid, string stramountpay, string receiptdateimport, ref string serializedResult)
+        public void Main(string installmentid, string stramountpay, string receiptdateimport, ref string serializedResult)
         {
             decimal amountpay = Convert.ToDecimal(stramountpay);
             DateTime receiptdate = Convert.ToDateTime(receiptdateimport);
@@ -60,7 +60,7 @@ namespace Action_Calculate_Interest
             var serializer = new JavaScriptSerializer();
             serializedResult = serializer.Serialize(objIns);
         }
-        private static void getInterestStartDate()
+        private void getInterestStartDate()
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Action_Calculate_Interest
 
 
         }
-        public static int getLateDays(DateTime dateCalculate)
+        public int getLateDays(DateTime dateCalculate)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Action_Calculate_Interest
             }
 
         }
-        private static int getViTriDotSightContract(Guid idOE)
+        private int getViTriDotSightContract(Guid idOE)
         {
             int location = -1;
             var fetchXml_instalment = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -180,7 +180,7 @@ namespace Action_Calculate_Interest
         /// <param name="dateCalculate"></param>
         /// <param name="amountPay"></param>
         /// <returns></returns>
-        public static decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay)
+        public decimal calc_InterestCharge(DateTime dateCalculate, decimal amountPay)
         {
             try
             {
@@ -368,7 +368,7 @@ namespace Action_Calculate_Interest
                 throw new InvalidPluginExecutionException(ex.ToString());
             }
         }
-        public static decimal sumWaiverInterest(Entity enOptionEntry)
+        public decimal sumWaiverInterest(Entity enOptionEntry)
         {
             // Define Condition Values
             var QEbsd_paymentschemedetail_bsd_optionentry = enOptionEntry.Id;
@@ -397,7 +397,7 @@ namespace Action_Calculate_Interest
             traceService.Trace("Sum bsd_waiverinterest: " + sum.ToString());
             return sum;
         }
-        public static decimal getInterestSimulation(Entity enIns, DateTime dateCalculate, decimal amountpay)
+        public decimal getInterestSimulation(Entity enIns, DateTime dateCalculate, decimal amountpay)
         {
             traceService.Trace("aaaaaaaaaaaaaaaaaaaaaamountPay:" + amountpay);
             enInstallment = service.Retrieve(enIns.LogicalName, enIns.Id, new ColumnSet(true));
@@ -416,7 +416,7 @@ namespace Action_Calculate_Interest
         /// <param name="dateCalculate"></param>
         /// <param name="amountpay"></param>
         /// <returns></returns>
-        public static decimal SumInterestAM_OE_New(Guid OEID, DateTime dateCalculate, decimal amountpay)
+        public decimal SumInterestAM_OE_New(Guid OEID, DateTime dateCalculate, decimal amountpay)
         {
             decimal result = 0m;
             try
@@ -489,7 +489,7 @@ namespace Action_Calculate_Interest
             }
             return result;
         }
-        private static bool check_Data_Setup()
+        private bool check_Data_Setup()
         {
             try
             {
@@ -517,12 +517,12 @@ namespace Action_Calculate_Interest
             }
 
         }
-        private static string format_Money(decimal money)
+        private string format_Money(decimal money)
         {
             string result = string.Format("{0:#,##0.00}", money);
             return result;
         }
-        public static EntityCollection get_ec_bsd_dailyinterestrate(Guid projID)
+        public EntityCollection get_ec_bsd_dailyinterestrate(Guid projID)
         {
             string fetchXml =
               @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -543,7 +543,7 @@ namespace Action_Calculate_Interest
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
         }
-        public static DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
+        public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
             int? timeZoneCode = RetrieveCurrentUsersSettings(service);
             if (!timeZoneCode.HasValue)
@@ -559,7 +559,7 @@ namespace Action_Calculate_Interest
             //var utcTime = utcTime.ToString("MM/dd/yyyy HH:mm:ss");
             //var localDateOnly = response.LocalTime.ToString("dd-MM-yyyy");
         }
-        private static int? RetrieveCurrentUsersSettings(IOrganizationService service)
+        private int? RetrieveCurrentUsersSettings(IOrganizationService service)
         {
             var currentUserSettings = service.RetrieveMultiple(
             new QueryExpression("usersettings")

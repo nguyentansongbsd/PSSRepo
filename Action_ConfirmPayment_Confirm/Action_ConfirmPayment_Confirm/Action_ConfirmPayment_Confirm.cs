@@ -11,10 +11,10 @@ namespace Action_ConfirmPayment_Confirm
 {
     public class Action_ConfirmPayment_Confirm : IPlugin
     {
-        public static IOrganizationService service = null;
-        public static decimal pm_balancemaster = 0;
-        public static decimal d_bsd_assignamountmaster = 0;
-        public static decimal pm_differentamountmaster = 0;
+        public IOrganizationService service = null;
+        public decimal pm_balancemaster = 0;
+        public decimal d_bsd_assignamountmaster = 0;
+        public decimal pm_differentamountmaster = 0;
         IOrganizationServiceFactory factory = null;
         ITracingService TracingSe = null;
         StringBuilder strMess = new StringBuilder();
@@ -62,17 +62,18 @@ namespace Action_ConfirmPayment_Confirm
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = true;
+                enConfirmPayment["bsd_confirm"] = true;
                 service.Update(enConfirmPayment);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Confirm");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Payment Confirm");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
             }
             else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
             {
@@ -453,6 +454,7 @@ namespace Action_ConfirmPayment_Confirm
                         service.Execute(request);
                     }
                 } // end if payment status = active 
+                TracingSe.Trace(strMess.ToString());
                 //throw new InvalidPluginExecutionException("test confirm payment 13h 14/01/2025");
                 ////}
                 ////catch (Exception ex)
@@ -480,6 +482,7 @@ namespace Action_ConfirmPayment_Confirm
                 Entity enConfirmPayment = new Entity("bsd_confirmpayment");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = false;
+                enConfirmPayment["bsd_confirm"] = false;
                 enConfirmPayment["statuscode"] = new OptionSetValue(100000000);
                 service.Update(enConfirmPayment);
             }
@@ -1362,7 +1365,7 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
             strMess.AppendLine(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
             strMess.AppendLine(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
-            TracingSe.Trace(strMess.ToString());
+            //TracingSe.Trace(strMess.ToString());
             //Throw #######################################
             //throw new Exception(strMess.ToString());
         }
@@ -2351,6 +2354,7 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 if (fee < mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = false;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2358,6 +2362,7 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 else if (fee == mainBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_maintenancefeepaid += fee;
                                     f_mains = true;
                                     d_oe_bsd_totalamountpaid += fee;
@@ -2378,11 +2383,13 @@ namespace Action_ConfirmPayment_Confirm
                                 }
                                 if (fee < manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = false;
                                 }
                                 else if (fee == manaBL)
                                 {
+                                    tiendu -= fee;
                                     bsd_managementfeepaid += fee;
                                     f_manas = true;
                                 }

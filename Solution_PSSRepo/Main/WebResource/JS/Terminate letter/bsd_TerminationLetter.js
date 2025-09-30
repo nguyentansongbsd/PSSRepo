@@ -59,6 +59,8 @@ function onloadSystem() {
         crmcontrol.setDisabled("bsd_date", false);
         crmcontrol.setDisabled("bsd_terminatefee", false);
         crmcontrol.setDisabled("bsd_terminatefeewaiver", false);
+        crmcontrol.setDisabled("bsd_1stnoticedate", false);
+        crmcontrol.setDisabled("bsd_2ndnoticedate", false);
     }
 }
 function blockAllField(block) {
@@ -75,4 +77,3 @@ function onChange_terminatefeewaiver() {
     Xrm.Page.getAttribute("bsd_terminatefee").setValue(totalforfeitureamount - terminatefeewaiver);
 }
 
-ấdâd aa ằquaf 

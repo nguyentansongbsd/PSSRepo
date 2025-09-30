@@ -108,7 +108,7 @@ ready();
 //        window.top.$ui.Dialog("Error", e.message, null);
 //    }
 //}
-window.top.generateTerminateletter2 = function (project, block, floor, units) {
+window.top.generateTerminateletter2 = function (project, block, floor, units,_date) {
     try {
         debugger;
         if (project == null) {
@@ -123,18 +123,28 @@ window.top.generateTerminateletter2 = function (project, block, floor, units) {
                 ""
                 , ""
                 , "bsd_Action_TerminateLetter_GenerateTerminateLetter"
-                , [{ name: 'Project', type: 'string', value: project != null ? project : "" },
-                { name: 'Block', type: 'string', value: block != null ? block : "" },
-                { name: 'Floor', type: 'string', value: floor != null ? floor : "" },
-                { name: 'Units', type: 'string', value: units != null ? units : "" }]
+                , [
+                    { name: 'Project', type: 'string', value: project != null ? project : "" },
+                    { name: 'Block', type: 'string', value: block != null ? block : "" },
+                    { name: 'Floor', type: 'string', value: floor != null ? floor : "" },
+                    { name: 'Units', type: 'string', value: units != null ? units : "" },
+                    { name: '_date', type: 'string', value: _date != null ? _date.toString() : "" },
+                  ]
                 , function (result) {
                     window.parent.processingDlg.hide();
                     if (result != null && result.status != null) {
                         if (result.status == "error")
                             window.top.$ui.Dialog("Message", result.data);
                         else if (result.status == "success") {
-                            isShowNoti = 0;
-                            btn_GenerateEnableRule(1);
+
+                            if (result && result.data && result.data.idmaster && result.data.idmaster.value) {
+                                var entityId = result.data.idmaster.value;
+                                var entityName = "bsd_genterminationletter";
+                                // Open the entity form in a new tab
+                                Xrm.Utility.openEntityForm(entityName, entityId, null, { openInNewWindow: true });
+                            } else {
+                                window.top.$ui.Dialog("Error", "Cannot open Termination Letter form. Invalid result data.", null);
+                            }
                         }
                         else {
                             console.log(JSON.stringify(result));
@@ -150,7 +160,19 @@ window.top.generateTerminateletter2 = function (project, block, floor, units) {
 function btnView_Generate() {
     debugger;
 
-    openOptionFilter();
+    var entityFormOptions = {};
+    entityFormOptions["entityName"] = "bsd_genterminationletter";
+    entityFormOptions["use"] = true; 
+    // Mở form
+    Xrm.Navigation.openForm(entityFormOptions).then(
+        function (lookup) {
+            console.log("Form bsd_generateterminationletter đã được mở thành công.");
+            // lookup.savedEntityReference trả về thông tin của bản ghi được tạo (nếu có)
+        },
+        function (error) {
+            console.log(error.message);
+        }
+    );
     // Xrm.Utility.openDialog(Xrm.Page.context.getClientUrl() + "/webresources/bsd_WarningNotice_Form.html", { width: 360,height: 270 }, null, null);
 
 }
@@ -161,10 +183,10 @@ function openOptionFilter() {
         data: null
     };
     var navigationOptions = {
-        target: 2, // 2 is for opening the page as a dialog. 
-        width: 520, // default is px. can be specified in % as well. 
-        height: 400, // default is px. can be specified in % as well. 
-        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center). 
+        target: 2, // 2 is for opening the page as a dialog.
+        width: 520, // default is px. can be specified in % as well.
+        height: 400, // default is px. can be specified in % as well.
+        position: 1 // Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
     };
     Xrm.Navigation.navigateTo(pageInput, navigationOptions).then(
         function success() {

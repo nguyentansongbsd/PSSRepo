@@ -81,9 +81,9 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                         CheckStatusHD(ref result, item, enHD);
                         if (!result) return;
                         tracingService.Trace($"CheckPaid");
-                        CheckPaid(ref result, item, enInstallment);
-                        if (!result) return;
-                        tracingService.Trace($"CheckDueDate");
+                        //CheckPaid(ref result, item, enInstallment);
+                        //if (!result) return;
+                        //tracingService.Trace($"CheckDueDate");
                         CheckDueDate(ref result, item, enInstallment, enHD);
                         if (!result) return;
                         if (bsd_types == 100000001)// Update all
@@ -251,7 +251,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                     tracingService.Trace($"bsd_ordernumber:{(int)JItem["bsd_ordernumber"]}");
                     if (((int)JItem["bsd_ordernumber"]) < ((int)enInstallment["bsd_ordernumber"]))
                     {
-                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
+                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= -1)
                         {
                             var mess = "The new due date is invalid. Please check again.";
                             HandleError(item, mess);
@@ -262,11 +262,10 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                     }
                     if (((int)JItem["bsd_ordernumber"]) > ((int)enInstallment["bsd_ordernumber"]))
                     {
-                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
+                        if ((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 1)
                         {
                             var mess = "The new due date is invalid. Please check again.";
                             HandleError(item, mess);
-
                             result = false;
                             break;
                         }

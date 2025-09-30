@@ -39,19 +39,19 @@ namespace Action_TerminateLetter_GenerateTerminateLetter
             if (paymentScheme.Entities.Count == 0)
                 throw new InvalidPluginExecutionException("No payments found!");
             string lst_id = string.Join(",", paymentScheme.Entities.Select(x => x.Id.ToString()).ToList());
-            var request = new OrganizationRequest("bsd_Action_Active_GenerateTerminateLetter");
-            var query_bsd_name = "GENTerminationLetter";
 
-            var query = new QueryExpression("bsd_process");
-            query.TopCount = 50; query.ColumnSet.AllColumns = true;
-            query.Criteria.AddCondition("bsd_name", ConditionOperator.Equal, query_bsd_name);
-            var rs = this.service.RetrieveMultiple(query);
-            var enProcess = new Entity("bsd_process", rs.Entities[0].Id);
-            enProcess["statuscode"] = new OptionSetValue(100000000);
-            this.service.Update(enProcess);
-            // lấy số điện thoại của khách để gửi            
+            Entity enMaster = this.service.Retrieve("bsd_genterminationletter",new Guid(context.InputParameters["_idmaster"].ToString()),new ColumnSet(true));
+            enMaster["bsd_processing_pa"] = true;
+            enMaster["statuscode"] = new OptionSetValue(100000001);
+            this.service.Update(enMaster);
+
+            var request = new OrganizationRequest("bsd_Action_Active_GenerateTerminateLetter");
+            request["bsd_generate_termination_letter"] = context.InputParameters["_idmaster"].ToString();
+            request["_date"] = context.InputParameters.Contains("_date") ? context.InputParameters["_date"].ToString() : "";
             request["list_id"] = lst_id;
+            request["userid"] = context.UserId.ToString();
             this.service.Execute(request);
+            context.OutputParameters["idmaster"]= context.InputParameters["_idmaster"];
             //int num1 = 0;
             //for (int index1 = 0; index1 < paymentScheme.Entities.Count; ++index1)
             //{

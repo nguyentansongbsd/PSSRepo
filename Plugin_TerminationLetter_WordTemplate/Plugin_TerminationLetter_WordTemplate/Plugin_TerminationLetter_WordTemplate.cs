@@ -37,8 +37,8 @@ namespace Plugin_TerminationLetter_WordTemplate
             upTL["bsd_penatytext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_penaty");
             upTL["bsd_penatytexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_penaty");
 
-            //upTL["bsd_overdue_interesttext"] = SoBangChu_VN(enTerminationLetter, "bsd_overdue_interest");
-            //upTL["bsd_overdue_interesttexten"] = SoBangChu_ENG(enTerminationLetter, "bsd_overdue_interest");
+            upTL["bsd_overdue_interesttext"] = GetTienBangChu_VN(enTerminationLetter, "bsd_overdue_interest_money");
+            upTL["bsd_overdue_interesttexten"] = GetTienBangChu_ENG(enTerminationLetter, "bsd_overdue_interest_money");
             service.Update(upTL);
 
         }

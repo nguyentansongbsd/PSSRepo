@@ -134,19 +134,19 @@
             white-space: nowrap;
         }
 
-        .button-7:hover,
-        .button-7:focus {
-            background-color: #07c;
-        }
+            .button-7:hover,
+            .button-7:focus {
+                background-color: #07c;
+            }
 
-        .button-7:focus {
-            box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
-        }
+            .button-7:focus {
+                box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+            }
 
-        .button-7:active {
-            background-color: #0064bd;
-            box-shadow: none;
-        }
+            .button-7:active {
+                background-color: #0064bd;
+                box-shadow: none;
+            }
 
         /* The Modal (background) */
         .modal {
@@ -220,12 +220,12 @@
             font-weight: bold;
         }
 
-        #closeModal:hover,
-        #closeModal:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
+            #closeModal:hover,
+            #closeModal:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
 
         .modal-header {
             padding: 2px 16px;
@@ -313,10 +313,10 @@
                     <input type="radio" id="khdn" name="khachhang" value="1">
                 </div>
 
-                
+
 
                 <div class="align-right">
-                    
+
                     <button class="button-7" style="margin-right:5px"><a class="search" href="javascript:search()"></a></button>
                     <button id="saveToTeam" class="button-7" onclick="btnSave()">Sharing</button>
                 </div>
@@ -338,7 +338,6 @@
                         </tr>
                     </thead>
                     <tbody id="bodyTableKHCN">
-
                     </tbody>
                 </table>
             </div>
@@ -396,7 +395,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('input[name="khachhang"]').change(function () {
-                
+
                 var radioValue = $('input[name="khachhang"]:checked').val();
                 if (radioValue == 0) {
                     $("#cmnd").prop('disabled', false);
@@ -433,7 +432,7 @@
         });
 
         function search() {
-            
+
             Xrm.Utility.showProgressIndicator("Please Wait!...");
 
             var radioValue = $('input[name="khachhang"]:checked').val();
@@ -520,7 +519,7 @@
                     }
                 }, true);
         }
-var arrID="";
+        var arrID = "";
         function KHDN(radioValue) {
             var registrationCode = $("#registrationCode").val();
             var nameCompany = $("#nameCompany").val();
@@ -579,7 +578,7 @@ var arrID="";
         }
 
         function btnSave() {
-            
+
             window.top.processingDlg.show();
             var radioValue = $('input[name="khachhang"]:checked').val();
             var id = "";
@@ -603,6 +602,11 @@ var arrID="";
                     name: 'id',
                     type: 'string',
                     value: id
+                },
+                {
+                    name: 'CreateShareCustomer',
+                    type: 'string',
+                    value: "true"
                 }
             ],
                 function (result) {
@@ -610,22 +614,22 @@ var arrID="";
                     if (result != null && result.status != null) {
                         if (result.status == "error") alertdialogConfirm(result.data);
                         else if (result.status == "success") {
-                            
+
                             if (result.data.entityColl.value == "")
                                 alertdialogConfirm("Thao tác thành công !");
                             else {
-arrID = id;
+                                arrID = id;
                                 var data = JSON.parse(result.data.entityColl.value);
                                 $('#bodyTableTeam').empty();
                                 for (let i = 0; i < data.length; i++) {
                                     const item = data[i];
                                     $("#bodyTableTeam").append(`
-                                        <tr>
-                                            <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
-                                            <td>${i + 1}</td>
-                                            <td>${item.TeamName}</td>
-                                        </tr>
-                                    `);
+                                                <tr>
+                                                    <td><input type='checkbox' name='choose-ckb-team' data-id='${item.TeamID}' /></td>
+                                                    <td>${i + 1}</td>
+                                                    <td>${item.TeamName}</td>
+                                                </tr>
+                                            `);
                                 }
                                 $("#modalForm").css("display", "block");
                             }
@@ -644,7 +648,7 @@ arrID = id;
         function btnSaveMulti() {
             debugger;
             var radioValue = $('input[name="khachhang"]:checked').val();
-            radioValue = radioValue =="0"?2:3;//2 = contact - 3= account;
+            radioValue = radioValue == "0" ? 2 : 3;//2 = contact - 3= account;
             var id = "";
             $("table input[name='choose-ckb-team']:checked").each(function (index) {
                 id = id + $(this).data('id') + ",";
@@ -654,7 +658,7 @@ arrID = id;
                 alertdialogConfirm("Xin vui lòng chọn team cần share !");
                 return;
             }
-                ExecuteAction(
+            ExecuteAction(
                 null, null, "bsd_Action_ShareCustomerToTeam", [
                 {
                     name: 'type',
@@ -670,23 +674,27 @@ arrID = id;
                     name: 'idTeam',
                     type: 'string',
                     value: id
+                },
+
+                {
+                    name: 'CreateShareCustomer',
+                    type: 'string',
+                    value: "true"
                 }
             ],
                 function (result) {
                     window.top.processingDlg.hide();
-                    if (result != null && result.status != null) 
-                        {
+                    if (result != null && result.status != null) {
                         if (result.status == "error") alertdialogConfirm(result.data);
-                        else if (result.status == "success") 
-                            {
-                                    alertdialogConfirm("Thao tác thành công !");
-                                    //crmcontrol.openAlertDialog("Thao tác thành công !","Notices");
-                                    $("#modalForm").css("display", "none");               
-                            }
+                        else if (result.status == "success") {
+                            alertdialogConfirm("Thao tác thành công !");
+                            //crmcontrol.openAlertDialog("Thao tác thành công !","Notices");
+                            $("#modalForm").css("display", "none");
                         }
-                    
+                    }
+
                 }, true);
-            
+
             console.log(id);
         }
     </script>

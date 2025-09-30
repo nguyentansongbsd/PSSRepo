@@ -233,10 +233,11 @@ namespace Action_Approved_Updateduedate_Detail
                     if (((int)JItem["bsd_ordernumber"]) < ((int)enInstallment["bsd_ordernumber"]))//lớn hơn đợt phí trước?
                     {
                         #region lấy item trong list detail nếu có
-                        var itemDetail = lstDetail.Entities.FirstOrDefault(x => x.Id == JItem.Id);
+                        var itemDetail = lstDetail.Entities.FirstOrDefault(x =>((EntityReference)x["bsd_installment"]).Id == JItem.Id);
+                        tracingService.Trace("@@");
                         if(itemDetail != null)
                         {
-                            if ((newDate - (((DateTime)itemDetail["bsd_duedatenew"])).AddHours(7)).TotalDays <= 0)
+                            if ((newDate - (((DateTime)itemDetail["bsd_duedatenew"]))).TotalDays <=-1)
                             {
                                 var mess = "The new due date is earlier than the next batch. Please check again.";
                                 HandleError(item, mess);
@@ -244,8 +245,9 @@ namespace Action_Approved_Updateduedate_Detail
                                 break;
                             }
                         }
-                        else if((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays <= 0)
+                        else if( (newDate - (((DateTime)JItem["bsd_duedate"]))).TotalDays<=-1)
                         {
+                            tracingService.Trace("islist1");
                             var mess = "The new due date is earlier than the next batch. Please check again.";
                             HandleError(item, mess);
                             result = false;
@@ -257,19 +259,23 @@ namespace Action_Approved_Updateduedate_Detail
                     if (((int)JItem["bsd_ordernumber"]) > ((int)enInstallment["bsd_ordernumber"]))//nhở hơn đợt phí sau?
                     {
                         #region lấy item trong list detail nếu có
-                        var itemDetail = lstDetail.Entities.FirstOrDefault(x => x.Id == JItem.Id);
+                        var itemDetail = lstDetail.Entities.FirstOrDefault(x => ((EntityReference)x["bsd_installment"]).Id == JItem.Id);
+                        tracingService.Trace("###");
+
                         if (itemDetail != null)
                         {
-                            if ((newDate - (((DateTime)itemDetail["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
+                            if ((newDate - (((DateTime)itemDetail["bsd_duedatenew"]))).TotalDays >= 1)
                             {
-                                var mess = "The new due date is earlier than the next batch. Please check again.";
+                                var mess = "The new due date is later than the previous batch. Please check again..";
                                 HandleError(item, mess);
                                 result = false;
                                 break;
                             }
                         }
-                        else if((newDate - (((DateTime)JItem["bsd_duedate"])).AddHours(7)).TotalDays >= 0)
+                        else if( (newDate - (((DateTime)JItem["bsd_duedate"]))).TotalDays >= 1)
                         {
+                            tracingService.Trace("islist2");
+
                             var mess = "The new due date is later than the previous batch. Please check again.";
                             HandleError(item, mess);
                             result = false;
@@ -308,14 +314,14 @@ namespace Action_Approved_Updateduedate_Detail
 
             tracingService.Trace($"{enInstallment.Id}");
             tracingService.Trace($"newDate {newDate}");
-            if ((newDate - ((DateTime)enInstallment["bsd_duedate"]).AddHours(7)).TotalDays == 0)
-            {
+            //if ((newDate - ((DateTime)enInstallment["bsd_duedate"]).AddHours(7)).TotalDays == 0|| (newDate - ((DateTime)enInstallment["bsd_duedate"])).TotalDays == 0)
+            //{
                 
 
-                var mess = "The new due date is the same as the old due date. Please check again.";
-                HandleError(item, mess);
-                result = false;
-            }
+            //    var mess = "The new due date is the same as the old due date. Please check again.";
+            //    HandleError(item, mess);
+            //    result = false;
+            //}
 
         }
         public void Approve(ref bool result, Entity item, Entity enInstallment)
@@ -339,7 +345,6 @@ namespace Action_Approved_Updateduedate_Detail
             var enMaster = new Entity("bsd_updateduedate", enMasterRef.Id);
             enMaster["bsd_error"] = true;
             enMaster["bsd_errordetail"] = error;
-            enMaster["statuscode"] = new OptionSetValue(1);
 
             enMaster["bsd_approvedrejecteddate"] = null ;
             enMaster["bsd_approvedrejectedperson"] = null;

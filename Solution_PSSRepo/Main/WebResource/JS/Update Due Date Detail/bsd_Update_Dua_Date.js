@@ -87,6 +87,7 @@ function onload() {
         //disableFormFields(false);
     }
     ready();
+    lockStatus();
 }
 function disableFormFields(onOff) {
     function doesControlHaveAttribute(control) {
@@ -146,4 +147,12 @@ function checkPA() {
             }
         }
     });
+}
+
+function lockStatus() {
+    debugger;
+    var role = crmcontrol.checkRoles("CLVN_S&M_Senior Sale Staff") ||crmcontrol.checkRoles("CLVN_S&M_Sales Manager") || crmcontrol.checkRoles("CLVN_S&M_Head of Sale") || crmcontrol.checkRoles("CLVN_FIN_Finance Manager");
+    var status = crmcontrol.getValue("statuscode");
+    if (role && status != 100000000) crmcontrol.setDisabled("statuscode", false);
+    else crmcontrol.setDisabled("statuscode", true);
 }
