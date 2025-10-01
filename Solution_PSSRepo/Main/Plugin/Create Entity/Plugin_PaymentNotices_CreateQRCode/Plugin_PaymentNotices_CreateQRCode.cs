@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xrm.Sdk;
 using QRCoder;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.Xrm.Sdk.Query;
 using VietQRHelper;
 
@@ -16,7 +16,6 @@ namespace Plugin_PaymentNotices_CreateQRCode
         IOrganizationServiceFactory factory = null;
         IOrganizationService service = null;
         ITracingService tracingService = null;
-        Entity en = new Entity();
         
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
@@ -33,12 +32,12 @@ namespace Plugin_PaymentNotices_CreateQRCode
 
             string banknumber = "";
             string bankbin = "";
-            string amount = GetValueMoneyTranfer(); // Số tiền (ví dụ: 100,000 VND)
-            string purpose = "THANH TOAN DON HANG";
+            // Lấy nội dung cho mã QR từ thông tin Khách hàng và Sản phẩm (Unit)
+            string purpose = GetContent(service, enTarget);
             GetBankInfor(enProject, ref banknumber, ref bankbin);
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeGenerator qrGenerator = new QRCodeGenerator(); 
             
-            QRCodeData qrCodeInfo = qrGenerator.CreateQrCode(GenerateVietQRpayload(bankbin,banknumber,amount,purpose), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeInfo = qrGenerator.CreateQrCode(GenerateVietQRpayload(bankbin,banknumber,purpose), QRCodeGenerator.ECCLevel.Q);
             PngByteQRCode qrCode = new PngByteQRCode(qrCodeInfo);
             byte[] qrCodeImageBytes = qrCode.GetGraphic(20); // Kích thước pixel của mỗi module QR
 
@@ -95,11 +94,70 @@ namespace Plugin_PaymentNotices_CreateQRCode
                 }
             }
         }
-        public string GetValueMoneyTranfer()
+
+        /// <summary>
+        /// Lấy nội dung thanh toán từ thông tin Khách hàng và Sản phẩm (Unit).
+        /// </summary>
+        /// <param name="service">Đối tượng IOrganizationService.</param>
+        /// <param name="target">Entity Payment Notice.</param>
+        /// <returns>Chuỗi nội dung theo định dạng "TenKhachHang-TenSanPham".</returns>
+        public string GetContent(IOrganizationService service, Entity target)
         {
-            return "0";
+            string customerName = "KHACH HANG"; // Giá trị mặc định
+            string unitName = "SAN PHAM"; // Giá trị mặc định
+
+            // 1. Lấy thông tin khách hàng (Contact/Account)
+            if (target.Contains("bsd_customer"))
+            {
+                EntityReference customerRef = target.GetAttributeValue<EntityReference>("bsd_customer");
+                if (customerRef != null)
+                {
+                    Entity customer = service.Retrieve(customerRef.LogicalName, customerRef.Id, new ColumnSet(true));
+                    // Lấy tên tùy thuộc vào loại thực thể là contact hay account
+                    customerName = customer.LogicalName == "contact" ? customer.GetAttributeValue<string>("fullname") : customer.GetAttributeValue<string>("name");
+                }
+            }
+
+            // 2. Lấy thông tin sản phẩm (Unit)
+            if (target.Contains("bsd_units"))
+            {
+                EntityReference unitRef = target.GetAttributeValue<EntityReference>("bsd_units");
+                if (unitRef != null)
+                {
+                    Entity unit = service.Retrieve(unitRef.LogicalName, unitRef.Id, new ColumnSet("name"));
+                    unitName = unit.GetAttributeValue<string>("name");
+                }
+            }
+
+            // 3. Chuyển tên khách hàng về dạng không dấu và viết hoa
+            string finalCustomerName = RemoveDiacritics(customerName ?? "").ToUpper();
+            string finalUnitName = (unitName ?? "").ToUpper();
+
+            // 4. Kết hợp và trả về kết quả
+            return $"{finalCustomerName} {finalUnitName}";
         }
-        private static string GenerateVietQRpayload(string bankBin, string bankNumber, string amount, string purpose)
+
+        /// <summary>
+        /// Chuyển đổi chuỗi có dấu thành không dấu.
+        /// </summary>
+        private static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+            for (int i = 0; i < normalizedString.Length; i++)
+            {
+                char c = normalizedString[i];
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+        private static string GenerateVietQRpayload(string bankBin, string bankNumber, string purpose)
         {
             // Khởi tạo đối tượng VietQR và truyền vào các tham số
             var qrPay = QRPay.InitVietQR(

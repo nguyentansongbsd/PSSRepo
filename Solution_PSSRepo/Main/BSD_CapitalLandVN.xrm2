@@ -125,6 +125,287 @@
       },
       "Projects": [
         {
+          "Name": "Action_CreateEmailMessage.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "015eda85-19f2-42bc-80d3-51d836de1581",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_CreateEmailMessage.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Action_InsertQrcodeInPDF.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Action_InsertQrcodeInPDF.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "376c37ef-bf12-471f-86e0-6e51682c9e9c",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_InsertQrcodeInPDF.dll",
+                "SourceType": 0
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "BouncyCastle.Cryptography"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "itextsharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Action_MappingParamToWord.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "ee677466-b002-48ee-8119-eea7d6bf68e5",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_MappingParamToWord.dll",
+                "SourceType": 0
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "DocumentFormat.OpenXml.Framework"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.Bcl.AsyncInterfaces"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Newtonsoft.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Buffers"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Memory"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics.Vectors"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.CompilerServices.Unsafe"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Primitives"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Encodings.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Threading.Tasks.Extensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ValueTuple"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Action_MergeFilePDF.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "a14e5d5c-6a99-43fe-983e-dac31256fcf3",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Action_MergeFilePDF.dll",
+                "SourceType": 0
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "PdfSharp.Charting"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "Name": "Action_ShareCustomerToTeam.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -188,6 +469,22 @@
           ]
         },
         {
+          "Name": "Plugin_CreateEmail_UpdateInforToEntity.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "c7f8b143-f5e2-4ce1-aad7-1ba2e4ac30cf",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_CreateEmail_UpdateInforToEntity.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_MailNoti.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -198,6 +495,191 @@
                 "IsolationMode": 2,
                 "IsRegisteredInCrm": true,
                 "PathNameOnServer": "Plugin_MailNoti.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_PaymentNotices_CreateQRCode.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Files": [
+            {
+              "CrmId": "00000000-0000-0000-0000-000000000000",
+              "FileType": 26,
+              "RelativeFilePath": "\\Plugin_PaymentNotices_CreateQRCode.cs"
+            }
+          ],
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "3479913e-bb84-42f6-bee6-33a9eba04924",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_PaymentNotices_CreateQRCode.dll",
+                "SourceType": 0
+              }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.Bcl.AsyncInterfaces"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "PresentationCore"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "PresentationFramework"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "QRCoder"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Buffers"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.DirectoryServices"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.DirectoryServices.AccountManagement"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.IdentityModel"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Memory"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics.Vectors"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.CompilerServices.Unsafe"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.Serialization"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Security"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Primitives"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Encodings.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Text.Json"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Threading.Tasks.Extensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ValueTuple"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "VietQRHelper"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "WindowsBase"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_Update_Email_MapInforToPayment.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "3768cb7d-008f-4d5b-b276-5200819b42f8",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Update_Email_MapInforToPayment.dll",
                 "SourceType": 0
               }
             }
@@ -234,6 +716,21 @@
               "CrmId": "de85a477-5a42-ee11-bdf3-6045bd1f9d3d",
               "FileType": 1,
               "RelativeFilePath": "\\HTML\\bsd_searchcustomer.html"
+            },
+            {
+              "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
+            },
+            {
+              "CrmId": "6384cc50-1e20-f011-998a-6045bd21931e",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\bsd_btnEmailView.js"
             },
             {
               "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",

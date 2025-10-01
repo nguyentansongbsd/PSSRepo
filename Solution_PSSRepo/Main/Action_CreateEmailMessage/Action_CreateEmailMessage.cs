@@ -54,6 +54,8 @@ namespace Action_CreateEmailMessage
                 emailMessage["bsd_entityid"] = entityMainId.ToString();
                 emailMessage["bsd_emailcreator"] = enUserAction.ToEntityReference();
                 emailMessage["regardingobjectid"] = new EntityReference(entityName, new Guid(entityMainId.ToString()));
+                emailMessage["statecode"] = new OptionSetValue(0);
+                emailMessage["statuscode"]= new OptionSetValue(1);
                 var enUpdate= service.Retrieve(entityName, new Guid(entityMainId.ToString()),new ColumnSet(true));
                 switch (entityName)
                 {
