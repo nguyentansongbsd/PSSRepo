@@ -647,6 +647,8 @@
 
         function btnSaveMulti() {
             debugger;
+
+            window.top.processingDlg.show();
             var radioValue = $('input[name="khachhang"]:checked').val();
             radioValue = radioValue == "0" ? 2 : 3;//2 = contact - 3= account;
             var id = "";

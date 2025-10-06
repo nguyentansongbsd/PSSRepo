@@ -168,8 +168,8 @@ function UpdateStatus_SendMail() {
         var filenameroot = "";
         var count = 1;
         //dev
-        //var url = "https://prod-49.southeastasia.logic.azure.com:443/workflows/320497af4dc74d849cea21649907c4c6/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WsFNxxj9AyfRyyj9fPGSbCoB5_jNHxwaQx6QbiQySzc"
-        var url = "https://prod-64.southeastasia.logic.azure.com:443/workflows/b8ff54d276174d0c9772129127c67e7a/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iNJErifE4mTxG6bme1dHkHdLZH5-H70Mv52zzCKDcrM"
+        //var url = "https://1d554a713bc5455b887939f0df1c97.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b8ff54d276174d0c9772129127c67e7a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=mn-44FazmqYOejyIg5CCe4hWqpadHnJRASJXkTJ4K2g"
+        var url = "https://e32d24dee3864a64a2abda70077dc2.0c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/320497af4dc74d849cea21649907c4c6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jlru0baGdwnZ-4F4-VNfbALyhJuXNdIsQzuFson1aKU"
         result.entities.forEach(function (email) {
             Xrm.Utility.showProgressIndicator("sending " + count + "/" + result.entities.length);
             if (email.bsd_entityname) {

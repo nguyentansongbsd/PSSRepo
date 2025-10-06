@@ -204,36 +204,6 @@ namespace Plugin_Create_TerminationLetter
                         tracingService.Trace("step 4.3");
                         enupdate["bsd_overdue_interest"] = bsd_overdue_interest;
                         enupdate["bsd_overdue_interest_money"] = new Money(((decimal)enupdate["bsd_overdue_interest"]));
-                        var bsd_overdue_interest2 = ((Money)enupdate["bsd_overdue_interest_money"]).Value;
-                        #region Cộng thêm lãi chưa thanh toán các đợt trước đó nếu có
-                        var query_bsd_ordernumber = (int)installment["bsd_ordernumber"];
-                        var query_bsd_optionentry = installment.GetAttributeValue<EntityReference>("bsd_optionentry").Id.ToString();
-                        tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber);
-                        tracingService.Trace("query_bsd_optionentry: " + query_bsd_optionentry.ToString());
-                        tracingService.Trace("lấy các đợt trước đó để + thêm lãi chưa thanh toán cho bsd_overdue_interest");
-                        var query = new QueryExpression("bsd_paymentschemedetail")
-                        {
-                            ColumnSet = new ColumnSet(true),
-                            Criteria =
-                                    {
-                                        Conditions =
-                                        {
-                                            new ConditionExpression("bsd_ordernumber", ConditionOperator.LessThan, query_bsd_ordernumber),
-                                            new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry)
-                                        }
-                                    }
-                        };
-                        var rsIns = service.RetrieveMultiple((QueryBase)query);
-                        foreach (var rs in rsIns.Entities)
-                        {
-                            tracingService.Trace("ordernumber: " + ((int)rs["bsd_ordernumber"]));
-                            var bsd_interestchargeremaining = rs.Contains("bsd_interestchargeremaining") ? ((Money)rs["bsd_interestchargeremaining"]).Value : 0;
-                            tracingService.Trace("bsd_interestchargeremaining: " + bsd_interestchargeremaining.ToString());
-                            bsd_overdue_interest2 += bsd_interestchargeremaining;
-                        }
-                        enupdate["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
-                        tracingService.Trace("bsd_overdue_interest_money " + ((Money)enupdate["bsd_overdue_interest_money"]).Value.ToString());
-
 
                         tracingService.Trace("check và cộng thêm lãi đợt đang xét nếu có");
                         var bsd_interestchargeremaining_current = installment.Contains("bsd_interestchargeremaining") ? ((Money)installment["bsd_interestchargeremaining"]).Value : 0;
@@ -410,7 +380,7 @@ namespace Plugin_Create_TerminationLetter
                 {
                     tracingService.Trace("gracedays: " + ((int)entity["bsd_gracedays"]).ToString());
                     graceDays += (int)entity["bsd_gracedays"];
-                }
+                }    
                 tracingService.Trace("datẻTime after add graceday: " + dateTime.ToString());
                 tracingService.Trace("totalday: " + (int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).Date).TotalDays);
                 if ((int)dateTime.Subtract(((DateTime)entity["bsd_duedate"]).AddDays(graceDays).Date).TotalDays > 0 && (lstInstallments.Contains(entity.Id.ToString()) == false))

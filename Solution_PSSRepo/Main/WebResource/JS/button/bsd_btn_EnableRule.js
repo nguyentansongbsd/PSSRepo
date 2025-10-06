@@ -197,6 +197,7 @@ function CheckEnable_Condition(tyle) {
             break;
         case "salesorder-form-PrintHOM":
             if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
         case "salesorder-form-InterestSimulation":
             if (getStatusCodeValueByName("Terminated") == status) return false;
             break;
@@ -205,19 +206,25 @@ function CheckEnable_Condition(tyle) {
             break;
         case "salesorder-form-PrintHOM":
             if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
         case "salesorder-form-InterestSimulation":
             if (getStatusCodeValueByName("Terminated") == status) return false;
             break;
         case "quote-form-PrintRevervationForm":
             if (getStatusCodeValueByName("Won") == status) return false;
+            break;
         case "quote-form-Applydocument":
             if (!CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("System Administrator")) return false;
+            break;
         case "quote-form-FULTerminate":
             if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
         case "quote-form-CreateOrder":
             if (getStatusCodeValueByName("Terminated") == status) return false;
+            break;
         case "quote-form-PrintQuotaionFinal":
             if (getStatusCodeValueByName("Terminated") == status || getStatusCodeValueByName("Won") == status) return false;
+            break;
         case "quote-form-ConvertToOption":
             if (getStatusCodeValueByName("Terminated") == status) return false;
             break
@@ -293,6 +300,7 @@ function CheckEnable_ConditionView(tyle, item) {
                         return true;
                     }
                 });
+            break;
         case "email-SubGrid-Delete":
             //#region check list item có statecode = sent (3)
             var fetchXml =
@@ -321,6 +329,7 @@ function CheckEnable_ConditionView(tyle, item) {
                         return true;
                     }
                 });
+            break;
         case "bsd_bulksendmailmanager-View-Delete":
             //#region check list item có statecode = sent (3)
             var fetchXml =
