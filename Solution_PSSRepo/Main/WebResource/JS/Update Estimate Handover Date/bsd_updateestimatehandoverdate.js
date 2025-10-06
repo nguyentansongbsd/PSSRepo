@@ -95,6 +95,7 @@ function onLoad(executionContext) {
         if (checkUserRole("CLVN_S&M_Senior Sale Staff")) {
             // Set bsd_types to 'Update only for units' (100000000)
             formContext.getAttribute("bsd_types").setValue(100000000);
+            formContext.getControl("bsd_types").setDisabled(true);
         }
     }
 
