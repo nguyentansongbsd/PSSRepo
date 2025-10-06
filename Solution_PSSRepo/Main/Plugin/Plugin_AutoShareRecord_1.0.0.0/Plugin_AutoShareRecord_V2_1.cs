@@ -45,6 +45,8 @@ namespace Plugin_AutoShareRecord
                 //    Run_PriceList();
                 //    break;
                 case "bsd_discount":
+                    if (target.GetAttributeValue<bool>("bsd_applyafterpl") == false) break;
+                    traceService.Trace("!1");
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 0 } }, 100000000);
                     break;
             }

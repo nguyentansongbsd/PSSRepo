@@ -62,10 +62,14 @@ function RegisterModal() {
 ready();
 function btnBulkPrint_WordTemplate(item) {
     debugger;
+    var bsd_name = "bsd_name";
+    if (item[0].TypeName == "salesorder") {
+        bsd_name = "name";
+    }
     var fetchXml =
         "<fetch top='1'>" +
         "  <entity name='" + item[0].TypeName + "'>" +
-        "    <attribute name='bsd_name'/>" +
+        "    <attribute name='"+bsd_name+"'/>" +
         "    <attribute name='bsd_project'/>" +
         "    <filter>" +
         "      <condition attribute='" + item[0].TypeName + "id'  operator='eq' value='" + item[0].Id +"'/>" +
