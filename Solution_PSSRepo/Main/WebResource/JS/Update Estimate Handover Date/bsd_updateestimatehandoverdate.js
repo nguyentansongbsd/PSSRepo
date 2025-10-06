@@ -1,13 +1,14 @@
 // JavaScript source code
 $ = window.parent.$;
 jQuery = window.parent.jQuery;
-var intervalId = null
+var intervalId = null;
+var _previousStatusValue = null; // To store the status value on load and on valid change
+
 function ready() {
     debugger;
     var timer = null;
     function wait() {
-        if (window.top.$ != null
-            && window.top.$.fn != null) {
+        if (window.top.$ != null && window.top.$.fn != null) {
             if (timer != null) {
                 clearTimeout(timer);
                 timer = null;
@@ -18,11 +19,14 @@ function ready() {
                 window.parent.processingDlg.show();
                 intervalId = setInterval(function () {
                     checkPA();
-                }, 2000)
+                },
+                2000)
             }
         }
-        else
-            timer = setTimeout(function () { wait() }, 1000);
+        else timer = setTimeout(function () {
+            wait()
+        },
+        1000);
     }
     wait();
 }
@@ -54,7 +58,6 @@ function RegisterModal() {
         window.parent.document.head.appendChild(script1);
     }
 
-
     var script3 = window.parent.document.getElementById("ClientGlobalContext.js.aspx");
     if (script3 == null) {
         script3 = window.parent.document.createElement("script");
@@ -80,8 +83,21 @@ function RegisterModal() {
         window.parent.document.head.appendChild(script5);
     }
 }
-function onLoad() {
+function onLoad(executionContext) {
     debugger;
+    var formContext = executionContext.getFormContext();
+    _previousStatusValue = formContext.getAttribute("statuscode").getValue();
+
+    var formType = formContext.ui.getFormType();
+    // If Form is in create mode
+    if (formType === 1) {
+        // Check if user has 'CLVN_S&M_Senior Sale Staff' role
+        if (checkUserRole("CLVN_S&M_Senior Sale Staff")) {
+            // Set bsd_types to 'Update only for units' (100000000)
+            formContext.getAttribute("bsd_types").setValue(100000000);
+        }
+    }
+
     ready();
     SHOW_HIDE_LOCK();
 }
@@ -107,23 +123,13 @@ function onSaveReload(executionContext) {
         window.parent.processingDlg.show();
         var intervalId = setInterval(function () {
             checkPA();
-        }, 2000)
+        },
+        2000)
     });
 }
 var ishowErr = 0;
 function checkPA() {
-    var fetchXml = [
-        "<fetch top='50'>",
-        "  <entity name='bsd_updateestimatehandoverdate'>",
-        "    <attribute name='bsd_error'/>",
-        "    <attribute name='bsd_errordetail'/>",
-        "    <attribute name='bsd_processing_pa'/>",
-        "    <filter>",
-        "      <condition attribute='bsd_updateestimatehandoverdateid' operator='eq' value='", Xrm.Page.data.entity.getId(), "'/>",
-        "    </filter>",
-        "  </entity>",
-        "</fetch>"
-    ].join("");
+    var fetchXml = ["<fetch top='50'>", "  <entity name='bsd_updateestimatehandoverdate'>", "    <attribute name='bsd_error'/>", "    <attribute name='bsd_errordetail'/>", "    <attribute name='bsd_processing_pa'/>", "    <filter>", "      <condition attribute='bsd_updateestimatehandoverdateid' operator='eq' value='", Xrm.Page.data.entity.getId(), "'/>", "    </filter>", "  </entity>", "</fetch>"].join("");
     window.top.CrmFetchKit.Fetch(fetchXml, false).then(function (rs) {
         if (rs.length > 0) {
             if (rs[0].attributes.bsd_processing_pa.value == false) {
@@ -134,10 +140,77 @@ function checkPA() {
                         ishowErr = 1;
                         window.top.$ui.Confirm("Error", rs[0].attributes.bsd_errordetail.value, function () {
                             window.top.location.reload();
-                        }, null);
+                        },
+                        null);
                     }
                 }
             }
         }
     });
+}
+
+/**
+ * Checks if the current user has a specific role.
+ * @param {string} roleName The name of the security role to check.
+ * @returns {boolean} True if the user has the role, false otherwise.
+ */
+function checkUserRole(roleName) {
+    var userRoles = Xrm.Utility.getGlobalContext().userSettings.roles;
+    var hasRole = false;
+    userRoles.forEach(function (role) {
+        if (role.name === roleName) {
+            hasRole = true;
+        }
+    });
+    return hasRole;
+}
+
+/**
+ * Handles the logic when the status field changes.
+ * @param {object} executionContext The execution context from the form event.
+ */
+function onChangeStatus(executionContext) {
+    var formContext = executionContext.getFormContext();
+    var statusAttribute = formContext.getAttribute("statuscode");
+    var newStatus = statusAttribute.getValue();
+
+    // --- PLEASE VERIFY OPTION SET VALUES ---
+    // Dynamics 365 uses integer values for Option Sets.
+    // The values used here are based on common practices and existing code.
+    // Please verify them against your system's configuration.
+    var statusValues = {
+        active: 1,
+        submitted: 100000000,
+        approved: 100000001, // Value from SHOW_HIDE_LOCK
+        rejected: 100000002  // Value from SHOW_HIDE_LOCK
+    };
+
+    var isSalesManager = checkUserRole("CLVN_S&M_Sales Manager");
+    var isSeniorSaleStaff = checkUserRole("CLVN_S&M_Senior Sale Staff");
+
+    var isValidChange = true;
+    var errorMessage = "";
+
+    if (isSalesManager) {
+        if (newStatus !== statusValues.approved && newStatus !== statusValues.rejected) {
+            isValidChange = false;
+            errorMessage = "As a Sales Manager, you can only change the status to Approved or Rejected.";
+        }
+    } else if (isSeniorSaleStaff) {
+        if (newStatus !== statusValues.active && newStatus !== statusValues.submitted) {
+            isValidChange = false;
+            errorMessage = "As a Senior Sale Staff, you can only change the status to Active or Submitted.";
+        }
+    }
+    // Note: If a user has both roles, the first condition (Sales Manager) will take precedence.
+    // If a user has neither role, no validation will occur with this logic.
+
+    if (!isValidChange) {
+        formContext.ui.clearNotification("status_validation"); // Clear previous notification
+        formContext.ui.setFormNotification(errorMessage, "ERROR", "status_validation");
+        statusAttribute.setValue(_previousStatusValue); // Revert to the previous valid value
+    } else {
+        formContext.ui.clearNotification("status_validation"); // Clear notification on valid change
+        _previousStatusValue = newStatus; // Update the previous value to the new, valid one
+    }
 }

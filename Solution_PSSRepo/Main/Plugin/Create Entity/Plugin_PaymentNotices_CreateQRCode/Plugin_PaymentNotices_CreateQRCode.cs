@@ -105,7 +105,8 @@ namespace Plugin_PaymentNotices_CreateQRCode
         {
             string customerName = "KHACH HANG"; // Giá trị mặc định
             string unitName = "SAN PHAM"; // Giá trị mặc định
-
+            string projectname = "ProjectName";
+            string ordernumber = "0";
             // 1. Lấy thông tin khách hàng (Contact/Account)
             if (target.Contains("bsd_customer"))
             {
@@ -128,13 +129,30 @@ namespace Plugin_PaymentNotices_CreateQRCode
                     unitName = unit.GetAttributeValue<string>("name");
                 }
             }
-
+            if(target.Contains("bsd_project"))
+            {
+                EntityReference projectRef = target.GetAttributeValue<EntityReference>("bsd_project");
+                if (projectRef != null)
+                {
+                    Entity project = service.Retrieve(projectRef.LogicalName, projectRef.Id, new ColumnSet("bsd_name"));
+                    projectname = project.GetAttributeValue<string>("bsd_name");
+                }
+            }
+            if (target.Contains("bsd_paymentschemedetail"))
+            {
+                EntityReference insRef = target.GetAttributeValue<EntityReference>("bsd_paymentschemedetail");
+                if (insRef != null)
+                {
+                    Entity ins = service.Retrieve(insRef.LogicalName, insRef.Id, new ColumnSet("bsd_ordernumber"));
+                    ordernumber = ins.GetAttributeValue<int>("bsd_ordernumber").ToString();
+                }
+            }
             // 3. Chuyển tên khách hàng về dạng không dấu và viết hoa
             string finalCustomerName = RemoveDiacritics(customerName ?? "").ToUpper();
             string finalUnitName = (unitName ?? "").ToUpper();
-
-            // 4. Kết hợp và trả về kết quả
-            return $"{finalCustomerName} {finalUnitName}";
+            
+            // 5. Kết hợp và trả về kết quả
+            return $"{finalUnitName}_{projectname}_{finalCustomerName}_Thanh toan dot {ordernumber}";
         }
 
         /// <summary>

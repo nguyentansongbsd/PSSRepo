@@ -44,7 +44,7 @@ function DisableStatus() {
                 Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
             break;
         case "bsd_updateestimatehandoverdate":
-            if (!CheckRoleForUser("CLVN_FIN_Finance Manager"))
+            if (!CheckRoleForUser("CLVN_FIN_Finance Manager") && !CheckRoleForUser("CLVN_S&M_Sales Manager") && !CheckRoleForUser("CLVN_S&M_Senior Sale Staff"))
                 Xrm.Page.ui.controls.get("header_statuscode").setDisabled(true);
             break;
     }
