@@ -1364,8 +1364,8 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine(String.Format("- pm_balance: {0}", pm_balance));
             strMess.AppendLine(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
             strMess.AppendLine(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
-            strMess.AppendLine(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
-            //TracingSe.Trace(strMess.ToString());
+            strMess.AppendLine(String.Format("- d_inter: {0}", d_inter));
+            TracingSe.Trace(strMess.ToString());
             //Throw #######################################
             //throw new Exception(strMess.ToString());
         }
