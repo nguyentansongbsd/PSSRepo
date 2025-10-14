@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PdfSharp.Pdf.PdfDictionary;
 namespace Action_MergeFilePDF
 {
     public class Action_MergeFilePDF : IPlugin
@@ -27,33 +28,88 @@ namespace Action_MergeFilePDF
             var filers =  MergePdfFiles(files);
             context.OutputParameters["fileres"] = filers;
         }
-        public static string MergePdfFiles(string[] base64Files)
+        //public static string MergePdfFiles(string[] base64Files)
+        //{
+        //    using (MemoryStream outputStream = new MemoryStream())
+        //    {
+        //        using (PdfDocument outputDocument = new PdfDocument())
+        //        {
+        //            foreach (var base64File in base64Files)
+        //            {
+        //                byte[] pdfBytes = Convert.FromBase64String(base64File);
+
+        //                // Mở file PDF từ byte array
+        //                using (PdfDocument inputDocument = PdfReader.Open(new MemoryStream(pdfBytes), PdfDocumentOpenMode.Import))
+        //                {
+        //                    // Thêm tất cả các trang từ file PDF vào file PDF đầu ra
+        //                    for (int i = 0; i < inputDocument.PageCount; i++)
+        //                    {
+        //                        outputDocument.AddPage(inputDocument.Pages[i]);
+        //                        outputDocument.
+        //                    }
+        //                }
+        //            }
+
+        //            // Lưu file PDF đã hợp nhất vào MemoryStream
+        //            outputDocument.Save(outputStream);
+        //        }
+
+        //        // Chuyển đổi MemoryStream thành base64
+        //        return Convert.ToBase64String(outputStream.ToArray());
+        //    }
+        //}
+
+
+        public string MergePdfFiles(string[] base64Files)
         {
-            using (MemoryStream outputStream = new MemoryStream())
+            tracingService.Trace("validBase64Files:" + base64Files[0]);
+            var validBase64Files = base64Files.Where(f => !string.IsNullOrWhiteSpace(f)).ToList();
+            if (validBase64Files.Count == 0)
             {
-                using (PdfDocument outputDocument = new PdfDocument())
+                tracingService.Trace("Không có file hợp lệ nào để gộp.");
+                return string.Empty;
+            }
+            int count = 0;
+            // --- LOGIC MỚI BẮT ĐẦU TỪ ĐÂY ---
+            using (PdfDocument outputDocument = new PdfDocument())
+            {
+               
+
+                // 2. Lặp qua TẤT CẢ các file đầu vào của bạn
+                foreach (var base64File in validBase64Files)
                 {
-                    foreach (var base64File in base64Files)
+                    try
                     {
                         byte[] pdfBytes = Convert.FromBase64String(base64File);
-
-                        // Mở file PDF từ byte array
-                        using (PdfDocument inputDocument = PdfReader.Open(new MemoryStream(pdfBytes), PdfDocumentOpenMode.Import))
+                        using (MemoryStream pdfStream = new MemoryStream(pdfBytes))
+                        // Mở TẤT CẢ các file ở chế độ Import an toàn
+                        using (PdfDocument inputDocument = PdfReader.Open(pdfStream, PdfDocumentOpenMode.Import))
                         {
-                            // Thêm tất cả các trang từ file PDF vào file PDF đầu ra
-                            for (int i = 0; i < inputDocument.PageCount; i++)
+                            foreach (PdfPage page in inputDocument.Pages)
                             {
-                                outputDocument.AddPage(inputDocument.Pages[i]);
+                                outputDocument.AddPage(page);
                             }
                         }
+                       
                     }
-
-                    // Lưu file PDF đã hợp nhất vào MemoryStream
-                    outputDocument.Save(outputStream);
+                    catch (Exception ex)
+                    {
+                        tracingService.Trace($"Lỗi khi import một file PDF: {ex.Message}");
+                        throw new InvalidPluginExecutionException($"Một trong các file PDF không hợp lệ. Chi tiết: {ex.Message}", ex);
+                    }
+                    count++;
                 }
 
-                // Chuyển đổi MemoryStream thành base64
-                return Convert.ToBase64String(outputStream.ToArray());
+                
+
+               
+
+                // 4. Lưu kết quả cuối cùng
+                using (MemoryStream resultStream = new MemoryStream())
+                {
+                    outputDocument.Save(resultStream, false);
+                    return Convert.ToBase64String(resultStream.ToArray());
+                }
             }
         }
     }

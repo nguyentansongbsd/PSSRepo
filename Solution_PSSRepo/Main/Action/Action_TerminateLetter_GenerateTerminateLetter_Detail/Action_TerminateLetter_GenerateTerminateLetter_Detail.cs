@@ -32,17 +32,17 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
             this.service = this.factory.CreateOrganizationService(new Guid?(service.UserId));
             context = serviceProvider.GetService(typeof(IPluginExecutionContext)) as IPluginExecutionContext;
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-            if(context.InputParameters.Contains("userid"))
+            if (context.InputParameters.Contains("userid"))
             {
-                
+
                 string userid = context.InputParameters["userid"].ToString();
                 tracingService.Trace("user Action:" + userid);
                 EntityReference user = new EntityReference("systemuser", new Guid(userid));
                 this.service = (IOrganizationService)factory.CreateOrganizationService(user.Id);
-            }    
+            }
             ((ITracingService)serviceProvider.GetService(typeof(ITracingService))).Trace(string.Format("Context Depth {0}", (object)service.Depth));
             var entity1 = this.service.Retrieve("salesorder", new Guid(this.context.InputParameters["id"].ToString()), new ColumnSet(true));
-            if (context.InputParameters.Contains("_date") && context.InputParameters["_date"].ToString()!="")
+            if (context.InputParameters.Contains("_date") && context.InputParameters["_date"].ToString() != "")
                 _date = Convert.ToDateTime(context.InputParameters["_date"].ToString());
             var query_bsd_name = "GENTerminationLetter";
             var query = new QueryExpression("bsd_process");
@@ -102,9 +102,9 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                 }
                 Entity installment = null;
                 if (this.check_overDuedate_pmShcDtl(dtlFromOpentryId, ref installment) || num2 > 60)
-                { 
+                {
                     #region khởi tạo entity generate letter detail
-                        Entity enGenDetail = new Entity("bsd_genterminationletterdetail");
+                    Entity enGenDetail = new Entity("bsd_genterminationletterdetail");
                     enGenDetail["bsd_genterminationletter"] = new EntityReference("bsd_genterminationletter", new Guid(this.context.InputParameters["bsd_generate_termination_letter"].ToString()));
                     #endregion
                     try
@@ -188,25 +188,36 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                             ((EntityReference)entity1["bsd_paymentscheme"]).Id, new ColumnSet(true));
                         var bsd_totalpercent = ((decimal)entity1["bsd_totalpercent"]);
                         var bsd_spforfeiture = (decimal)en_bsd_paymentscheme["bsd_spforfeiture"];
-                        if (bsd_totalpercent <= bsd_spforfeiture)
-                        {
-                            var bsd_penaty = ((Money)entity1["bsd_depositamount"]).Value;
-                            var installments = get_all_pmSchDtl_fromOpentryID(entity1.Id);
-                            for (var i = 0; i < installments.Entities.Count; i++)
-                            {
-                                tracingService.Trace($"{installments[i].Id}");
-                                var bsd_amountwaspaid = installments[i].Contains("bsd_amountwaspaid") ? ((Money)installments[i]["bsd_amountwaspaid"]).Value : 0;
-                                tracingService.Trace($"{bsd_amountwaspaid}");
-                                bsd_penaty += bsd_amountwaspaid;
-                            }
-                            tracingService.Trace("bsd_penaty " + bsd_penaty.ToString());
-                            entity3["bsd_penaty"] = new Money(bsd_penaty);
-                        }
-                        else
-                        {
-                            entity3["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)entity1["bsd_totalamountlessfreight"]).Value);
 
-                        }
+                        #region cthuc mới 9/9/2025
+
+                        #endregion
+                        //if (bsd_totalpercent <= bsd_spforfeiture)
+                        //{
+                        //    var bsd_penaty = ((Money)entity1["bsd_depositamount"]).Value;
+                        //    var installments = get_all_pmSchDtl_fromOpentryID(entity1.Id);
+                        //    for (var i = 0; i < installments.Entities.Count; i++)
+                        //    {
+                        //        tracingService.Trace($"{installments[i].Id}");
+                        //        var bsd_amountwaspaid = installments[i].Contains("bsd_amountwaspaid") ? ((Money)installments[i]["bsd_amountwaspaid"]).Value : 0;
+                        //        tracingService.Trace($"{bsd_amountwaspaid}");
+                        //        bsd_penaty += bsd_amountwaspaid;
+                        //    }
+                        //    tracingService.Trace("bsd_penaty " + bsd_penaty.ToString());
+                        //    entity3["bsd_penaty"] = new Money(bsd_penaty);
+                        //}
+                        //else
+                        //{
+                        //    entity3["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)entity1["bsd_totalamountlessfreight"]).Value);
+
+                        //}
+                        double percent =0.2;
+                        var money = ((Money)entity1["bsd_totalamountlessfreight"]).Value *  (decimal)percent;
+                        tracingService.Trace("(20 / 100 " + money);
+                        tracingService.Trace("bsd_totalamountlessfreight * 20% " + money.ToString());
+                        entity3["bsd_penaty"] = new Money(money);
+                        tracingService.Trace("bsd_totalamountlessfreight " + ((Money)entity1["bsd_totalamountlessfreight"]).Value.ToString());
+                        tracingService.Trace("bsd_penaty " + ((Money)entity3["bsd_penaty"]).Value.ToString());
                         #endregion
                         #region  Overdue Interest
                         tracingService.Trace("installment name = " + installment["bsd_name"].ToString());
@@ -262,9 +273,51 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         tracingService.Trace($"totalday: {((int)((_date - bsd_duedate).TotalDays) - bsd_gracedays)}");
                         tracingService.Trace($"bsd_overdue_interest: {bsd_termsinterestpercentage * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1)}");
                         tracingService.Trace($"bsd_balance:{((Money)installment["bsd_balance"]).Value}");
+
+
+                        var bsd_overdue_interest2 = ((Money)entity3["bsd_overdue_interest_money"]).Value;
+                        tracingService.Trace(" bsd_overdue_interest_money: " + bsd_overdue_interest2.ToString());
+                        #region Cộng thêm lãi chưa thanh toán các đợt trước và lãi đợt đang xét đó nếu có
+                        var query_bsd_ordernumber = (int)installment["bsd_ordernumber"];
+                        tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber.ToString());
+                        var query_bsd_optionentry = installment.GetAttributeValue<EntityReference>("bsd_optionentry").Id.ToString();
+                        tracingService.Trace("query_bsd_ordernumber: " + query_bsd_ordernumber);
+                        tracingService.Trace("query_bsd_optionentry: " + query_bsd_optionentry.ToString());
+                        tracingService.Trace("lấy các đợt trước đó để + thêm lãi chưa thanh toán cho bsd_overdue_interest");
+                        var query2 = new QueryExpression("bsd_paymentschemedetail")
+                        {
+                            ColumnSet = new ColumnSet(true),
+                            Criteria =
+                                    {
+                                        Conditions =
+                                        {
+                                            new ConditionExpression("bsd_ordernumber", ConditionOperator.LessThan, query_bsd_ordernumber),
+                                            new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry)
+                                        }
+                                    }
+                        };
+                        var rsIns = this.service.RetrieveMultiple((QueryBase)query2);
+                        foreach (var rs in rsIns.Entities)
+                        {
+                            tracingService.Trace("ordernumber: " + ((int)rs["bsd_ordernumber"]));
+                            var bsd_interestchargeremaining = rs.Contains("bsd_interestchargeremaining") ? ((Money)rs["bsd_interestchargeremaining"]).Value : 0;
+                            tracingService.Trace("bsd_interestchargeremaining: " + bsd_interestchargeremaining.ToString());
+                            bsd_overdue_interest2 += bsd_interestchargeremaining;
+                        }
+                        entity3["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
+                        tracingService.Trace("bsd_overdue_interest_money " + ((Money)entity3["bsd_overdue_interest_money"]).Value.ToString());
+
+                        tracingService.Trace("check và cộng thêm lãi đợt đang xét nếu có");
+                        var bsd_interestchargeremaining_current = installment.Contains("bsd_interestchargeremaining") ? ((Money)installment["bsd_interestchargeremaining"]).Value : 0;
+                        tracingService.Trace("bsd_interestchargeremaining_current: " + bsd_interestchargeremaining_current.ToString());
+                        bsd_overdue_interest2 += bsd_interestchargeremaining_current;
+                        entity3["bsd_overdue_interest_money"] = new Money(bsd_overdue_interest2);
+                        tracingService.Trace("bsd_overdue_interest_money " + ((Money)entity3["bsd_overdue_interest_money"]).Value.ToString());
+
+                        #endregion
                         #endregion
                         entity3["bsd_generateterminationletter"] = enGenDetail["bsd_genterminationletter"];
-                        var id =this.service.Create(entity3);
+                        var id = this.service.Create(entity3);
                         #region map và create entity generate letter detail
                         //tracingService.Trace("bsd_terminateletter:"+id.ToString());
                         //enGenDetail["bsd_optionentry"] = new EntityReference(entity1.LogicalName, entity1.Id);
@@ -276,14 +329,14 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                     catch (Exception ex)
                     {
                         tracingService.Trace($"Error: {ex.Message}");
-                        enGenDetail["bsd_errordetail"]=ex.Message;
+                        enGenDetail["bsd_errordetail"] = ex.Message;
                         enGenDetail["bsd_optionentry"] = new EntityReference(entity1.LogicalName, entity1.Id);
                         enGenDetail["bsd_errordetail"] = ex.Message;
                         enGenDetail["statuscode"] = new OptionSetValue(100000001); // Error
                         this.service.Create(enGenDetail);
-                        
+
                     }
-                   
+
                 }
             }
         }
@@ -542,13 +595,18 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
         private EntityCollection get_pmSchDtl_fromOpentryID(Guid opID)
         {
             QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet = new ColumnSet(new string[7]
+            query.ColumnSet = new ColumnSet(new string[10]
             {
         "bsd_duedate",
         "statuscode",
         "bsd_balance",
         "bsd_actualgracedays",
-        "bsd_amountofthisphase","bsd_name","bsd_interestchargeper"
+        "bsd_amountofthisphase",
+                "bsd_name",
+                "bsd_interestchargeper",
+                "bsd_ordernumber",
+                "bsd_optionentry",
+                "bsd_interestchargeremaining"
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opID));

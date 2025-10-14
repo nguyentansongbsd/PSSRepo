@@ -1089,9 +1089,9 @@ namespace Action_ConfirmPayment_Confirm
 
                 //>>> Trace Test ===================================================================================
                 strMess.AppendLine(String.Format(string.Format("+ d_sumTmp_IC_amount: {0}", d_sumTmp_IC_amount)));
-                var result = CheckInterestCharge_New(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
-                strMess.AppendLine(String.Format(string.Format("####. result function CheckInterestCharge_New")));
-                strMess.AppendLine(result.message);
+                //var result = CheckInterestCharge_New(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
+                //strMess.AppendLine(String.Format(string.Format("####. result function CheckInterestCharge_New")));
+                //strMess.AppendLine(result.message);
                 //==================================================================================================
 
 
@@ -1364,8 +1364,8 @@ namespace Action_ConfirmPayment_Confirm
             strMess.AppendLine(String.Format("- pm_balance: {0}", pm_balance));
             strMess.AppendLine(String.Format("- bsd_interestchargeamount: {0}", psd_bsd_interestchargeamount));
             strMess.AppendLine(String.Format("- bsd_interestwaspaid: {0}", psd_bsd_interestwaspaid));
-            strMess.AppendLine(String.Format("- bsd_actualgracedays: {0}", psd_bsd_interestwaspaid));
-            //TracingSe.Trace(strMess.ToString());
+            strMess.AppendLine(String.Format("- d_inter: {0}", d_inter));
+            TracingSe.Trace(strMess.ToString());
             //Throw #######################################
             //throw new Exception(strMess.ToString());
         }

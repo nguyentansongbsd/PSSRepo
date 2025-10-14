@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,7 +79,7 @@ namespace Action_UnShareSaleTeam
                           <attribute name='name' />
                           <attribute name='teamid' />
                           <filter>
-                            <condition attribute='name' operator='like' value='%-SALE-TEAM' />
+                            <condition attribute='name' operator='eq' value='cl' />
                           </filter>
                         </link-entity>
                         <filter type='and'>
@@ -87,10 +88,56 @@ namespace Action_UnShareSaleTeam
                         </filter>
                       </entity>
                     </fetch>";
-                
+                #region check xem có thuộc logic share team CL không
+                if (entityName == "contact") //nếu contact là primary contact của account có bsd_businesstypesys là 100000003 || 100000002 thì không unshare
+                {
+                    var demo_bsd_businesstypesys_1 = 100000003;
+                    var demo_bsd_businesstypesys_2 = 100000002;
+
+                    var query = new QueryExpression("contact")
+                    {
+                        ColumnSet = new ColumnSet("contactid"),
+                        LinkEntities =
+                                        {
+                                            new LinkEntity("contact", "account", "contactid", "primarycontactid", JoinOperator.Inner)
+                                            {
+                                                EntityAlias = "demo",
+                                                Columns = new ColumnSet("bsd_businesstypesys"),
+                                                LinkCriteria =
+                                                {
+                                                    FilterOperator = LogicalOperator.Or,
+                                                    Conditions =
+                                                    {
+                                                        new ConditionExpression("bsd_businesstypesys", ConditionOperator.ContainValues, demo_bsd_businesstypesys_1, demo_bsd_businesstypesys_2)
+                                                    }
+                                                }
+                                            }
+                                        }
+                    };
+                    var contactids = service.RetrieveMultiple(query).Entities.Select(e => e.Id.ToString()).ToList(); 
+                    traceService.Trace($"Số lượng contact thuộc logic share team CL: {contactids.Count()}");
+                    traceService.Trace($"Danh sách contact thuộc logic share team CL: {string.Join(", ", contactids)}");
+                    if (contactids.Contains(entityId.ToString()))
+                    {
+                        traceService.Trace(" KHCN thuộc logic share CL, không thực hiện unshare team CL");
+                        return;
+                    }
+                }
+                if(entityName=="account")
+                {
+                    var account= service.Retrieve("account", entityId, new ColumnSet(true));
+                    if(account.Contains("bsd_businesstypesys") &&( 
+                         ((OptionSetValueCollection)account["bsd_businesstypesys"]).Contains(new OptionSetValue(100000002))||((OptionSetValueCollection)account["bsd_businesstypesys"]).Contains(new OptionSetValue(100000003))))
+                    {
+                        traceService.Trace(" KHDN thuộc logic share CL, không thực hiện unshare team CL");
+                        return;
+                    }
+                }    
+
+                #endregion
                 EntityCollection sharedTeams = service.RetrieveMultiple(new FetchExpression(fetchXml));
                 traceService.Trace($"Tìm thấy {sharedTeams.Entities.Count} team phù hợp để unshare.");
-                
+
                 // BƯỚC 4: Thu hồi quyền truy cập của các team đã lọc được
                 foreach (var poaEntity in sharedTeams.Entities)
                 {
@@ -99,13 +146,13 @@ namespace Action_UnShareSaleTeam
                     string teamName = (string)((AliasedValue)poaEntity["t.name"]).Value;
 
                     traceService.Trace($"Bắt đầu thu hồi quyền của team: '{teamName}' (ID: {teamId}).");
-                    
+
                     RevokeAccessRequest revokeRequest = new RevokeAccessRequest
                     {
                         Target = targetRecord,
                         Revokee = new EntityReference("team", teamId)
                     };
-                    
+
                     service.Execute(revokeRequest);
                     traceService.Trace($"Đã thu hồi quyền truy cập của team '{teamName}'.");
                 }

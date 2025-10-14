@@ -62,7 +62,6 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                         tracingService.Trace($"UpdateOPDateFromMasterToUnit");
                         UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
                         AprroveDetail(item);
-
                         break;
                     default: //khác Update Only for Units
                         if(!en.Contains("bsd_optionentry"))

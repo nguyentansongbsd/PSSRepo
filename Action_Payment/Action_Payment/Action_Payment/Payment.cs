@@ -752,9 +752,9 @@ namespace Action_Payment
 
                 //>>> Trace Test ===================================================================================
                 TracingSe.Trace(String.Format(string.Format("+ d_sumTmp_IC_amount: {0}", d_sumTmp_IC_amount)));
-                var result = CheckInterestCharge_New(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
-                TracingSe.Trace(String.Format(string.Format("####. result function CheckInterestCharge_New")));
-                TracingSe.Trace(result.message);
+                //var result = CheckInterestCharge_New(service, ref d_inter, ref i_lateday, PaymentDetailEn, paymentEn, pm_amountpay, optionentryEn, ref i_intereststartdate);
+                //TracingSe.Trace(String.Format(string.Format("####. result function CheckInterestCharge_New")));
+                //TracingSe.Trace(result.message);
                 //==================================================================================================
 
 

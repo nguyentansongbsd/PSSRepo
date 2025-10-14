@@ -4,6 +4,8 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing.Pictures;
+using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Xrm.Sdk;
@@ -32,14 +34,120 @@ namespace Action_MappingParamToWord
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             string base64Input = context.InputParameters["base64"].ToString();
             string jsonInput = context.InputParameters["lstParamValue"].ToString();
+
             PrintContentControlsFromBase64(base64Input, jsonInput);
             var rs = ReplaceByRemovingControls(base64Input, jsonInput);
             rs = ReplaceTextInDocument(rs, jsonInput);
 
+            // Kiểm tra xem có tham số QR code và tọa độ không
+            if (context.InputParameters.Contains("qrcodebase64") && !string.IsNullOrEmpty(context.InputParameters["qrcodebase64"].ToString()))
+            {
+                string qrcodebase64 = context.InputParameters["qrcodebase64"].ToString(); ;
+                string qrText = "";
+
+                rs = MapQRcode(qrcodebase64, rs, qrText);
+            }
             //AnalyzeTemplate(base64Input);
             context.OutputParameters["result"] = rs;
 
         }
+        private string MapQRcode(string qrCodeBase64, string base64Word, string textToAdd)
+        {
+            tracingService.Trace("Adding QR code and text to footer");
+            try
+            {
+                // Kích thước ảnh (ví dụ: 1x1 inch)
+                long imageWidthEmu = 914400L;
+                long imageHeightEmu = 914400L;
+
+                byte[] wordBytes = Convert.FromBase64String(base64Word);
+                byte[] qrCodeBytes = Convert.FromBase64String(qrCodeBase64);
+
+                using (var stream = new MemoryStream())
+                {
+                    stream.Write(wordBytes, 0, wordBytes.Length);
+
+                    using (var wordDoc = WordprocessingDocument.Open(stream, true))
+                    {
+                        var mainPart = wordDoc.MainDocumentPart;
+
+                        // 1. Tìm hoặc tạo FooterPart
+                        FooterPart footerPart = mainPart.FooterParts.FirstOrDefault();
+                        if (footerPart == null)
+                        {
+                            tracingService.Trace("No default footer found. Creating a new one.");
+                            footerPart = mainPart.AddNewPart<FooterPart>();
+                            string footerPartId = mainPart.GetIdOfPart(footerPart);
+
+                            // Tạo footer rỗng
+                            footerPart.Footer = new Footer();
+
+                            // Liên kết footer với section
+                            var sectionProperties = mainPart.Document.Body.Descendants<SectionProperties>().FirstOrDefault();
+                            if (sectionProperties == null)
+                            {
+                                sectionProperties = new SectionProperties();
+                                mainPart.Document.Body.Append(sectionProperties);
+                            }
+                            sectionProperties.RemoveAllChildren<FooterReference>();
+                            sectionProperties.Append(new FooterReference() { Type = HeaderFooterValues.Default, Id = footerPartId });
+                        }
+
+                        // 2. Thêm ảnh vào FooterPart
+                        ImagePart imagePart = footerPart.AddImagePart(ImagePartType.Png);
+                        using (var imageStream = new MemoryStream(qrCodeBytes))
+                        {
+                            imagePart.FeedData(imageStream);
+                        }
+                        var relationshipId = footerPart.GetIdOfPart(imagePart);
+
+                        // 3. Tạo cấu trúc Drawing cho ảnh inline
+                        var imageElement = new Drawing(
+                            new Inline(
+                                new Extent() { Cx = imageWidthEmu, Cy = imageHeightEmu },
+                                new EffectExtent() { LeftEdge = 0L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
+                                new DocProperties() { Id = (UInt32Value)1U, Name = "QR Code" },
+                                new NonVisualGraphicFrameDrawingProperties(new DocumentFormat.OpenXml.Drawing.GraphicFrameLocks() { NoChangeAspect = true }),
+                                new DocumentFormat.OpenXml.Drawing.Graphic(
+                                    new DocumentFormat.OpenXml.Drawing.GraphicData(
+                                        new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
+                                            new NonVisualPictureProperties(
+                                                new NonVisualDrawingProperties() { Id = (UInt32Value)0U, Name = "qrcode.png" },
+                                                new NonVisualPictureDrawingProperties()),
+                                            new BlipFill(
+                                                new DocumentFormat.OpenXml.Drawing.Blip() { Embed = relationshipId },
+                                                new DocumentFormat.OpenXml.Drawing.Stretch(new DocumentFormat.OpenXml.Drawing.FillRectangle())),
+                                            new ShapeProperties(
+                                                new DocumentFormat.OpenXml.Drawing.Transform2D(
+                                                    new DocumentFormat.OpenXml.Drawing.Offset() { X = 0L, Y = 0L },
+                                                    new DocumentFormat.OpenXml.Drawing.Extents() { Cx = imageWidthEmu, Cy = imageHeightEmu }),
+                                                new DocumentFormat.OpenXml.Drawing.PresetGeometry(new DocumentFormat.OpenXml.Drawing.AdjustValueList()) { Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle })))
+                                    { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                            ) { DistanceFromTop = (UInt32Value)0U, DistanceFromBottom = (UInt32Value)0U, DistanceFromLeft = (UInt32Value)0U, DistanceFromRight = (UInt32Value)0U });
+
+                        // 4. Tạo Paragraph mới trong footer và thêm ảnh, text vào
+                        var paragraph = new Paragraph();
+                        // Căn lề phải cho đẹp
+                        paragraph.Append(new ParagraphProperties(new Justification() { Val = JustificationValues.Right }));
+                        // Thêm ảnh
+                        paragraph.Append(new Run(imageElement));
+                        // Thêm text
+                        paragraph.Append(new Run(new Text(" " + textToAdd) { Space = SpaceProcessingModeValues.Preserve }));
+
+                        // 5. Thêm paragraph vào footer
+                        footerPart.Footer.Append(paragraph);
+                        footerPart.Footer.Save();
+                    }
+                    return Convert.ToBase64String(stream.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                tracingService.Trace($"Error: {ex.Message}");
+                throw;
+            }
+        }
+
         private string ReplaceTextInDocument(string base64Word, string jsonData)
         {
             try
@@ -525,7 +633,6 @@ namespace Action_MappingParamToWord
                 )
             );
         }
+
     }
 }
-
-

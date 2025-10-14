@@ -60,7 +60,7 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_bulksendmailmanager":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    var rs = GetDetailBulkMailManager();
+                    rs = GetDetailBulkMailManager();
                     foreach (var item in rs.Entities)
                     {
                         Run_ShareTemProject(false, new List<string> { "FINANCE-TEAM" }, item);
@@ -125,6 +125,26 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_updatefuldetail":
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    break;
+                case "bsd_sharecustomerproject":
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-ADMIN" });
+                    #region Share bsd_sharecustomerproject
+                    Entity enMaster = service.Retrieve("bsd_sharecustomers", ((EntityReference)target["bsd_sharecustomer"]).Id, new ColumnSet(true));
+                    traceService.Trace(target.LogicalName);
+                    Entity enShare = enMaster;
+                    var teamShares = new List<string> { "FINANCE-TEAM", "SALE-MGT", "CCR-TEAM", "SALE-ADMIN" };
+                    if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+                    {
+                        foreach (Entity team in rs.Entities)
+                        {
+                            if (teamShares != null)
+                            {
+                                if (teamShares.Contains(((string)team["name"]).Replace($"{projectCode}-", "")))
+                                    ShareTeams(enShare.ToEntityReference(), team.ToEntityReference(), true);
+                            }
+                        }
+                    }
+                    #endregion
                     break;
                 case "bsd_handovernotice":
                     break;
@@ -360,6 +380,10 @@ namespace Plugin_AutoShareRecord
                     enMaster = service.Retrieve(enMasterRef.LogicalName, enMasterRef.Id, new ColumnSet(true));
                     enProjectRef2 = (EntityReference)enMaster["bsd_project"];
                     break;
+                case "bsd_sharecustomerproject":
+                    enProjectRef2 = (EntityReference)en["bsd_project"];
+                    break;
+
 
 
             }

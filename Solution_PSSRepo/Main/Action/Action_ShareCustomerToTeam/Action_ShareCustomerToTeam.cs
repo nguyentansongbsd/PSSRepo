@@ -290,6 +290,7 @@ namespace Action_ShareCustomerToTeam
                         i.TeamID = enTeam.Id.ToString();
                         i.TeamName = enTeam["name"].ToString().Split('-').ToList()[0];
                         if (i.TeamName == "pssvn") continue;
+                        if(i.TeamName =="cl") continue;
                         if (list.Any(x => x.TeamName == i.TeamName) == false)
                             list.Add(i);
                     }
