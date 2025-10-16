@@ -32,10 +32,11 @@ namespace Plugin_Installment_Delete
 
                 Entity enInstallment = (Entity)this.context.PreEntityImages["preImage"];
                 if (!enInstallment.Contains("bsd_paymentscheme") || !enInstallment.Contains("bsd_ordernumber")) return;
+                if (!enInstallment.Contains("bsd_quotation") && !enInstallment.Contains("bsd_reservation") && !enInstallment.Contains("bsd_optionentry")) return;
 
                 int currentOrderNumber = (int)enInstallment["bsd_ordernumber"];
                 tracingService.Trace("Current ordernum: " + currentOrderNumber);
-                EntityCollection listPMDs = getPaymentSchemeDetails(((EntityReference)enInstallment["bsd_paymentscheme"]).Id);
+                EntityCollection listPMDs = getPaymentSchemeDetails(((EntityReference)enInstallment["bsd_paymentscheme"]).Id, enInstallment);
                 if (listPMDs.Entities.Count <= 0) return;
                 int lastOrderNumber = (int)listPMDs.Entities.LastOrDefault()["bsd_ordernumber"];
                 tracingService.Trace("Last ordernum: " + lastOrderNumber);
@@ -66,10 +67,14 @@ namespace Plugin_Installment_Delete
                 throw ex;
             }
         }
-        private EntityCollection getPaymentSchemeDetails(Guid paymentSchemeId)
+        private EntityCollection getPaymentSchemeDetails(Guid paymentSchemeId, Entity enInstallment)
         {
             try
             {
+                string conditionTransaction = string.Empty;
+                if (enInstallment.Contains("bsd_quotation")) conditionTransaction = $@"<condition attribute=""bsd_quotation"" operator=""eq"" value=""{((EntityReference)enInstallment["bsd_quotation"]).Id}"" />";
+                else if (enInstallment.Contains("bsd_reservation")) conditionTransaction = $@"<condition attribute=""bsd_reservation"" operator=""eq"" value=""{((EntityReference)enInstallment["bsd_reservation"]).Id}"" />";
+                else if (enInstallment.Contains("bsd_optionentry")) conditionTransaction = $@"<condition attribute=""bsd_optionentry"" operator=""eq"" value=""{((EntityReference)enInstallment["bsd_optionentry"]).Id}"" />";
                 var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 <fetch>
                   <entity name=""bsd_paymentschemedetail"">
@@ -80,6 +85,7 @@ namespace Plugin_Installment_Delete
                     <filter>
                       <condition attribute=""statecode"" operator=""eq"" value=""0"" />
                       <condition attribute=""bsd_paymentscheme"" operator=""eq"" value=""{paymentSchemeId}"" />
+                      {conditionTransaction}
                     </filter>
                     <order attribute=""bsd_ordernumber"" />
                   </entity>
