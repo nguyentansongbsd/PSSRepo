@@ -60,6 +60,7 @@
     <Content Include="HTML\report\bsd_SelectReport_SaleOrder.html" />
     <Content Include="HTML\report\bsd_Senique_Total_Payment_Confirmation_SPA.html" />
     <Content Include="HTML\report\bsd_Simulation_Report_InOptionEntryForm.html" />
+    <Content Include="JS\%24_base_query\base_query_data.js" />
     <Content Include="JS\bsd_account.js" />
     <Content Include="JS\bsd_btnDiscountSpecialForm.js" />
     <Content Include="JS\bsd_btnEmailView.js" />
@@ -84,6 +85,8 @@
     <Content Include="JS\Option Entry\bsd_btnOptionEntryForm.js" />
     <Content Include="HTML\report\bsd_Simulation.html" />
     <Content Include="JS\Payments\Report\bsd_payment_report_05_08_2020.js" />
+    <Content Include="JS\Project\projectform.js" />
+    <Content Include="JS\Quotation Reservation\bsd_btnQuoteReservationForm.js" />
     <Content Include="JS\Quotation Reservation\bsd_quote_form.js" />
     <Content Include="JS\Terminate letter\bsd_btnTerminateLetterView,js.js" />
     <Content Include="JS\Terminate letter\bsd_GenTerminationLetter_form.js" />

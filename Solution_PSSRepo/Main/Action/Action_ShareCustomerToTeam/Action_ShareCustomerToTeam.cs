@@ -1,5 +1,34 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿﻿using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
+/*
+ * Plugin: Action_ShareCustomerToTeam
+ * Tác giả:
+ * Ngày:
+ * 
+ * **Mô tả & Chức năng:**
+ * - Plugin này được kích hoạt bởi một Custom Action có tên là `bsd_Action_ShareCustomerToTeam`.
+ * - Nhiệm vụ chính là quản lý việc chia sẻ (share) bản ghi khách hàng (Contact hoặc Account) cho các Team nghiệp vụ của một dự án.
+ * - Plugin có nhiều luồng hoạt động khác nhau tùy thuộc vào tham số đầu vào.
+ * 
+ * **Các luồng chính:**
+ * 1.  **Tạo Yêu Cầu Chia Sẻ (từ Web Resource `bsd_searchcustomer.html`):**
+ *     - Khi người dùng tìm kiếm và chọn khách hàng để chia sẻ, Web Resource sẽ gọi Action này.
+ *     - Plugin kiểm tra xem người dùng thuộc bao nhiêu team dự án.
+ *     - Nếu thuộc nhiều team, plugin sẽ trả về danh sách các team dự án để người dùng chọn (Output: `entityColl`).
+ *     - Sau khi người dùng chọn team, Web Resource gọi lại Action với `idTeam` và `CreateShareCustomer=true`. Plugin sẽ tạo các bản ghi `bsd_sharecustomers` và `bsd_sharecustomerproject` để lưu lại yêu cầu chia sẻ.
+ * 
+ * 2.  **Tự động Chia Sẻ (từ Form Contact/Account):**
+ *     - Khi người dùng bấm nút "Sharing" trên form, nếu người dùng chỉ thuộc một team dự án duy nhất, plugin sẽ tự động chia sẻ khách hàng đó cho các team nghiệp vụ liên quan (CCR, FINANCE, SALE-MGT, SALE-ADMIN) của dự án đó.
+ * 
+ * 3.  **Xử lý Phê duyệt Yêu cầu Chia sẻ:**
+ *     - Khi một bản ghi `bsd_sharecustomers` được phê duyệt, một tiến trình khác (workflow/flow) sẽ gọi Action này với tham số `sharecusid`.
+ *     - Plugin sẽ đọc các `bsd_sharecustomerproject` liên quan, xác định các dự án, và chia sẻ bản ghi khách hàng cho các team nghiệp vụ của các dự án đó.
+ * 
+ * **Thành phần liên quan bên ngoài:**
+ * - **Custom Action:** `bsd_Action_ShareCustomerToTeam`
+ * - **Web Resources:** `bsd_searchcustomer.html`, `bsd_button_action.js` (trên form Contact/Account).
+ * - **Custom Entities:** `bsd_sharecustomers`, `bsd_sharecustomerproject`, `bsd_project`.
+ */
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;

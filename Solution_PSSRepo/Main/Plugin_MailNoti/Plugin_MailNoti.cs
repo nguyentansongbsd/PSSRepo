@@ -6,6 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// <summary>
+// Plugin này có chức năng tự động gửi email thông báo khi có sự thay đổi trạng thái trên các bản ghi Quote hoặc Sales Order.
+// - Trigger: Plugin được kích hoạt khi một bản ghi Quote hoặc Sales Order được cập nhật.
+// - Logic chính:
+//   1. Kiểm tra entity và trạng thái của bản ghi được cập nhật (Quote hoặc Sales Order).
+//   2. Dựa trên trạng thái, xác định email template và team nhận thông báo tương ứng (ví dụ: FINANCE-TEAM, CCR-TEAM).
+//   3. Lấy các thông tin cần thiết từ bản ghi và các entity liên quan như:
+//      - Tên dự án, mã dự án.
+//      - Tên sản phẩm (unit).
+//      - Tên khách hàng.
+//   4. Lấy URL của bản ghi từ cấu hình (bsd_configgolive) để chèn vào email.
+//   5. Tạo một bản ghi Email mới:
+//      - Điền chủ đề và nội dung từ template, thay thế các placeholder bằng dữ liệu đã lấy.
+//      - Thiết lập người gửi (From) là người dùng thực hiện hành động.
+//      - Lấy danh sách tất cả thành viên trong team đích và thêm vào danh sách người nhận (To).
+//   6. Lưu bản ghi email để hệ thống tự động gửi đi.
+// </summary>
 namespace Plugin_MailNoti
 {
     public class Plugin_MailNoti : IPlugin

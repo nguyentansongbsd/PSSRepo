@@ -1,4 +1,4 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -88,10 +88,24 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdate":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
+                    {
+                        Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    }
+                    else
+                    {
+                        Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    }
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
-                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
+                    {
+                        Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    }
+                    else
+                    {
+                        Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    }
                     break;
                 case "bsd_bulkwaiver":
                 case "bsd_bulkwaiverdetail":
@@ -148,6 +162,28 @@ namespace Plugin_AutoShareRecord
                     break;
                 case "bsd_handovernotice":
                     break;
+            }
+        }
+
+        public bool UserHasRole(Guid userId, string roleName)
+        {
+            traceService.Trace($"Checking for role '{roleName}' for user '{userId}'.");
+            var query = new QueryExpression("role");
+            query.ColumnSet.AddColumn("name");
+            var userLink = query.AddLink("systemuserroles", "roleid", "roleid");
+            var roleLink = userLink.AddLink("systemuser", "systemuserid", "systemuserid");
+            roleLink.LinkCriteria.AddCondition("systemuserid", ConditionOperator.Equal, userId);
+            query.Criteria.AddCondition("name", ConditionOperator.Equal, roleName);
+
+            try
+            {
+                EntityCollection result = service.RetrieveMultiple(query);
+                return result.Entities.Any();
+            }
+            catch (Exception ex)
+            {
+                traceService.Trace($"Error in UserHasRole: {ex.Message}");
+                return false;
             }
         }
 

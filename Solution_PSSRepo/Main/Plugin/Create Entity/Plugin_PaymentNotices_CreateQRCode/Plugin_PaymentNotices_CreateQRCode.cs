@@ -16,7 +16,10 @@ namespace Plugin_PaymentNotices_CreateQRCode
         IOrganizationServiceFactory factory = null;
         IOrganizationService service = null;
         ITracingService tracingService = null;
-        
+        Entity projectBankAccount = null;
+        bool isGenQR=true;
+        bool isExistBankInfor=false;
+        string error;
         void IPlugin.Execute(IServiceProvider serviceProvider)
         {
 
@@ -34,7 +37,13 @@ namespace Plugin_PaymentNotices_CreateQRCode
             string bankbin = "";
             // Lấy nội dung cho mã QR từ thông tin Khách hàng và Sản phẩm (Unit)
             string purpose = GetContent(service, enTarget);
+            if(isGenQR==false)
+                return;
             GetBankInfor(enProject, ref banknumber, ref bankbin);
+            if(isExistBankInfor==false)
+            {
+                throw new Exception("Print QR Bank = true but not found Bank Account Default. Please check again!");
+            }
             QRCodeGenerator qrGenerator = new QRCodeGenerator(); 
             
             QRCodeData qrCodeInfo = qrGenerator.CreateQrCode(GenerateVietQRpayload(bankbin,banknumber,purpose), QRCodeGenerator.ECCLevel.Q);
@@ -48,12 +57,14 @@ namespace Plugin_PaymentNotices_CreateQRCode
             // Cập nhật lại bản ghi vừa tạo với mã QR.
             Entity entityToUpdate = new Entity(enTarget.LogicalName, enTarget.Id);
             entityToUpdate["bsd_qrcode"] = imageBytes; // Đảm bảo trường này có kiểu 'Multiple Lines of Text'.
+
+            #region ké code để gắn project bank account default
+            entityToUpdate["bsd_projectbankaccount"]=projectBankAccount.ToEntityReference();
+            #endregion
             service.Update(entityToUpdate);
         }
         public void GetBankInfor(Entity enproject,ref string banknumber,ref string bankbin)
         {
-            // Giả định tên logic của các thực thể và trường.
-            // Bạn cần thay đổi cho phù hợp với hệ thống của bạn.
             string bankAccountEntityName = "bsd_projectbankaccount";
             string projectLookupFieldOnBankAccount = "bsd_project";
             string isDefaultField = "bsd_default";
@@ -80,7 +91,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
             if (results.Entities.Count > 0)
             {
                 Entity defaultBankAccount = results.Entities.First();
-
+                projectBankAccount = defaultBankAccount;
                 // Lấy banknumber từ Bank Account
                 if (defaultBankAccount.Contains(bankAccountNumberField))
                 {
@@ -92,7 +103,10 @@ namespace Plugin_PaymentNotices_CreateQRCode
                 {
                     bankbin = (string)((AliasedValue)defaultBankAccount[$"{bankAlias}.{bankBinField}"]).Value;
                 }
+                isExistBankInfor = true;
             }
+
+            
         }
 
         /// <summary>
@@ -107,6 +121,24 @@ namespace Plugin_PaymentNotices_CreateQRCode
             string unitName = "SAN PHAM"; // Giá trị mặc định
             string projectname = "ProjectName";
             string ordernumber = "0";
+            if (target.Contains("bsd_project"))
+            {
+                EntityReference projectRef = target.GetAttributeValue<EntityReference>("bsd_project");
+                if (projectRef != null)
+                {
+                    Entity project = service.Retrieve(projectRef.LogicalName, projectRef.Id, new ColumnSet("bsd_name", "bsd_print_qr_bank"));
+                    projectname = project.GetAttributeValue<string>("bsd_name");
+                    if(project.Contains("bsd_print_qr_bank"))
+                    {
+                        isGenQR = project.GetAttributeValue<bool>("bsd_print_qr_bank");
+                        tracingService.Trace("isGenQR = " + isGenQR);
+                        if (!isGenQR)
+                        {
+                            return "";
+                        }
+                    }   
+                }
+            }
             // 1. Lấy thông tin khách hàng (Contact/Account)
             if (target.Contains("bsd_customer"))
             {
@@ -129,15 +161,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
                     unitName = unit.GetAttributeValue<string>("name");
                 }
             }
-            if(target.Contains("bsd_project"))
-            {
-                EntityReference projectRef = target.GetAttributeValue<EntityReference>("bsd_project");
-                if (projectRef != null)
-                {
-                    Entity project = service.Retrieve(projectRef.LogicalName, projectRef.Id, new ColumnSet("bsd_name"));
-                    projectname = project.GetAttributeValue<string>("bsd_name");
-                }
-            }
+           
             if (target.Contains("bsd_paymentschemedetail"))
             {
                 EntityReference insRef = target.GetAttributeValue<EntityReference>("bsd_paymentschemedetail");

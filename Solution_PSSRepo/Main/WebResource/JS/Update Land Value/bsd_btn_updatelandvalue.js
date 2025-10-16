@@ -14,15 +14,18 @@
     //            console.error("Lỗi khi cập nhật bản ghi:", error.message);
     //        }
     //    );
-    const formContext = Xrm.Page; // Dùng Xrm.Page cho form hiện tại
-    if (formContext.getAttribute("statuscode")) {
-        formContext.getAttribute("statuscode").setValue(100000001);
-        var statuscode = Xrm.Page.getAttribute("statuscode").getValue();
-        if (statuscode == 100000001 || statuscode == 100000003) {
-            crmcontrol.disabledForm();
+    window.top.$ui.Confirm("Confirms", "Are you sure you want to approve?", function (e) {
+        const formContext = Xrm.Page; // Dùng Xrm.Page cho form hiện tại
+        if (formContext.getAttribute("statuscode")) {
+            formContext.getAttribute("statuscode").setValue(100000001);
+            var statuscode = Xrm.Page.getAttribute("statuscode").getValue();
+            if (statuscode == 100000001 || statuscode == 100000003) {
+                crmcontrol.disabledForm();
+            }
+            Xrm.Page.data.save();
         }
-        Xrm.Page.data.save();
-    }
+    });
+   
 }
 function vis_btn_approve() {
     var statuscode = Xrm.Page.getAttribute("statuscode").getValue();

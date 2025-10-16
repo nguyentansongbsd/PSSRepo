@@ -1,15 +1,14 @@
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//- map bsd_mandatoryprimaryaccount = primarycontactid nếu khách hàng là account
-//- map  value SPA Date -> SPA Date String  với định dạng Ví dụ 14/October/2025
-namespace Plugin_Create_OP_MapField
+// - map  value SPA Date -> SPA Date String  với định dạng Ví dụ 14/October/2025
+namespace Plugin_Create_OP
 {
-    public class Class1Plugin_Create_UpdateLandValueUnitsIPluginExecutionContext : IPlugin
+    public class Plugin_Create_Pre_OP : IPlugin
     {
         IPluginExecutionContext context = null;
         IOrganizationServiceFactory factory = null;
@@ -24,16 +23,14 @@ namespace Plugin_Create_OP_MapField
             service = (IOrganizationService)factory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             Entity entity = (Entity)context.InputParameters["Target"];
-            Guid recordId = entity.Id;
-            Entity enCreated = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-            EntityReference enCusRef = (EntityReference)enCreated["customerid"];
-            if (enCusRef.LogicalName== "account") 
-            {
-                Entity enCus = service.Retrieve(enCusRef.LogicalName, enCusRef.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-                Entity enUpdate = new Entity(entity.LogicalName,entity.Id);
-                enUpdate["bsd_mandatoryprimaryaccount"] = enCus["primarycontactid"];
-                service.Update(enUpdate);
-            }
+           
+            tracingService.Trace("start");
+            Entity targetEntity = (Entity)context.InputParameters["Target"];
+            if (!targetEntity.Contains("bsd_contractdate")) return;
+            DateTime spa_Date = targetEntity.GetAttributeValue<DateTime>("bsd_contractdate");
+            targetEntity["bsd_spadatestring"] = ToDayMonthNameYearString(spa_Date);
+
+
         }
         public string ToDayMonthNameYearString(DateTime dateToFormat)
         {
@@ -42,4 +39,5 @@ namespace Plugin_Create_OP_MapField
             return dateToFormat.ToString("dd/MMMM/yyyy", CultureInfo.InvariantCulture);
         }
     }
+
 }
