@@ -197,7 +197,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
                 }
             }
 
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC).Replace("Đ","D").Replace("đ","d");
         }
         private static string GenerateVietQRpayload(string bankBin, string bankNumber, string purpose)
         {

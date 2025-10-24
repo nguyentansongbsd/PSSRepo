@@ -53,10 +53,10 @@ namespace Action_MappingParamToWord
         }
         private string MapQRcode(string qrCodeBase64, string base64Word, string textToAdd)
         {
-            tracingService.Trace("Adding QR code and text to footer");
+            tracingService.Trace("Finding placeholder 'bsd_qr_bank' and inserting QR code.");
             try
             {
-                // Kích thước ảnh (ví dụ: 1x1 inch)
+                // Kích thước ảnh (1x1 inch)
                 long imageWidthEmu = 914400L;
                 long imageHeightEmu = 914400L;
 
@@ -70,80 +70,77 @@ namespace Action_MappingParamToWord
                     using (var wordDoc = WordprocessingDocument.Open(stream, true))
                     {
                         var mainPart = wordDoc.MainDocumentPart;
+                        var body = mainPart.Document.Body;
 
-                        // 1. Tìm hoặc tạo FooterPart
-                        FooterPart footerPart = mainPart.FooterParts.FirstOrDefault();
-                        if (footerPart == null)
+                        // 1. Tìm tất cả các phần tử Text chứa placeholder
+                        var textElements = body.Descendants<Text>().Where(t => t.Text.Contains("bsd_qr_bank")).ToList();
+
+                        if (textElements.Any())
                         {
-                            tracingService.Trace("No default footer found. Creating a new one.");
-                            footerPart = mainPart.AddNewPart<FooterPart>();
-                            string footerPartId = mainPart.GetIdOfPart(footerPart);
+                            tracingService.Trace($"Found {textElements.Count} instances of the QR code placeholder.");
 
-                            // Tạo footer rỗng
-                            footerPart.Footer = new Footer();
-
-                            // Liên kết footer với section
-                            var sectionProperties = mainPart.Document.Body.Descendants<SectionProperties>().FirstOrDefault();
-                            if (sectionProperties == null)
+                            // 2. Thêm ImagePart vào MainDocumentPart
+                            ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Png);
+                            using (var imageStream = new MemoryStream(qrCodeBytes))
                             {
-                                sectionProperties = new SectionProperties();
-                                mainPart.Document.Body.Append(sectionProperties);
+                                imagePart.FeedData(imageStream);
                             }
-                            sectionProperties.RemoveAllChildren<FooterReference>();
-                            sectionProperties.Append(new FooterReference() { Type = HeaderFooterValues.Default, Id = footerPartId });
-                        }
+                            var relationshipId = mainPart.GetIdOfPart(imagePart);
 
-                        // 2. Thêm ảnh vào FooterPart
-                        ImagePart imagePart = footerPart.AddImagePart(ImagePartType.Png);
-                        using (var imageStream = new MemoryStream(qrCodeBytes))
+                            // 3. Tạo cấu trúc Drawing cho ảnh
+                            var imageElement = new Drawing(
+                                new Inline(
+                                    new Extent() { Cx = imageWidthEmu, Cy = imageHeightEmu },
+                                    new EffectExtent() { LeftEdge = 0L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
+                                    new DocProperties() { Id = (UInt32Value)1U, Name = "QR Code" },
+                                    new NonVisualGraphicFrameDrawingProperties(new DocumentFormat.OpenXml.Drawing.GraphicFrameLocks() { NoChangeAspect = true }),
+                                    new DocumentFormat.OpenXml.Drawing.Graphic(
+                                        new DocumentFormat.OpenXml.Drawing.GraphicData(
+                                            new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
+                                                new NonVisualPictureProperties(
+                                                    new NonVisualDrawingProperties() { Id = (UInt32Value)0U, Name = "qrcode.png" },
+                                                    new NonVisualPictureDrawingProperties()),
+                                                new BlipFill(
+                                                    new DocumentFormat.OpenXml.Drawing.Blip() { Embed = relationshipId },
+                                                    new DocumentFormat.OpenXml.Drawing.Stretch(new DocumentFormat.OpenXml.Drawing.FillRectangle())),
+                                                new ShapeProperties(
+                                                    new DocumentFormat.OpenXml.Drawing.Transform2D(
+                                                        new DocumentFormat.OpenXml.Drawing.Offset() { X = 0L, Y = 0L },
+                                                        new DocumentFormat.OpenXml.Drawing.Extents() { Cx = imageWidthEmu, Cy = imageHeightEmu }),
+                                                    new DocumentFormat.OpenXml.Drawing.PresetGeometry(new DocumentFormat.OpenXml.Drawing.AdjustValueList()) { Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle }))
+                                        ) { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" }
+                                    )
+                                ) { DistanceFromTop = (UInt32Value)0U, DistanceFromBottom = (UInt32Value)0U, DistanceFromLeft = (UInt32Value)0U, DistanceFromRight = (UInt32Value)0U }
+                            );
+
+                            // 4. Thay thế placeholder bằng ảnh
+                            var textToReplace = textElements.First(); // Lấy phần tử đầu tiên tìm thấy
+                            var parentRun = textToReplace.Parent as Run;
+
+                            if (parentRun != null)
+                            {
+                                // Xóa nội dung text cũ và thêm ảnh vào
+                                parentRun.RemoveAllChildren<Text>();
+                                parentRun.Append(imageElement);
+                                tracingService.Trace("Successfully replaced placeholder with QR code.");
+                            }
+                            else
+                            {
+                                tracingService.Trace("Could not find the parent Run element to replace.");
+                            }
+                        }
+                        else
                         {
-                            imagePart.FeedData(imageStream);
+                            tracingService.Trace("Placeholder 'bsd_qr_bank' not found in the document.");
                         }
-                        var relationshipId = footerPart.GetIdOfPart(imagePart);
-
-                        // 3. Tạo cấu trúc Drawing cho ảnh inline
-                        var imageElement = new Drawing(
-                            new Inline(
-                                new Extent() { Cx = imageWidthEmu, Cy = imageHeightEmu },
-                                new EffectExtent() { LeftEdge = 0L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
-                                new DocProperties() { Id = (UInt32Value)1U, Name = "QR Code" },
-                                new NonVisualGraphicFrameDrawingProperties(new DocumentFormat.OpenXml.Drawing.GraphicFrameLocks() { NoChangeAspect = true }),
-                                new DocumentFormat.OpenXml.Drawing.Graphic(
-                                    new DocumentFormat.OpenXml.Drawing.GraphicData(
-                                        new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
-                                            new NonVisualPictureProperties(
-                                                new NonVisualDrawingProperties() { Id = (UInt32Value)0U, Name = "qrcode.png" },
-                                                new NonVisualPictureDrawingProperties()),
-                                            new BlipFill(
-                                                new DocumentFormat.OpenXml.Drawing.Blip() { Embed = relationshipId },
-                                                new DocumentFormat.OpenXml.Drawing.Stretch(new DocumentFormat.OpenXml.Drawing.FillRectangle())),
-                                            new ShapeProperties(
-                                                new DocumentFormat.OpenXml.Drawing.Transform2D(
-                                                    new DocumentFormat.OpenXml.Drawing.Offset() { X = 0L, Y = 0L },
-                                                    new DocumentFormat.OpenXml.Drawing.Extents() { Cx = imageWidthEmu, Cy = imageHeightEmu }),
-                                                new DocumentFormat.OpenXml.Drawing.PresetGeometry(new DocumentFormat.OpenXml.Drawing.AdjustValueList()) { Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle })))
-                                    { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
-                            ) { DistanceFromTop = (UInt32Value)0U, DistanceFromBottom = (UInt32Value)0U, DistanceFromLeft = (UInt32Value)0U, DistanceFromRight = (UInt32Value)0U });
-
-                        // 4. Tạo Paragraph mới trong footer và thêm ảnh, text vào
-                        var paragraph = new Paragraph();
-                        // Căn lề phải cho đẹp
-                        paragraph.Append(new ParagraphProperties(new Justification() { Val = JustificationValues.Right }));
-                        // Thêm ảnh
-                        paragraph.Append(new Run(imageElement));
-                        // Thêm text
-                        paragraph.Append(new Run(new Text(" " + textToAdd) { Space = SpaceProcessingModeValues.Preserve }));
-
-                        // 5. Thêm paragraph vào footer
-                        footerPart.Footer.Append(paragraph);
-                        footerPart.Footer.Save();
+                        mainPart.Document.Save();
                     }
                     return Convert.ToBase64String(stream.ToArray());
                 }
             }
             catch (Exception ex)
             {
-                tracingService.Trace($"Error: {ex.Message}");
+                tracingService.Trace($"Error in MapQRcode: {ex.Message}");
                 throw;
             }
         }

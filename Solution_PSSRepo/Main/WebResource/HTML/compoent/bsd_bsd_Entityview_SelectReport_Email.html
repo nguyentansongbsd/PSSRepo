@@ -245,10 +245,11 @@
                 );
                 return Promise.resolve();
             }
+            else {
 
-            // Lưu giá trị hiện tại của i
-            var currentIndex = index;
-            var fetchXml = `
+                // Lưu giá trị hiện tại của i
+                var currentIndex = index;
+                var fetchXml = `
                                 <fetch>
                                   <entity name="bsd_documents">
                                     <attribute name="bsd_name" />
@@ -259,60 +260,61 @@
                                   </entity>
                                 </fetch>`;
 
-            // Xử lý phần tử hiện tại
-            return Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml)
-                .then(function (result) {
-                    if (result.entities.length > 0) {
-                        // Tạo một promise cho phần tử hiện tại
-                        return Promise.all(result.entities.map(function (template) {
-                            var data = {
-                                listId: arrlstId[currentIndex],
-                                templateId: template.bsd_documentsid,
-                                userId: Xrm.Utility.getGlobalContext().getUserId(),
-                                bulkManagerId: bulkManagerId
-                            };
+                // Xử lý phần tử hiện tại
+                return Xrm.WebApi.retrieveMultipleRecords("bsd_documents", "?fetchXml=" + fetchXml)
+                    .then(function (result) {
+                        if (result.entities.length > 0) {
+                            // Tạo một promise cho phần tử hiện tại
+                            return Promise.all(result.entities.map(function (template) {
+                                var data = {
+                                    listId: arrlstId[index],
+                                    templateId: template.bsd_documentsid,
+                                    userId: Xrm.Utility.getGlobalContext().getUserId(),
+                                    bulkManagerId: bulkManagerId
+                                };
 
-                            return fetchWithTimeout(url, {
-                                method: "POST",
-                                headers: {
-                                    "OData-MaxVersion": "4.0",
-                                    "OData-Version": "4.0",
-                                    "Accept": "application/json",
-                                    "Content-Type": "application/json; charset=utf-8"
-                                },
-                                body: JSON.stringify(data)
-                            })
-                                .then(response => {
-                                    if (response.status == 200) {
-                                        Xrm.Utility.closeProgressIndicator();
-                                        return response.json();
-                                    }
+                                return fetchWithTimeout(url, {
+                                    method: "POST",
+                                    headers: {
+                                        "OData-MaxVersion": "4.0",
+                                        "OData-Version": "4.0",
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json; charset=utf-8"
+                                    },
+                                    body: JSON.stringify(data)
                                 })
-                                .then(data => {
-                                    if (data) {
-                                        if (bulkManagerId == "")
-                                            bulkManagerId = data.data.split(',')[0];
-                                        Xrm.Utility.closeProgressIndicator();
-                                        Xrm.Utility.showProgressIndicator("Created " + (countListid - parseInt(data.data.split(',')[1])));
-                                        return data.data;
-                                    }
-                                });
-                        }));
-                    } else {
-                        alert("not found documents");
-                        return Promise.resolve();
-                    }
-                })
-                .then(() => {
-                    // Gọi đệ quy để xử lý phần tử tiếp theo
-                    return processArraySequentially(arrlstId, currentIndex + 1, bulkManagerId, url, countListid);
-                })
-                .catch(error => {
-                    console.error("Error processing item " + currentIndex, error);
-                    Xrm.Utility.closeProgressIndicator();
-                    // Vẫn tiếp tục với phần tử tiếp theo ngay cả khi có lỗi
-                    return processArraySequentially(arrlstId, currentIndex + 1, bulkManagerId, url, countListid);
-                });
+                                    .then(response => {
+                                        if (response.status == 200) {
+                                            Xrm.Utility.closeProgressIndicator();
+                                            return response.json();
+                                        }
+                                    })
+                                    .then(data => {
+                                        if (data) {
+                                            if (bulkManagerId == "")
+                                                bulkManagerId = data.data.split(',')[0];
+                                            Xrm.Utility.closeProgressIndicator();
+                                            Xrm.Utility.showProgressIndicator("Created " + (countListid - parseInt(data.data.split(',')[1])));
+                                            return data.data;
+                                        }
+                                    });
+                            }));
+                        } else {
+                            alert("not found documents");
+                            return Promise.resolve();
+                        }
+                    })
+                    .then(() => {
+                        // Gọi đệ quy để xử lý phần tử tiếp theo
+                        return processArraySequentially(arrlstId, index + 1, bulkManagerId, url, countListid);
+                    })
+                    .catch(error => {
+                        console.error("Error processing item " + index, error);
+                        Xrm.Utility.closeProgressIndicator();
+                        // Vẫn tiếp tục với phần tử tiếp theo ngay cả khi có lỗi
+                        return processArraySequentially(arrlstId, index + 1, bulkManagerId, url, countListid);
+                    });
+            }
         }
 
 

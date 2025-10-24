@@ -1,3 +1,4 @@
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -39,6 +40,9 @@ namespace Plugin_Updateestimatehandoverdate
                 enDetailUpdate["bsd_processing_pa"] = true; //
                 enDetailUpdate["bsd_error"] = false;
                 enDetailUpdate["bsd_errordetail"] = "";
+                enDetailUpdate["bsd_approvedrejectedperson"] = (object)new EntityReference("systemuser", this.context.UserId);
+                enDetailUpdate["bsd_approvedrejecteddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
+
                 service.Update(enDetailUpdate);
                 var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");
                 string listid = string.Join(",", rs.Entities.Select(x => x.Id.ToString()));
@@ -47,6 +51,32 @@ namespace Plugin_Updateestimatehandoverdate
                 service.Execute(request);
             }
         }
+        private int? RetrieveCurrentUsersSettings(IOrganizationService service)
+        {
+            IOrganizationService organizationService = service;
+            QueryExpression queryExpression1 = new QueryExpression("usersettings");
+            queryExpression1.ColumnSet = new ColumnSet(new string[2]
+            {
+        "localeid",
+        "timezonecode"
+            });
+            QueryExpression queryExpression2 = queryExpression1;
+            FilterExpression filterExpression = new FilterExpression();
+            filterExpression.Conditions.Add(new ConditionExpression("systemuserid", ConditionOperator.EqualUserId));
+            queryExpression2.Criteria = filterExpression;
+            QueryExpression query = queryExpression1;
+            return (int?)organizationService.RetrieveMultiple((QueryBase)query).Entities[0].ToEntity<Entity>().Attributes["timezonecode"];
+        }
+
+        public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
+        {
+            return ((LocalTimeFromUtcTimeResponse)this.service.Execute((OrganizationRequest)new LocalTimeFromUtcTimeRequest()
+            {
+                TimeZoneCode = this.RetrieveCurrentUsersSettings(this.service) == null ? throw new InvalidPluginExecutionException("Can't find time zone code") : this.RetrieveCurrentUsersSettings(this.service).Value,
+                UtcTime = utcTime.ToUniversalTime()
+            })).LocalTime;
+        }
+
         /// <summary>
         /// kiểm tra xem có danh sách chi tiết của master không 1
         /// </summary>

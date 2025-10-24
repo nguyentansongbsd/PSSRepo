@@ -579,6 +579,22 @@
           ]
         },
         {
+          "Name": "Plugin_Create_UpdateLandValueUnits.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "5a34e880-122a-4dcd-b132-c4dcacc6abec",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Create_UpdateLandValueUnits.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_CreateEmail_UpdateInforToEntity.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Properties": [
@@ -819,6 +835,38 @@
           ]
         },
         {
+          "Name": "Plugin_Updateestimatehandoverdate.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "803fd09a-0cae-4e77-bc5f-d77aebe646ac",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_Updateestimatehandoverdate.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
+          "Name": "Plugin_UpdateLandvalueUnit_Approve_1.0.0.0.csproj",
+          "RemoveLinksToFilesThatDoNotExistOnDisk": true,
+          "Properties": [
+            {
+              "PropertiesType": 1,
+              "Config": {
+                "Id": "679e0237-6ec5-4ef3-be82-9e45f1d15879",
+                "IsolationMode": 2,
+                "IsRegisteredInCrm": true,
+                "PathNameOnServer": "Plugin_UpdateLandvalueUnit_Approve.dll",
+                "SourceType": 0
+              }
+            }
+          ]
+        },
+        {
           "Name": "Plugin_UpdateLandValueUnit_checkImportv2.csproj",
           "RemoveLinksToFilesThatDoNotExistOnDisk": true,
           "Files": [
@@ -849,6 +897,11 @@
               "CrmId": "b659216a-0bf8-ef11-bae2-0022485a0a4f",
               "FileType": 1,
               "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport.html"
+            },
+            {
+              "CrmId": "c70ad2f1-4e2f-f011-8c4d-6045bd1d2e19",
+              "FileType": 1,
+              "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
             },
             {
               "CrmId": "66aaf66a-fd6d-e811-814a-3863bb367d68",
