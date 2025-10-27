@@ -525,6 +525,17 @@ namespace Plugin_Payment_Import
             {
                 decimal bsd_assignamount = target.Contains("bsd_assignamount") ? ((Money)target["bsd_assignamount"]).Value : 0;
                 if (bsd_assignamount < 0) throw new InvalidPluginExecutionException("Assign Amount is less than 0. Please check again.");
+                if (target.Contains("statuscode"))
+                {
+                    Entity preimage = context.PreEntityImages["pre"];
+                    int stsPre = ((OptionSetValue)preimage["statuscode"]).Value;
+                    int stsTar = ((OptionSetValue)target["statuscode"]).Value;
+                    traceService.Trace("stsPre " + stsPre);
+                    traceService.Trace("stsTar " + stsTar);
+                    if (stsPre != 1 && stsTar == 2)
+                        throw new InvalidPluginExecutionException("Invalid deactivation status. Please check again.");
+                }
+                //throw new InvalidPluginExecutionException("hải đang check task payment chờ hải chút");
             }
         }
         private int getViTriDotSightContract(Guid idOE)
