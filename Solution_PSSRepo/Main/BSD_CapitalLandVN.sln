@@ -212,6 +212,47 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Reservation_ReventDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_OP", "Plugin\Create Entity\Plugin_Create_OP\Plugin_Create_OP.csproj", "{687B2967-3FE4-4573-B719-84F2CC6D8DBE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeReadMe", "CodeReadMe", "{CB5BD1E0-790A-4310-AF0D-16FE3EE2AD81}"
+	ProjectSection(SolutionItems) = preProject
+		Action\Action_Action_UpdateLandValue\Action_Action_UpdateLandValue.cs = Action\Action_Action_UpdateLandValue\Action_Action_UpdateLandValue.cs
+		Action_Active_Approved_Updateduedate_Detail\Action_Active_Approved_Updateduedate_Detail.cs = Action_Active_Approved_Updateduedate_Detail\Action_Active_Approved_Updateduedate_Detail.cs
+		Action_Active_Approved_Updateestimatehandoverdate_Detail\Action_Active_Approved_Updateestimatehandoverdate_Detail.cs = Action_Active_Approved_Updateestimatehandoverdate_Detail\Action_Active_Approved_Updateestimatehandoverdate_Detail.cs
+		Action\Action_Active_GenerateTerminateLetter\Action_Active_GenerateTerminateLetter.cs = Action\Action_Active_GenerateTerminateLetter\Action_Active_GenerateTerminateLetter.cs
+		..\..\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation.cs = ..\..\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation\Action_AgingSimulation_Calculation.cs
+		Action\Action_Approved_UpdateDuedateOfLastInstallment_Master\Action_Approved_UpdateDuedateOfLastInstallment_Master.cs = Action\Action_Approved_UpdateDuedateOfLastInstallment_Master\Action_Approved_UpdateDuedateOfLastInstallment_Master.cs
+		Action_Approved_Updateduedate_Detail\Action_Approved_Updateduedate_Detail.cs = Action_Approved_Updateduedate_Detail\Action_Approved_Updateduedate_Detail.cs
+		Action\Action_Approved_Updateduedate_Master\Action_Approved_Updateduedate_Master.cs = Action\Action_Approved_Updateduedate_Master\Action_Approved_Updateduedate_Master.cs
+		Action_Approved_Updateestimatehandoverdate_Detail\Action_Approved_Updateestimatehandoverdate_Detail.cs = Action_Approved_Updateestimatehandoverdate_Detail\Action_Approved_Updateestimatehandoverdate_Detail.cs
+		Action_Calculate_Interest_SIMULATION_report\Action_Calculate_Interest_SIMULATION_report.cs = Action_Calculate_Interest_SIMULATION_report\Action_Calculate_Interest_SIMULATION_report.cs
+		Action\Action_CollectionMeeting_Complete_Detail\Action_CollectionMeeting_Complete_Detail.cs = Action\Action_CollectionMeeting_Complete_Detail\Action_CollectionMeeting_Complete_Detail.cs
+		Action_ConvertWordToPDF\Action_ConvertWordToPDF.cs = Action_ConvertWordToPDF\Action_ConvertWordToPDF.cs
+		..\..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_Generate.cs = ..\..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_Generate.cs
+		..\..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_Generate_Backup.cs = ..\..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_Generate_Backup.cs
+		..\..\Action_Documents_Approve\Action_Documents_Approve\Action_Documents_Approve.cs = ..\..\Action_Documents_Approve\Action_Documents_Approve\Action_Documents_Approve.cs
+		Action_FormatString_Input_Selectedrecord\Action_FormatString_Input_Selectedrecord.cs = Action_FormatString_Input_Selectedrecord\Action_FormatString_Input_Selectedrecord.cs
+		Action_FUL_GenerateTerminateLetter_1.0.0.0\Action_FUL_GenerateTerminateLetter.cs = Action_FUL_GenerateTerminateLetter_1.0.0.0\Action_FUL_GenerateTerminateLetter.cs
+		Action\Action_GetMailFromAndTo\Action_GetMailFromAndTo.cs = Action\Action_GetMailFromAndTo\Action_GetMailFromAndTo.cs
+		Action\Action_HandoverNotices_GenerateHandoverNotices\Action_HandoverNotices_GenerateHandoverNotices\Action_HandoverNotices_Generate.cs = Action\Action_HandoverNotices_GenerateHandoverNotices\Action_HandoverNotices_GenerateHandoverNotices\Action_HandoverNotices_Generate.cs
+		Action_InsertQrcodeInPDF\Action_InsertQrcodeInPDF.cs = Action_InsertQrcodeInPDF\Action_InsertQrcodeInPDF.cs
+		Action\Action_MappingParamToWord\Action_MappingParamToWord.cs = Action\Action_MappingParamToWord\Action_MappingParamToWord.cs
+		Action_MergeFilePDF\Action_MergeFilePDF.cs = Action_MergeFilePDF\Action_MergeFilePDF.cs
+		..\..\Action_Resv_GenPMS\Action_Resv_GenPMS.cs = ..\..\Action_Resv_GenPMS\Action_Resv_GenPMS.cs
+		Action\bsd_Action_SearchCustomer\Action_SearchCustomer.cs = Action\bsd_Action_SearchCustomer\Action_SearchCustomer.cs
+		Action\Action_ShareCustomerToTeam\Action_ShareCustomerToTeam.cs = Action\Action_ShareCustomerToTeam\Action_ShareCustomerToTeam.cs
+		Action\Action_SignedContract_1.0.0.0\Action_SignedContract\Action_SignedContract.cs = Action\Action_SignedContract_1.0.0.0\Action_SignedContract\Action_SignedContract.cs
+		Action\Action_TerminateLetter_GenerateTerminateLetter_Detail\Action_TerminateLetter_GenerateTerminateLetter_Detail.cs = Action\Action_TerminateLetter_GenerateTerminateLetter_Detail\Action_TerminateLetter_GenerateTerminateLetter_Detail.cs
+		Action\Action_Termination_Refund\Action_Termination_Refund.cs = Action\Action_Termination_Refund\Action_Termination_Refund.cs
+		Action_UnShareSaleTeam\Action_UnShareSaleTeam.cs = Action_UnShareSaleTeam\Action_UnShareSaleTeam.cs
+		Action_UpdateLandValue_Detail\Action_UpdateLandValue_Detail.cs = Action_UpdateLandValue_Detail\Action_UpdateLandValue_Detail.cs
+		Action\Action_UpdateOwner\Action_UpdateOwner.cs = Action\Action_UpdateOwner\Action_UpdateOwner.cs
+		..\..\Action_WarningNotices_GenerateWarningNotices\Action_WarningNotices_GenerateWarningNotices.cs = ..\..\Action_WarningNotices_GenerateWarningNotices\Action_WarningNotices_GenerateWarningNotices.cs
+		..\..\Action_WarningNotices_GenerateWarningNotices\Action_WarningNotices_GenerateWarningNotices_BackUp.cs = ..\..\Action_WarningNotices_GenerateWarningNotices\Action_WarningNotices_GenerateWarningNotices_BackUp.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{58A5FA93-3376-458F-8C07-929E754B804D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Code_Read_me", "Code_Read_me\Code_Read_me.csproj", "{7B791FFC-FECC-4783-9943-BBDCE4236871}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -715,6 +756,12 @@ Global
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
