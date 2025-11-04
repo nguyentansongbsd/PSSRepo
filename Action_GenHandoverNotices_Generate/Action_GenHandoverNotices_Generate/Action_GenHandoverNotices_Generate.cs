@@ -352,6 +352,10 @@ namespace Action_GenHandoverNotices_Generate
                     //DateTime InterestStarDate = duedate.AddDays(Graceday);
                     traceService.Trace("dateCalculate " + dateCalculate);
                     traceService.Trace("duedate " + duedate);
+                    dateCalculate = new DateTime(dateCalculate.Year, dateCalculate.Month, dateCalculate.Day);
+                    duedate = new DateTime(duedate.Year, duedate.Month, duedate.Day);
+                    traceService.Trace("dateCalculate 2 " + dateCalculate);
+                    traceService.Trace("duedate 2 " + duedate);
                     TimeSpan difference = dateCalculate - duedate;
                     int bsd_latedays = difference.Days - Graceday;
                     bsd_latedays = bsd_latedays < 0 ? 0 : bsd_latedays;
