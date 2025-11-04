@@ -2,7 +2,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Metadata;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Services;

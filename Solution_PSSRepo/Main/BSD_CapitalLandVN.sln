@@ -212,6 +212,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Reservation_ReventDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin_Create_OP", "Plugin\Create Entity\Plugin_Create_OP\Plugin_Create_OP.csproj", "{687B2967-3FE4-4573-B719-84F2CC6D8DBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Code_Read_me", "Code_Read_me\Code_Read_me.csproj", "{7B791FFC-FECC-4783-9943-BBDCE4236871}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{3F698801-628E-4BA9-97A1-CDBA5C63E5AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -715,6 +719,12 @@ Global
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{687B2967-3FE4-4573-B719-84F2CC6D8DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B791FFC-FECC-4783-9943-BBDCE4236871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

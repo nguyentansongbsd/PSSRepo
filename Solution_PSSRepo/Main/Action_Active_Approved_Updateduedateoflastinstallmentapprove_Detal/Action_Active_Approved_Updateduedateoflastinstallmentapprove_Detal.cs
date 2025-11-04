@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+// action này là trigger. 
 namespace Action_Active_Approved_Updateduedateoflastinstallmentapprove_Detal
 {
     public class Action_Active_Approved_Updateduedateoflastinstallmentapprove_Detal : IPlugin

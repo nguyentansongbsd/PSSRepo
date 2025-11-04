@@ -10,19 +10,34 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace Action_CollectionMeeting_Complete_Detail
 {
+    /// <summary>
+    /// Plugin xử lý hoàn thành (Complete) cho từng bản ghi chi tiết của Collection Meeting (bsd_followuplist).
+    /// Khi được gọi, plugin sẽ:
+    /// - Đánh dấu hoàn thành cho bản ghi bsd_followuplist.
+    /// - Thực hiện các cập nhật liên quan đến Reservation, Option Entry, Termination, Terminate Letter, v.v. tùy theo loại (bsd_type).
+    /// - Tạo các bản ghi Termination, Terminate Letter, hoặc bản sao FollowUpList khi cần thiết.
+    /// - Nếu có lỗi, cập nhật trạng thái lỗi và tạo bản sao FollowUpList với thông tin lỗi.
+    /// </summary>
     public class Action_CollectionMeeting_Complete_Detail : IPlugin
     {
         private IOrganizationService service = null;
         private IOrganizationServiceFactory factory = null;
         IPluginExecutionContext context = null;
         ITracingService tracingService = null;
-        Entity ful=null;
+        Entity ful = null;
+
+        /// <summary>
+        /// Hàm thực thi chính của plugin.
+        /// </summary>
+        /// <param name="serviceProvider">Cung cấp các dịch vụ CRM cần thiết.</param>
         public void Execute(IServiceProvider serviceProvider)
         {
+            // Lấy context, factory, service, tracingService từ serviceProvider.
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            // Nếu có tham số userid, tạo service theo user đó.
             if (context.InputParameters.Contains("userid"))
             {
 
@@ -31,6 +46,7 @@ namespace Action_CollectionMeeting_Complete_Detail
                 EntityReference user = new EntityReference("systemuser", new Guid(userid));
                 service = (IOrganizationService)factory.CreateOrganizationService(user.Id);
             }
+            // Nếu có tham số id, thực hiện xử lý hoàn thành cho bản ghi bsd_followuplist.
             if (context.InputParameters.Contains("id"))
             {
                 tracingService.Trace("Action_CollectionMeeting_Complete_Detail: Start");
@@ -40,16 +56,20 @@ namespace Action_CollectionMeeting_Complete_Detail
                 try
                 {
 
+                    // Lấy ngày hiện tại theo múi giờ người dùng.
                     DateTime today = RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
+                    // Kiểm tra bsd_type và statuscode của bản ghi. Nếu chưa complete thì thực hiện cập nhật.
                     if (ful.Contains("bsd_type") && ((OptionSetValue)ful["statuscode"]).Value != 100000000)//statuscode = complete
                     {
-                        //Cap nhat FuL >>> Complete
+                        // Cập nhật trạng thái FuL sang Complete.
                         Entity follow = new Entity(ful.LogicalName);
                         follow.Id = ful.Id;
                         follow["statuscode"] = new OptionSetValue(100000000);
                         service.Update(follow);
 
                         #region Reservation - Sign off RF
+                        // Nếu là loại Reservation - Sign off RF, kiểm tra và cập nhật ngày hết hạn ký (bsd_signingexpired) nếu cần.
+                        // Chuyển trạng thái Reservation sang Deposited nếu cập nhật thành công.
                         if (((OptionSetValue)ful["bsd_type"]).Value == 100000000 && ful.Contains("bsd_reservation"))//Reservation - Sign off RF
                         {
                             Entity res = service.Retrieve(((EntityReference)ful["bsd_reservation"]).LogicalName, ((EntityReference)ful["bsd_reservation"]).Id, new ColumnSet(new string[] { "statuscode", "bsd_reservationprinteddate", "bsd_signingexpired" }));
@@ -60,9 +80,7 @@ namespace Action_CollectionMeeting_Complete_Detail
 
                                 if (((int)(new_expired.Date.Subtract(expired.Date).TotalDays)) > 0)
                                 {
-                                    //throw new InvalidPluginExecutionException((new_expired.Date.Subtract(expired.Date).TotalDays.ToString()));
-                                    //Cap nhat expired tren Reservation
-                                    //mo form
+                                    // Cập nhật expired trên Reservation
                                     SetStateRequest setStateRequest = new SetStateRequest()
                                     {
                                         EntityMoniker = new EntityReference
@@ -75,13 +93,13 @@ namespace Action_CollectionMeeting_Complete_Detail
                                     };
                                     service.Execute(setStateRequest);
 
-                                    //cap nhat expired of signing
+                                    // Cập nhật expired of signing
                                     Entity reservation = new Entity(res.LogicalName);
                                     reservation.Id = res.Id;
                                     reservation["bsd_signingexpired"] = ful["bsd_expiredate"];
                                     service.Update(reservation);
                                     tracingService.Trace("1");
-                                    // cap nhat tinh trang thanh Deposited
+                                    // Cập nhật trạng thái thành Deposited
                                     SetStateRequest setStateRequest1 = new SetStateRequest()
                                     {
                                         EntityMoniker = new EntityReference
@@ -101,11 +119,12 @@ namespace Action_CollectionMeeting_Complete_Detail
                         #endregion
 
                         #region Option entry - 1St installment OR Option entry - Installment
+                        // Nếu là loại Option entry - 1St installment hoặc Installment, cập nhật ngày đến hạn cho installment.
                         else if (((OptionSetValue)ful["bsd_type"]).Value == 100000002 || ((OptionSetValue)ful["bsd_type"]).Value == 100000004)
                         {
                             if (ful.Contains("bsd_optionentry") && ful.Contains("bsd_installment") && ful.Contains("bsd_expiredate"))
                             {
-                                //Cap nhat due date of installment
+                                // Cập nhật due date of installment
                                 Entity installment = new Entity(((EntityReference)ful["bsd_installment"]).LogicalName);
                                 installment.Id = ((EntityReference)ful["bsd_installment"]).Id;
                                 installment["bsd_duedate"] = ful["bsd_expiredate"];
@@ -117,34 +136,14 @@ namespace Action_CollectionMeeting_Complete_Detail
                         #endregion
 
                         #region Reservation - Terminate
+                        // Nếu là loại Reservation - Terminate, tạo termination hoặc terminate letter, đồng thời tạo bản sao FollowUpList nếu cần.
                         else if (((OptionSetValue)ful["bsd_type"]).Value == 100000005)
                         {
                             if (ful.Contains("bsd_reservation"))
                             {
                                 Entity reser = service.Retrieve(((EntityReference)ful["bsd_reservation"]).LogicalName, ((EntityReference)ful["bsd_reservation"]).Id, new ColumnSet(new string[]
                                 { "name", "customerid", "bsd_unitno", "bsd_projectid","bsd_salessgentcompany" }));
-                                //Tao refund
-                                //Entity Refund = new Entity("bsd_refund");
-                                //Refund["bsd_name"] = "Refund of " + (reser.Contains("name") ? reser["name"] : "");
-                                //Refund["bsd_followuplist"] = ful.ToEntityReference();
-                                //Refund["bsd_refundtype"] = new OptionSetValue(100000000);
-                                //if (reser.Contains("customerid"))
-                                //    Refund["bsd_customer"] = reser["customerid"];
-
-                                //if (reser.Contains("bsd_projectid"))
-                                //    Refund["bsd_project"] = reser["bsd_projectid"];
-
-                                //if (reser.Contains("bsd_unitno"))
-                                //    Refund["bsd_unitno"] = reser["bsd_unitno"];
-                                //Refund["bsd_reservation"] = ful["bsd_reservation"];
-                                //Refund["bsd_paymentactualtime"] = today;
-                                //decimal amountDeposit = tinhTienDeposited(service, (EntityReference)ful["bsd_reservation"]);
-                                //Refund["bsd_totalamountpaid"] = new Money(amountDeposit);
-                                //Refund["bsd_refundamount"] = new Money(amountDeposit);
-                                //Refund["bsd_refundableamount"] = new Money(amountDeposit);
-                                //service.Create(Refund);
-
-                                //----------------tạo termination--------------
+                                // Tạo termination nếu có trường bsd_termination = true
                                 if (ful.Contains("bsd_termination") && (bool)ful["bsd_termination"] == true)
                                 {
                                     Entity termination = new Entity("bsd_termination");
@@ -212,12 +211,11 @@ namespace Action_CollectionMeeting_Complete_Detail
                                             termination["bsd_resell"] = false;
                                         }
                                     }
-                                    //tracingService.Trace(paid.ToString() + " " + percent.ToString() + " " + amount.ToString() + " " + totalForfeiture.ToString() + " " + (paid - totalForfeiture).ToString());
                                     service.Create(termination);
                                 }
+                                // Tạo terminate letter nếu có trường bsd_terminateletter = true và chưa có termination
                                 if (ful.Contains("bsd_terminateletter") && (bool)ful["bsd_terminateletter"] == true && (!ful.Contains("bsd_termination") || (bool)ful["bsd_termination"] == false))
                                 {
-                                    //----------------tạo terminateletter--------------------
                                     Entity terminateLetter = new Entity("bsd_terminateletter");
                                     terminateLetter["bsd_name"] = "Terminate letter of " + (ful.Contains("bsd_name") ? ful["bsd_name"] : "");
                                     terminateLetter["bsd_subject"] = "Terminate letter - Follow Up List";
@@ -239,7 +237,6 @@ namespace Action_CollectionMeeting_Complete_Detail
                                     {
                                         if (((OptionSetValue)ful["bsd_takeoutmoney"]).Value == 100000001)//Forfeiture
                                         {
-                                            //decimal amountpaid = ful.Contains("bsd_totalamountpaid") ? ((Money)ful["bsd_totalamountpaid"]).Value : -1;
                                             decimal amountpaid = ful.Contains("bsd_totalamount") ? ((Money)ful["bsd_totalamount"]).Value : -1;
                                             decimal forfeiturePercent = ful.Contains("bsd_forfeiturepercent") ? (decimal)ful["bsd_forfeiturepercent"] : -1;
 
@@ -249,7 +246,7 @@ namespace Action_CollectionMeeting_Complete_Detail
                                             tracingService.Trace("2");
                                         }
                                         else if (((OptionSetValue)ful["bsd_takeoutmoney"]).Value == 100000000)//Refund
-                                        {// field Refund Amount dislay name bsd_forfeitureamount
+                                        {
                                             if (ful.Contains("bsd_forfeitureamount"))
                                                 terminateLetter["bsd_totalforfeitureamount"] = ful["bsd_forfeitureamount"];
                                         }
@@ -259,7 +256,7 @@ namespace Action_CollectionMeeting_Complete_Detail
                                         terminateLetter["bsd_signedcontractdate"] = Units["bsd_signedcontractdate"];
 
                                     service.Create(terminateLetter);
-                                    //----------------tạo Follow up list COPY--------------------
+                                    // Tạo bản sao FollowUpList với trạng thái copy
                                     Entity FollowUpList = CloneEntity(ful);
                                     FollowUpList.Attributes.Remove("bsd_followuplistid");
                                     FollowUpList["bsd_name"] = ful["bsd_name"] + " - Copy";
@@ -274,17 +271,15 @@ namespace Action_CollectionMeeting_Complete_Detail
                         #endregion
 
                         #region Option entry - Termination
+                        // Nếu là loại Option entry - Termination, tạo termination, terminate letter, và bản sao FollowUpList nếu cần.
                         else if (((OptionSetValue)ful["bsd_type"]).Value == 100000006 && ful.Contains("bsd_optionentry") && ful.Contains("bsd_units"))//option-termination
                         {
                             tracingService.Trace("Option entry - Termination");
                             EntityReference optionE = (EntityReference)ful["bsd_optionentry"];
                             Entity OE = service.Retrieve(optionE.LogicalName, optionE.Id, new ColumnSet(new string[] { "customerid", "bsd_salesagentcompany" }));
-                            //----------------tạo termination--------------
                             tracingService.Trace((ful.Contains("bsd_termination") && (bool)ful["bsd_termination"] == true).ToString());
                             if (ful.Contains("bsd_termination") && (bool)ful["bsd_termination"] == true)
                             {
-                                //if (ful.Contains("bsd_termination"))
-                                //    throw new InvalidPluginExecutionException(((bool)ful["bsd_termination"]).ToString()+"dsđsddsds");
                                 decimal bsd_maintenancefeepaid = ful.Contains("bsd_maintenancefeepaid") ? ((Money)ful["bsd_maintenancefeepaid"]).Value : 0;
                                 decimal bsd_managementfeepaid = ful.Contains("bsd_managementfeepaid") ? ((Money)ful["bsd_managementfeepaid"]).Value : 0;
                                 tracingService.Trace("bsd_maintenancefeepaid: " + bsd_maintenancefeepaid.ToString());
@@ -361,17 +356,9 @@ namespace Action_CollectionMeeting_Complete_Detail
                                 service.Create(termination);
                             }
 
-
-                            //if (ful.Contains("bsd_optionentry"))
-                            //{
-                            //    Entity oe = new Entity(((EntityReference)ful["bsd_optionentry"]).LogicalName);
-                            //    oe.Id = ((EntityReference)ful["bsd_optionentry"]).Id;
-                            //    oe["statuscode"] = new OptionSetValue(100000006);
-                            //    service.Update(oe);
-
+                            // Tạo terminate letter nếu có trường bsd_terminateletter = true và chưa có termination
                             if (ful.Contains("bsd_terminateletter") && (bool)ful["bsd_terminateletter"] == true && (!ful.Contains("bsd_termination") || (bool)ful["bsd_termination"] == false))
                             {
-                                //----------------tạo terminateletter--------------------
                                 Entity terminateLetter = new Entity("bsd_terminateletter");
                                 terminateLetter["bsd_name"] = "Terminate letter of " + (ful.Contains("bsd_name") ? ful["bsd_name"] : "");
                                 terminateLetter["bsd_subject"] = "Terminate letter - Follow Up List";
@@ -391,7 +378,6 @@ namespace Action_CollectionMeeting_Complete_Detail
                                 {
                                     if (((OptionSetValue)ful["bsd_takeoutmoney"]).Value == 100000001)//Forfeiture
                                     {
-                                        //decimal amountpaid = ful.Contains("bsd_totalamountpaid") ? ((Money)ful["bsd_totalamountpaid"]).Value : -1;
                                         decimal amountpaid = ful.Contains("bsd_totalamount") ? ((Money)ful["bsd_totalamount"]).Value : -1;
                                         decimal forfeiturePercent = ful.Contains("bsd_forfeiturepercent") ? (decimal)ful["bsd_forfeiturepercent"] : -1;
 
@@ -411,21 +397,11 @@ namespace Action_CollectionMeeting_Complete_Detail
                                     terminateLetter["bsd_signedcontractdate"] = Units["bsd_signedcontractdate"];
 
                                 service.Create(terminateLetter);
-                                //----------------tạo Follow up list COPY--------------------
+                                // Tạo bản sao FollowUpList với trạng thái copy
                                 Entity FollowUpList = CloneEntity(ful);
                                 FollowUpList.Attributes.Remove("bsd_followuplistid");
                                 FollowUpList.Attributes.Remove("createdon");
                                 FollowUpList["bsd_name"] = ful["bsd_name"] + " - Copy";
-                                //if (ful.Contains("bsd_terminateletter"))
-                                //    FollowUpList["bsd_terminateletter"] = ful["bsd_terminateletter"];
-                                //if (ful.Contains("bsd_termination"))
-                                //    FollowUpList["bsd_termination"] = ful["bsd_termination"];
-                                //if (ful.Contains("bsd_group"))
-                                //    FollowUpList["bsd_group"] = ful["bsd_group"];
-                                //if (ful.Contains("bsd_owneroptionreservation"))
-                                //    FollowUpList["bsd_owneroptionreservation"] = ful["bsd_owneroptionreservation"];
-                                //if (ful.Contains("bsd_project"))
-                                //    FollowUpList["bsd_project"] = ful["bsd_project"];
                                 FollowUpList["bsd_date"] = today;
                                 FollowUpList["bsd_copy"] = true;
                                 FollowUpList["bsd_system"] = true;
@@ -442,12 +418,19 @@ namespace Action_CollectionMeeting_Complete_Detail
                 }
                 catch (Exception ex)
                 {
+                    // Nếu có lỗi, gọi HandleError để cập nhật trạng thái lỗi và tạo bản sao FollowUpList với thông tin lỗi.
                     HandleError(ful, ex.Message);
                 }
 
 
             }
         }
+
+        /// <summary>
+        /// Xử lý khi có lỗi: cập nhật trạng thái lỗi cho Collection Meeting và FollowUpList, tạo bản sao FollowUpList với thông tin lỗi.
+        /// </summary>
+        /// <param name="item">Bản ghi gặp lỗi</param>
+        /// <param name="error">Thông tin lỗi</param>
         public void HandleError(Entity item, string error)
         {
             tracingService.Trace("error  :" + error);
@@ -464,7 +447,7 @@ namespace Action_CollectionMeeting_Complete_Detail
             Entity FollowUpList = CloneEntity(item);
             FollowUpList.Attributes.Remove("bsd_followuplistid");
             FollowUpList.Attributes.Remove("bsd_collectionmeeting");
-            FollowUpList["bsd_name"] = item["bsd_name"] ;
+            FollowUpList["bsd_name"] = item["bsd_name"];
             FollowUpList["bsd_date"] = today;
             FollowUpList["bsd_copy"] = true;
             FollowUpList["bsd_system"] = true;
@@ -472,22 +455,35 @@ namespace Action_CollectionMeeting_Complete_Detail
             tracingService.Trace("Create FollowUpList Copy");
             service.Create(FollowUpList);
         }
+
+        /// <summary>
+        /// Tìm phase launch theo id và kiểm tra trạng thái.
+        /// </summary>
+        /// <param name="service">Service CRM</param>
+        /// <param name="phase">EntityReference phase</param>
+        /// <returns>EntityCollection các phase launch không ở trạng thái Launched</returns>
         private EntityCollection find_phase(IOrganizationService service, EntityReference phase)
         {
             string fetXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                  <entity name='bsd_phaseslaunch'>
-                    <attribute name='bsd_name'/>
-                    <attribute name='bsd_phaseslaunchid'/>
-                    <filter type='and'>
-                   <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}'/>
-                    <condition attribute='statuscode' operator='ne' value='100000000'/>
-                    </filter>
-                  </entity>
-                </fetch>";
+                          <entity name='bsd_phaseslaunch'>
+                            <attribute name='bsd_name'/>
+                            <attribute name='bsd_phaseslaunchid'/>
+                            <filter type='and'>
+                           <condition attribute='bsd_phaseslaunchid' operator='eq' value='{0}'/>
+                            <condition attribute='statuscode' operator='ne' value='100000000'/>
+                            </filter>
+                          </entity>
+                        </fetch>";
             fetXml = string.Format(fetXml, phase.Id);
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetXml));
             return entc;
         }
+
+        /// <summary>
+        /// Tạo bản sao entity từ entity đầu vào.
+        /// </summary>
+        /// <param name="input">Entity đầu vào</param>
+        /// <returns>Bản sao entity</returns>
         private Entity CloneEntity(Entity input)
         {
             Entity outPut = new Entity(input.LogicalName);
@@ -498,6 +494,12 @@ namespace Action_CollectionMeeting_Complete_Detail
             return outPut;
         }
 
+        /// <summary>
+        /// Chuyển đổi thời gian UTC sang giờ địa phương của user CRM.
+        /// </summary>
+        /// <param name="utcTime">Thời gian UTC</param>
+        /// <param name="service">Service CRM</param>
+        /// <returns>Thời gian local</returns>
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime, IOrganizationService service)
         {
             var currentUserSettings = service.RetrieveMultiple(
@@ -508,7 +510,7 @@ namespace Action_CollectionMeeting_Complete_Detail
                {
                    Conditions =
            {
-            new ConditionExpression("systemuserid", ConditionOperator.EqualUserId)
+                    new ConditionExpression("systemuserid", ConditionOperator.EqualUserId)
            }
                }
            }).Entities[0].ToEntity<Entity>();
