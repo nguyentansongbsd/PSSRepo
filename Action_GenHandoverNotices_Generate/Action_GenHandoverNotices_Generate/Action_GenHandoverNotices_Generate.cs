@@ -350,7 +350,8 @@ namespace Action_GenHandoverNotices_Generate
                     //TINH LAI
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
                     //DateTime InterestStarDate = duedate.AddDays(Graceday);
-
+                    traceService.Trace("dateCalculate " + dateCalculate);
+                    traceService.Trace("duedate " + duedate);
                     TimeSpan difference = dateCalculate - duedate;
                     int bsd_latedays = difference.Days - Graceday;
                     bsd_latedays = bsd_latedays < 0 ? 0 : bsd_latedays;
