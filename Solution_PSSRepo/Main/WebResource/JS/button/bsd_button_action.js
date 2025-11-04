@@ -107,7 +107,7 @@ function addModelShareTeam() {
       {
           name: 'type',
           type: 'int',
-          value: Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 3);
+          value: Xrm.Page.data.entity.getEntityName() == "account" ? 1 : (Xrm.Page.data.entity.getEntityName() == "contact" ? 0 : 3)
 
       },
       {

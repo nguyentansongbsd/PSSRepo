@@ -904,6 +904,16 @@
               "RelativeFilePath": "\\HTML\\compoent\\bsd_bsd_Entityview_SelectReport_Email.html"
             },
             {
+              "CrmId": "fbba0ffa-a0d7-ef11-8ee9-002248570185",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_btn_EnableRule.js"
+            },
+            {
+              "CrmId": "9335d116-5def-ef11-9341-6045bd21b0f0",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\button\\bsd_button_action.js"
+            },
+            {
               "CrmId": "66aaf66a-fd6d-e811-814a-3863bb367d68",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Project\\projectform.js"
@@ -922,6 +932,11 @@
               "CrmId": "ff6f75dd-2b92-f011-b4cb-00224859aca2",
               "FileType": 3,
               "RelativeFilePath": "\\JS\\Update Land Value\\bsd_btn_updatelandvalue.js"
+            },
+            {
+              "CrmId": "3448b6ea-2089-ea11-a811-000d3a085b2b",
+              "FileType": 3,
+              "RelativeFilePath": "\\JS\\Update Management Fee\\bsd_bulkchangemanagementfee.js"
             }
           ]
         }
