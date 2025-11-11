@@ -227,24 +227,27 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                     customerNotices["bsd_units"] = orderPro["productid"];
                                 }
                                 #region xử lý OdernumberE
-                                if (((int)PSDetail["bsd_ordernumber"]) == 1)
+                                int bsd_ordernumber = ((int)PSDetail["bsd_ordernumber"]);
+                                if (bsd_ordernumber == 1)
                                 {
                                     customerNotices["bsd_odernumber_e"] = "1st";
                                 }
-                                else if (((int)PSDetail["bsd_ordernumber"]) == 2)
+                                else if (bsd_ordernumber == 2)
                                 {
                                     customerNotices["bsd_odernumber_e"] = "2nd";
                                 }
-                                else if (((int)PSDetail["bsd_ordernumber"]) == 3)
+                                else if (bsd_ordernumber == 3)
                                 {
                                     customerNotices["bsd_odernumber_e"] = "3rd";
 
                                 }
                                 else
                                 {
-                                    customerNotices["bsd_odernumber_e"] = $"{((int)PSDetail["bsd_ordernumber"])}th";
+                                    customerNotices["bsd_odernumber_e"] = $"{bsd_ordernumber}th";
                                 }
+                                customerNotices["bsd_actualinterestamount"] = new Money(get_INS_InterestChargeRemaining(service, OE, bsd_ordernumber));
                                 #endregion
+
                                 customerNotices["bsd_genpaymentnotices"] = enTarget.ToEntityReference();
                                 Guid id = service.Create(customerNotices);
                                 Entity ins = new Entity(PSD.LogicalName);
@@ -338,6 +341,30 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
             fetchXml = string.Format(fetchXml, oe.Id);
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
+        }
+        private decimal get_INS_InterestChargeRemaining(IOrganizationService crmservices, Entity oe, int orderNumber)
+        {
+            decimal bsd_interestchargeremaining = 0;
+            var fetchXml =
+                @"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_paymentschemedetail"">
+                    <attribute name=""bsd_interestchargeremaining"" />
+                    <filter>
+                      <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""0"" />
+                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{0}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                      <condition attribute=""bsd_ordernumber"" operator=""le"" value=""{1}"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+            fetchXml = string.Format(fetchXml, oe.Id, orderNumber);
+            EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
+            foreach (Entity item in entc.Entities)
+            {
+                bsd_interestchargeremaining += ((Money)item["bsd_interestchargeremaining"]).Value;
+            }
+            return bsd_interestchargeremaining;
         }
         private EntityCollection findCustomerNoticesByIntallment(IOrganizationService crmservices, EntityReference ins)
         {
