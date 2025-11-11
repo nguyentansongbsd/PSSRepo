@@ -108,7 +108,15 @@ namespace Action_InsertQrcodeInPDF
 
                     tracingService.Trace("Hoàn thành việc thêm QR code trên trang mới.");
 
+                    stamper.Close();
+                    reader.Close();
 
+                    // 4. Chuyển đổi PDF đã sửa đổi thành chuỗi Base64
+                    tracingService.Trace("Chuyển đổi PDF đã sửa đổi sang base64.");
+                    string modifiedPdfBase64 = Convert.ToBase64String(outputStream.ToArray());
+
+                    // 5. Gán kết quả vào OutputParameters
+                    context.OutputParameters["modifiedPdfBase64"] = modifiedPdfBase64;
                     tracingService.Trace("Hoàn thành Action_InsertQrcodeInPDF.");
                 }
             }
