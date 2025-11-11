@@ -1,12 +1,9 @@
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Action_InsertQrcodeInPDF
 {
@@ -19,70 +16,104 @@ namespace Action_InsertQrcodeInPDF
         public void Execute(IServiceProvider serviceProvider)
         {
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            service = ((IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory))).CreateOrganizationService(context.UserId);
+            service = ((IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory)))
+                .CreateOrganizationService(context.UserId);
             tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
 
             try
             {
                 tracingService.Trace("Bắt đầu Action_InsertQrcodeInPDF.");
 
-                // 1. Lấy các tham số đầu vào từ context
+                // 1. Lấy PDF base64 từ InputParameters
                 if (!context.InputParameters.Contains("pdfBase64") || !(context.InputParameters["pdfBase64"] is string))
                     throw new InvalidPluginExecutionException("Tham số 'pdfBase64' không hợp lệ.");
 
-                if (!context.InputParameters.Contains("qrBase64") || !(context.InputParameters["qrBase64"] is string))
-                    context.OutputParameters["modifiedPdfBase64"] = context.InputParameters["pdfBase64"].ToString();
-                #region dán qr vào cuối page
                 string pdfBase64 = context.InputParameters["pdfBase64"].ToString();
-                string qrBase64 = context.InputParameters["qrBase64"].ToString();
 
-                // 2. Chuyển đổi chuỗi Base64 thành mảng byte
-                tracingService.Trace("Giải mã chuỗi base64.");
+                // 2. Lấy QR code từ Note (annotation) của entity bằng FetchXML
+                if (!context.InputParameters.Contains("targetEntityId") || !(context.InputParameters["targetEntityId"] is string))
+                    throw new InvalidPluginExecutionException("Tham số 'targetEntityId' không hợp lệ.");
+
+                Guid objectId = new Guid("DC514F48-0EAB-F011-BBD2-6045BD1CFFFF");
+
+                string fetchXml = $@"
+<fetch top='1'>
+  <entity name='annotation'>
+    <attribute name='subject' />
+    <attribute name='filename' />
+    <attribute name='documentbody' />
+    <attribute name='createdon' />
+    <attribute name='annotationid' />
+    <filter type='and'>
+      <condition attribute='objectid' operator='eq' value='{objectId}' />
+      <condition attribute='isdocument' operator='eq' value='1' />
+      <condition attribute='subject' operator='eq' value='QR Code' />
+    </filter>
+    <order attribute='createdon' descending='true' />
+  </entity>
+</fetch>";
+
+                EntityCollection notes = service.RetrieveMultiple(new FetchExpression(fetchXml));
+
+                if (notes.Entities.Count == 0)
+                {
+                    tracingService.Trace("Không tìm thấy note QR Code nào.");
+                    context.OutputParameters["modifiedPdfBase64"] = pdfBase64;
+                    return;
+                }
+
+                Entity note = notes.Entities[0];
+                string qrBase64 = note.GetAttributeValue<string>("documentbody");
+
+                if (string.IsNullOrEmpty(qrBase64))
+                {
+                    tracingService.Trace("Note QR Code không có nội dung documentbody.");
+                    context.OutputParameters["modifiedPdfBase64"] = pdfBase64;
+                    return;
+                }
+
+                tracingService.Trace("Giải mã chuỗi QR code base64.");
                 byte[] pdfBytes = Convert.FromBase64String(pdfBase64);
                 byte[] qrBytes = Convert.FromBase64String(qrBase64);
 
-                // 3. Sử dụng iTextSharp để chèn QR code vào PDF
-                tracingService.Trace("Bắt đầu xử lý PDF.");
+                // 3. Chèn QR code vào PDF bằng iTextSharp
+                tracingService.Trace("Bắt đầu xử lý PDF và chèn QR code trên trang mới.");
+
                 using (MemoryStream outputStream = new MemoryStream())
                 {
                     PdfReader reader = new PdfReader(pdfBytes);
                     PdfStamper stamper = new PdfStamper(reader, outputStream);
 
-                    //// Tạo đối tượng hình ảnh từ QR code
-                    //Image qrImage = Image.GetInstance(qrBytes);
+                    Image qrImage = Image.GetInstance(qrBytes);
 
-                    //// Thiết lập kích thước cho QR code (ví dụ: 70x70 points)
-                    //qrImage.ScaleAbsolute(70f, 70f);
+                    // Kích thước trang A4
+                    float pageWidth = PageSize.A4.Width;
+                    float pageHeight = PageSize.A4.Height;
 
-                    //// Lặp qua tất cả các trang trong file PDF
-                    //for (int i = 1; i <= reader.NumberOfPages; i++)
-                    //{
-                    //    tracingService.Trace($"Đang xử lý trang {i}.");
-                    //    // Lấy kích thước trang
-                    //    Rectangle pageSize = reader.GetPageSizeWithRotation(i);
+                    // Lề 20 points
+                    float margin = 20f;
+                    qrImage.ScaleAbsolute(pageWidth - 2 * margin, pageHeight - 2 * margin);
 
-                    //    // Tính toán vị trí góc dưới bên phải (với lề 20 points)
-                    //    float x = pageSize.Right - qrImage.ScaledWidth - 20;
-                    //    float y = pageSize.Bottom + 20;
-                    //    qrImage.SetAbsolutePosition(x, y);
+                    // Thêm một trang mới vào cuối PDF
+                    stamper.InsertPage(reader.NumberOfPages + 1, PageSize.A4);
 
-                    //    // Lấy nội dung trang để thêm hình ảnh
-                    //    PdfContentByte content = stamper.GetOverContent(i);
-                    //    content.AddImage(qrImage);
-                    //}
+                    // Đặt vị trí QR code tại góc dưới bên trái (sau lề)
+                    qrImage.SetAbsolutePosition(margin, margin);
 
-                    // Đóng stamper để lưu thay đổi
+                    // Lấy nội dung trang mới để chèn QR
+                    PdfContentByte content = stamper.GetOverContent(reader.NumberOfPages + 1);
+                    content.AddImage(qrImage);
+
                     stamper.Close();
                     reader.Close();
 
-                    // 4. Chuyển đổi PDF đã sửa đổi thành chuỗi Base64
-                    tracingService.Trace("Chuyển đổi PDF đã sửa đổi sang base64.");
                     string modifiedPdfBase64 = Convert.ToBase64String(outputStream.ToArray());
-
-                    // 5. Gán kết quả vào OutputParameters
                     context.OutputParameters["modifiedPdfBase64"] = modifiedPdfBase64;
                 }
-                #endregion
+
+                tracingService.Trace("Hoàn thành việc thêm QR code trên trang mới.");
+
+
                 tracingService.Trace("Hoàn thành Action_InsertQrcodeInPDF.");
             }
             catch (Exception ex)
