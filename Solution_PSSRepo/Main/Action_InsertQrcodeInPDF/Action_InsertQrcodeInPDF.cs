@@ -30,28 +30,28 @@ namespace Action_InsertQrcodeInPDF
 
                 string pdfBase64 = context.InputParameters["pdfBase64"].ToString();
 
-                // 2. Lấy QR code từ Note (annotation) của entity bằng FetchXML
-                if (!context.InputParameters.Contains("targetEntityId") || !(context.InputParameters["targetEntityId"] is string))
-                    throw new InvalidPluginExecutionException("Tham số 'targetEntityId' không hợp lệ.");
+                //// 2. Lấy QR code từ Note (annotation) của entity bằng FetchXML
+                //if (!context.InputParameters.Contains("targetEntityId") || !(context.InputParameters["targetEntityId"] is string))
+                //    throw new InvalidPluginExecutionException("Tham số 'targetEntityId' không hợp lệ.");
 
                 Guid objectId = new Guid("DC514F48-0EAB-F011-BBD2-6045BD1CFFFF");
 
                 string fetchXml = $@"
-<fetch top='1'>
-  <entity name='annotation'>
-    <attribute name='subject' />
-    <attribute name='filename' />
-    <attribute name='documentbody' />
-    <attribute name='createdon' />
-    <attribute name='annotationid' />
-    <filter type='and'>
-      <condition attribute='objectid' operator='eq' value='{objectId}' />
-      <condition attribute='isdocument' operator='eq' value='1' />
-      <condition attribute='subject' operator='eq' value='QR Code' />
-    </filter>
-    <order attribute='createdon' descending='true' />
-  </entity>
-</fetch>";
+                <fetch top='1'>
+                  <entity name='annotation'>
+                    <attribute name='subject' />
+                    <attribute name='filename' />
+                    <attribute name='documentbody' />
+                    <attribute name='createdon' />
+                    <attribute name='annotationid' />
+                    <filter type='and'>
+                      <condition attribute='objectid' operator='eq' value='{objectId}' />
+                      <condition attribute='isdocument' operator='eq' value='1' />
+                      <condition attribute='subject' operator='eq' value='QR Code' />
+                    </filter>
+                    <order attribute='createdon' descending='true' />
+                  </entity>
+                </fetch>";
 
                 EntityCollection notes = service.RetrieveMultiple(new FetchExpression(fetchXml));
 
@@ -61,7 +61,6 @@ namespace Action_InsertQrcodeInPDF
                     context.OutputParameters["modifiedPdfBase64"] = pdfBase64;
                     return;
                 }
-
                 Entity note = notes.Entities[0];
                 string qrBase64 = note.GetAttributeValue<string>("documentbody");
 
@@ -84,37 +83,34 @@ namespace Action_InsertQrcodeInPDF
                     PdfReader reader = new PdfReader(pdfBytes);
                     PdfStamper stamper = new PdfStamper(reader, outputStream);
 
+                    // Tạo đối tượng hình ảnh từ QR code
                     Image qrImage = Image.GetInstance(qrBytes);
 
-                    // Kích thước trang A4
-                    float pageWidth = PageSize.A4.Width;
-                    float pageHeight = PageSize.A4.Height;
+                    // Thiết lập kích thước cho QR code (ví dụ: 70x70 points)
+                    qrImage.ScaleAbsolute(700f, 700f);
 
-                    // Lề 20 points
-                    float margin = 20f;
-                    qrImage.ScaleAbsolute(pageWidth - 2 * margin, pageHeight - 2 * margin);
+                    // Lặp qua tất cả các trang trong file PDF
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
+                    {
+                        tracingService.Trace($"Đang xử lý trang {i}.");
+                        // Lấy kích thước trang
+                        Rectangle pageSize = reader.GetPageSizeWithRotation(i);
 
-                    // Thêm một trang mới vào cuối PDF
-                    stamper.InsertPage(reader.NumberOfPages + 1, PageSize.A4);
+                        // Tính toán vị trí góc dưới bên phải (với lề 20 points)
+                        float x = pageSize.Right - qrImage.ScaledWidth - 20;
+                        float y = pageSize.Bottom + 20;
+                        qrImage.SetAbsolutePosition(x, y);
 
-                    // Đặt vị trí QR code tại góc dưới bên trái (sau lề)
-                    qrImage.SetAbsolutePosition(margin, margin);
+                        // Lấy nội dung trang để thêm hình ảnh
+                        PdfContentByte content = stamper.GetOverContent(i);
+                        content.AddImage(qrImage);
+                    }
 
-                    // Lấy nội dung trang mới để chèn QR
-                    PdfContentByte content = stamper.GetOverContent(reader.NumberOfPages + 1);
-                    content.AddImage(qrImage);
+                    tracingService.Trace("Hoàn thành việc thêm QR code trên trang mới.");
 
-                    stamper.Close();
-                    reader.Close();
 
-                    string modifiedPdfBase64 = Convert.ToBase64String(outputStream.ToArray());
-                    context.OutputParameters["modifiedPdfBase64"] = modifiedPdfBase64;
+                    tracingService.Trace("Hoàn thành Action_InsertQrcodeInPDF.");
                 }
-
-                tracingService.Trace("Hoàn thành việc thêm QR code trên trang mới.");
-
-
-                tracingService.Trace("Hoàn thành Action_InsertQrcodeInPDF.");
             }
             catch (Exception ex)
             {
