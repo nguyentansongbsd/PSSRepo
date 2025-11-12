@@ -39,7 +39,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 input04 = context.InputParameters["Owner"].ToString();
             }
             traceService.Trace("vào xử lý " + input01);
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceService.Trace("Bước 01");
                 Entity enUp = new Entity("bsd_genpaymentnotices");
