@@ -154,7 +154,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     throw new InvalidPluginExecutionException("The list is empty. Please check again.");
                 context.OutputParameters["ReturnId"] = string.Join(";", listOE);
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -263,7 +263,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     #endregion
                 }
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
