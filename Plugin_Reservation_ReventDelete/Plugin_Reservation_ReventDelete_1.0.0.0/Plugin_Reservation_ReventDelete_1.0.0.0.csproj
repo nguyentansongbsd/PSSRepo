@@ -7,7 +7,7 @@
     <ProjectGuid>{C06EF5B2-8646-4F5F-AA79-79D7C4BD3DB5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Plugin_Reservation_ReventDelete</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>Plugin_Reservation_ReventDelete</RootNamespace>
