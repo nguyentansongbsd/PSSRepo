@@ -485,10 +485,12 @@ namespace Plugin_CollectionMeeting_GenerateTermination
                     <order attribute='bsd_name' descending='false' />
                     <filter type='and'>
                       <condition attribute='bsd_collectionmeeting' operator='eq'  uitype='appointment' value='{0}' />
+                      <condition attribute='statecode' operator='eq' value='0' />
                     </filter>
                   </entity>
                 </fetch>";
             fetXml = string.Format(fetXml, CM.Id);
+            traceService.Trace("fetch: " + fetXml);
             EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetXml));
             return entc;
         }

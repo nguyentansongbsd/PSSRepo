@@ -7,7 +7,7 @@
     <ProjectGuid>{E813B202-F95F-408E-8DE9-1126C5A38B01}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Action_SignedContract</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>BSDLibrary</RootNamespace>

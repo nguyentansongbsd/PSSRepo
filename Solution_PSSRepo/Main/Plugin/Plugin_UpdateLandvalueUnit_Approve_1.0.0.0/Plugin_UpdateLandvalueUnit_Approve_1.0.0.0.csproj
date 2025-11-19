@@ -7,10 +7,11 @@
     <ProjectGuid>{950F76C4-E19D-4FB6-8671-D7CFA1E0A703}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Plugin_UpdateLandvalueUnit_Approve</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>Plugin_UpdateLandvalueUnit_Approve</RootNamespace>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

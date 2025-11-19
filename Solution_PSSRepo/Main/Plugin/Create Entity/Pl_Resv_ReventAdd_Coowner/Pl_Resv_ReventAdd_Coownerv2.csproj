@@ -7,7 +7,7 @@
     <ProjectGuid>{1004E468-FAFB-416C-9199-5A4923DCC1CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Pl_Resv_ReventAdd_Coownerv2</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>Pl_Resv_ReventAdd_Coownerv2</RootNamespace>
