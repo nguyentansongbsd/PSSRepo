@@ -44,11 +44,15 @@ namespace Plugin_CollectionMeeting_GenerateTermination
                         {
                             return;
                         }
-                        Entity enDetailUpdate = new Entity(tar.LogicalName, tar.Id);
-                        enDetailUpdate["bsd_processing_pa"] = true; //
-                        enDetailUpdate["bsd_error"] = false;
-                        enDetailUpdate["bsd_errordetail"] = "";
-                        service.Update(enDetailUpdate);
+                        //Entity enDetailUpdate = new Entity(tar.LogicalName, tar.Id);
+                        //enDetailUpdate["bsd_processing_pa"] = true; //
+                        //enDetailUpdate["bsd_error"] = false;
+                        //enDetailUpdate["bsd_errordetail"] = "";
+                        ////service.Update(enDetailUpdate);
+                        ///
+                        tar["bsd_processing_pa"] = true;
+                        tar["bsd_error"] = false;
+                        tar["bsd_errordetail"] = "";
                         var request = new OrganizationRequest("bsd_Action_Active_CollectionMeeting_Complete");
                         string listid = string.Join(",", l_FUL.Entities.Select(x => x.Id.ToString()));
                         request["listid"] = listid;
