@@ -140,6 +140,17 @@ namespace Plugin_Termination_Loyalty
                         trace.Trace("end up contact" + chiaChoMotPhayMot);
                     }
                 }
+                else
+                {
+                    Entity updateCustomer = new Entity(customerRef.LogicalName, customerRef.Id);
+                    updateCustomer["bsd_membershiptier"] = null;
+                    updateCustomer["bsd_totalamountofownership"] = new Money(0);
+                    updateCustomer["bsd_totalamountofownership3years"] = new Money(0);
+                    updateCustomer["bsd_loyaltystatus"] = new OptionSetValue(100000001);
+                    updateCustomer["bsd_loyaltydate"] = today1;
+                    updateCustomer["bsd_totaltransaction"] = orderCount;
+                    service.Update(updateCustomer);
+                }
             }
         }
         public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)

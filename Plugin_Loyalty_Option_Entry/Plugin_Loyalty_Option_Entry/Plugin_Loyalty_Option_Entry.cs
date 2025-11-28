@@ -133,7 +133,19 @@ namespace Plugin_Loyalty_Option_Entry
                             trace.Trace("end up contact" + chiaChoMotPhayMot);
                         }
                     }
-                }
+                    else
+                    {
+                    EntityReference customerRef = (EntityReference)OE["customerid"];
+                    Entity updateCustomer = new Entity(customerRef.LogicalName, customerRef.Id);
+                    updateCustomer["bsd_membershiptier"] = null;
+                    updateCustomer["bsd_totalamountofownership"] = new Money(0);
+                    updateCustomer["bsd_totalamountofownership3years"] = new Money(0);
+                    updateCustomer["bsd_loyaltystatus"] = new OptionSetValue(100000001);
+                    updateCustomer["bsd_loyaltydate"] = today;
+                    updateCustomer["bsd_totaltransaction"] = orderCount;
+                    service.Update(updateCustomer);
+                    }
+            }
         }
     }
 }
