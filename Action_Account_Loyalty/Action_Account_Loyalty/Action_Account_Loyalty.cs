@@ -132,8 +132,7 @@ namespace Action_Account_Loyalty
                         ["bsd_totalamountofownership3years"] = new Money(chiaChoMotPhayMot),
                         ["bsd_loyaltystatus"] = new OptionSetValue(100000001),
                         ["bsd_loyaltydate"] = today,
-                        ["bsd_totaltransaction"] = orderCount,
-                        ["bsd_uployal"] = true
+                        ["bsd_totaltransaction"] = orderCount
                     };
                     service.Update(updateCustomer);
                     tracingService.Trace("end");
@@ -149,8 +148,7 @@ namespace Action_Account_Loyalty
                     ["bsd_totalamountofownership3years"] = new Money(chiaChoMotPhayMot),
                     ["bsd_loyaltystatus"] = new OptionSetValue(100000000),
                     ["bsd_loyaltydate"] = null,
-                    ["bsd_totaltransaction"] = orderCount,
-                    ["bsd_uployal"] = true
+                    ["bsd_totaltransaction"] = orderCount
                 };
                 service.Update(updateCustomer);
             }
