@@ -61,12 +61,12 @@ namespace Plugin_Loyalty_Option_Entry
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='ne' value='100000006' />
-                      <condition attribute='statuscode' operator='ne' value='100000001' />
-                      <condition attribute='statuscode' operator='ne' value='100000000' />
+                      <condition attribute='statuscode' operator='eq' value='100000002' />
+                      <condition attribute='statuscode' operator='eq' value='100000003' />
+                      <condition attribute='statuscode' operator='eq' value='100000004' />
+                      <condition attribute='statuscode' operator='eq' value='100000005' />
+                      <condition attribute='statuscode' operator='eq' value='100001' />
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
                     </filter>
                   </entity>
                 </fetch>";
