@@ -46,10 +46,14 @@ namespace Plugin_Termination_Loyalty
                   <entity name=""salesorder"">
                     <attribute name=""totalamount"" alias=""sumtotalamount"" aggregate=""sum"" />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='ne' value='100000006' />
-                      <condition attribute='statuscode' operator='ne' value='100000001' />
-                      <condition attribute='statuscode' operator='ne' value='100000000' />
-                      <condition attribute=""customerid"" operator=""eq"" value=""{purchaserId}"" />
+                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
                     </filter>
                   </entity>
                 </fetch>";
@@ -68,12 +72,16 @@ namespace Plugin_Termination_Loyalty
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='ne' value='100000006' />
-                      <condition attribute='statuscode' operator='ne' value='100000001' />
-                      <condition attribute='statuscode' operator='ne' value='100000000' />
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today1:yyyy-MM-dd}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today1:yyyy-MM-dd}"" />
                     </filter>
                   </entity>
                 </fetch>";
@@ -87,12 +95,16 @@ namespace Plugin_Termination_Loyalty
                   <entity name=""salesorder"">
                     <attribute name=""totalamount"" alias=""sumtotalamount"" aggregate=""sum"" />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='eq' value='100000002' />
-                      <condition attribute='statuscode' operator='eq' value='100000003' />
-                      <condition attribute='statuscode' operator='eq' value='100000004' />
-                      <condition attribute='statuscode' operator='eq' value='100000005' />
-                      <condition attribute='statuscode' operator='eq' value='100001' />
-                      <condition attribute=""customerid"" operator=""eq"" value=""{purchaserId}"" />  
+                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today1:yyyy-MM-dd}"" />
                     </filter>
                   </entity>
                 </fetch>";
@@ -111,8 +123,8 @@ namespace Plugin_Termination_Loyalty
                             <attribute name='bsd_purchaserloyaltyprogramid' />
                             <attribute name='bsd_membershiptier' />
                             <filter type='and'>
-                              <condition attribute='bsd_beginamountcur' operator='le' value='{chiaChoMotPhayMot}' />
-                              <condition attribute='bsd_endamountcur' operator='gt' value='{chiaChoMotPhayMot}' />
+                              <condition attribute='bsd_beginamountcur' operator='le' value='{chiaChoMotPhayMot_all}' />
+                              <condition attribute='bsd_endamountcur' operator='gt' value='{chiaChoMotPhayMot_all}' />
                               <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                             </filter>
                             <order attribute='bsd_beginamountcur' descending='false' />

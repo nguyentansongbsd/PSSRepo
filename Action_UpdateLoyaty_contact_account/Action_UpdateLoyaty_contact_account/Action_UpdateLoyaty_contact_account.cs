@@ -34,11 +34,15 @@ namespace Action_UpdateLoyaty_contact_account
               <entity name='salesorder'>
                 <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
                 <filter type='and'>
-                  <condition attribute='statuscode' operator='ne' value='100000006' />
-                  <condition attribute='statuscode' operator='ne' value='100000001' />
-                  <condition attribute='statuscode' operator='ne' value='100000000' />
-                  <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
-                </filter>
+                      <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                    </filter>
               </entity>
             </fetch>";
 
@@ -62,12 +66,16 @@ namespace Action_UpdateLoyaty_contact_account
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='ne' value='100000006' />
-                      <condition attribute='statuscode' operator='ne' value='100000001' />
-                      <condition attribute='statuscode' operator='ne' value='100000000' />
                       <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
-                      <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
                     </filter>
                   </entity>
                 </fetch>";
@@ -80,15 +88,20 @@ namespace Action_UpdateLoyaty_contact_account
                   <entity name='salesorder'>
                     <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
                     <filter type='and'>
-                      <condition attribute='statuscode' operator='eq' value='100000002' />
-                      <condition attribute='statuscode' operator='eq' value='100000003' />
-                      <condition attribute='statuscode' operator='eq' value='100000004' />
-                      <condition attribute='statuscode' operator='eq' value='100000005' />
-                      <condition attribute='statuscode' operator='eq' value='100001' />
                       <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
                     </filter>
                   </entity>
                 </fetch>";
+            
             EntityCollection orders3Y = service.RetrieveMultiple(new FetchExpression(fetchXml_3y));
             tracingService.Trace("xml_" + fetchXml_3y);
             if (orders3Y.Entities.Count > 0 && orders3Y[0].Attributes.Contains("sumtotalamount"))
@@ -99,6 +112,7 @@ namespace Action_UpdateLoyaty_contact_account
                     decimal totalAmount3Y = moneyValue.Value;
                     tracingService.Trace("totalAmount3Y_ " + totalAmount3Y);
                     chiaChoMotPhayMot = totalAmount3Y;
+                    tracingService.Trace("chiaChoMotPhayMot_3year = " + chiaChoMotPhayMot);
                 }
             }
             tracingService.Trace("4_");
@@ -109,8 +123,8 @@ namespace Action_UpdateLoyaty_contact_account
                     <attribute name='bsd_purchaserloyaltyprogramid' />
                     <attribute name='bsd_membershiptier' />
                     <filter type='and'>
-                      <condition attribute='bsd_beginamountcur' operator='le' value='{chiaChoMotPhayMot}' />
-                      <condition attribute='bsd_endamountcur' operator='ge' value='{chiaChoMotPhayMot}' />
+                      <condition attribute='bsd_beginamountcur' operator='le' value='{chiaChoMotPhayMot_all}' />
+                      <condition attribute='bsd_endamountcur' operator='ge' value='{chiaChoMotPhayMot_all}' />
                       <condition attribute='statuscode' operator='eq' value='100000000' />
                     </filter>
                     <order attribute='bsd_beginamountcur' descending='false' />
