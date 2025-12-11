@@ -60,8 +60,8 @@ namespace Plugin_Loyalty_Option_Entry
                     }
                 }
                 // đếm số lượng giao dịch của kh này trong 3 năm 
-                var fetchXml_countOrders = $@"
-                <fetch distinct='false' mapping='logical' aggregate='false'>
+                var fetchXml_count = $@"
+                <fetch>
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
                     <filter type='and'>
@@ -79,7 +79,7 @@ namespace Plugin_Loyalty_Option_Entry
                   </entity>
                 </fetch>";
 
-                EntityCollection orders = service.RetrieveMultiple(new FetchExpression(fetchXml_countOrders));
+                EntityCollection orders = service.RetrieveMultiple(new FetchExpression(fetchXml_count));
                 int orderCount = orders.Entities.Count;
 
                 //Lấy giá trị totalamount giao dịch trong 3 năm kể từ thời điểm hiện tại trở về trước trên oe

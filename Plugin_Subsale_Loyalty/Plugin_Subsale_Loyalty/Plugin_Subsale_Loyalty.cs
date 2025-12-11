@@ -67,6 +67,7 @@ namespace Plugin_Subsale_Loyalty
                     </filter>
                   </entity>
                 </fetch>";
+            trace.Trace("fet1");
             EntityCollection allOrders = service.RetrieveMultiple(new FetchExpression(fetchXml_all));
             if (allOrders.Entities.Count > 0 && allOrders[0].Attributes.Contains("sumtotalamount"))
             {
@@ -82,27 +83,6 @@ namespace Plugin_Subsale_Loyalty
                 <fetch>
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
-                      <filter type='and'>
-                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='statuscode' operator='in'>
-                        <value>100000002</value>
-                        <value>100000003</value>
-                        <value>100000004</value>
-                        <value>100000005</value>
-                        <value>100001</value>
-                      </condition>
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
-                    </filter>
-                </fetch>";
-            EntityCollection orderCountResult = service.RetrieveMultiple(new FetchExpression(fetchXml_count));
-            int orderCount = orderCountResult.Entities.Count;
-
-            // Lấy tổng amount giao dịch trong 3 năm
-            var fetchXml_3y = $@"
-                <fetch aggregate='true'>
-                  <entity name='salesorder'>
-                    <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
                     <filter type='and'>
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                       <condition attribute='statuscode' operator='in'>
@@ -117,6 +97,30 @@ namespace Plugin_Subsale_Loyalty
                     </filter>
                   </entity>
                 </fetch>";
+            trace.Trace("fet2");
+            EntityCollection orderCountResult = service.RetrieveMultiple(new FetchExpression(fetchXml_count));
+            int orderCount = orderCountResult.Entities.Count;
+
+            // Lấy tổng amount giao dịch trong 3 năm
+            var fetchXml_3y = $@"
+                <fetch aggregate='true'>
+                  <entity name='salesorder'>
+                    <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
+                    <filter type='and'>
+                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
+                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
+                      <condition attribute='statuscode' operator='in'>
+                        <value>100000002</value>
+                        <value>100000003</value>
+                        <value>100000004</value>
+                        <value>100000005</value>
+                        <value>100001</value>
+                      </condition>
+                    </filter>
+                  </entity>
+                </fetch>";
+            trace.Trace("fet3");
             EntityCollection orders3Y = service.RetrieveMultiple(new FetchExpression(fetchXml_3y));
             if (orders3Y.Entities.Count > 0 && orders3Y[0].Attributes.Contains("sumtotalamount") && orders3Y[0]["sumtotalamount"] != null)
             {
@@ -141,7 +145,7 @@ namespace Plugin_Subsale_Loyalty
                   </entity>
                 </fetch>";
             EntityCollection loyaltyResults = service.RetrieveMultiple(new FetchExpression(fetchLoyalty));
-            trace.Trace("fet" + fetchLoyalty);
+            trace.Trace("fet4" + fetchLoyalty);
             if (loyaltyResults.Entities.Count > 0)
             {
                 Entity matchedProgram = loyaltyResults[0];
