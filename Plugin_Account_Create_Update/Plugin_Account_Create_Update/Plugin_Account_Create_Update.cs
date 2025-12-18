@@ -22,7 +22,6 @@ namespace Plugin_Account_Create_Update
             ITracingService traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             if (context.MessageName == "Update")
             {
-                if (context.Depth > 2) return;
                 traceService.Trace("Update");
                 Entity target = (Entity)context.InputParameters["Target"];
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));

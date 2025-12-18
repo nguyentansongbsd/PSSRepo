@@ -182,7 +182,6 @@ namespace Plugin_Contact_Create_Update
             }
             else if (context.MessageName == "Update")
             {
-                if (context.Depth > 2) return;
                 traceService.Trace("Update");
                 Entity target = (Entity)context.InputParameters["Target"];
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
