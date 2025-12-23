@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
@@ -105,8 +106,29 @@ namespace Action_BulkWaiver_Void_Ver02
             traceService.Trace("getLastConfirmPaymentDate");
 
             Installment installment = new Installment(service, enInstallment);
-            Entity enPaymentLast = installment.getLastConfirmPayment(bsd_paymenttype);
-            DateTime lastConfirmedDatePayment = new DateTime(0);
+
+            Guid id = enInstallment.Id;
+            int num1 = bsd_paymenttype;
+            int num2 = 100000000;
+            QueryExpression queryExpression = new QueryExpression("bsd_payment");
+            queryExpression.ColumnSet.AllColumns = true;
+            queryExpression.AddOrder("bsd_paymentactualtime", (OrderType)1);
+            queryExpression.Criteria.AddCondition("bsd_paymentschemedetail", 0, new object[1]
+            {
+         id
+            });
+            queryExpression.Criteria.AddCondition(nameof(bsd_paymenttype), 0, new object[1]
+            {
+         num1
+            });
+            queryExpression.Criteria.AddCondition("statuscode", 0, new object[1]
+            {
+         num2
+            });
+            EntityCollection entityCollection = service.RetrieveMultiple(queryExpression);
+
+            Entity enPaymentLast = entityCollection.Entities.Count > 0 ? ((Collection<Entity>)entityCollection.Entities)[0] : null;
+            DateTime lastConfirmedDatePayment = new DateTime();
             if (enPaymentLast != null)
             {
                 if (enPaymentLast.Contains("bsd_confirmeddate"))
@@ -114,13 +136,39 @@ namespace Action_BulkWaiver_Void_Ver02
                     lastConfirmedDatePayment = (DateTime)enPaymentLast["bsd_confirmeddate"];
                 }
             }
+
             return lastConfirmedDatePayment;
         }
         public DateTime getLastConfirmTransactionPaymentDate(Entity enInstallment, int bsd_transactiontype, int bsd_feetype)
         {
+            traceService.Trace("getLastConfirmTransactionPaymentDate");
             Installment installment = new Installment(service, enInstallment);
-            Entity enTransactionPaymentLast = installment.getLastConfirmTransactionPayment(bsd_transactiontype, bsd_feetype);
-            DateTime lastconfirmedDateTransactionPayment = new DateTime(0);
+            Guid id = enInstallment.Id;
+            int num1 = 100000000;
+            int num2 = bsd_transactiontype;
+            QueryExpression queryExpression = new QueryExpression("bsd_transactionpayment");
+            queryExpression.ColumnSet.AllColumns = true;
+            queryExpression.AddOrder("createdon", (OrderType)1);
+            queryExpression.Criteria.AddCondition("bsd_installment", 0, new object[1]
+            {
+         id
+            });
+            queryExpression.Criteria.AddCondition("statuscode", 0, new object[1]
+            {
+         num1
+            });
+            queryExpression.Criteria.AddCondition(nameof(bsd_transactiontype), 0, new object[1]
+            {
+         num2
+            });
+            if (bsd_feetype != 0)
+                queryExpression.Criteria.AddCondition(nameof(bsd_feetype), 0, new object[1]
+                {
+           bsd_feetype
+                });
+            EntityCollection entityCollection = service.RetrieveMultiple(queryExpression);
+            Entity enTransactionPaymentLast = entityCollection.Entities.Count > 0 ? ((Collection<Entity>)entityCollection.Entities)[0] : null;
+            DateTime lastconfirmedDateTransactionPayment = new DateTime();
             if (enTransactionPaymentLast != null)
             {
                 if (enTransactionPaymentLast.Contains("createdon"))
@@ -177,9 +225,10 @@ namespace Action_BulkWaiver_Void_Ver02
             //Fees = 100000002
             //Other = 100000003
             var bsd_transactiontype = 100000001;
+            traceService.Trace("validateInterest");
             DateTime lastconfirmedDateTransactionPayment = getLastConfirmTransactionPaymentDate(enInstallment, bsd_transactiontype, 0);
             DateTime lastPaidDate = DateTime.Compare(lastConfirmedDatePayment, lastconfirmedDateTransactionPayment) > 0 ? lastConfirmedDatePayment : lastconfirmedDateTransactionPayment;
-
+            traceService.Trace("validateInterest");
             if (lastPaidDate.Ticks > 0)
             {
                 //Có payment
@@ -187,7 +236,7 @@ namespace Action_BulkWaiver_Void_Ver02
                 //Nếu lastPaidDate > bsd_approvedrejecteddate thì không cho void
                 return DateTime.Compare(bsd_approvedrejecteddate, lastPaidDate) > 0 ? true : false;
             }
-
+            traceService.Trace("validateInterest");
             return true;
         }
         private bool validateManagementFee(Entity enInstallment, Entity enBulkWaiver)
@@ -257,7 +306,7 @@ namespace Action_BulkWaiver_Void_Ver02
                         traceService.Trace("Void Installment");
                         if (validateInstallment(enInstallment, enBulkWaiver))
                         {
-                            installment.voidInstallment(bsd_waiveramount);
+                            voidInstallment(bsd_waiveramount, enInstallment);
                         }
                         else
                         {
@@ -268,7 +317,7 @@ namespace Action_BulkWaiver_Void_Ver02
                         traceService.Trace("Void Interest");
                         if (validateInterest(enInstallment, enBulkWaiver))
                         {
-                            installment.voidInterest(bsd_waiveramount);
+                            voidInterest(bsd_waiveramount, enInstallment);
                         }
                         else
                         {
@@ -279,7 +328,7 @@ namespace Action_BulkWaiver_Void_Ver02
                         traceService.Trace("Void Management Fee");
                         if (validateManagementFee(enInstallment, enBulkWaiver))
                         {
-                            installment.voidManagementFee(bsd_waiveramount);
+                            voidManagementFee(bsd_waiveramount, enInstallment);
                         }
                         else
                         {
@@ -290,7 +339,7 @@ namespace Action_BulkWaiver_Void_Ver02
                         traceService.Trace("Void Maintenance Fee");
                         if (validateMaintenanceFee(enInstallment, enBulkWaiver))
                         {
-                            installment.voidMaintenanceFee(bsd_waiveramount);
+                            voidMaintenanceFee(bsd_waiveramount, enInstallment);
                         }
                         else
                         {
@@ -316,6 +365,122 @@ namespace Action_BulkWaiver_Void_Ver02
             EntityCollection entc = service.RetrieveMultiple(q);
 
             return entc;
+        }
+        public void voidInstallment(decimal bsd_waiveramount, Entity enInstallment)
+        {
+            decimal num1 = enInstallment.Contains("bsd_balance") ? ((Money)enInstallment["bsd_balance"]).Value : 0M;
+            decimal num2 = enInstallment.Contains("bsd_waiverinstallment") ? ((Money)enInstallment["bsd_waiverinstallment"]).Value : 0M;
+            decimal num3 = enInstallment.Contains("bsd_waiveramount") ? ((Money)enInstallment["bsd_waiveramount"]).Value : 0M;
+            decimal num4 = num1 + bsd_waiveramount;
+            decimal num5 = num2 - bsd_waiveramount;
+            decimal num6 = num3 - bsd_waiveramount;
+            Entity enUp = new Entity(enInstallment.LogicalName, enInstallment.Id);
+            enUp["bsd_balance"] = new Money(num4);
+            enUp["bsd_waiverinstallment"] = new Money(num5);
+            enUp["bsd_waiveramount"] = new Money(num6);
+            if (num4 == 0)
+            {
+                enUp["statuscode"] = new OptionSetValue(100000001);//--> PAID
+                decimal waiverinterest = enInstallment.Contains("bsd_waiverinterest") ? ((Money)enInstallment["bsd_waiverinterest"]).Value : 0;
+                decimal interestamount = enInstallment.Contains("bsd_interestchargeamount") ? ((Money)enInstallment["bsd_interestchargeamount"]).Value : 0;
+                decimal interestpaid = enInstallment.Contains("bsd_interestwaspaid") ? ((Money)enInstallment["bsd_interestwaspaid"]).Value : 0;
+                decimal balace_Interest = interestamount - interestpaid - waiverinterest;
+                if (balace_Interest == 0)
+                    enUp["bsd_interestchargestatus"] = new OptionSetValue(100000001);//--> PAID
+                else enUp["bsd_interestchargestatus"] = new OptionSetValue(100000000);//--> NOT PAID
+            }
+            else
+            {
+                enUp["statuscode"] = new OptionSetValue(100000000);
+                enUp["bsd_interestchargestatus"] = new OptionSetValue(100000000);//--> NOT PAID
+            }
+            service.Update(enUp);
+        }
+
+        public void voidInterest(decimal bsd_waiveramount, Entity enInstallment)
+        {
+            traceService.Trace("voidInterest");
+            int statuscode = enInstallment.Contains("statuscode") ? ((OptionSetValue)enInstallment["statuscode"]).Value : 0;
+            decimal num1 = enInstallment.Contains("bsd_waiverinterest") ? ((Money)enInstallment["bsd_waiverinterest"]).Value : 0M;
+            decimal num2 = enInstallment.Contains("bsd_waiveramount") ? ((Money)enInstallment["bsd_waiveramount"]).Value : 0M;
+            decimal num3 = num1 - bsd_waiveramount;
+            decimal num4 = num2 - bsd_waiveramount;
+            Entity enUp = new Entity(enInstallment.LogicalName, enInstallment.Id);
+            enUp["bsd_waiverinterest"] = new Money(num3);
+            enUp["bsd_waiveramount"] = new Money(num4);
+            traceService.Trace("voidInterest");
+            if (statuscode == 100000001)
+            {
+                decimal interestamount = enInstallment.Contains("bsd_interestchargeamount") ? ((Money)enInstallment["bsd_interestchargeamount"]).Value : 0;
+                decimal interestpaid = enInstallment.Contains("bsd_interestwaspaid") ? ((Money)enInstallment["bsd_interestwaspaid"]).Value : 0;
+                decimal balace_Interest = interestamount - interestpaid - num3;
+                if (balace_Interest == 0)
+                    enUp["bsd_interestchargestatus"] = new OptionSetValue(100000001);//--> PAID
+                else enUp["bsd_interestchargestatus"] = new OptionSetValue(100000000);//--> NOT PAID
+            }
+            else
+            {
+                enUp["bsd_interestchargestatus"] = new OptionSetValue(100000000);//--> NOT PAID
+            }
+            traceService.Trace("voidInterest");
+            service.Update(enUp);
+        }
+
+        public void voidManagementFee(decimal bsd_waiveramount, Entity enInstallment)
+        {
+            decimal num1 = enInstallment.Contains("bsd_managementfeewaiver") ? ((Money)enInstallment["bsd_managementfeewaiver"]).Value : 0M;
+            decimal num2 = enInstallment.Contains("bsd_waiveramount") ? ((Money)enInstallment["bsd_waiveramount"]).Value : 0M;
+            decimal num3 = num1 - bsd_waiveramount;
+            decimal num4 = num2 - bsd_waiveramount;
+            Entity enUp = new Entity(enInstallment.LogicalName, enInstallment.Id);
+            enUp["bsd_managementfeewaiver"] = new Money(num3);
+            enUp["bsd_waiveramount"] = new Money(num4);
+
+            decimal managementamount = enInstallment.Contains("bsd_managementamount") ? ((Money)enInstallment["bsd_managementamount"]).Value : 0;
+            decimal managementfeepaid = enInstallment.Contains("bsd_managementfeepaid") ? ((Money)enInstallment["bsd_managementfeepaid"]).Value : 0;
+            decimal balancemanagement = managementamount - managementfeepaid - num3;
+            if (balancemanagement == 0)
+            {
+                enUp["bsd_managementfeesstatus"] = true;//--> PAID
+            }
+            else
+            {
+                if (balancemanagement < 0)
+                {
+                    throw new InvalidPluginExecutionException("Cannot set Waiver Amount bigger than the balance in Management fees: " + enInstallment["bsd_name"]);
+                }
+                enUp["bsd_managementfeesstatus"] = false;//--> NOT PAID
+            }
+            service.Update(enUp);
+        }
+
+        public void voidMaintenanceFee(decimal bsd_waiveramount, Entity enInstallment)
+        {
+            decimal num1 = enInstallment.Contains("bsd_maintenancefeewaiver") ? ((Money)enInstallment["bsd_maintenancefeewaiver"]).Value : 0M;
+            decimal num2 = enInstallment.Contains("bsd_waiveramount") ? ((Money)enInstallment["bsd_waiveramount"]).Value : 0M;
+            decimal num3 = num1 - bsd_waiveramount;
+            decimal num4 = num2 - bsd_waiveramount;
+
+            Entity enUp = new Entity(enInstallment.LogicalName, enInstallment.Id);
+            enUp["bsd_maintenancefeewaiver"] = new Money(num3);
+            enUp["bsd_waiveramount"] = new Money(num4);
+
+            decimal maintenanceamount = enInstallment.Contains("bsd_maintenanceamount") ? ((Money)enInstallment["bsd_maintenanceamount"]).Value : 0;
+            decimal maintenancefeepaid = enInstallment.Contains("bsd_maintenancefeepaid") ? ((Money)enInstallment["bsd_maintenancefeepaid"]).Value : 0;
+            decimal balancemaintence = maintenanceamount - maintenancefeepaid - num3;
+            if (balancemaintence == 0)
+            {
+                enUp["bsd_maintenancefeesstatus"] = true;//--> PAID
+            }
+            else
+            {
+                if (balancemaintence < 0)
+                {
+                    throw new InvalidPluginExecutionException("Cannot set Waiver Amount bigger than the balance in Maintenance fees: " + enInstallment["bsd_name"]);
+                }
+                enUp["bsd_maintenancefeesstatus"] = false;//--> NOT PAID
+            }
+            service.Update(enUp);
         }
         private EntityCollection find(string id, int sts)
         {
