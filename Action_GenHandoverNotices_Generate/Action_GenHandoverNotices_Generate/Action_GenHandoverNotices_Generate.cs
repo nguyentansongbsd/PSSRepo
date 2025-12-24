@@ -246,7 +246,8 @@ namespace Action_GenHandoverNotices_Generate
                 }
                 if (enTarget.Contains("bsd_date"))
                     hn["bsd_billdate"] = RetrieveLocalTimeFromUTCTime((DateTime)enTarget["bsd_date"], service);
-                service.Create(hn);
+                Guid id = service.Create(hn);
+                copy_CownerForOE(OE.Id, id, hn.LogicalName, "bsd_warningnotice");
                 //UPDATE UEHD
                 Entity uehd = new Entity("bsd_updateestimatehandoverdate");
                 uehd.Id = ((EntityReference)detail["bsd_updateestimatehandoverdate"]).Id;
@@ -264,6 +265,30 @@ namespace Action_GenHandoverNotices_Generate
                 enUp["bsd_generateddate"] = DateTime.Now;
                 enUp["bsd_generator"] = new EntityReference("systemuser", Guid.Parse(input04));
                 service.Update(enUp);
+            }
+        }
+        private void copy_CownerForOE(Guid idSource, Guid id, string localName, string fieldName)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+        <fetch>
+          <entity name=""bsd_coowner"">
+            <filter>
+              <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idSource}"" />
+              <condition attribute=""bsd_current"" operator=""eq"" value=""1"" />
+            </filter>
+          </entity>
+        </fetch>";
+            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count <= 0) return;
+            foreach (var item in result.Entities)
+            {
+                Entity it = new Entity(item.LogicalName);
+                item.Attributes.Remove(item.LogicalName + "id");
+                item.Attributes.Remove("bsd_optionentry");
+                item[fieldName] = new EntityReference(localName, id);
+                item.Id = Guid.NewGuid();
+                it = item;
+                service.Create(it);
             }
         }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)

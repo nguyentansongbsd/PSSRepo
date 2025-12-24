@@ -250,6 +250,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
 
                                 customerNotices["bsd_genpaymentnotices"] = enTarget.ToEntityReference();
                                 Guid id = service.Create(customerNotices);
+                                copy_CownerForOE(OE.Id, id, customerNotices.LogicalName, "bsd_customernotice");
                                 Entity ins = new Entity(PSD.LogicalName);
                                 ins.Id = PSD.Id;
                                 ins["bsd_paymentnotices"] = true;
@@ -549,7 +550,9 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                             }
                                             #endregion
                                             warningNotices["bsd_genpaymentnotices"] = erfEntity;
-                                            service.Create(warningNotices);
+
+                                            Guid id = service.Create(warningNotices);
+                                            copy_CownerForOE(enOptionEntry.Id, id, warningNotices.LogicalName, "bsd_warningnotice");
                                             Entity ins = new Entity(PSD.LogicalName);
                                             ins.Id = PSD.Id;
                                             string field = "bsd_warningnotices" + (numberofWarning + 1);
@@ -643,8 +646,8 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                                     }
                                     #endregion
                                     warningNotices["bsd_genpaymentnotices"] = erfEntity;
-                                    service.Create(warningNotices);
-
+                                    Guid id = service.Create(warningNotices);
+                                    copy_CownerForOE(enOptionEntry.Id, id, warningNotices.LogicalName, "bsd_warningnotice");
                                     Entity ins = new Entity(PSD.LogicalName);
                                     ins.Id = PSD.Id;
                                     string field = "bsd_warningnotices1";
@@ -657,6 +660,30 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
 
                     }
                 }
+            }
+        }
+        private void copy_CownerForOE(Guid idSource, Guid id, string localName, string fieldName)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_coowner"">
+                    <filter>
+                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idSource}"" />
+                      <condition attribute=""bsd_current"" operator=""eq"" value=""1"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count <= 0) return;
+            foreach (var item in result.Entities)
+            {
+                Entity it = new Entity(item.LogicalName);
+                item.Attributes.Remove(item.LogicalName + "id");
+                item.Attributes.Remove("bsd_optionentry");
+                item[fieldName] = new EntityReference(localName, id);
+                item.Id = Guid.NewGuid();
+                it = item;
+                service.Create(it);
             }
         }
         private EntityCollection getAllInstallmentByOptionEntry(Entity enOptionEntry)
