@@ -49,7 +49,7 @@ namespace Plugin_OE_NumberToText
                     break;
                 case "salesorder":
                     Entity enSalesOrder = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_totalpaidincludecoa", "bsd_refundableamount",
-                                                                            "bsd_additionalpayment", "bsd_finalrefundamount"}));
+                                                                            "bsd_additionalpayment", "bsd_finalrefundamount", "bsd_confirmationamount"}));
                     Entity enUp = new Entity(enSalesOrder.LogicalName, enSalesOrder.Id);
                     enUp["bsd_totalpaidincludecoatext"] = GetTienBangChu_VN(enSalesOrder, "bsd_totalpaidincludecoa");
                     enUp["bsd_totalpaidincludecoatexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_totalpaidincludecoa");
@@ -62,6 +62,9 @@ namespace Plugin_OE_NumberToText
 
                     enUp["bsd_finalrefundamounttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_finalrefundamount");
                     enUp["bsd_finalrefundamounttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_finalrefundamount");
+
+                    enUp["bsd_confirmationamounttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_confirmationamount");
+                    enUp["bsd_confirmationamounttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_confirmationamount");
 
                     service.Update(enUp);
                     break;
