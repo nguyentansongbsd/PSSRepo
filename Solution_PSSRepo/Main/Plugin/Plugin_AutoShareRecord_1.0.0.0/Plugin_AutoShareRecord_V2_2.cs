@@ -88,24 +88,26 @@ namespace Plugin_AutoShareRecord
                     Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdate":
-                    if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
-                    {
-                        Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
-                    }
-                    else
-                    {
-                        Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    }
+                    //if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
+                    //{
+                    //    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    //}
+                    //else
+                    //{
+                    //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    //}
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_updateestimatehandoverdatedetail":
-                    if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
-                    {
-                        Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
-                    }
-                    else
-                    {
-                        Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
-                    }
+                    //if (UserHasRole(_context.UserId, "CLVN_S&M_Senior Sale Staff"))
+                    //{
+                    //    Run_ShareTemProject(true, new List<string> { "SALE-TEAM" });
+                    //}
+                    //else
+                    //{
+                    //    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
+                    //}
+                    Run_ShareTemProject(true, new List<string> { "FINANCE-TEAM" });
                     break;
                 case "bsd_bulkwaiver":
                 case "bsd_bulkwaiverdetail":

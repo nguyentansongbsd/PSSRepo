@@ -124,6 +124,9 @@ namespace Plugin_AutoShareRecord
                     else
                         ShareTeams_ConfirmPayment(_context);
                     break;
+                case "bsd_coowner":
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 } });
+                    break;
             }
 
         }
