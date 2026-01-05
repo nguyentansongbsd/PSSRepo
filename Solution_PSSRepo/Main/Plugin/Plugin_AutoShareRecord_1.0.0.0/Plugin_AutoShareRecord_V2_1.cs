@@ -33,7 +33,7 @@ namespace Plugin_AutoShareRecord
                     Run_PhasesLaunch();
                     break;
                 case "bsd_paymentscheme":
-                    Run_PaymentScheme();
+                    Run_PaymentScheme(_context);
                     break;
                 case "bsd_event":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 0 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 0 } }, 100000000);
@@ -86,7 +86,17 @@ namespace Plugin_AutoShareRecord
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 0 } });
                     break;
                 case "bsd_paymentschemedetail":
-                    ShareTeams_Ins(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 2 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 2 } });
+                    Entity enIns = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_reservation", "bsd_duedate", "bsd_amountofthisphase", "bsd_optionentry" }));
+                    if (!enIns.Contains("bsd_duedate") && !enIns.Contains("bsd_amountofthisphase") && !enIns.Contains("bsd_reservation") && !enIns.Contains("bsd_optionentry")) //master
+                    {
+                        traceService.Trace("ins master");
+                        ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 0 }, { "SALE-ADMIN", 0 } });
+                    }
+                    else
+                    {
+                        traceService.Trace("ins hđ");
+                        ShareTeams_Ins(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 2 }, { "SALE-MGT", 2 }, { "SALE-ADMIN", 2 } }, enIns);
+                    }
                     break;
                 case "bsd_transfermoney":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 1 }, { "FINANCE-TEAM", 1 } });
@@ -127,6 +137,9 @@ namespace Plugin_AutoShareRecord
                 case "bsd_coowner":
                     ShareTeams_OneEntity(new Dictionary<string, int> { { "FINANCE-TEAM", 2 } });
                     break;
+                case "bsd_paymentscheme":
+                    ShareTeams_OneEntity(new Dictionary<string, int> { { "CCR-TEAM", 2 }, { "FINANCE-TEAM", 0 }, { "SALE-TEAM", 0 }, { "SALE-MGT", 0 }, { "SALE-ADMIN", 0 } });
+                    break;
             }
 
         }
@@ -166,6 +179,26 @@ namespace Plugin_AutoShareRecord
             catch (Exception ex)
             {
                 traceService.Trace("ShareTeams Exception: " + ex.Message);
+                return;
+            }
+
+        }
+
+        public void UnShareTeams(EntityReference sharedRecord, EntityReference shareTeams)
+        {
+            try
+            {
+                traceService.Trace($"UnShareTeams {shareTeams.Id}");
+                RevokeAccessRequest revokeRequest = new RevokeAccessRequest
+                {
+                    Revokee = shareTeams,
+                    Target = sharedRecord
+                };
+                service.Execute(revokeRequest);
+            }
+            catch (Exception ex)
+            {
+                traceService.Trace("UnShareTeams Exception: " + ex.Message);
                 return;
             }
 
@@ -239,6 +272,12 @@ namespace Plugin_AutoShareRecord
             if (refProject == null)
                 return projectCode;
 
+            projectCode = Run_GetProjectCode(refProject);
+            return projectCode;
+        }
+
+        private string Run_GetProjectCode(EntityReference refProject)
+        {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
               <entity name=""bsd_project"">
@@ -252,9 +291,10 @@ namespace Plugin_AutoShareRecord
             EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
             if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
             {
-                projectCode = (string)rs.Entities[0]["bsd_projectcode"];
+                return (string)rs.Entities[0]["bsd_projectcode"];
             }
-            return projectCode;
+
+            return string.Empty;
         }
 
         public EntityCollection GetTeams(string projectCode)
@@ -400,19 +440,43 @@ namespace Plugin_AutoShareRecord
             return rs;
         }
 
-        private void Run_PaymentScheme()
+        private void Run_PaymentScheme(IPluginExecutionContext _context)
         {
             traceService.Trace("Run_PaymentScheme");
+            Entity preImg = _context.PreEntityImages["preImg"];
+            EntityReference preRefProject = preImg.Contains("bsd_project") ? (EntityReference)preImg["bsd_project"] : null;
+            EntityReference refPS = target.ToEntityReference();
+            EntityCollection rsPSDetails = GetPaymentSchemeDetails(refPS);
 
-            if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000) //Confirm
+            if (preRefProject != null)  //unshare
+            {
+                string preProjectCode = Run_GetProjectCode(preRefProject);
+                EntityCollection rs = GetTeams(preProjectCode);
+                if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
+                {
+                    EntityReference refTeam = null;
+                    foreach (Entity team in rs.Entities)
+                    {
+                        refTeam = team.ToEntityReference();
+                        UnShareTeams(refPS, refTeam);
+
+                        if (rsPSDetails != null && rsPSDetails.Entities != null && rsPSDetails.Entities.Count > 0)
+                        {
+                            foreach (var ins in rsPSDetails.Entities)
+                            {
+                                UnShareTeams(ins.ToEntityReference(), refTeam);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (target.Contains("bsd_project")) //share
             {
                 string projectCode = GetProjectCode();
                 EntityCollection rs = GetTeams(projectCode);
                 if (rs != null && rs.Entities != null && rs.Entities.Count > 0)
                 {
-                    EntityReference refPS = enTarget.ToEntityReference();
-                    EntityCollection rsPSDetails = GetPaymentSchemeDetails(refPS);
-
                     EntityReference refTeam = null;
                     bool hasWrite = false;
                     int accessType = 0;
@@ -445,6 +509,10 @@ namespace Plugin_AutoShareRecord
                 <attribute name=""bsd_name"" />
                 <filter>
                   <condition attribute=""bsd_paymentscheme"" operator=""eq"" value=""{refPS.Id}"" />
+                  <condition attribute=""bsd_duedate"" operator=""null"" />
+                  <condition attribute=""bsd_amountofthisphase"" operator=""null"" />
+                  <condition attribute=""bsd_reservation"" operator=""null"" />
+                  <condition attribute=""bsd_optionentry"" operator=""null"" />
                 </filter>
               </entity>
             </fetch>";
@@ -654,7 +722,7 @@ namespace Plugin_AutoShareRecord
             }
         }
 
-        public void ShareTeams_Ins(Dictionary<string, int> listTeamRights)
+        public void ShareTeams_Ins(Dictionary<string, int> listTeamRights, Entity enIns)
         {
             traceService.Trace("ShareTeams_Ins");
 
@@ -675,7 +743,6 @@ namespace Plugin_AutoShareRecord
                     }
                 }
 
-                Entity enIns = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_reservation" }));
                 if (enIns.Contains("bsd_reservation"))
                 {
                     EntityReference refQuote = (EntityReference)enIns["bsd_reservation"];
