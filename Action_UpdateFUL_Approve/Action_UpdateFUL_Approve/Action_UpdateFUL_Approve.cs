@@ -53,7 +53,7 @@ namespace Action_UpdateFUL_Approve
                 service = factory.CreateOrganizationService(Guid.Parse(idUser));
                 Entity enOE = new Entity("salesorder");
                 enOE.Id = Guid.Parse(idOE);
-                enOE["bsd_tobeterminated"] = inValue;
+                enOE["bsd_tobeterminated"] = bool.Parse(inValue);
                 service.Update(enOE);
             }
             else if (inCase == "Case2" && idDetail != "" && idUser != "")
