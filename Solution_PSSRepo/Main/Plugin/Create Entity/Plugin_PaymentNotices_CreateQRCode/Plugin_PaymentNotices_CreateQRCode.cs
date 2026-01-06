@@ -175,7 +175,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
             string finalCustomerName = RemoveDiacritics(customerName ?? "").ToUpper();
             string finalUnitName = (unitName ?? "").ToUpper();
             
-            // 5. Kết hợp và trả về kết quả
+            // 5. Kết hợp và trả về kết quả1
             return $"{finalUnitName} {projectname} {finalCustomerName} Thanh toan dot {ordernumber}";
         }
 
