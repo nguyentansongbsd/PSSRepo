@@ -39,21 +39,27 @@ namespace Plugin_Termination_Loyalty
                 //DateTime today = DateTime.UtcNow;
                 DateTime today1 = RetrieveLocalTimeFromUTCTime(DateTime.UtcNow).Date;
                 DateTime fromDate = today1.AddYears(-(int)Math.Floor(yearCount));
-                
+
                 //Lấy giá trị totalamount all giao dịch trên oe
-                var fetchXml_all_GD = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                <fetch aggregate=""true"">
-                  <entity name=""salesorder"">
-                    <attribute name=""totalamount"" alias=""sumtotalamount"" aggregate=""sum"" />
+                var fetchXml_all_GD = $@"<?xml version='1.0' encoding='utf-16'?>
+                <fetch aggregate='true'>
+                  <entity name='salesorder'>
+                    <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
                     <filter type='and'>
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                       <condition attribute='statuscode' operator='in'>
+                        <value>100000000</value>
+                        <value>100000001</value>
                         <value>100000002</value>
                         <value>100000003</value>
                         <value>100000004</value>
                         <value>100000005</value>
                         <value>100001</value>
                       </condition>
+                      <filter type='or'>
+                          <condition attribute='bsd_signeddadate' operator='not-null' />
+                          <condition attribute='bsd_signedcontractdate' operator='not-null' />
+                      </filter>
                     </filter>
                   </entity>
                 </fetch>";
@@ -71,18 +77,36 @@ namespace Plugin_Termination_Loyalty
                 <fetch distinct='false' mapping='logical' aggregate='false'>
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
-                    <filter type='and'>
-                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='statuscode' operator='in'>
-                        <value>100000002</value>
-                        <value>100000003</value>
-                        <value>100000004</value>
-                        <value>100000005</value>
-                        <value>100001</value>
-                      </condition>
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today1:yyyy-MM-dd}"" />
+                    <filter type='or'>
+                          <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today1:yyyy-MM-dd}' />
                     </filter>
+                        <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signeddadate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signeddadate' operator='on-or-before' value='{today1:yyyy-MM-dd}' />
+                        </filter>
+                      </filter>
                   </entity>
                 </fetch>";
                 EntityCollection orders = service.RetrieveMultiple(new FetchExpression(fetchXml_countOrders));
@@ -90,22 +114,40 @@ namespace Plugin_Termination_Loyalty
                 //throw new InvalidPluginExecutionException("test Thinh" + orders.Entities.Count);
                 trace.Trace("số lượng giao dịch trong 3 năm" + orderCount);
                 //Lấy giá trị totalamount giao dịch trong 3 năm kể từ thời điểm hiện tại trsở về trước trên oe
-                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                <fetch aggregate=""true"">
-                  <entity name=""salesorder"">
-                    <attribute name=""totalamount"" alias=""sumtotalamount"" aggregate=""sum"" />
-                    <filter type='and'>
-                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='statuscode' operator='in'>
-                        <value>100000002</value>
-                        <value>100000003</value>
-                        <value>100000004</value>
-                        <value>100000005</value>
-                        <value>100001</value>
-                      </condition>
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today1:yyyy-MM-dd}"" />
+                var fetchXml = $@"<?xml version='1.0' encoding='utf-16'?>
+                <fetch aggregate='true'>
+                  <entity name='salesorder'>
+                    <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
+                    <filter type='or'>
+                          <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today1:yyyy-MM-dd}' />
                     </filter>
+                        <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signeddadate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signeddadate' operator='on-or-before' value='{today1:yyyy-MM-dd}' />
+                        </filter>
+                      </filter>
                   </entity>
                 </fetch>";
                 EntityCollection sum_oe = service.RetrieveMultiple(new FetchExpression(fetchXml));
@@ -118,14 +160,14 @@ namespace Plugin_Termination_Loyalty
                         trace.Trace("chiaChoMotPhayMot " + chiaChoMotPhayMot);
                     }
                 }
-                    var fetchLoyaltyProgram = $@"<fetch top='1'>
+                var fetchLoyaltyProgram = $@"<fetch top='1'>
                           <entity name='bsd_purchaserloyaltyprogram'>
                             <attribute name='bsd_purchaserloyaltyprogramid' />
                             <attribute name='bsd_membershiptier' />
                             <filter type='and'>
                               <condition attribute='bsd_beginamountcur' operator='le' value='{chiaChoMotPhayMot_all}' />
                               <condition attribute='bsd_endamountcur' operator='gt' value='{chiaChoMotPhayMot_all}' />
-                              <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                              <condition attribute='statuscode' operator='eq' value='{100000000}' />
                             </filter>
                             <order attribute='bsd_beginamountcur' descending='false' />
                           </entity>
