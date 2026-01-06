@@ -48,6 +48,8 @@ namespace Plugin_Termination_Loyalty
                     <filter type='and'>
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                       <condition attribute='statuscode' operator='in'>
+                        <value>100000000</value>
+                        <value>100000001</value>
                         <value>100000002</value>
                         <value>100000003</value>
                         <value>100000004</value>
@@ -79,6 +81,8 @@ namespace Plugin_Termination_Loyalty
                           <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -91,6 +95,8 @@ namespace Plugin_Termination_Loyalty
                         <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -116,6 +122,8 @@ namespace Plugin_Termination_Loyalty
                           <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -128,6 +136,8 @@ namespace Plugin_Termination_Loyalty
                         <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>

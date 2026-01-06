@@ -36,6 +36,8 @@ namespace Action_UpdateLoyaty_contact_account
                 <filter type='and'>
                       <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
                       <condition attribute='statuscode' operator='in'>
+                        <value>100000000</value>
+                        <value>100000001</value>
                         <value>100000002</value>
                         <value>100000003</value>
                         <value>100000004</value>
@@ -73,6 +75,8 @@ namespace Action_UpdateLoyaty_contact_account
                           <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -85,6 +89,8 @@ namespace Action_UpdateLoyaty_contact_account
                         <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -109,6 +115,8 @@ namespace Action_UpdateLoyaty_contact_account
                           <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
@@ -121,6 +129,8 @@ namespace Action_UpdateLoyaty_contact_account
                         <filter type='and'>
                               <condition attribute='customerid' operator='eq' value='{Guid.Parse(id)}' />
                               <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
                                 <value>100000002</value>
                                 <value>100000003</value>
                                 <value>100000004</value>
