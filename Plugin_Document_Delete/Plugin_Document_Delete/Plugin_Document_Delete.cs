@@ -45,12 +45,14 @@ namespace Plugin_Document_Delete
             try
             {
                 if (!this.en.Contains("bsd_name")) return Guid.Empty;
+                string bsdName = this.en["bsd_name"].ToString();
+                string escapedBsdName = System.Security.SecurityElement.Escape(bsdName);
                 var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 <fetch top=""1"">
                   <entity name=""documenttemplate"">
                     <attribute name=""documenttemplateid"" />
                     <filter>
-                      <condition attribute=""name"" operator=""eq"" value=""{this.en["bsd_name"]}"" />
+                      <condition attribute=""name"" operator=""eq"" value=""{escapedBsdName}"" />
                     </filter>
                   </entity>
                 </fetch>";
