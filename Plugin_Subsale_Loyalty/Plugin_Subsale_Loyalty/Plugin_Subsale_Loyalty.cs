@@ -58,12 +58,18 @@ namespace Plugin_Subsale_Loyalty
                     <filter type='and'>
                       <condition attribute='customerid' operator='eq' value='{purchaserId}' />
                       <condition attribute='statuscode' operator='in'>
+                        <value>100000000</value>
+                        <value>100000001</value>
                         <value>100000002</value>
                         <value>100000003</value>
                         <value>100000004</value>
                         <value>100000005</value>
                         <value>100001</value>
                       </condition>
+                      <filter type='or'>
+                          <condition attribute='bsd_signeddadate' operator='not-null' />
+                          <condition attribute='bsd_signedcontractdate' operator='not-null' />
+                      </filter>
                     </filter>
                   </entity>
                 </fetch>";
@@ -83,18 +89,36 @@ namespace Plugin_Subsale_Loyalty
                 <fetch>
                   <entity name='salesorder'>
                     <attribute name='salesorderid' />
-                    <filter type='and'>
-                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute='statuscode' operator='in'>
-                        <value>100000002</value>
-                        <value>100000003</value>
-                        <value>100000004</value>
-                        <value>100000005</value>
-                        <value>100001</value>
-                      </condition>
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
+                    <filter type='or'>
+                          <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
                     </filter>
+                        <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signeddadate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signeddadate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
+                        </filter>
+                      </filter>
                   </entity>
                 </fetch>";
             trace.Trace("fet2");
@@ -106,18 +130,36 @@ namespace Plugin_Subsale_Loyalty
                 <fetch aggregate='true'>
                   <entity name='salesorder'>
                     <attribute name='totalamount' alias='sumtotalamount' aggregate='sum' />
-                    <filter type='and'>
-                      <condition attribute='customerid' operator='eq' value='{purchaserId}' />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-after"" value=""{fromDate:yyyy-MM-dd}"" />
-                      <condition attribute=""bsd_signedcontractdate"" operator=""on-or-before"" value=""{today:yyyy-MM-dd}"" />
-                      <condition attribute='statuscode' operator='in'>
-                        <value>100000002</value>
-                        <value>100000003</value>
-                        <value>100000004</value>
-                        <value>100000005</value>
-                        <value>100001</value>
-                      </condition>
+                    <filter type='or'>
+                          <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signedcontractdate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
                     </filter>
+                        <filter type='and'>
+                              <condition attribute='customerid' operator='eq' value='{purchaserId}' />
+                              <condition attribute='statuscode' operator='in'>
+                                <value>100000000</value>
+                        <value>100000001</value>
+                                <value>100000002</value>
+                                <value>100000003</value>
+                                <value>100000004</value>
+                                <value>100000005</value>
+                                <value>100001</value>
+                              </condition>
+                              <condition attribute='bsd_signeddadate' operator='on-or-after' value='{fromDate:yyyy-MM-dd}' />
+                              <condition attribute='bsd_signeddadate' operator='on-or-before' value='{today:yyyy-MM-dd}' />
+                        </filter>
+                      </filter>
                   </entity>
                 </fetch>";
             trace.Trace("fet3");

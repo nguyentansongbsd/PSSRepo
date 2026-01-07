@@ -6,7 +6,7 @@
       "OrganizationDisplayName": "CapitaLand Preview",
       "OrganizationName": "pssvn-preview",
       "OrganizationUrl": "https://pssvn-preview.crm5.dynamics.com",
-      "UserFriendlyName": "PSS - DEV",
+      "UserFriendlyName": "https://pssvn-preview.crm5.dynamics.com/",
       "CurrentSolution": {
         "Id": "fd140aaf-4df4-11dd-bd17-0019b9312238",
         "Name": "Default Solution",
@@ -25,6 +25,152 @@
                 "IsRegisteredInCrm": true,
                 "SourceType": 0
               }
+            },
+            {
+              "AllowDuplicateResources": false,
+              "AllowDuplicateTypes": false,
+              "Closed": true,
+              "CopyAttributes": true,
+              "ProduceDebugInfo": true,
+              "PropertiesType": 2,
+              "References": [
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "Microsoft.Bcl.AsyncInterfaces"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "Microsoft.CSharp"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "mscorlib"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "PresentationCore"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "PresentationFramework"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "QRCoder"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Buffers"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Core"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Data.DataSetExtensions"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.DirectoryServices"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.DirectoryServices.AccountManagement"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.IdentityModel"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Memory"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Net.Http"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Numerics"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Numerics.Vectors"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Runtime.CompilerServices.Unsafe"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Runtime.Serialization"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Security"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.ServiceModel.Http"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.ServiceModel.Primitives"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.ServiceModel.Web"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Text.Encodings.Web"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Text.Json"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.Threading.Tasks.Extensions"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "System.ValueTuple"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Web"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "System.Xml.Linq"
+                },
+                {
+                  "IncludeInILMerge": true,
+                  "Name": "VietQRHelper"
+                },
+                {
+                  "IncludeInILMerge": false,
+                  "Name": "WindowsBase"
+                }
+              ]
             }
           ]
         }
@@ -58,9 +204,9 @@
           "UseStronglyTypedNameForProxyRelatedEntities": true
         },
         {
-          "ChartPath": "\\Charts",
           "CssPath": "\\Web",
           "CustomAssemblyConfigPath": "\\AssemblyConfig",
+          "ChartPath": "\\Charts",
           "EmailTemplatePath": "\\EmailTemplates",
           "EntityMetadataPath": "\\EntityMetadata",
           "HtmlPath": "\\Web",
