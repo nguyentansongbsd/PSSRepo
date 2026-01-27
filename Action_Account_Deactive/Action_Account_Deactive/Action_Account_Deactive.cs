@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Action_Contact_Deactive
+namespace Action_Account_Deactive
 {
-    public class Action_Contact_Deactive : IPlugin
+    public class Action_Account_Deactive : IPlugin
     {
         IPluginExecutionContext context = null;
         IOrganizationServiceFactory factory = null;
