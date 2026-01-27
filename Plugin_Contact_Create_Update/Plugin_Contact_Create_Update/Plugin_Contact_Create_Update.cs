@@ -193,6 +193,95 @@ namespace Plugin_Contact_Create_Update
                 enUp["bsd_loyaltypoints"] = bsd_loyaltypoints;
                 service.Update(enUp);
                 traceService.Trace("done");
+                int statuscode = enTarget.Contains("statuscode") ? ((OptionSetValue)enTarget["statuscode"]).Value : 0;
+                if (statuscode == 2)
+                {
+                    service = factory.CreateOrganizationService(Guid.Parse("d90ce220-655a-e811-812e-3863bb36dc00")); //this.context.UserId
+                    Init(target);
+                }
+            }
+        }
+        private void Init(Entity target)
+        {
+            try
+            {
+                bool hadAdvance = checkAdvance(target);
+                bool hadOptionEntry = checkOptionEntry(target);
+                bool hadQuote = checQuote(target);
+                if (hadAdvance == true || hadOptionEntry == true || hadQuote == true) throw new InvalidPluginExecutionException("The customer has transactions and cannot perform this action.");
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
+            }
+        }
+        private bool checkAdvance(Entity target)
+        {
+            try
+            {
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_advancepayment"">
+                    <attribute name=""bsd_name"" />
+                    <filter>
+                      <condition attribute=""bsd_customer"" operator=""eq"" value=""{target.Id}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+                EntityCollection result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (result == null || result.Entities.Count <= 0) return false;
+                return true;
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
+            }
+        }
+        private bool checkOptionEntry(Entity target)
+        {
+            try
+            {
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""salesorder"">
+                    <attribute name=""name"" />
+                    <filter>
+                      <condition attribute=""customerid"" operator=""eq"" value=""{target.Id}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+                EntityCollection result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (result == null || result.Entities.Count <= 0) return false;
+                return true;
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
+            }
+        }
+        private bool checQuote(Entity target)
+        {
+            try
+            {
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""quote"">
+                    <attribute name=""name"" />
+                    <filter>
+                      <condition attribute=""customerid"" operator=""eq"" value=""{target.Id}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+                EntityCollection result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (result == null || result.Entities.Count <= 0) return false;
+                return true;
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
             }
         }
     }
