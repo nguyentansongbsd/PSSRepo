@@ -8,6 +8,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.ObjectModel;
+using System.IdentityModel.Metadata;
 
 namespace Plugin_UEHDDetail_Import_ver_2
 {
@@ -62,12 +63,16 @@ namespace Plugin_UEHDDetail_Import_ver_2
                     foreach (Entity entity3 in (Collection<Entity>)optionEntry.Entities)
                     {
                         inputParameter["bsd_optionentry"] = (object)entity3.ToEntityReference();
+                        int count = 0;
                         foreach (Entity entity4 in (Collection<Entity>)this.findEstimateInstallment(this.service, entity3.ToEntityReference(), bsd_duedatecalculatingmethod).Entities)
                         {
+                            count++;
                             inputParameter["bsd_installment"] = (object)entity4.ToEntityReference();
                             if (entity4.Contains("bsd_duedate"))
                                 inputParameter["bsd_paymentduedate"] = entity4["bsd_duedate"];
                         }
+                        if (count == 0)
+                            throw new InvalidPluginExecutionException("Installment not found. Please check again!");
                     }
                 }
                 else
@@ -75,12 +80,16 @@ namespace Plugin_UEHDDetail_Import_ver_2
                     foreach (Entity entity5 in (Collection<Entity>)this.findReservation(this.service, entity1.ToEntityReference()).Entities)
                     {
                         inputParameter["bsd_quotationreservation"] = (object)entity5.ToEntityReference();
+                        int count = 0;
                         foreach (Entity entity6 in (Collection<Entity>)this.findEstimateInstallment_RS(this.service, entity5.ToEntityReference(), bsd_duedatecalculatingmethod).Entities)
                         {
+                            count++;
                             inputParameter["bsd_installment"] = (object)entity6.ToEntityReference();
                             if (entity6.Contains("bsd_duedate"))
                                 inputParameter["bsd_paymentduedate"] = entity6["bsd_duedate"];
                         }
+                        if (count == 0)
+                            throw new InvalidPluginExecutionException("Installment not found. Please check again!");
                     }
                 }
             }
@@ -92,8 +101,14 @@ namespace Plugin_UEHDDetail_Import_ver_2
                     foreach (Entity entity7 in (Collection<Entity>)optionEntry.Entities)
                     {
                         inputParameter["bsd_optionentry"] = (object)entity7.ToEntityReference();
+                        int count = 0;
                         foreach (Entity entity8 in (Collection<Entity>)this.findEstimateInstallment(this.service, entity7.ToEntityReference(), bsd_duedatecalculatingmethod).Entities)
+                        {
+                            count++;
                             inputParameter["bsd_installment"] = (object)entity8.ToEntityReference();
+                        }
+                        if (count == 0)
+                            throw new InvalidPluginExecutionException("Installment not found. Please check again!");
                     }
                 }
                 else
@@ -101,8 +116,14 @@ namespace Plugin_UEHDDetail_Import_ver_2
                     foreach (Entity entity9 in (Collection<Entity>)this.findReservation(this.service, entity1.ToEntityReference()).Entities)
                     {
                         inputParameter["bsd_quotationreservation"] = (object)entity9.ToEntityReference();
+                        int count = 0;
                         foreach (Entity entity10 in (Collection<Entity>)this.findEstimateInstallment_RS(this.service, entity9.ToEntityReference(), bsd_duedatecalculatingmethod).Entities)
+                        {
+                            count++;
                             inputParameter["bsd_installment"] = (object)entity10.ToEntityReference();
+                        }
+                        if (count == 0)
+                            throw new InvalidPluginExecutionException("Installment not found. Please check again!");
                     }
                 }
             }
