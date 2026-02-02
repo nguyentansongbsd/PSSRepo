@@ -124,7 +124,7 @@ namespace Plugin_UEHDDetail_Import_ver_2
           IOrganizationService service,
           EntityReference oe, int bsd_duedatecalculatingmethod)
         {
-            string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n              <entity name='bsd_paymentschemedetail'>\r\n                <attribute name='bsd_paymentschemedetailid' />\r\n                <attribute name='bsd_duedate' />\r\n                <filter type='and'>\r\n                  <condition attribute='bsd_duedatecalculatingmethod' operator='eq' value='{0}' />\r\n                  <condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='{0}' />\r\n                </filter>\r\n              </entity>\r\n            </fetch>", bsd_duedatecalculatingmethod, (object)oe.Id);
+            string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n              <entity name='bsd_paymentschemedetail'>\r\n                <attribute name='bsd_paymentschemedetailid' />\r\n                <attribute name='bsd_duedate' />\r\n                <filter type='and'>\r\n                  <condition attribute='bsd_duedatecalculatingmethod' operator='eq' value='{0}' />\r\n                  <condition attribute='bsd_optionentry' operator='eq' uitype='salesorder' value='{1}' />\r\n                </filter>\r\n              </entity>\r\n            </fetch>", bsd_duedatecalculatingmethod, (object)oe.Id);
             return service.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
 
@@ -132,7 +132,7 @@ namespace Plugin_UEHDDetail_Import_ver_2
           IOrganizationService service,
           EntityReference rs, int bsd_duedatecalculatingmethod)
         {
-            string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n              <entity name='bsd_paymentschemedetail'>\r\n                <attribute name='bsd_paymentschemedetailid' />\r\n                <attribute name='bsd_duedate' />\r\n                <filter type='and'>\r\n                  <condition attribute='bsd_duedatecalculatingmethod' operator='eq' value='{0}' />\r\n                  <condition attribute='bsd_reservation' operator='eq' uitype='quote' value='{0}' />\r\n                </filter>\r\n              </entity>\r\n            </fetch>", bsd_duedatecalculatingmethod, (object)rs.Id);
+            string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n              <entity name='bsd_paymentschemedetail'>\r\n                <attribute name='bsd_paymentschemedetailid' />\r\n                <attribute name='bsd_duedate' />\r\n                <filter type='and'>\r\n                  <condition attribute='bsd_duedatecalculatingmethod' operator='eq' value='{0}' />\r\n                  <condition attribute='bsd_reservation' operator='eq' uitype='quote' value='{1}' />\r\n                </filter>\r\n              </entity>\r\n            </fetch>", bsd_duedatecalculatingmethod, (object)rs.Id);
             return service.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
     }
