@@ -450,7 +450,7 @@ namespace Action_GenHandoverNotices_Generate
             decimal interest = balance * lateDays * (interestPercent / 100);
             return interest;
         }
-        private EntityCollection CalculateOutstanding(IOrganizationService crmservices, EntityReference oe, Boolean isincludelastinstallment, int CalculateOutstanding)
+        private EntityCollection CalculateOutstanding(IOrganizationService crmservices, EntityReference oe, Boolean isincludelastinstallment, int bsd_duedatecalculatingmethod)
         {
             string fetchXml = "";
             if (isincludelastinstallment == false)
@@ -461,12 +461,12 @@ namespace Action_GenHandoverNotices_Generate
                     <attribute name='bsd_balance' alias='balance' aggregate='sum' />
                     <filter>
                       <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
-                      <condition attribute='bsd_duedatecalculatingmethod' operator='ne' value='100000002' />
+                      <condition attribute='bsd_duedatecalculatingmethod' operator='ne' value='{1}' />
                       <condition attribute='bsd_lastinstallment' operator='ne' value='1' />
                     </filter>
                   </entity>
                 </fetch>";
-                fetchXml = string.Format(fetchXml, oe.Id);
+                fetchXml = string.Format(fetchXml, oe.Id, bsd_duedatecalculatingmethod);
             }
             else
             {
@@ -476,11 +476,11 @@ namespace Action_GenHandoverNotices_Generate
                     <attribute name='bsd_balance' alias='balance' aggregate='sum' />
                     <filter>
                       <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
-                      <condition attribute='bsd_duedatecalculatingmethod' operator='ne' value='100000002' />
+                      <condition attribute='bsd_duedatecalculatingmethod' operator='ne' value='{1}' />
                     </filter>
                   </entity>
                 </fetch>";
-                fetchXml = string.Format(fetchXml, oe.Id);
+                fetchXml = string.Format(fetchXml, oe.Id, bsd_duedatecalculatingmethod);
             }
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return entc;
