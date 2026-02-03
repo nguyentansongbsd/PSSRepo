@@ -305,10 +305,10 @@ namespace Plugin_ReadMoney
                     }
                     if (context.MessageName == "Create")
                     {
-                        if (target.Contains("bsd_blocknumber") && !target.Contains("bsd_landlot"))
-                            target["bsd_landlot"] = target["bsd_blocknumber"];
-                        if (target.Contains("bsd_floor") && !target.Contains("bsd_plotnumber"))
-                            target["bsd_plotnumber"] = target["bsd_floor"];
+                        if (!target.Contains("bsd_blocknumber") && target.Contains("bsd_landlot"))
+                            target["bsd_blocknumber"] = target["bsd_landlot"];
+                        if (!target.Contains("bsd_floor") && target.Contains("bsd_plotnumber"))
+                            target["bsd_floor"] = target["bsd_plotnumber"];
                     }
                 }
                 #endregion
