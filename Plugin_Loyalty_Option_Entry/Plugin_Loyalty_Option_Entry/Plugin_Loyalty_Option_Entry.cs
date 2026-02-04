@@ -199,14 +199,14 @@ namespace Plugin_Loyalty_Option_Entry
                 service.Update(updateCustomer);
             }
             //}
-            int status_oe = ((OptionSetValue)OE["statuscode"]).Value;
-            bool bsd_terminationletter = OE.Contains("bsd_terminationletter") ? (bool)OE["bsd_terminationletter"] : false;
-            if (status_oe == 100000006 && bsd_terminationletter)//termination
-            {
-                Entity upOE = new Entity(OE.LogicalName, OE.Id);
-                upOE["bsd_terminationletter"] = false;
-                service.Update(upOE);
-            }
+            //int status_oe = ((OptionSetValue)OE["statuscode"]).Value;
+            //bool bsd_terminationletter = OE.Contains("bsd_terminationletter") ? (bool)OE["bsd_terminationletter"] : false;
+            //if (status_oe == 100000006 && bsd_terminationletter)//termination
+            //{
+            //    Entity upOE = new Entity(OE.LogicalName, OE.Id);
+            //    upOE["bsd_terminationletter"] = false;
+            //    service.Update(upOE);
+            //}
         }
     }
 }
