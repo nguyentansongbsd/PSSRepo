@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 
 namespace Action_PhasesLaunch_Release
 {
@@ -140,7 +141,7 @@ namespace Action_PhasesLaunch_Release
                     Entity PhaseLaunch = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
                     if (input_02 == "output_1_if")
                     {
-                        Entity a = service.Retrieve("product", Guid.Parse(input_03), new ColumnSet(new string[] { "statuscode", "bsd_blocknumber", "bsd_floor", "bsd_vippriority", "bsd_phaseslaunchid" }));
+                        Entity a = service.Retrieve("product", Guid.Parse(input_03), new ColumnSet(new string[] { "statuscode", "bsd_blocknumber", "bsd_floor", "bsd_vippriority", "bsd_phaseslaunchid", "bsd_landlot", "bsd_plotnumber" }));
 
                         traceService.Trace("1.2");
                         bool checkp = false;
@@ -168,8 +169,8 @@ namespace Action_PhasesLaunch_Release
                                     newpre["bsd_phareslaunch"] = PhaseLaunch.ToEntityReference();
                                     newpre["bsd_pricelist"] = PhaseLaunch["bsd_pricelistid"];
                                     newpre["bsd_project"] = PhaseLaunch["bsd_projectid"];
-                                    newpre["bsd_block"] = a["bsd_blocknumber"];
-                                    newpre["bsd_floor"] = a["bsd_floor"];
+                                    newpre["bsd_block"] = a.Contains("bsd_blocknumber") ? a["bsd_blocknumber"] : (a.Contains("bsd_landlot") ? a["bsd_landlot"] : null);
+                                    newpre["bsd_floor"] = a.Contains("bsd_floor") ? a["bsd_floor"] : (a.Contains("bsd_plotnumber") ? a["bsd_plotnumber"] : null);
                                     newpre["bsd_unit"] = a.ToEntityReference();
                                     newpre["bsd_reason"] = "This Units was released.";
                                     newpre["bsd_secondreason"] = "This Units was released.";
@@ -202,8 +203,8 @@ namespace Action_PhasesLaunch_Release
                                     //______________________________________
                                     Entity unitlaunch = new Entity("bsd_unitlaunched");
                                     unitlaunch["bsd_phaseslaunchid"] = PhaseLaunch.ToEntityReference();
-                                    unitlaunch["bsd_blockid"] = a["bsd_blocknumber"];
-                                    unitlaunch["bsd_floorid"] = a["bsd_floor"];
+                                    unitlaunch["bsd_blockid"] = a.Contains("bsd_blocknumber") ? a["bsd_blocknumber"] : (a.Contains("bsd_landlot") ? a["bsd_landlot"] : null);
+                                    unitlaunch["bsd_floorid"] = a.Contains("bsd_floor") ? a["bsd_floor"] : (a.Contains("bsd_plotnumber") ? a["bsd_plotnumber"] : null);
                                     unitlaunch["bsd_productid"] = a.ToEntityReference();
                                     unitlaunch["bsd_price"] = pli["amount"];
                                     service.Create(unitlaunch);
@@ -230,8 +231,8 @@ namespace Action_PhasesLaunch_Release
                                         newpre["bsd_phareslaunch"] = PhaseLaunch.ToEntityReference();
                                         newpre["bsd_pricelist"] = PhaseLaunch["bsd_pricelistid"];
                                         newpre["bsd_project"] = PhaseLaunch["bsd_projectid"];
-                                        newpre["bsd_block"] = a["bsd_blocknumber"];
-                                        newpre["bsd_floor"] = a["bsd_floor"];
+                                        newpre["bsd_block"] = a.Contains("bsd_blocknumber") ? a["bsd_blocknumber"] : (a.Contains("bsd_landlot") ? a["bsd_landlot"] : null);
+                                        newpre["bsd_floor"] = a.Contains("bsd_floor") ? a["bsd_floor"] : (a.Contains("bsd_plotnumber") ? a["bsd_plotnumber"] : null);
                                         newpre["bsd_unit"] = a.ToEntityReference();
                                         newpre["bsd_reason"] = "The price list does not contain this Units";
                                         newpre["bsd_secondreason"] = "The price list does not contain this Units";
@@ -262,8 +263,8 @@ namespace Action_PhasesLaunch_Release
                                 newpre["bsd_phareslaunch"] = PhaseLaunch.ToEntityReference();
                                 newpre["bsd_pricelist"] = PhaseLaunch["bsd_pricelistid"];
                                 newpre["bsd_project"] = PhaseLaunch["bsd_projectid"];
-                                newpre["bsd_block"] = a["bsd_blocknumber"];
-                                newpre["bsd_floor"] = a["bsd_floor"];
+                                newpre["bsd_block"] = a.Contains("bsd_blocknumber") ? a["bsd_blocknumber"] : (a.Contains("bsd_landlot") ? a["bsd_landlot"] : null);
+                                newpre["bsd_floor"] = a.Contains("bsd_floor") ? a["bsd_floor"] : (a.Contains("bsd_plotnumber") ? a["bsd_plotnumber"] : null);
                                 newpre["bsd_unit"] = a.ToEntityReference();
                                 newpre["bsd_reason"] = "This Units has VIP priority.";
                                 newpre["bsd_secondreason"] = "This Units has VIP priority.";
@@ -310,9 +311,9 @@ namespace Action_PhasesLaunch_Release
                                     traceService.Trace("2.1.2.4");
                                     unitlaunch["bsd_phaseslaunchid"] = PhaseLaunch.ToEntityReference();
                                     traceService.Trace("2.1.2.5");
-                                    unitlaunch["bsd_blockid"] = unit.Contains("bsd_blocknumber") ? unit["bsd_blocknumber"] : null;
+                                    unitlaunch["bsd_blockid"] = unit.Contains("bsd_blocknumber") ? unit["bsd_blocknumber"] : (unit.Contains("bsd_landlot") ? unit["bsd_landlot"] : null);
                                     traceService.Trace("2.1.2.6");
-                                    unitlaunch["bsd_floorid"] = unit["bsd_floor"];
+                                    unitlaunch["bsd_floorid"] = unit.Contains("bsd_floor") ? unit["bsd_floor"] : (unit.Contains("bsd_plotnumber") ? unit["bsd_plotnumber"] : null);
                                     traceService.Trace("2.1.2.7");
                                     unitlaunch["bsd_productid"] = unit.ToEntityReference();
                                     traceService.Trace("2.1.2.8");
@@ -346,9 +347,9 @@ namespace Action_PhasesLaunch_Release
                                         traceService.Trace("2.1.3.5.4.1.1.1");
                                         newpre["bsd_project"] = PhaseLaunch.Contains("bsd_projectid") ? PhaseLaunch["bsd_projectid"] : null;
                                         traceService.Trace("2.1.3.4.1.1.1");
-                                        newpre["bsd_block"] = unit.Contains("bsd_blocknumber") ? unit["bsd_blocknumber"] : null;
+                                        newpre["bsd_block"] = unit.Contains("bsd_blocknumber") ? unit["bsd_blocknumber"] : (unit.Contains("bsd_landlot") ? unit["bsd_landlot"] : null);
                                         traceService.Trace("2.1.3.5.5");
-                                        newpre["bsd_floor"] = unit.Contains("bsd_floor") ? unit["bsd_floor"] : null;
+                                        newpre["bsd_floor"] = unit.Contains("bsd_floor") ? unit["bsd_floor"] : (unit.Contains("bsd_plotnumber") ? unit["bsd_plotnumber"] : null);
                                         if (unit != null)
                                         {
                                             newpre["bsd_unit"] = unit.ToEntityReference();
@@ -388,9 +389,9 @@ namespace Action_PhasesLaunch_Release
                                     newpre["bsd_phareslaunch"] = PhaseLaunch.ToEntityReference();
                                     newpre["bsd_pricelist"] = PhaseLaunch["bsd_pricelistid"];
                                     newpre["bsd_project"] = PhaseLaunch["bsd_projectid"];
-                                    newpre["bsd_block"] = unit["bsd_blocknumber"];
+                                    newpre["bsd_block"] = unit.Contains("bsd_blocknumber") ? unit["bsd_blocknumber"] : (unit.Contains("bsd_landlot") ? unit["bsd_landlot"] : null);
                                     traceService.Trace("2.1.3.3.4");
-                                    newpre["bsd_floor"] = unit["bsd_floor"];
+                                    newpre["bsd_floor"] = unit.Contains("bsd_floor") ? unit["bsd_floor"] : (unit.Contains("bsd_plotnumber") ? unit["bsd_plotnumber"] : null);
                                     newpre["bsd_unit"] = unit.ToEntityReference();
                                     newpre["bsd_reason"] = "This Units has VIP priority.";
                                     newpre["bsd_secondreason"] = "This Units has VIP priority.";

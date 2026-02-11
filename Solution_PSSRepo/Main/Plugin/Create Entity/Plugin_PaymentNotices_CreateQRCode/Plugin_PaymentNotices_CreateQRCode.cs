@@ -207,7 +207,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
                 bankNumber: bankNumber,
                 purpose: purpose
             );
-
+            qrPay.PointOfInitiationMethod = "11";
             // Xây dựng chuỗi VietQR và trả về
             return qrPay.Build();
         }

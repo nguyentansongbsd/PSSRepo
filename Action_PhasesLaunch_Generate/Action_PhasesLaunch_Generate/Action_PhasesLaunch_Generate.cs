@@ -46,7 +46,12 @@ namespace Action_PhasesLaunch_Generate
             {
                 input05 = context.InputParameters["input05"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            string input06 = "";
+            if (!string.IsNullOrEmpty((string)context.InputParameters["input06"]))
+            {
+                input06 = context.InputParameters["input06"].ToString();
+            }
+            if (input01 == "Bước 01" && input02 != "" && input06 != "")
             {
                 TracingSe.Trace("Bước 01");
                 Entity enPhasesLaunch = new Entity("bsd_phaseslaunch");
@@ -237,26 +242,50 @@ namespace Action_PhasesLaunch_Generate
                         {
                             string ID = blocks.Entities[i].Id.ToString();
                             listBlock.Add(ID);
-                            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                            <fetch top=""1"">
-                              <entity name=""productpricelevel"">
-                                <attribute name=""productpricelevelid"" />
-                                <filter>
-                                  <condition attribute=""pricelevelid"" operator=""eq"" value=""{((EntityReference)pl["bsd_pricelistid"]).Id}"" />
-                                  <condition attribute=""pricingmethodcode"" operator=""ne"" value=""{1}"" />
-                                </filter>
-                                <link-entity name=""product"" from=""productid"" to=""productid"">
-                                  <link-entity name=""bsd_block"" from=""bsd_blockid"" to=""bsd_blocknumber"">
+                            if (input06 == "0")
+                            {
+                                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                                <fetch top=""1"">
+                                  <entity name=""productpricelevel"">
+                                    <attribute name=""productpricelevelid"" />
                                     <filter>
-                                      <condition attribute=""bsd_blockid"" operator=""eq"" value=""{ID}"" />
+                                      <condition attribute=""pricelevelid"" operator=""eq"" value=""{((EntityReference)pl["bsd_pricelistid"]).Id}"" />
+                                      <condition attribute=""pricingmethodcode"" operator=""ne"" value=""{1}"" />
                                     </filter>
-                                  </link-entity>
-                                </link-entity>
-                              </entity>
-                            </fetch>";
-                            EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                            if (rs.Entities.Count > 0) throw new InvalidPluginExecutionException("This unit is attached with a wrong pricing method. Please re-pick.(Price list item - Currency Amount)");
-
+                                    <link-entity name=""product"" from=""productid"" to=""productid"">
+                                      <link-entity name=""bsd_block"" from=""bsd_blockid"" to=""bsd_landlot"">
+                                        <filter>
+                                          <condition attribute=""bsd_blockid"" operator=""eq"" value=""{ID}"" />
+                                        </filter>
+                                      </link-entity>
+                                    </link-entity>
+                                  </entity>
+                                </fetch>";
+                                EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                                if (rs.Entities.Count > 0) throw new InvalidPluginExecutionException("This unit is attached with a wrong pricing method. Please re-pick.(Price list item - Currency Amount)");
+                            }
+                            else
+                            {
+                                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                                <fetch top=""1"">
+                                  <entity name=""productpricelevel"">
+                                    <attribute name=""productpricelevelid"" />
+                                    <filter>
+                                      <condition attribute=""pricelevelid"" operator=""eq"" value=""{((EntityReference)pl["bsd_pricelistid"]).Id}"" />
+                                      <condition attribute=""pricingmethodcode"" operator=""ne"" value=""{1}"" />
+                                    </filter>
+                                    <link-entity name=""product"" from=""productid"" to=""productid"">
+                                      <link-entity name=""bsd_block"" from=""bsd_blockid"" to=""bsd_blocknumber"">
+                                        <filter>
+                                          <condition attribute=""bsd_blockid"" operator=""eq"" value=""{ID}"" />
+                                        </filter>
+                                      </link-entity>
+                                    </link-entity>
+                                  </entity>
+                                </fetch>";
+                                EntityCollection rs = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                                if (rs.Entities.Count > 0) throw new InvalidPluginExecutionException("This unit is attached with a wrong pricing method. Please re-pick.(Price list item - Currency Amount)");
+                            }
                         }
                     }
                 }
@@ -272,7 +301,7 @@ namespace Action_PhasesLaunch_Generate
                 if (url == "") throw new InvalidPluginExecutionException("Không tìm thấy link duyệt bảng giá PA. Vui lòng kiểm tra lại.");
                 context.OutputParameters["output03"] = url;
             }
-            else if (input01 == "Bước 02" && input04 != "")
+            else if (input01 == "Bước 02" && input04 != "" && input06 != "")
             {
                 TracingSe.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -284,7 +313,7 @@ namespace Action_PhasesLaunch_Generate
                     listFloor.RemoveAll(string.IsNullOrEmpty);
                     foreach (string item in listFloor)
                     {
-                        List<Entity> units = RetrieveMultiRecord2(service, "product", new ColumnSet(new string[] { "productid" }), "bsd_floor", item);
+                        List<Entity> units = RetrieveMultiRecord2(service, "product", new ColumnSet(new string[] { "productid" }), input06 == "0" ? "bsd_plotnumber" : "bsd_floor", item);
                         foreach (Entity fl in units)
                         {
                             listUnit.Add(fl.Id.ToString());
@@ -298,7 +327,7 @@ namespace Action_PhasesLaunch_Generate
                     listBlock.RemoveAll(string.IsNullOrEmpty);
                     foreach (string item in listBlock)
                     {
-                        List<Entity> units = RetrieveMultiRecord2(service, "product", new ColumnSet(new string[] { "productid" }), "bsd_blocknumber", item);
+                        List<Entity> units = RetrieveMultiRecord2(service, "product", new ColumnSet(new string[] { "productid" }), input06 == "0" ? "bsd_landlot" : "bsd_blocknumber", item);
                         foreach (Entity fl in units)
                         {
                             listUnit.Add(fl.Id.ToString());
@@ -313,14 +342,14 @@ namespace Action_PhasesLaunch_Generate
                 TracingSe.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity pl = service.Retrieve("bsd_phaseslaunch", Guid.Parse(input02), new ColumnSet(new string[] { "bsd_phaseslaunchid", "bsd_pricelistid", "bsd_projectid" }));
-                Entity fl = service.Retrieve("product", Guid.Parse(input03), new ColumnSet(new string[] { "bsd_blocknumber", "bsd_floor", "name", "productid" }));
+                Entity fl = service.Retrieve("product", Guid.Parse(input03), new ColumnSet(new string[] { "bsd_blocknumber", "bsd_floor", "name", "productid", "bsd_landlot", "bsd_plotnumber" }));
                 Entity up = new Entity("bsd_unit_preparing");
                 up["bsd_name"] = fl["name"];
                 up["bsd_phareslaunch"] = pl.ToEntityReference();
                 up["bsd_pricelist"] = pl["bsd_pricelistid"];
                 up["bsd_project"] = pl["bsd_projectid"];
-                up["bsd_block"] = fl["bsd_blocknumber"];
-                up["bsd_floor"] = fl["bsd_floor"];
+                up["bsd_block"] = pl.Contains("bsd_blocknumber") ? pl["bsd_blocknumber"] : (pl.Contains("bsd_landlot") ? pl["bsd_landlot"] : null);
+                up["bsd_floor"] = pl.Contains("bsd_floor") ? pl["bsd_floor"] : (pl.Contains("bsd_plotnumber") ? pl["bsd_plotnumber"] : null);
                 up["bsd_unit"] = fl.ToEntityReference();
                 string Xml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                             <entity name='productpricelevel'>

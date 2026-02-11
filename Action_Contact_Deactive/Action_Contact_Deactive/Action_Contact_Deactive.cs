@@ -32,7 +32,8 @@ namespace Action_Contact_Deactive
                 this.target = (EntityReference)this.context.InputParameters["Target"];
                 bool hadAdvance = checkAdvance();
                 bool hadOptionEntry = checkOptionEntry();
-                if (hadAdvance == true || hadOptionEntry == true) throw new InvalidPluginExecutionException("The customer has transactions and cannot perform this action.");
+                bool hadQuote = checQuote();
+                if (hadAdvance == true || hadOptionEntry == true || hadQuote == true) throw new InvalidPluginExecutionException("The customer has transactions and cannot perform this action.");
                 updateContact();
             }
             catch (InvalidPluginExecutionException ex)
@@ -84,6 +85,29 @@ namespace Action_Contact_Deactive
                 var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 <fetch>
                   <entity name=""salesorder"">
+                    <attribute name=""name"" />
+                    <filter>
+                      <condition attribute=""customerid"" operator=""eq"" value=""{this.target.Id}"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+                EntityCollection result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                if (result == null || result.Entities.Count <= 0) return false;
+                return true;
+            }
+            catch (InvalidPluginExecutionException ex)
+            {
+                throw ex;
+            }
+        }
+        private bool checQuote()
+        {
+            try
+            {
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""quote"">
                     <attribute name=""name"" />
                     <filter>
                       <condition attribute=""customerid"" operator=""eq"" value=""{this.target.Id}"" />

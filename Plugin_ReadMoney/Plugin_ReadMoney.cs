@@ -294,12 +294,22 @@ namespace Plugin_ReadMoney
                 #region -- Units
                 else if (target.LogicalName == "product" && target.Contains("bsd_maintenancefeespercent"))
                 {
-                    smoney = (Convert.ToInt64(((Decimal)target["bsd_maintenancefeespercent"]))).ToString();
-                    dmoney = Convert.ToInt64(((Decimal)target["bsd_maintenancefeespercent"]));
-                    vn = TienBangChu(smoney);
-                    en = read(dmoney);
-                    target["bsd_txmaintanencevn"] = vn;
-                    target["bsd_txmaintanenceen"] = en;
+                    if (target.Contains("bsd_maintenancefeespercent"))
+                    {
+                        smoney = (Convert.ToInt64(((Decimal)target["bsd_maintenancefeespercent"]))).ToString();
+                        dmoney = Convert.ToInt64(((Decimal)target["bsd_maintenancefeespercent"]));
+                        vn = TienBangChu(smoney);
+                        en = read(dmoney);
+                        target["bsd_txmaintanencevn"] = vn;
+                        target["bsd_txmaintanenceen"] = en;
+                    }
+                    if (context.MessageName == "Create")
+                    {
+                        if (!target.Contains("bsd_blocknumber") && target.Contains("bsd_landlot"))
+                            target["bsd_blocknumber"] = target["bsd_landlot"];
+                        if (!target.Contains("bsd_floor") && target.Contains("bsd_plotnumber"))
+                            target["bsd_floor"] = target["bsd_plotnumber"];
+                    }
                 }
                 #endregion
 
