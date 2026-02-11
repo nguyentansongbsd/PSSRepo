@@ -318,9 +318,12 @@ namespace Action_WarningNotices_GenerateWarningNotices
             {
                 Entity it = new Entity(item.LogicalName);
                 item.Attributes.Remove(item.LogicalName + "id");
-                item.Attributes.Remove("bsd_optionentry");
-                item.Attributes.Remove("bsd_reservation");
-                item.Attributes.Remove("ownerid");
+                if(item.Contains("bsd_optionentry"))
+                    item.Attributes.Remove("bsd_optionentry");
+                if (item.Contains("bsd_reservation"))
+                    item.Attributes.Remove("bsd_reservation");
+                if (item.Contains("ownerid"))
+                    item.Attributes.Remove("ownerid");
                 item[fieldName] = new EntityReference(localName, id);
                 item.Id = Guid.NewGuid();
                 it = item;
