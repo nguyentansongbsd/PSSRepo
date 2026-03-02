@@ -20,6 +20,7 @@ namespace Action_BulkWaiver_Approve
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             service = factory.CreateOrganizationService(context.UserId);
+            traceService.Trace("Action_BulkWaiver_Approve");
             string input01 = "";
             if (!string.IsNullOrEmpty((string)context.InputParameters["input01"]))
             {
@@ -40,7 +41,8 @@ namespace Action_BulkWaiver_Approve
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            traceService.Trace("input01 " + input01);
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceService.Trace("Bước 01");
                 Entity enBulkWaiver = service.Retrieve("bsd_bulkwaiver", Guid.Parse(input02), new ColumnSet(true));
@@ -48,23 +50,23 @@ namespace Action_BulkWaiver_Approve
                 if (statuscode != 1) throw new InvalidPluginExecutionException("The status of the Bulk Waiver is invalid. Please check again.");
                 bool bsd_powerautomate = enBulkWaiver.Contains("bsd_powerautomate") ? (bool)enBulkWaiver["bsd_powerautomate"] : false;
                 if (bsd_powerautomate) throw new InvalidPluginExecutionException("The Record Bulk Waiver is running Power Automate. Please check again.");
+                EntityCollection list = find(input02, 1);
+                if (list.Entities.Count == 0) throw new InvalidPluginExecutionException("The list of waiver to be processed is currently empty. Please check again.");
                 Entity enTarget = new Entity(enBulkWaiver.LogicalName, enBulkWaiver.Id);
                 enTarget["bsd_powerautomate"] = true;
                 service.Update(enTarget);
-                EntityCollection list = find(input02, 1);
-                if (list.Entities.Count == 0) throw new InvalidPluginExecutionException("The list of waiver to be processed is currently empty. Please check again.");
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Bulk Waiver Approve");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Bulk Waiver Approve");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -307,7 +309,7 @@ namespace Action_BulkWaiver_Approve
                 }
 
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
