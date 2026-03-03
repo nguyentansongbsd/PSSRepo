@@ -48,23 +48,21 @@ namespace Action_AgingSimulation_GenerateUnit
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceService.Trace("Bước 01");
                 Entity enTarget = new Entity("bsd_interestsimulation");
                 enTarget.Id = Guid.Parse(input02);
-                enTarget["bsd_powerautomate"] = true;
-                service.Update(enTarget);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Aging Simulation Generate Unit");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Aging Simulation Generate Unit");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
                 Entity enInterestsimulation = service.Retrieve(enTarget.LogicalName, enTarget.Id, new ColumnSet(new string[4]
                   {
                     "bsd_project",
@@ -85,11 +83,15 @@ namespace Action_AgingSimulation_GenerateUnit
                 {
                     listUnit.Add(item.Id.ToString());
                 }
-                traceService.Trace("paymentScheme " + paymentScheme.Entities.Count);
-                traceService.Trace("output03 " + string.Join(";", listUnit));
-                context.OutputParameters["output03"] = string.Join(";", listUnit);
+                //traceService.Trace("paymentScheme " + paymentScheme.Entities.Count);
+                //traceService.Trace("output03 " + string.Join(";", listUnit));
+
+                enTarget["bsd_powerautomate"] = true;
+                enTarget["bsd_generate"] = true;
+                enTarget["bsd_list"] = string.Join(";", listUnit);
+                service.Update(enTarget);
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -98,7 +100,7 @@ namespace Action_AgingSimulation_GenerateUnit
                 referenceCollection2.Add(new EntityReference("product", Guid.Parse(input03)));
                 service.Disassociate(master.LogicalName, master.Id, new Relationship("bsd_bsd_interestsimulation_product"), referenceCollection2);
             }
-            else if (input01 == "Bước 03" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -129,13 +131,14 @@ namespace Action_AgingSimulation_GenerateUnit
                     service.Associate(master.LogicalName, master.Id, new Relationship("bsd_bsd_interestsimulation_product"), referenceCollection2);
                 }
             }
-            else if (input01 == "Bước 04" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 04" && input02 != "" && input04 != "")
             {
                 traceService.Trace("Bước 04");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity enConfirmPayment = new Entity("bsd_interestsimulation");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = false;
+                enConfirmPayment["bsd_generate"] = false;
                 enConfirmPayment["bsd_errorincalculation"] = "";
                 service.Update(enConfirmPayment);
             }
