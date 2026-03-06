@@ -70,9 +70,6 @@ namespace Action_GenHandoverNotices_Generate
                 query.Criteria.AddCondition(new ConditionExpression("bsd_installment", ConditionOperator.NotNull));// == bsd_installment
                 query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
                 query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.And);
-                var bsd_types_1 = 100000002;
-                var bsd_types_2 = 100000001;
-                query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_types", ConditionOperator.In, bsd_types_1, bsd_types_2)); // Update Only for Installment or Update All
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_usegeneratehandovernotice", ConditionOperator.Equal, "1"));//Use Generate Handover Notice = Yes
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_generated", ConditionOperator.Equal, "0"));// == NO
                 if (enTarget.Contains("bsd_project"))
