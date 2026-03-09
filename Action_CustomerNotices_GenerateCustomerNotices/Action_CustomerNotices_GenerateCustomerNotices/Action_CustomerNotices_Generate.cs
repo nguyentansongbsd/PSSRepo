@@ -44,18 +44,6 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 traceService.Trace("Bước 01");
                 Entity enUp = new Entity("bsd_genpaymentnotices");
                 enUp.Id = Guid.Parse(input02);
-                enUp["bsd_powerautomate"] = true;
-                service.Update(enUp);
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "GenPaymentNotices");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["Count"] = url;
-
                 Entity enTarget = service.Retrieve(enUp.LogicalName, enUp.Id, new ColumnSet(true));
                 //LAY DANH SACH CAC OE HOP LE
                 var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -144,7 +132,6 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 }
                 EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
                 traceService.Trace("count " + list.Entities.Count);
-                traceService.Trace("url " + url);
                 List<string> listOE = new List<string>();
                 foreach (Entity detail in list.Entities)
                 {
@@ -152,7 +139,9 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 }
                 if (listOE.Count == 0)
                     throw new InvalidPluginExecutionException("The list is empty. Please check again.");
-                context.OutputParameters["ReturnId"] = string.Join(";", listOE);
+                enUp["bsd_powerautomate"] = true;
+                enUp["bsd_list"] = string.Join(";", listOE);
+                service.Update(enUp);
             }
             else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {

@@ -40,24 +40,11 @@ namespace Action_GenHandoverNotices_Generate
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceService.Trace("Bước 01");
                 Entity enUp = new Entity("bsd_generatehandovernotices");
                 enUp.Id = Guid.Parse(input02);
-                enUp["bsd_powerautomate"] = true;
-                service.Update(enUp);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "GenHandoverNotices Generate");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
-
                 Entity enTarget = service.Retrieve(enUp.LogicalName, enUp.Id, new ColumnSet(true));
 
                 //LAY DANH SACH CAC UEHD DETAIL HOP LE
@@ -95,9 +82,11 @@ namespace Action_GenHandoverNotices_Generate
                 }
                 if (listUnit.Count == 0)
                     throw new InvalidPluginExecutionException("The list is empty. Please check again.");
-                context.OutputParameters["output03"] = string.Join(";", listUnit);
+                enUp["bsd_powerautomate"] = true;
+                enUp["bsd_list"] = string.Join(";", listUnit);
+                service.Update(enUp);
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -257,7 +246,7 @@ namespace Action_GenHandoverNotices_Generate
                 uehd["bsd_generated"] = true;
                 service.Update(uehd);
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
