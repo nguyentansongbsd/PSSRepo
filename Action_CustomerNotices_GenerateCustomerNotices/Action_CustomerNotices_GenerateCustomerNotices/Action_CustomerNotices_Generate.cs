@@ -659,6 +659,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     <filter>
                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idSource}"" />
                       <condition attribute=""bsd_current"" operator=""eq"" value=""1"" />
+                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
                     </filter>
                   </entity>
                 </fetch>";
