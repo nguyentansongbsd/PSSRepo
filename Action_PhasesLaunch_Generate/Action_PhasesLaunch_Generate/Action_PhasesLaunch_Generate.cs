@@ -51,14 +51,11 @@ namespace Action_PhasesLaunch_Generate
             {
                 input06 = context.InputParameters["input06"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "" && input06 != "")
+            if (input01 == "Buoc 01" && input02 != "" && input06 != "")
             {
                 TracingSe.Trace("Bước 01");
                 Entity enPhasesLaunch = new Entity("bsd_phaseslaunch");
                 enPhasesLaunch.Id = Guid.Parse(input02);
-                enPhasesLaunch["bsd_powerautomate"] = true;
-                service.Update(enPhasesLaunch);
-                context.OutputParameters["output01"] = context.UserId.ToString();
                 List<string> listBlock = new List<string>();
                 List<string> listFloor = new List<string>();
                 Entity pl = service.Retrieve("bsd_phaseslaunch", enPhasesLaunch.Id, new ColumnSet(true));
@@ -289,19 +286,14 @@ namespace Action_PhasesLaunch_Generate
                         }
                     }
                 }
-                context.OutputParameters["output02"] = string.Join(";", listBlock);
-                context.OutputParameters["output04"] = string.Join(";", listFloor);
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Generate");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Không tìm thấy link duyệt bảng giá PA. Vui lòng kiểm tra lại.");
-                context.OutputParameters["output03"] = url;
+                enPhasesLaunch["bsd_powerautomate"] = true;
+                enPhasesLaunch["bsd_generate"] = true;
+                enPhasesLaunch["bsd_type"] = input06;
+                enPhasesLaunch["bsd_listblock"] = string.Join(";", listBlock);
+                enPhasesLaunch["bsd_listfloor"] = string.Join(";", listFloor);
+                service.Update(enPhasesLaunch);
             }
-            else if (input01 == "Bước 02" && input04 != "" && input06 != "")
+            else if (input01 == "Buoc 02" && input04 != "" && input06 != "")
             {
                 TracingSe.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -337,7 +329,7 @@ namespace Action_PhasesLaunch_Generate
                 context.OutputParameters["output05"] = string.Join(";", listUnit);
                 //TracingSe.Trace("output05: " + string.Join(";", listUnit));
             }
-            else if (input01 == "Bước 03" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input03 != "" && input04 != "")
             {
                 TracingSe.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -371,13 +363,14 @@ namespace Action_PhasesLaunch_Generate
                 }
                 service.Create(up);
             }
-            else if (input01 == "Bước 04" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 04" && input02 != "" && input04 != "")
             {
                 TracingSe.Trace("Bước 04");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity enPhasesLaunch = new Entity("bsd_phaseslaunch");
                 enPhasesLaunch.Id = Guid.Parse(input02);
                 enPhasesLaunch["bsd_powerautomate"] = false;
+                enPhasesLaunch["bsd_generate"] = false;
                 service.Update(enPhasesLaunch);
             }
         }

@@ -26,7 +26,7 @@ namespace Action_PhasesLaunch_Release
             if (target.LogicalName == "bsd_phaseslaunch")
             {
                 string input_01 = (string)context.InputParameters["Input01"];
-                if (input_01 == "Bước 01")
+                if (input_01 == "Buoc 01")
                 {
                     Entity PhaseLaunch = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_pricelistid", "bsd_discountlist" }));
                     if (PhaseLaunch.Contains("bsd_pricelistid"))
@@ -79,18 +79,11 @@ namespace Action_PhasesLaunch_Release
                                 phaseslaunch.Id = target.Id;
                                 traceService.Trace("3333333333333333");
                                 phaseslaunch["bsd_powerautomate"] = true;
+                                phaseslaunch["bsd_release"] = true;
+                                phaseslaunch["bsd_type"] = "output_1_if";
+                                phaseslaunch["bsd_list"] = string.Join(";", products2);
                                 service.Update(phaseslaunch);
-                                context.OutputParameters["Output01"] = "output_1_if";
-                                context.OutputParameters["Output02"] = string.Join(";", products2);
-                                //string url = "";
-                                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
-                                //foreach (Entity item in configGolive.Entities)
-                                //{
-                                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                                //}
-                                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                                //context.OutputParameters["Output03"] = url;
+
                             }
                             else
                             {
@@ -115,26 +108,17 @@ namespace Action_PhasesLaunch_Release
                                 phaseslaunch.Id = target.Id;
                                 traceService.Trace("3333333333333333");
                                 phaseslaunch["bsd_powerautomate"] = true;
+                                phaseslaunch["bsd_release"] = true;
+                                phaseslaunch["bsd_type"] = "output_1_else";
+                                phaseslaunch["bsd_list"] = string.Join(";", productsElse2);
                                 service.Update(phaseslaunch);
-                                
-                                context.OutputParameters["Output01"] = "output_1_else";
-                                context.OutputParameters["Output02"] = string.Join(";", productsElse2);
-                                //string url = "";
-                                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Release");
-                                //foreach (Entity item in configGolive.Entities)
-                                //{
-                                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                                //}
-                                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                                //context.OutputParameters["Output03"] = url;
                             }
                         }
                         else throw new InvalidPluginExecutionException("Please insert Discount List.");
                     }
                     else throw new InvalidPluginExecutionException("Please insert Price List.");
                 }
-                else if (input_01 == "Bước 02")
+                else if (input_01 == "Buoc 02")
                 {
                     string input_02 = (string)context.InputParameters["Input02"];
                     string input_03 = (string)context.InputParameters["Input03"];
@@ -403,12 +387,13 @@ namespace Action_PhasesLaunch_Release
                         }
                     }
                 }
-                else if (input_01 == "Bước 03")
+                else if (input_01 == "Buoc 03")
                 {
                     EntityCollection Units = RetrieveMultiRecord(service, "bsd_unitlaunched", new ColumnSet(new string[] { "bsd_productid" }), "bsd_phaseslaunchid", target.Id);
                     Entity phaseslaunch = new Entity(target.LogicalName);
                     phaseslaunch.Id = target.Id;
                     phaseslaunch["bsd_powerautomate"] = false;
+                    phaseslaunch["bsd_release"] = false;
                     if (Units.Entities.Count > 0)
                     {
                         DateTime t = RetrieveLocalTimeFromUTCTime(DateTime.Now, service);
