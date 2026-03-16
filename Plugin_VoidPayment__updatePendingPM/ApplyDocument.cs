@@ -206,8 +206,14 @@ namespace Plugin_VoidPayment_updatePendingPM
                                     "bsd_totallatedays",
                                     "bsd_totalamountpaid",
                                     "bsd_signedcontractdate",
+                                    "statuscode",
                                     "salesorderid"
                                     }));
+            int statuscode_OE = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 0;
+            if (statuscode_OE == 100000006)
+                throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+            if (statuscode_OE == 100000004)
+                throw new InvalidPluginExecutionException("Option Entry has been completed.");
             if (bsd_transactiontype == 2)//installment
             {
                 voidPayInstallment(en_voidPM, en_app, en_OE);

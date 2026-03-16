@@ -74,6 +74,11 @@ namespace Action_ConfirmApplyDocument_Confirm
         public void paymentInstallment(Entity en_app, ref decimal totalapplyamout, string type, ref string str0, ref string str00, ArrayList listCheckFee)
         {
             Entity en_OE = service.Retrieve("salesorder", ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
+            int statuscode_OE = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 0;
+            if (statuscode_OE == 100000006)
+                throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+            if (statuscode_OE == 100000004)
+                throw new InvalidPluginExecutionException("Option Entry has been completed.");
             string optionentryID = en_OE.Id.ToString();
             if (!en_OE.Contains("bsd_unitnumber")) throw new InvalidPluginExecutionException("Cannot find Unit information in Option Entry " + (string)en_OE["name"] + "!");
             d_oe_bsd_totalamountpaid = en_OE.Contains("bsd_totalamountpaid") ? ((Money)en_OE["bsd_totalamountpaid"]).Value : 0;

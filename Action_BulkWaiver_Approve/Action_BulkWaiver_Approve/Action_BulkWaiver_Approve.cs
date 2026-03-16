@@ -251,6 +251,11 @@ namespace Action_BulkWaiver_Approve
                 Entity optionentryEn = e.Contains("bsd_optionentry") ? service.Retrieve("salesorder", ((EntityReference)e["bsd_optionentry"]).Id, new ColumnSet(true)) : null;
                 if (optionentryEn != null)
                 {
+                    int statuscode_OE = optionentryEn.Contains("statuscode") ? ((OptionSetValue)optionentryEn["statuscode"]).Value : 0;
+                    if (statuscode_OE == 100000006)
+                        throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+                    if (statuscode_OE == 100000004)
+                        throw new InvalidPluginExecutionException("Option Entry has been completed.");
                     var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
                     EntityCollection psdFirst = GetPSD(optionentryEn.Id.ToString());
                     Entity detailFirst = psdFirst.Entities[0];
