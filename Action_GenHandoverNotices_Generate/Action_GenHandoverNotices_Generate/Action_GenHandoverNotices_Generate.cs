@@ -148,11 +148,17 @@ namespace Action_GenHandoverNotices_Generate
 
                 foreach (Entity e in InstallFee.Entities)
                 {
-                    if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
-                        maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
+                    if (detail.Contains("bsd_maintenancefees") && (bool)detail["bsd_maintenancefees"] == true)
+                    {
+                        if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
+                            maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
+                    }
 
-                    if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
-                        managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
+                    if (detail.Contains("bsd_managementfee") && (bool)detail["bsd_managementfee"] == true)
+                    {
+                        if (e.Contains("ManaFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
+                            managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
+                    }
                 }
                 traceService.Trace("555555");
                 hn["bsd_maintenancefee"] = new Money(maintenanceF);
