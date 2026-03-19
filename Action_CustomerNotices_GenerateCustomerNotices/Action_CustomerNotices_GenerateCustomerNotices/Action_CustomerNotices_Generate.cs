@@ -314,6 +314,14 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                     <attribute name='bsd_lastinstallment' />
                     <attribute name='statuscode' />
                     <order attribute='bsd_duedate' descending='true' />
+                <filter type='and'>
+                                <condition attribute='bsd_duedatecalculatingmethod' operator='not-in'>
+                                    <value>100000002</value>
+                                    <value>100000003</value>
+                                    <value>100000004</value>
+                                    <value>100000005</value>
+                                    <value>100000006</value>
+                                </condition>
                     <filter type='or'>
                         <filter type='and'>
                             <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
@@ -326,6 +334,7 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
 
                         </filter>
                     </filter>
+                </filter>
                   </entity>
                 </fetch>";
             fetchXml = string.Format(fetchXml, oe.Id);
