@@ -115,7 +115,7 @@ namespace Action_GenHandoverNotices_Generate
                 decimal advancePaymentAmount = decimal.Zero;
                 decimal installmentAmount = decimal.Zero;
                 decimal orther = decimal.Zero;
-
+                int number = 0;
                 decimal TotalSysRe = decimal.Zero;
                 Entity hn = new Entity("bsd_handovernotice");
                 hn["bsd_name"] = "Handover Notices of " + ((EntityReference)detail["bsd_optionentry"]).Name;
@@ -145,26 +145,42 @@ namespace Action_GenHandoverNotices_Generate
                 traceService.Trace("444444");
                 //Han_15082018 : Get Remaining Amount of Mana Fee + Main Fee
                 EntityCollection InstallFee = CalSum_FeeRemaining(service, OE.ToEntityReference());
-
                 foreach (Entity e in InstallFee.Entities)
                 {
-                    if (detail.Contains("bsd_maintenancefees") && (bool)detail["bsd_maintenancefees"] == true)
+                    EntityReference installmentRef = detail.GetAttributeValue<EntityReference>("bsd_installment");
+                    Entity realInstallment = service.Retrieve(installmentRef.LogicalName, installmentRef.Id, new ColumnSet("bsd_maintenancefees", "bsd_managementfee"));
+                    bool isMainFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_maintenancefees");
+                    traceService.Trace("thinhtests2_" + isMainFeeChecked);
+                    if (isMainFeeChecked == true)
                     {
+                        number = OE.Contains("bsd_numberofmonthspaidmf") ? (int)OE["bsd_numberofmonthspaidmf"]: 0;
                         if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
                             maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
                     }
-
-                    if (detail.Contains("bsd_managementfee") && (bool)detail["bsd_managementfee"] == true)
+                    else
                     {
+                        maintenanceF = 0;
+                        number = 0;
+                    }
+                        bool isManaFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_managementfee");
+                    if (isManaFeeChecked == true)
+                    {
+                        
                         if (e.Contains("ManaFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
                             managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
                     }
+                    else
+                    {
+                        managementF = 0;
+                        number = 0;
+                    }
+
                 }
                 traceService.Trace("555555");
                 hn["bsd_maintenancefee"] = new Money(maintenanceF);
                 hn["bsd_managementfee"] = new Money(managementF);
                 hn["bsd_depositamount"] = OE.Contains("bsd_depositamount") ? OE["bsd_depositamount"] : new Money(decimal.Zero);
-                hn["bsd_numberofmonthspaidmf"] = OE.Contains("bsd_numberofmonthspaidmf") ? OE["bsd_numberofmonthspaidmf"] : 0;
+                hn["bsd_numberofmonthspaidmf"] = number;
                 hn["bsd_updateestimatehandoverdatedetail"] = detail.ToEntityReference();
                 EntityCollection calculateOutstanding = CalculateOutstanding(service, OE.ToEntityReference(), bsd_isincludelastinstallment, bsd_duedatecalculatingmethod);
                 foreach (Entity e in calculateOutstanding.Entities)
