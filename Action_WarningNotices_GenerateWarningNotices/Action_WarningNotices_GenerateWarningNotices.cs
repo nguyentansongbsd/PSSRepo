@@ -350,15 +350,20 @@ namespace Action_WarningNotices_GenerateWarningNotices
                     <attribute name='bsd_balance' />
                     <attribute name='bsd_ordernumber' />
                     <attribute name='bsd_gracedays' />
-
                     <attribute name='bsd_paymentscheme' />
-
-
                     <order attribute='bsd_duedate' descending='false' />
+
                     <filter type='and'>
                       <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
                         <condition attribute='statuscode' operator='eq' value='100000000' />
                       <condition attribute='bsd_duedate' operator='not-null' />
+                    <condition attribute='bsd_duedatecalculatingmethod' operator='not-in'>
+                      <value>100000002</value>
+                      <value>100000003</value>
+                      <value>100000004</value>
+                      <value>100000005</value>
+                      <value>100000006</value>
+                    </condition>
                     </filter>
                   </entity>
                 </fetch>";

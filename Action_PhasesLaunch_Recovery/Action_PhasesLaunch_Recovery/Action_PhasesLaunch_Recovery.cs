@@ -40,7 +40,7 @@ namespace Action_PhasesLaunch_Recovery
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 TracingSe.Trace("Bước 01");
                 var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -81,19 +81,10 @@ namespace Action_PhasesLaunch_Recovery
                 Entity enPhasesLaunch = new Entity("bsd_phaseslaunch");
                 enPhasesLaunch.Id = Guid.Parse(input02);
                 enPhasesLaunch["bsd_powerautomate"] = true;
+                enPhasesLaunch["bsd_recovery"] = true;
                 service.Update(enPhasesLaunch);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Phases Launch Recovery");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 TracingSe.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -103,13 +94,14 @@ namespace Action_PhasesLaunch_Recovery
                 entity["bsd_locked"] = null;
                 service.Update(entity);
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 TracingSe.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity enPhasesLaunch = new Entity("bsd_phaseslaunch");
                 enPhasesLaunch.Id = Guid.Parse(input02);
                 enPhasesLaunch["bsd_powerautomate"] = false;
+                enPhasesLaunch["bsd_recovery"] = false;
                 enPhasesLaunch["statuscode"] = new OptionSetValue(100000001);
                 service.Update(enPhasesLaunch);
             }

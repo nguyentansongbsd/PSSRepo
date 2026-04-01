@@ -108,6 +108,11 @@ namespace Plugin_VoidPayment_updatePendingPM
                                     "bsd_maintenancefeesstatus",
                                     "bsd_managementfeesstatus"
                                     }));
+                    int statuscode_OE = enOptionEntry.Contains("statuscode") ? ((OptionSetValue)enOptionEntry["statuscode"]).Value : 0;
+                    if (statuscode_OE == 100000006)
+                        throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+                    if (statuscode_OE == 100000004)
+                        throw new InvalidPluginExecutionException("Option Entry has been completed.");
                 }
                 int i_bsd_totallatedays = enOptionEntry.Contains("bsd_totallatedays") ? (int)enOptionEntry["bsd_totallatedays"] : 0;
                 decimal d_oe_totalamount = enOptionEntry.Contains("totalamount") ? ((Money)enOptionEntry["totalamount"]).Value : 0;

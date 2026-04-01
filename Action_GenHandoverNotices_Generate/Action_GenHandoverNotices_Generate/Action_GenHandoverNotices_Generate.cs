@@ -40,24 +40,11 @@ namespace Action_GenHandoverNotices_Generate
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceService.Trace("Bước 01");
                 Entity enUp = new Entity("bsd_generatehandovernotices");
                 enUp.Id = Guid.Parse(input02);
-                enUp["bsd_powerautomate"] = true;
-                service.Update(enUp);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "GenHandoverNotices Generate");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
-
                 Entity enTarget = service.Retrieve(enUp.LogicalName, enUp.Id, new ColumnSet(true));
 
                 //LAY DANH SACH CAC UEHD DETAIL HOP LE
@@ -70,9 +57,6 @@ namespace Action_GenHandoverNotices_Generate
                 query.Criteria.AddCondition(new ConditionExpression("bsd_installment", ConditionOperator.NotNull));// == bsd_installment
                 query.LinkEntities.Add(new LinkEntity("bsd_updateestimatehandoverdatedetail", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdate", "bsd_updateestimatehandoverdateid", JoinOperator.Inner));
                 query.LinkEntities[0].LinkCriteria = new FilterExpression(LogicalOperator.And);
-                var bsd_types_1 = 100000002;
-                var bsd_types_2 = 100000001;
-                query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_types", ConditionOperator.In, bsd_types_1, bsd_types_2)); // Update Only for Installment or Update All
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_usegeneratehandovernotice", ConditionOperator.Equal, "1"));//Use Generate Handover Notice = Yes
                 query.LinkEntities[0].LinkCriteria.AddCondition(new ConditionExpression("bsd_generated", ConditionOperator.Equal, "0"));// == NO
                 if (enTarget.Contains("bsd_project"))
@@ -98,9 +82,11 @@ namespace Action_GenHandoverNotices_Generate
                 }
                 if (listUnit.Count == 0)
                     throw new InvalidPluginExecutionException("The list is empty. Please check again.");
-                context.OutputParameters["output03"] = string.Join(";", listUnit);
+                enUp["bsd_powerautomate"] = true;
+                enUp["bsd_list"] = string.Join(";", listUnit);
+                service.Update(enUp);
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceService.Trace("Bước 02");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -129,7 +115,7 @@ namespace Action_GenHandoverNotices_Generate
                 decimal advancePaymentAmount = decimal.Zero;
                 decimal installmentAmount = decimal.Zero;
                 decimal orther = decimal.Zero;
-
+                int number = 0;
                 decimal TotalSysRe = decimal.Zero;
                 Entity hn = new Entity("bsd_handovernotice");
                 hn["bsd_name"] = "Handover Notices of " + ((EntityReference)detail["bsd_optionentry"]).Name;
@@ -159,20 +145,42 @@ namespace Action_GenHandoverNotices_Generate
                 traceService.Trace("444444");
                 //Han_15082018 : Get Remaining Amount of Mana Fee + Main Fee
                 EntityCollection InstallFee = CalSum_FeeRemaining(service, OE.ToEntityReference());
-
                 foreach (Entity e in InstallFee.Entities)
                 {
-                    if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
-                        maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
+                    EntityReference installmentRef = detail.GetAttributeValue<EntityReference>("bsd_installment");
+                    Entity realInstallment = service.Retrieve(installmentRef.LogicalName, installmentRef.Id, new ColumnSet("bsd_maintenancefees", "bsd_managementfee"));
+                    bool isMainFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_maintenancefees");
+                    traceService.Trace("thinhtests2_" + isMainFeeChecked);
+                    if (isMainFeeChecked == true)
+                    {
+                        number = OE.Contains("bsd_numberofmonthspaidmf") ? (int)OE["bsd_numberofmonthspaidmf"]: 0;
+                        if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
+                            maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
+                    }
+                    else
+                    {
+                        maintenanceF = 0;
+                        number = 0;
+                    }
+                        bool isManaFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_managementfee");
+                    if (isManaFeeChecked == true)
+                    {
+                        
+                        if (e.Contains("ManaFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
+                            managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
+                    }
+                    else
+                    {
+                        managementF = 0;
+                        number = 0;
+                    }
 
-                    if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
-                        managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
                 }
                 traceService.Trace("555555");
                 hn["bsd_maintenancefee"] = new Money(maintenanceF);
                 hn["bsd_managementfee"] = new Money(managementF);
                 hn["bsd_depositamount"] = OE.Contains("bsd_depositamount") ? OE["bsd_depositamount"] : new Money(decimal.Zero);
-                hn["bsd_numberofmonthspaidmf"] = OE.Contains("bsd_numberofmonthspaidmf") ? OE["bsd_numberofmonthspaidmf"] : 0;
+                hn["bsd_numberofmonthspaidmf"] = number;
                 hn["bsd_updateestimatehandoverdatedetail"] = detail.ToEntityReference();
                 EntityCollection calculateOutstanding = CalculateOutstanding(service, OE.ToEntityReference(), bsd_isincludelastinstallment, bsd_duedatecalculatingmethod);
                 foreach (Entity e in calculateOutstanding.Entities)
@@ -260,7 +268,7 @@ namespace Action_GenHandoverNotices_Generate
                 uehd["bsd_generated"] = true;
                 service.Update(uehd);
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 traceService.Trace("Bước 03");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
