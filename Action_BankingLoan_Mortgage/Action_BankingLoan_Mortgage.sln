@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_TerminateLetter_Gene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_CustomerNotices_GenerateCustomerNotices", "..\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices\Action_CustomerNotices_GenerateCustomerNotices.csproj", "{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Action_Active_GenerateTerminateLetter", "..\Solution_PSSRepo\Main\Action\Action_Active_GenerateTerminateLetter\Action_Active_GenerateTerminateLetter.csproj", "{97583DA4-0070-4156-9269-2FAF5B447C3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91EF71F6-FE5A-477A-ACA0-0BCAE81B485F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97583DA4-0070-4156-9269-2FAF5B447C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97583DA4-0070-4156-9269-2FAF5B447C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97583DA4-0070-4156-9269-2FAF5B447C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97583DA4-0070-4156-9269-2FAF5B447C3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

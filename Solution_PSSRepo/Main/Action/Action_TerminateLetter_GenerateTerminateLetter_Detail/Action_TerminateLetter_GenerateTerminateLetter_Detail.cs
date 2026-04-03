@@ -588,6 +588,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
             });
             query.Criteria = new FilterExpression(LogicalOperator.And);
             query.Criteria.AddCondition(new ConditionExpression("bsd_optionentry", ConditionOperator.Equal, (object)opRef));
+            query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.NotEqual, "100000005"));
             query.TopCount = new int?(1);
             return this.service.RetrieveMultiple((QueryBase)query).Entities.Count > 0;
         }
