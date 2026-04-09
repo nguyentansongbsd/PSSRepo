@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +37,9 @@ namespace Plugin_UtopSyncContract
             Entity enCustomer = service.Retrieve(((EntityReference)enContract["customerid"]).LogicalName, ((EntityReference)enContract["customerid"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_isconsent"));
             if (!enCustomer.Contains("bsd_isconsent") || (enCustomer.Contains("bsd_isconsent") && (bool)enCustomer["bsd_isconsent"] == false))
                 return;
-
+            Guid optionEntryId = enContract.Id;
             // call api azure function to sync project data to utop system
-            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertcontract?id={enCustomer.Id}&entity={enCustomer.LogicalName}";
+            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertcontract?id={enCustomer.Id}&entity={enCustomer.LogicalName}&oeid={optionEntryId}";
             HttpClient httpClient = new HttpClient();
 
             var respose = await httpClient.GetAsync(url);
