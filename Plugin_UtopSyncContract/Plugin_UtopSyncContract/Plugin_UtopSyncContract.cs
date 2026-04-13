@@ -38,8 +38,10 @@ namespace Plugin_UtopSyncContract
             if (!enCustomer.Contains("bsd_isconsent") || (enCustomer.Contains("bsd_isconsent") && (bool)enCustomer["bsd_isconsent"] == false))
                 return;
             Guid optionEntryId = enContract.Id;
+            tracingService.Trace("idoe" + optionEntryId);
             // call api azure function to sync project data to utop system
             string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertcontract?id={enCustomer.Id}&entity={enCustomer.LogicalName}&oeid={optionEntryId}";
+            tracingService.Trace("Call api"+ url);
             HttpClient httpClient = new HttpClient();
 
             var respose = await httpClient.GetAsync(url);
