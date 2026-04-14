@@ -38,7 +38,7 @@ namespace Plugin_OE_NumberToText
                     Up_totalpaidincludecoa(enIns, "bsd_totalamountpaidinstallment");
                     break;
                 case "bsd_advancepayment":
-                    if (!(target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000))  //Collected
+                    if (!(target.Contains("statuscode") && (((OptionSetValue)target["statuscode"]).Value == 100000000 || ((OptionSetValue)target["statuscode"]).Value == 100000004)))
                         return;
 
                     Entity enAdvencePayment = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_optionentry" }));
