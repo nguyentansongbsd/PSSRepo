@@ -39,7 +39,7 @@ namespace Plugin_UtopSyncBankLoan
             if (!enContact.Contains("bsd_isconsent") || (enContact.Contains("bsd_isconsent") && (bool)enContact["bsd_isconsent"] == false))
                 return;
             // call api azure function to sync project data to utop system
-            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertcontract?id={this.target.Id}&entity={this.target.LogicalName}&oeid={optionEntryId}";
+            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertcontract?id={enContact.Id}&entity={enContact.LogicalName}&oeid={optionEntryId}";
             HttpClient httpClient = new HttpClient();
 
             var respose = await httpClient.GetAsync(url);
