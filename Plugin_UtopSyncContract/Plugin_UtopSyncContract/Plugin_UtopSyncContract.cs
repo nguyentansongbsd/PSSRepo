@@ -30,7 +30,7 @@ namespace Plugin_UtopSyncContract
         {
             if (this.context.MessageName == "Delete")
                 return;
-            if (this.context.Depth > 3)
+            if (this.context.Depth > 2)
                 return;
             this.target = this.context.InputParameters["Target"] as Entity;
             Entity enContract = service.Retrieve(this.target.LogicalName, this.target.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("customerid"));
