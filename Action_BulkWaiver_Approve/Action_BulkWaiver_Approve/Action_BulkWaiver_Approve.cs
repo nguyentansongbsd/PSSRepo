@@ -141,6 +141,7 @@ namespace Action_BulkWaiver_Approve
                             if (balance == 0)
                             {
                                 ins["statuscode"] = new OptionSetValue(100000001);//--> PAID
+                                ins["bsd_paiddate"] = DateTime.Now;
                                 if (installment.Contains("bsd_ordernumber") && (int)installment["bsd_ordernumber"] == 1 && installment.Contains("bsd_optionentry"))
                                 {
                                     //cap nhat option entry va units :
