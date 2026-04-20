@@ -77,7 +77,76 @@ namespace Action_BulkWaiver_Void_Ver02
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity enBulkWaiver = service.Retrieve("bsd_bulkwaiver", Guid.Parse(input02), new ColumnSet(true));
                 Entity enBulkWaiverDetail = service.Retrieve("bsd_bulkwaiverdetail", Guid.Parse(input03), new ColumnSet(true));
-                voidBulkWaiverDetail(enBulkWaiverDetail, enBulkWaiver);
+                Entity enInstallment = null;
+                int phaseNum = voidBulkWaiverDetail(enBulkWaiverDetail, enBulkWaiver, enInstallment);
+                Entity optionentryEn = enBulkWaiverDetail.Contains("bsd_optionentry") ? service.Retrieve("salesorder", ((EntityReference)enBulkWaiverDetail["bsd_optionentry"]).Id, new ColumnSet(true)) : null;
+                if (optionentryEn != null)
+                {
+                    int statuscode_OE = optionentryEn.Contains("statuscode") ? ((OptionSetValue)optionentryEn["statuscode"]).Value : 0;
+                    if (statuscode_OE == 100000006)
+                        throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+                    if (statuscode_OE == 100000004)
+                        throw new InvalidPluginExecutionException("Option Entry has been completed.");
+                    var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
+                    EntityCollection psdFirst = GetPSD(optionentryEn.Id.ToString());
+                    Entity detailFirst = psdFirst.Entities[0];
+                    int t = psdFirst.Entities.Count;
+                    Entity detailLast = psdFirst.Entities[t - 1]; // entity cuoi cung ( phase cuoi cung )
+                    string detailLastID = detailLast.Id.ToString();
+                    int psd_statuscodeInterest = enInstallment.Contains("bsd_interestchargestatus") ? ((OptionSetValue)enInstallment["bsd_interestchargestatus"]).Value : 100000000;//check interest đã thanh toán chưa
+                    bool psd_statuscodeFeeMain = enInstallment.Contains("bsd_maintenancefeesstatus") ? ((bool)enInstallment["bsd_maintenancefeesstatus"]) : false;//check fee đã thanh toán chưa
+                    bool psd_statuscodeFeeMana = enInstallment.Contains("bsd_managementfeesstatus") ? ((bool)enInstallment["bsd_managementfeesstatus"]) : false;//check fee đã thanh toán chưa
+                    int psd_statuscode = enInstallment.Contains("statuscode") ? ((OptionSetValue)enInstallment["statuscode"]).Value : 100000000;
+                    int sttOE = 100000001; // statuscode of OE= 1st installment
+                    int sttUnit = 100000001; // statuscode of unit= 1st installment
+                    Entity Unit = service.Retrieve("product", ((EntityReference)optionentryEn["bsd_unitnumber"]).Id, new ColumnSet(true));
+                    if (phaseNum == 1)
+                    {
+                        if (optionentryEn.Contains("bsd_signedcontractdate"))
+                        {
+                            sttOE = 100000002; // sign contract OE
+                            sttUnit = 100000002; // unit = sold
+                        }
+                        else
+                        { // khi 1st da Paid roi moi duoc chuyen sang 1st installment else van la option
+                            if (detailFirst.Contains("statuscode"))
+                            {
+                                if (((OptionSetValue)detailFirst["statuscode"]).Value == 100000000) // 1st installment not paid
+                                {
+                                    sttOE = 100000000; // option
+                                    sttUnit = 100000003; // deposit
+                                }
+                                else
+                                {
+                                    sttOE = 100000001;//1st
+                                    sttUnit = 100000001; // 1st
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!optionentryEn.Contains("bsd_signedcontractdate"))
+                        {
+                            sttOE = 100000001; // if OE not signcontract - status code still is 1st Installment
+                            sttUnit = 100000001; // 1st
+                        }
+                        else
+                        {
+                            sttUnit = 100000002;
+                            sttOE = 100000003; //Being Payment (khi da sign contract)
+
+                            if ((detailLastID == enInstallment.Id.ToString()) && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
+                                    psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                                sttOE = 100000004; //Complete Payment
+                        }
+                    }
+                    Entity oe_tmp = new Entity(optionentryEn.LogicalName);
+                    oe_tmp.Id = optionentryEn.Id;
+                    oe_tmp["bsd_unitstatus"] = new OptionSetValue(sttUnit);
+                    oe_tmp["statuscode"] = new OptionSetValue(sttOE);
+                    service.Update(oe_tmp);
+                }
             }
             else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
@@ -101,6 +170,46 @@ namespace Action_BulkWaiver_Void_Ver02
                 }
                 service.Update(enBulkWaiver);
             }
+        }
+        private EntityCollection GetPSD(string OptionEntryID)
+        {
+            QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
+            query.ColumnSet = new ColumnSet(true);
+            query.Distinct = true;
+            query.Criteria = new FilterExpression();
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, OptionEntryID);
+            query.AddOrder("bsd_ordernumber", OrderType.Ascending);
+            //query.TopCount = 1;
+            EntityCollection psdFirst = service.RetrieveMultiple(query);
+            return psdFirst;
+        }
+        public EntityCollection get_All_MIS_NotPaid(string oeID)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                <entity name='bsd_miscellaneous' >
+                <attribute name='bsd_balance' />
+                <attribute name='statuscode' />
+                <attribute name='bsd_miscellaneousnumber' />
+                <attribute name='bsd_units' />
+                <attribute name='bsd_optionentry' />
+                <attribute name='bsd_miscellaneousid' />
+                <attribute name='bsd_amount' />
+                <attribute name='bsd_paidamount' />
+                <attribute name='bsd_installment' />
+                <attribute name='bsd_name' />
+                <attribute name='bsd_project' />
+                <attribute name='bsd_installmentnumber' />
+                <filter type='and' >
+                    <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
+                    <condition attribute='statecode' operator='eq' value='0' />
+                    <condition attribute='statuscode' operator='eq' value='1' />
+                </filter>                           
+                </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, oeID);
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
         }
         public DateTime getLastConfirmPaymentDate(Entity enInstallment, int bsd_paymenttype)
         {
@@ -290,15 +399,17 @@ namespace Action_BulkWaiver_Void_Ver02
 
             return true;
         }
-        private void voidBulkWaiverDetail(Entity enBulkWaiverDetail, Entity enBulkWaiver)
+        private int voidBulkWaiverDetail(Entity enBulkWaiverDetail, Entity enBulkWaiver, Entity enInstallment)
         {
+            int phaseNum = 1;
             int bsd_waivertype = enBulkWaiverDetail.Contains("bsd_waivertype") ? ((OptionSetValue)enBulkWaiverDetail["bsd_waivertype"]).Value : 0;
             traceService.Trace("bsd_waivertype: " + bsd_waivertype.ToString());
             EntityReference enrefInstallment = enBulkWaiverDetail.Contains("bsd_installment") ? (EntityReference)enBulkWaiverDetail["bsd_installment"] : null;
             if (enrefInstallment != null)
             {
                 traceService.Trace("Kiểm tra có payment đã đươc confirm sau thời diểm waiver thì không được void");
-                Entity enInstallment = service.Retrieve(enrefInstallment.LogicalName, enrefInstallment.Id, new ColumnSet(true));
+                enInstallment = service.Retrieve(enrefInstallment.LogicalName, enrefInstallment.Id, new ColumnSet(true));
+                phaseNum = enInstallment.Contains("bsd_ordernumber") ? (int)enInstallment["bsd_ordernumber"] : 1;
                 Installment installment = new Installment(service, enInstallment);
                 decimal bsd_waiveramount = enBulkWaiverDetail.Contains("bsd_waiveramount") ? ((Money)enBulkWaiverDetail["bsd_waiveramount"]).Value : 0;
                 switch (bsd_waivertype)
@@ -354,7 +465,7 @@ namespace Action_BulkWaiver_Void_Ver02
                 enBulkWaiverDetailUpdate["bsd_error"] = "";
                 service.Update(enBulkWaiverDetailUpdate);
             }
-
+            return phaseNum;
         }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
         {
@@ -382,6 +493,7 @@ namespace Action_BulkWaiver_Void_Ver02
             if (num4 == 0)
             {
                 enUp["statuscode"] = new OptionSetValue(100000001);//--> PAID
+                enUp["bsd_paiddate"] = DateTime.Now;
                 decimal waiverinterest = enInstallment.Contains("bsd_waiverinterest") ? ((Money)enInstallment["bsd_waiverinterest"]).Value : 0;
                 decimal interestamount = enInstallment.Contains("bsd_interestchargeamount") ? ((Money)enInstallment["bsd_interestchargeamount"]).Value : 0;
                 decimal interestpaid = enInstallment.Contains("bsd_interestwaspaid") ? ((Money)enInstallment["bsd_interestwaspaid"]).Value : 0;
