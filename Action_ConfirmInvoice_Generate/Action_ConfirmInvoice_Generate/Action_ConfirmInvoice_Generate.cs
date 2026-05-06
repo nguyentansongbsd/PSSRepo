@@ -73,7 +73,7 @@ namespace Action_ConfirmInvoice_Generate
                 StringBuilder xml = new StringBuilder();
                 xml.AppendLine("<fetch version='1.0' output-format='xml-platform' mapping='logical'>");
                 xml.AppendLine("<entity name='bsd_invoice'>");
-                xml.AppendLine("<attribute name='bsd_issuedate' />");
+                xml.AppendLine("<attribute name='bsd_issueddate' />");
                 xml.AppendLine("<attribute name='createdon' />");
                 xml.AppendLine("<filter type='and'>");
                 xml.AppendLine(string.Format("<condition attribute='bsd_project' operator='eq' value='{0}'/>", project.Id));
@@ -92,15 +92,15 @@ namespace Action_ConfirmInvoice_Generate
                 foreach (Entity item in unit.Entities)
                 {
                     bool check = false;
-                    if (issue_Date && create_Date && item.Contains("bsd_issuedate") && item.Contains("createdon"))
+                    if (issue_Date && create_Date && item.Contains("bsd_issueddate") && item.Contains("createdon"))
                     {
-                        DateTime paymentactualtime = DateTime.Parse(RetrieveLocalTimeFromUTCTime((DateTime)item["bsd_issuedate"]).ToString("MM/dd/yyyy"));
+                        DateTime paymentactualtime = DateTime.Parse(RetrieveLocalTimeFromUTCTime((DateTime)item["bsd_issueddate"]).ToString("MM/dd/yyyy"));
                         DateTime bsd_createdon = DateTime.Parse(RetrieveLocalTimeFromUTCTime((DateTime)item["createdon"]).ToString("MM/dd/yyyy"));
                         if (bsd_issueddate == paymentactualtime && createdon == bsd_createdon) check = true;
                     }
-                    else if (issue_Date && item.Contains("bsd_issuedate"))
+                    else if (issue_Date && item.Contains("bsd_issueddate"))
                     {
-                        DateTime paymentactualtime = DateTime.Parse(RetrieveLocalTimeFromUTCTime((DateTime)item["bsd_issuedate"]).ToString("MM/dd/yyyy"));
+                        DateTime paymentactualtime = DateTime.Parse(RetrieveLocalTimeFromUTCTime((DateTime)item["bsd_issueddate"]).ToString("MM/dd/yyyy"));
                         if (bsd_issueddate == paymentactualtime) check = true;
                     }
                     else if (create_Date && item.Contains("createdon"))
@@ -113,7 +113,7 @@ namespace Action_ConfirmInvoice_Generate
                 }
                 if (listUnit.Count == 0) throw new InvalidPluginExecutionException("The list is empty. Please check again.");
                 enTarget["bsd_powerautomate"] = true;
-                enTarget["bsd_generate"] = true;
+                enTarget["bsd_genarate"] = true;
                 enTarget["bsd_list"] = string.Join(";", listUnit);
                 service.Update(enTarget);
             }
@@ -143,7 +143,7 @@ namespace Action_ConfirmInvoice_Generate
                 Entity enConfirmPayment = new Entity("bsd_confirminvoice");
                 enConfirmPayment.Id = Guid.Parse(input02);
                 enConfirmPayment["bsd_powerautomate"] = false;
-                enConfirmPayment["bsd_generate"] = false;
+                enConfirmPayment["bsd_genarate"] = false;
                 service.Update(enConfirmPayment);
             }
         }
