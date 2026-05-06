@@ -178,12 +178,17 @@ namespace Plugin_Create_Invoice_Payment
                 foreach (Installment item in ins_NOT_EDA)
                 {
                     Entity enIns = service.Retrieve("bsd_paymentschemedetail", item.id, new ColumnSet(
-                    new string[] { "statuscode", "bsd_depositamount", "bsd_duedatecalculatingmethod", "bsd_ordernumber" }));
+                    new string[] { "statuscode", "bsd_depositamount", "bsd_duedatecalculatingmethod", "bsd_ordernumber", "bsd_amountofthisphase" }));
                     int statuscode = ((OptionSetValue)enIns["statuscode"]).Value;
                     int bsd_ordernumber = (int)enIns["bsd_ordernumber"];
                     int bsd_duedatecalculatingmethod = enIns.Contains("bsd_duedatecalculatingmethod") ? ((OptionSetValue)enIns["bsd_duedatecalculatingmethod"]).Value : 0;
                     decimal bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
+                    decimal bsd_amountofthisphase = enIns.Contains("bsd_amountofthisphase") ? ((Money)enIns["bsd_amountofthisphase"]).Value : 0;
                     decimal amountPay = item.amount;
+                    traceService.Trace("bsd_duedatecalculatingmethod " + bsd_duedatecalculatingmethod);
+                    traceService.Trace("bsd_ordernumber " + bsd_ordernumber);
+                    traceService.Trace("statuscode " + statuscode);
+                    traceService.Trace("checkEDA " + checkEDA);
                     if (bsd_duedatecalculatingmethod == 100000002)// Estimate handover date
                     {
                         decimal landvalueIN = sumLandValueVoice(optionentry_invoive.Id);
@@ -233,13 +238,13 @@ namespace Plugin_Create_Invoice_Payment
                             if (checkEDA && statuscode == 100000001)
                             {
                                 inType = 100000003;
-                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, amountPay, 0);
+                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
                             }
                         }
                         else
                         {
                             inType = 100000000;
-                            createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, 0);
+                            createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, 0, amountPay, 0);
                         }
                     }
                 }
