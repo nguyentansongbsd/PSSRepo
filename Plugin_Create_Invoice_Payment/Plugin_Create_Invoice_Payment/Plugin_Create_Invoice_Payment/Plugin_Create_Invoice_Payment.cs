@@ -20,6 +20,7 @@ namespace Plugin_Create_Invoice_Payment
             traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             if (context.Depth > 2)
                 return;
+            traceService.Trace("vào Plugin_Create_Invoice_Payment");
             if (target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000)
             {
                 var EnPayment = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
@@ -28,6 +29,7 @@ namespace Plugin_Create_Invoice_Payment
         }
         public void processApplyDocument(Entity EnPayment)
         {
+            traceService.Trace("vào processApplyDocument");
             DateTime bsd_paymentactualtime = RetrieveLocalTimeFromUTCTime((DateTime)EnPayment["bsd_paymentactualtime"]);
             DateTime date_EDA = DateTime.Now;
             int bsd_paymenttype = EnPayment.Contains("bsd_paymenttype") ? ((OptionSetValue)EnPayment["bsd_paymenttype"]).Value : 0;
@@ -65,14 +67,14 @@ namespace Plugin_Create_Invoice_Payment
                     <attribute name='bsd_name' />
                     <attribute name='bsd_value' />
                     <filter type='and'>
-                      <condition attribute='bsd_taxcodeid' operator='eq' value='{((EntityReference)optionentry_invoive["bsd_landvaluededuction"]).Id}'/>
+                      <condition attribute='bsd_taxcodeid' operator='eq' value='{((EntityReference)optionentry_invoive["bsd_taxcode"]).Id}'/>
                     </filter>
-                    <order attribute='createdon' descending='true' />
                   </entity>
                 </fetch>";
             var EnColtaxcode = service.RetrieveMultiple(new FetchExpression(fetchXmltaxcode.ToString()));
             Entity EnTaxcode = EnColtaxcode.Entities[0];
             // set list Installment
+            traceService.Trace("set list Installment");
             List<Installment> ins_EDA = new List<Installment>();
             List<Installment> ins_NOT_EDA = new List<Installment>();
             if (bsd_paymenttype == 100000002 && EnPayment.Contains("bsd_paymentschemedetail"))
@@ -88,6 +90,7 @@ namespace Plugin_Create_Invoice_Payment
                 else if (abd == 1)//ins_NOT_EDA
                     ins_NOT_EDA.Add(arrIns);
             }
+            traceService.Trace("get list Installment");
             var fetchXmlListIns = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
               <entity name=""bsd_transactionpayment"">
@@ -113,6 +116,7 @@ namespace Plugin_Create_Invoice_Payment
                 else if (abd == 1)//ins_NOT_EDA
                     ins_NOT_EDA.Add(arrIns);
             }
+            traceService.Trace("set list Installment 2");
             int inType = 100000000;
             // EDA = YES
             if (checkEDA && ins_EDA.Count > 0)
@@ -167,6 +171,7 @@ namespace Plugin_Create_Invoice_Payment
                     createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
                 }
             }
+            traceService.Trace("ra eda yes");
             // EDA = NO
             if (ins_NOT_EDA.Count > 0)
             {
@@ -230,6 +235,7 @@ namespace Plugin_Create_Invoice_Payment
                     }
                 }
             }
+            traceService.Trace("ra eda no");
             //case thanh toán paid main fee
             var fetchXmlMainFee = $@"<?xml version=""1.0"" encoding=""utf-16""?>
             <fetch>
@@ -263,6 +269,7 @@ namespace Plugin_Create_Invoice_Payment
                 decimal bsd_maintenanceamount = item.Contains("bsd_maintenanceamount") ? ((Money)item["bsd_maintenanceamount"]).Value : 0;
                 createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000001, bsd_paymentactualtime, 0, bsd_maintenanceamount, 0);
             }
+            traceService.Trace("ra main");
         }
         private int check_EDA(Guid id)
         {
@@ -309,17 +316,18 @@ namespace Plugin_Create_Invoice_Payment
         }
         private decimal sumLandValueVoice(Guid enOE)
         {
+            traceService.Trace("vào sumLandValueVoice");
             decimal sum = 0;
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                             <fetch>
                               <entity name=""bsd_invoice"">
                                 <attribute name=""bsd_handoveramount"" />
                                 <filter>
-                                  <condition attribute=""bsd_optionentry"" operator=""ne"" value=""{enOE}"" />
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOE}"" />
                                   <condition attribute=""bsd_handoveramount"" operator=""gt"" value=""0"" />
-                                  <condition attribute=""statuscode"" operator=""in"" />
-                                  <value>1</value>
-                                  <value>100000000</value>
+                                  <condition attribute=""statuscode"" operator=""in"">
+                                    <value>{1}</value>
+                                    <value>{100000000}</value>
                                   </condition>
                                 </filter>
                               </entity>
@@ -329,11 +337,13 @@ namespace Plugin_Create_Invoice_Payment
             {
                 sum += item.Contains("bsd_handoveramount") ? ((Money)item["bsd_handoveramount"]).Value : 0;
             }
+            traceService.Trace("ra sumLandValueVoice");
             return sum;
         }
         private void createInvoice(string bsd_name, Entity project_invoive, Entity optionentry_invoive, Entity iv_units, Entity EnPayment, Entity EnTaxcode, int bsd_type, DateTime bsd_issueddate
             , decimal bsd_depositamount, decimal bsd_invoiceamount, decimal bsd_handoveramount)
         {
+            traceService.Trace("vào createInvoice");
             Entity invoice = new Entity("bsd_invoice");
             invoice.Id = new Guid();
             invoice["bsd_name"] = bsd_name;
@@ -345,7 +355,7 @@ namespace Plugin_Create_Invoice_Payment
             invoice["bsd_formno"] = formno;
             invoice["bsd_serialno"] = serialno;
             invoice["bsd_issueddate"] = bsd_issueddate;
-            invoice["bsd_units"] = iv_units.Id;
+            invoice["bsd_units"] = iv_units.ToEntityReference();
             invoice["bsd_purchaser"] = (EntityReference)optionentry_invoive["customerid"];
             invoice["bsd_paymentmethod"] = new OptionSetValue(100000000);
             invoice["bsd_type"] = new OptionSetValue(bsd_type);
@@ -353,7 +363,8 @@ namespace Plugin_Create_Invoice_Payment
             invoice["bsd_depositamount"] = bsd_depositamount;
             if (bsd_invoiceamount > 0)
             {
-                decimal bsd_vatamount = Math.Round(bsd_invoiceamount / (int)EnTaxcode["bsd_value"], MidpointRounding.AwayFromZero);
+                traceService.Trace("vào bsd_invoiceamount > 0");
+                decimal bsd_vatamount = Math.Round(bsd_invoiceamount / (decimal)EnTaxcode["bsd_value"] * 100, MidpointRounding.AwayFromZero);
                 invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
                 invoice["bsd_vatamount"] = new Money(bsd_vatamount);
                 invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
@@ -362,6 +373,7 @@ namespace Plugin_Create_Invoice_Payment
             if (bsd_handoveramount > 0 && bsd_invoiceamount > 0) invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
             invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
             service.Create(invoice);
+            traceService.Trace("ra createInvoice");
         }
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
