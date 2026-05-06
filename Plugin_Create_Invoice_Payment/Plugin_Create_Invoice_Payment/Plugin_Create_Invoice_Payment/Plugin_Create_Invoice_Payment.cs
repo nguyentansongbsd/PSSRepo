@@ -229,9 +229,18 @@ namespace Plugin_Create_Invoice_Payment
                             name = "Thu tiền căn hộ " + unitName;
                         }
                         if (bsd_ordernumber == 1)
-                            inType = 100000003;
-                        else inType = 100000000;
-                        createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, 0);
+                        {
+                            if (checkEDA && statuscode == 100000001)
+                            {
+                                inType = 100000003;
+                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, amountPay, 0);
+                            }
+                        }
+                        else
+                        {
+                            inType = 100000000;
+                            createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, 0);
+                        }
                     }
                 }
             }
