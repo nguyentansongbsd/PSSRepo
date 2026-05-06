@@ -364,10 +364,19 @@ namespace Plugin_Create_Invoice_ApplyDocument
             if (bsd_invoiceamount > 0)
             {
                 traceService.Trace("vào bsd_invoiceamount > 0");
-                decimal bsd_vatamount = Math.Round(bsd_invoiceamount / (decimal)EnTaxcode["bsd_value"] * 100, MidpointRounding.AwayFromZero);
-                invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
-                invoice["bsd_vatamount"] = new Money(bsd_vatamount);
-                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
+                if (bsd_type == 100000001)
+                {
+                    invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
+                    invoice["bsd_vatamount"] = new Money(0);
+                    invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount);
+                }
+                else
+                {
+                    decimal bsd_vatamount = Math.Round(bsd_invoiceamount * (decimal)EnTaxcode["bsd_value"] / 100, MidpointRounding.AwayFromZero);
+                    invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
+                    invoice["bsd_vatamount"] = new Money(bsd_vatamount);
+                    invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
+                }
             }
             invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
             if (bsd_handoveramount > 0 && bsd_invoiceamount > 0) invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
