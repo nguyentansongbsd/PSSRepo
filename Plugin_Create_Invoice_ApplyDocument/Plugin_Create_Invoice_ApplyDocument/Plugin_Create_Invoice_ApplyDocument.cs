@@ -31,7 +31,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
         {
             traceService.Trace("vào processApplyDocument");
             int bsd_paymenttype = EnApplyDocument.Contains("bsd_transactiontype") ? ((OptionSetValue)EnApplyDocument["bsd_transactiontype"]).Value : 0;
-            if ((bsd_paymenttype == 100000002 || bsd_paymenttype == 100000001) && EnApplyDocument.Contains("bsd_optionentry"))
+            if ((bsd_paymenttype == 2 || bsd_paymenttype == 4) && EnApplyDocument.Contains("bsd_optionentry"))
             {
                 DateTime bsd_paymentactualtime = RetrieveLocalTimeFromUTCTime((DateTime)EnApplyDocument["bsd_receiptdate"]);
                 DateTime date_EDA = DateTime.Now;
