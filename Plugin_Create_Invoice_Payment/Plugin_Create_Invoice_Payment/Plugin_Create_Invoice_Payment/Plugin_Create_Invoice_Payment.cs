@@ -188,14 +188,14 @@ namespace Plugin_Create_Invoice_Payment
                     decimal bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
                     decimal bsd_amountofthisphase = enIns.Contains("bsd_amountofthisphase") ? ((Money)enIns["bsd_amountofthisphase"]).Value : 0;
                     decimal amountPay = item.amount;
-                    traceService.Trace("bsd_duedatecalculatingmethod " + bsd_duedatecalculatingmethod);
-                    traceService.Trace("bsd_ordernumber " + bsd_ordernumber);
-                    traceService.Trace("statuscode " + statuscode);
-                    traceService.Trace("checkEDA " + checkEDA);
                     if (bsd_duedatecalculatingmethod == 100000002)// Estimate handover date
                     {
                         decimal landvalueIN = sumLandValueVoice(optionentry_invoive.Id);
                         decimal bsd_handoveramount = land_value - landvalueIN;
+                        traceService.Trace("landvalueIN " + landvalueIN);
+                        traceService.Trace("land_value " + land_value);
+                        traceService.Trace("bsd_handoveramount " + bsd_handoveramount);
+                        traceService.Trace("amountPay " + amountPay);
                         if (bsd_handoveramount < 0) bsd_handoveramount = 0;
                         name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
                         if (amountPay <= bsd_handoveramount)
@@ -300,7 +300,7 @@ namespace Plugin_Create_Invoice_Payment
                 createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000001, bsd_paymentactualtime, 0, bsd_maintenanceamount, 0);
             }
             traceService.Trace("ra main");
-            //throw new InvalidPluginExecutionException("hải đang test PT lúc 11h 07-05-2026");
+            //throw new InvalidPluginExecutionException("hải đang test PT lúc 5h30 07-05-2026");
         }
         private int check_EDA(Guid id)
         {
@@ -368,6 +368,26 @@ namespace Plugin_Create_Invoice_Payment
             {
                 sum += item.Contains("bsd_handoveramount") ? ((Money)item["bsd_handoveramount"]).Value : 0;
             }
+            fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_invoice"">
+                                <attribute name=""bsd_invoiceamount"" />
+                                <filter>
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOE}"" />
+                                  <condition attribute=""bsd_invoiceamount"" operator=""gt"" value=""0"" />
+                                  <condition attribute=""bsd_type"" operator=""eq"" value=""100000006"" />
+                                  <condition attribute=""statuscode"" operator=""in"">
+                                    <value>{1}</value>
+                                    <value>{100000000}</value>
+                                  </condition>
+                                </filter>
+                              </entity>
+                            </fetch>";
+            list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            foreach (Entity item in list.Entities)
+            {
+                sum += item.Contains("bsd_invoiceamount") ? ((Money)item["bsd_invoiceamount"]).Value : 0;
+            }
             traceService.Trace("ra sumLandValueVoice");
             return sum;
         }
@@ -392,7 +412,7 @@ namespace Plugin_Create_Invoice_Payment
             invoice["bsd_type"] = new OptionSetValue(bsd_type);
             invoice["statuscode"] = new OptionSetValue(1);
             invoice["bsd_depositamount"] = bsd_depositamount;
-            if (bsd_invoiceamount > 0)
+            if (bsd_invoiceamount > 0 && bsd_type != 100000006)
             {
                 traceService.Trace("vào bsd_invoiceamount > 0");
                 if (bsd_type == 100000001)
@@ -409,9 +429,19 @@ namespace Plugin_Create_Invoice_Payment
                     invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
                 }
             }
-            invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
-            if (bsd_handoveramount > 0 && bsd_invoiceamount > 0) invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
-            invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
+            else if (bsd_handoveramount > 0 && bsd_type == 100000006)
+            {
+                invoice["bsd_invoiceamount"] = new Money(bsd_handoveramount);
+                invoice["bsd_vatamount"] = new Money(0);
+                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_handoveramount);
+            }
+            if (bsd_type == 100000005)
+            {
+                invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
+                invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
+            }
+            if (bsd_type == 100000001 || bsd_type == 100000006) invoice["bsd_taxcodevalue"] = new decimal(0);
+            else invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
             service.Create(invoice);
             traceService.Trace("ra createInvoice");
         }
