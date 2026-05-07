@@ -94,7 +94,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                 if (i_bsd_transactiontype == 2)//Installments
                 {
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2, listCheckFee);
-                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
+                    //processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 3)//Interest
                 {
@@ -105,7 +105,7 @@ namespace Action_ConfirmApplyDocument_Confirm
                     TracingSe.Trace("Fees");
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4, listCheckFee);
                     TracingSe.Trace("ra Fees");
-                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
+                    //processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                     TracingSe.Trace("processApplyDocument");
                 }
                 else if (i_bsd_transactiontype == 5)//Miscellaneous

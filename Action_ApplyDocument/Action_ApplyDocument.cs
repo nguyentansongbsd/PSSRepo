@@ -43,7 +43,7 @@ namespace Action_ApplyDocument
                 if (i_bsd_transactiontype == 2)//Installments
                 {
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Installments", ref str1, ref str2, listCheckFee);
-                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
+                    //processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 3)//Interest
                 {
@@ -52,7 +52,7 @@ namespace Action_ApplyDocument
                 else if (i_bsd_transactiontype == 4)//Fees
                 {
                     applyDocument.paymentInstallment(en_app, ref totalapplyamout, "Fees", ref str3, ref str4, listCheckFee);
-                    processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
+                    //processApplyDocument(en_app, str1, str2, str3, str4, listCheckFee);
                 }
                 else if (i_bsd_transactiontype == 5)//Miscellaneous
                 {
