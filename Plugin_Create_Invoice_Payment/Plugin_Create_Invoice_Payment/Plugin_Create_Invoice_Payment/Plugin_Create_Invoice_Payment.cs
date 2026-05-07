@@ -411,9 +411,9 @@ namespace Plugin_Create_Invoice_Payment
             }
             else if (bsd_handoveramount > 0 && bsd_type == 100000006)
             {
-                invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
+                invoice["bsd_invoiceamount"] = new Money(bsd_handoveramount);
                 invoice["bsd_vatamount"] = new Money(0);
-                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount);
+                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_handoveramount);
             }
             if (bsd_type == 100000005)
             {
