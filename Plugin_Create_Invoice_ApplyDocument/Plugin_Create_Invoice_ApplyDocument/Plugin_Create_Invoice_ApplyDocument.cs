@@ -164,6 +164,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 // EDA = NO
                 if (ins_NOT_EDA.Count > 0)
                 {
+                    string name = "";
+                    decimal sumTypeIns = 0;
                     foreach (Installment item in ins_NOT_EDA)
                     {
                         Entity enIns = service.Retrieve("bsd_paymentschemedetail", item.id, new ColumnSet(
@@ -179,7 +181,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                             decimal landvalueIN = sumLandValueVoice(optionentry_invoive.Id);
                             decimal bsd_handoveramount = land_value - landvalueIN;
                             if (bsd_handoveramount < 0) bsd_handoveramount = 0;
-                            string name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
+                            name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
                             if (amountPay <= bsd_handoveramount)
                             {
                                 bsd_handoveramount = amountPay;
@@ -200,6 +202,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                                 {
                                     name = "Thu tiền căn hộ " + unitName;
                                 }
+                                else name = "";
                             }
                             createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnApplyDocument, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, bsd_handoveramount);
                             if (statuscode == 100000001)//sts=paid
@@ -209,29 +212,41 @@ namespace Plugin_Create_Invoice_ApplyDocument
                         }
                         else
                         {
-                            string name = "";
-                            if (bsd_project_type == 100000000)//land
-                            {
-                                name = "Thu tiền căn nhà ở số " + unitName;
-                            }
-                            else if (bsd_project_type == 100000001)//higt
-                            {
-                                name = "Thu tiền căn hộ " + unitName;
-                            }
                             if (bsd_ordernumber == 1)
                             {
                                 if (checkEDA && statuscode == 100000001)
                                 {
+                                    if (bsd_project_type == 100000000)//land
+                                    {
+                                        name = "Thu tiền căn nhà ở số " + unitName;
+                                    }
+                                    else if (bsd_project_type == 100000001)//higt
+                                    {
+                                        name = "Thu tiền căn hộ " + unitName;
+                                    }
+                                    else name = "";
                                     inType = 100000003;
                                     createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnApplyDocument, EnTaxcode, inType, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
                                 }
                             }
                             else
                             {
-                                inType = 100000000;
-                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnApplyDocument, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, 0);
+                                sumTypeIns += amountPay;
                             }
                         }
+                    }
+                    if (sumTypeIns > 0)
+                    {
+                        if (bsd_project_type == 100000000)//land
+                        {
+                            name = "Thu tiền căn nhà ở số " + unitName;
+                        }
+                        else if (bsd_project_type == 100000001)//higt
+                        {
+                            name = "Thu tiền căn hộ " + unitName;
+                        }
+                        else name = "";
+                        createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnApplyDocument, EnTaxcode, 100000000, bsd_paymentactualtime, 0, sumTypeIns, 0);
                     }
                 }
                 traceService.Trace("ra eda no");

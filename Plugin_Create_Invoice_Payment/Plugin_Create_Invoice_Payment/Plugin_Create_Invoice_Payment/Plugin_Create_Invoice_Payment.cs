@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 namespace Plugin_Create_Invoice_Payment
 {
     public class Plugin_Create_Invoice_Payment : IPlugin
@@ -175,6 +176,8 @@ namespace Plugin_Create_Invoice_Payment
             // EDA = NO
             if (ins_NOT_EDA.Count > 0)
             {
+                string name = "";
+                decimal sumTypeIns = 0;
                 foreach (Installment item in ins_NOT_EDA)
                 {
                     Entity enIns = service.Retrieve("bsd_paymentschemedetail", item.id, new ColumnSet(
@@ -194,7 +197,7 @@ namespace Plugin_Create_Invoice_Payment
                         decimal landvalueIN = sumLandValueVoice(optionentry_invoive.Id);
                         decimal bsd_handoveramount = land_value - landvalueIN;
                         if (bsd_handoveramount < 0) bsd_handoveramount = 0;
-                        string name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
+                        name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
                         if (amountPay <= bsd_handoveramount)
                         {
                             bsd_handoveramount = amountPay;
@@ -215,6 +218,7 @@ namespace Plugin_Create_Invoice_Payment
                             {
                                 name = "Thu tiền căn hộ " + unitName;
                             }
+                            else name = "";
                         }
                         createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, bsd_depositamount, amountPay, bsd_handoveramount);
                         if (statuscode == 100000001)//sts=paid
@@ -224,7 +228,30 @@ namespace Plugin_Create_Invoice_Payment
                     }
                     else
                     {
-                        string name = "";
+                        if (bsd_ordernumber == 1)
+                        {
+                            if (checkEDA && statuscode == 100000001)
+                            {
+                                inType = 100000003;
+                                if (bsd_project_type == 100000000)//land
+                                {
+                                    name = "Thu tiền căn nhà ở số " + unitName;
+                                }
+                                else if (bsd_project_type == 100000001)//higt
+                                {
+                                    name = "Thu tiền căn hộ " + unitName;
+                                }
+                                else name = "";
+                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
+                            }
+                        }
+                        else
+                        {
+                            sumTypeIns += amountPay;
+                        }
+                    }
+                    if (sumTypeIns > 0)
+                    {
                         if (bsd_project_type == 100000000)//land
                         {
                             name = "Thu tiền căn nhà ở số " + unitName;
@@ -233,19 +260,8 @@ namespace Plugin_Create_Invoice_Payment
                         {
                             name = "Thu tiền căn hộ " + unitName;
                         }
-                        if (bsd_ordernumber == 1)
-                        {
-                            if (checkEDA && statuscode == 100000001)
-                            {
-                                inType = 100000003;
-                                createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
-                            }
-                        }
-                        else
-                        {
-                            inType = 100000000;
-                            createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, inType, bsd_paymentactualtime, 0, amountPay, 0);
-                        }
+                        else name = "";
+                        createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000000, bsd_paymentactualtime, 0, sumTypeIns, 0);
                     }
                 }
             }
@@ -378,12 +394,12 @@ namespace Plugin_Create_Invoice_Payment
             if (bsd_invoiceamount > 0)
             {
                 traceService.Trace("vào bsd_invoiceamount > 0");
-                if(bsd_type == 100000001)
+                if (bsd_type == 100000001)
                 {
                     invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
                     invoice["bsd_vatamount"] = new Money(0);
                     invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount);
-                }   
+                }
                 else
                 {
                     decimal bsd_vatamount = Math.Round(bsd_invoiceamount * (decimal)EnTaxcode["bsd_value"] / 100, MidpointRounding.AwayFromZero);
