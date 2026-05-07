@@ -376,7 +376,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
             invoice["bsd_type"] = new OptionSetValue(bsd_type);
             invoice["statuscode"] = new OptionSetValue(1);
             invoice["bsd_depositamount"] = bsd_depositamount;
-            if (bsd_invoiceamount > 0)
+            if (bsd_invoiceamount > 0 && bsd_type != 100000006)
             {
                 traceService.Trace("vào bsd_invoiceamount > 0");
                 if (bsd_type == 100000001)
@@ -393,9 +393,19 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
                 }
             }
-            invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
-            if (bsd_handoveramount > 0 && bsd_invoiceamount > 0) invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
-            invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
+            else if (bsd_handoveramount > 0 && bsd_type == 100000006)
+            {
+                invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
+                invoice["bsd_vatamount"] = new Money(0);
+                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount);
+            }
+            if (bsd_type == 100000005)
+            {
+                invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
+                invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
+            }
+            if (bsd_type == 100000001 || bsd_type == 100000006) invoice["bsd_taxcodevalue"] = 0;
+            else invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
             service.Create(invoice);
             traceService.Trace("ra createInvoice");
         }
