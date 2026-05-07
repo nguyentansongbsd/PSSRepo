@@ -420,7 +420,7 @@ namespace Plugin_Create_Invoice_Payment
                 invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
                 invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
             }
-            if (bsd_type == 100000001 || bsd_type == 100000006) invoice["bsd_taxcodevalue"] = 0;
+            if (bsd_type == 100000001 || bsd_type == 100000006) invoice["bsd_taxcodevalue"] = new decimal(0);
             else invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
             service.Create(invoice);
             traceService.Trace("ra createInvoice");
