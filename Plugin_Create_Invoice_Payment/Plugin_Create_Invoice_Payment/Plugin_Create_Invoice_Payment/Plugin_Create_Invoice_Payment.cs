@@ -250,19 +250,19 @@ namespace Plugin_Create_Invoice_Payment
                             sumTypeIns += amountPay;
                         }
                     }
-                    if (sumTypeIns > 0)
+                }
+                if (sumTypeIns > 0)
+                {
+                    if (bsd_project_type == 100000000)//land
                     {
-                        if (bsd_project_type == 100000000)//land
-                        {
-                            name = "Thu tiền căn nhà ở số " + unitName;
-                        }
-                        else if (bsd_project_type == 100000001)//higt
-                        {
-                            name = "Thu tiền căn hộ " + unitName;
-                        }
-                        else name = "";
-                        createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000000, bsd_paymentactualtime, 0, sumTypeIns, 0);
+                        name = "Thu tiền căn nhà ở số " + unitName;
                     }
+                    else if (bsd_project_type == 100000001)//higt
+                    {
+                        name = "Thu tiền căn hộ " + unitName;
+                    }
+                    else name = "";
+                    createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000000, bsd_paymentactualtime, 0, sumTypeIns, 0);
                 }
             }
             traceService.Trace("ra eda no");
@@ -300,6 +300,7 @@ namespace Plugin_Create_Invoice_Payment
                 createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000001, bsd_paymentactualtime, 0, bsd_maintenanceamount, 0);
             }
             traceService.Trace("ra main");
+            //throw new InvalidPluginExecutionException("hải đang test PT lúc 11h 07-05-2026");
         }
         private int check_EDA(Guid id)
         {
