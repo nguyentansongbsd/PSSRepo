@@ -352,6 +352,26 @@ namespace Plugin_Create_Invoice_ApplyDocument
             {
                 sum += item.Contains("bsd_handoveramount") ? ((Money)item["bsd_handoveramount"]).Value : 0;
             }
+            fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_invoice"">
+                                <attribute name=""bsd_invoiceamount"" />
+                                <filter>
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOE}"" />
+                                  <condition attribute=""bsd_invoiceamount"" operator=""gt"" value=""0"" />
+                                  <condition attribute=""bsd_type"" operator=""eq"" value=""100000006"" />
+                                  <condition attribute=""statuscode"" operator=""in"">
+                                    <value>{1}</value>
+                                    <value>{100000000}</value>
+                                  </condition>
+                                </filter>
+                              </entity>
+                            </fetch>";
+            list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            foreach (Entity item in list.Entities)
+            {
+                sum += item.Contains("bsd_invoiceamount") ? ((Money)item["bsd_invoiceamount"]).Value : 0;
+            }
             traceService.Trace("ra sumLandValueVoice");
             return sum;
         }

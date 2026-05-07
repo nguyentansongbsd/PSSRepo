@@ -188,14 +188,14 @@ namespace Plugin_Create_Invoice_Payment
                     decimal bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
                     decimal bsd_amountofthisphase = enIns.Contains("bsd_amountofthisphase") ? ((Money)enIns["bsd_amountofthisphase"]).Value : 0;
                     decimal amountPay = item.amount;
-                    traceService.Trace("bsd_duedatecalculatingmethod " + bsd_duedatecalculatingmethod);
-                    traceService.Trace("bsd_ordernumber " + bsd_ordernumber);
-                    traceService.Trace("statuscode " + statuscode);
-                    traceService.Trace("checkEDA " + checkEDA);
                     if (bsd_duedatecalculatingmethod == 100000002)// Estimate handover date
                     {
                         decimal landvalueIN = sumLandValueVoice(optionentry_invoive.Id);
                         decimal bsd_handoveramount = land_value - landvalueIN;
+                        traceService.Trace("landvalueIN " + landvalueIN);
+                        traceService.Trace("land_value " + land_value);
+                        traceService.Trace("bsd_handoveramount " + bsd_handoveramount);
+                        traceService.Trace("amountPay " + amountPay);
                         if (bsd_handoveramount < 0) bsd_handoveramount = 0;
                         name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
                         if (amountPay <= bsd_handoveramount)
@@ -300,7 +300,7 @@ namespace Plugin_Create_Invoice_Payment
                 createInvoice(name, project_invoive, optionentry_invoive, iv_units, EnPayment, EnTaxcode, 100000001, bsd_paymentactualtime, 0, bsd_maintenanceamount, 0);
             }
             traceService.Trace("ra main");
-            //throw new InvalidPluginExecutionException("hải đang test PT lúc 11h 07-05-2026");
+            //throw new InvalidPluginExecutionException("hải đang test PT lúc 5h30 07-05-2026");
         }
         private int check_EDA(Guid id)
         {
@@ -367,6 +367,26 @@ namespace Plugin_Create_Invoice_Payment
             foreach (Entity item in list.Entities)
             {
                 sum += item.Contains("bsd_handoveramount") ? ((Money)item["bsd_handoveramount"]).Value : 0;
+            }
+            fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_invoice"">
+                                <attribute name=""bsd_invoiceamount"" />
+                                <filter>
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOE}"" />
+                                  <condition attribute=""bsd_invoiceamount"" operator=""gt"" value=""0"" />
+                                  <condition attribute=""bsd_type"" operator=""eq"" value=""100000006"" />
+                                  <condition attribute=""statuscode"" operator=""in"">
+                                    <value>{1}</value>
+                                    <value>{100000000}</value>
+                                  </condition>
+                                </filter>
+                              </entity>
+                            </fetch>";
+            list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            foreach (Entity item in list.Entities)
+            {
+                sum += item.Contains("bsd_invoiceamount") ? ((Money)item["bsd_invoiceamount"]).Value : 0;
             }
             traceService.Trace("ra sumLandValueVoice");
             return sum;
