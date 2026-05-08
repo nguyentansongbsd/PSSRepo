@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace PLugin_UtopSyncProject
         ITracingService tracingService = null;
 
         Entity target = null;
+        string environment = string.Empty;
         public void Execute(IServiceProvider serviceProvider)
         {
             this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -32,8 +34,9 @@ namespace PLugin_UtopSyncProject
                 return;
             this.target = this.context.InputParameters["Target"] as Entity;
 
+            GetEnvironment();
             // call api azure function to sync project data to utop system
-            string url = "https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/upsertProject/";
+            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/{environment}/upsertProject/";
             HttpClient httpClient = new HttpClient();
 
             var respose = await httpClient.PostAsync(url + this.target.Id, null);
@@ -45,6 +48,24 @@ namespace PLugin_UtopSyncProject
             {
                 tracingService.Trace("Sync project data to utop system failed.");
             }
+        }
+        private void GetEnvironment()
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch>
+              <entity name=""bsd_configgolive"">
+                <attribute name=""bsd_url"" />
+                <filter>
+                  <condition attribute=""bsd_name"" operator=""eq"" value=""EnvironmentIntergrationUtop"" />
+                </filter>
+              </entity>
+            </fetch>";
+            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count > 0)
+            {
+                this.environment = result.Entities[0].GetAttributeValue<string>("bsd_url").Replace("https://", "");
+            }else
+                tracingService.Trace("EnvironmentIntergrationUtop config is not found, please check.");
         }
     }
 }
