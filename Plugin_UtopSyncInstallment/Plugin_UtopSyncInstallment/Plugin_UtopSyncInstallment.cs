@@ -24,26 +24,31 @@ namespace Plugin_UtopSyncInstallment
             this.serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             this.service = serviceFactory.CreateOrganizationService(context.UserId);
             this.tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            
             Init();
         }
         private async Task Init()
         {
+            
             if (this.context.MessageName == "Delete")
                 return;
             if (this.context.Depth > 3)
                 return;
             this.target = this.context.InputParameters["Target"] as Entity;
-            Entity enInstallment = service.Retrieve(this.target.LogicalName, this.target.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_optionentry",""));
+            Entity enInstallment = service.Retrieve(this.target.LogicalName, this.target.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_optionentry"));
             Entity enoe = service.Retrieve(((EntityReference)enInstallment["bsd_optionentry"]).LogicalName, ((EntityReference)enInstallment["bsd_optionentry"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("customerid"));
             Entity enContact = service.Retrieve(((EntityReference)enoe["customerid"]).LogicalName, ((EntityReference)enoe["customerid"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_isconsent"));
             if (!enContact.Contains("bsd_isconsent") || (enContact.Contains("bsd_isconsent") && (bool)enContact["bsd_isconsent"] == false))
                 return;
+            tracingService.Trace("1");  
             GetEnvironment();
+            tracingService.Trace("2");
             Guid optionEntryId = enoe.Id;
+            
             // call api azure function to sync project data to utop system
-            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/{environment}/upsertcontract?id={this.target.Id}&entity={this.target.LogicalName}&oeid={optionEntryId}";
+            string url = $@"https://functionapp-cldvncapitaone-prod-fdezg4fwgphzcuef.southeastasia-01.azurewebsites.net/api/{environment}/upsertcontract?id={enContact.Id}&entity={enContact.LogicalName}&oeid={optionEntryId}";
             HttpClient httpClient = new HttpClient();
-
+            tracingService.Trace(url);
             var respose = await httpClient.GetAsync(url);
             if (respose.IsSuccessStatusCode)
             {
