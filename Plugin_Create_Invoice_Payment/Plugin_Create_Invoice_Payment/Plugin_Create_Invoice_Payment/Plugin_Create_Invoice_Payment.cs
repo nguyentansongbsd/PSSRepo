@@ -31,6 +31,12 @@ namespace Plugin_Create_Invoice_Payment
         public void processApplyDocument(Entity EnPayment)
         {
             traceService.Trace("vào processApplyDocument");
+            Entity project_invoive = service.Retrieve("bsd_project", ((EntityReference)EnPayment["bsd_project"]).Id,
+                new ColumnSet(new string[] {
+                            "bsd_formno","bsd_serialno", "bsd_optioncheckeinvoice", "bsd_project_type"
+                }));
+            bool bsd_optioncheckeinvoice = project_invoive.Contains("bsd_optioncheckeinvoice") ? (bool)project_invoive["bsd_optioncheckeinvoice"] : false;
+            if (!bsd_optioncheckeinvoice) return;
             DateTime bsd_paymentactualtime = RetrieveLocalTimeFromUTCTime((DateTime)EnPayment["bsd_paymentactualtime"]);
             DateTime date_EDA = DateTime.Now;
             int bsd_paymenttype = EnPayment.Contains("bsd_paymenttype") ? ((OptionSetValue)EnPayment["bsd_paymenttype"]).Value : 0;
@@ -54,10 +60,6 @@ namespace Plugin_Create_Invoice_Payment
                 }
             }
             decimal land_value = optionentry_invoive.Contains("bsd_landvaluededuction") ? ((Money)optionentry_invoive["bsd_landvaluededuction"]).Value : 0;
-            Entity project_invoive = service.Retrieve("bsd_project", ((EntityReference)EnPayment["bsd_project"]).Id,
-                new ColumnSet(new string[] {
-                            "bsd_formno","bsd_serialno", "bsd_optioncheckeinvoice", "bsd_project_type"
-                }));
             int bsd_project_type = project_invoive.Contains("bsd_project_type") ? ((OptionSetValue)project_invoive["bsd_project_type"]).Value : 0;
             EntityReference units = (EntityReference)EnPayment["bsd_units"];
             Entity iv_units = service.Retrieve(units.LogicalName, units.Id, new ColumnSet(new string[] { "name" }));
@@ -401,14 +403,10 @@ namespace Plugin_Create_Invoice_Payment
             invoice["bsd_project"] = project_invoive.ToEntityReference();
             invoice["bsd_optionentry"] = optionentry_invoive.ToEntityReference();
             invoice["bsd_payment"] = EnPayment.ToEntityReference();
-            bool bsd_optioncheckeinvoice = project_invoive.Contains("bsd_optioncheckeinvoice") ? (bool)project_invoive["bsd_optioncheckeinvoice"] : false;
-            if (bsd_optioncheckeinvoice == true)
-            {
-                string formno = project_invoive.Contains("bsd_formno") ? (string)project_invoive["bsd_formno"] : "";
-                string serialno = project_invoive.Contains("bsd_serialno") ? (string)project_invoive["bsd_serialno"] : "";
-                invoice["bsd_formno"] = formno;
-                invoice["bsd_serialno"] = serialno;
-            }
+            string formno = project_invoive.Contains("bsd_formno") ? (string)project_invoive["bsd_formno"] : "";
+            string serialno = project_invoive.Contains("bsd_serialno") ? (string)project_invoive["bsd_serialno"] : "";
+            invoice["bsd_formno"] = formno;
+            invoice["bsd_serialno"] = serialno;
             invoice["bsd_issueddate"] = bsd_issueddate;
             invoice["bsd_units"] = iv_units.ToEntityReference();
             invoice["bsd_purchaser"] = (EntityReference)optionentry_invoive["customerid"];
