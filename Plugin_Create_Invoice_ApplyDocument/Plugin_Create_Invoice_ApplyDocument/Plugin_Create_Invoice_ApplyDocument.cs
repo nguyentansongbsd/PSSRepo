@@ -316,7 +316,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                               <entity name=""bsd_paymentschemedetail"">
                                 <attribute name=""bsd_amountofthisphase"" />
                                 <filter>
-                                  <condition attribute=""bsd_optionentry"" operator=""ne"" value=""{enOE}"" />
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOE}"" />
                                   <condition attribute=""bsd_amountofthisphase"" operator=""gt"" value=""0"" />
                                   <condition attribute=""bsd_lastinstallment"" operator=""eq"" value=""1"" />
                                 </filter>
