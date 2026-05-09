@@ -392,7 +392,17 @@ namespace Plugin_Create_Invoice_ApplyDocument
             invoice["bsd_serialno"] = serialno;
             invoice["bsd_issueddate"] = bsd_issueddate;
             invoice["bsd_units"] = iv_units.ToEntityReference();
-            invoice["bsd_purchaser"] = (EntityReference)optionentry_invoive["customerid"];
+            EntityReference Pay_Perchaser = (EntityReference)optionentry_invoive["customerid"];
+            invoice["bsd_purchaser"] = Pay_Perchaser;
+            Entity iv_Perchaser = service.Retrieve(Pay_Perchaser.LogicalName, Pay_Perchaser.Id, new ColumnSet(true));
+            if (iv_Perchaser.LogicalName == "contact")
+            {
+                invoice["bsd_purchasernamecustomer"] = Pay_Perchaser;
+            }
+            else
+            {
+                invoice["bsd_purchasernamecompany"] = Pay_Perchaser;
+            }
             invoice["bsd_paymentmethod"] = new OptionSetValue(100000000);
             invoice["bsd_type"] = new OptionSetValue(bsd_type);
             invoice["statuscode"] = new OptionSetValue(1);
