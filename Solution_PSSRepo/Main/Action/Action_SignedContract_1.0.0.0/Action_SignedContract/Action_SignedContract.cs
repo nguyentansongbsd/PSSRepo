@@ -213,7 +213,7 @@ namespace Action_SignedContract
                               <entity name=""bsd_paymentschemedetail"">
                                 <attribute name=""bsd_paymentschemedetailid"" />
                                 <filter>
-                                  <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{1}"" />
+                                  <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
                                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
                                   <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                                 </filter>
@@ -230,7 +230,7 @@ namespace Action_SignedContract
                                     <attribute name=""bsd_depositamount"" />
                                     <attribute name=""bsd_ordernumber"" />
                                     <filter>
-                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{1}"" />
+                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
                                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
                                       <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
                                     </filter>
@@ -354,7 +354,7 @@ namespace Action_SignedContract
             query.Criteria.AddCondition(
                 "bsd_installmentforeda",
                 ConditionOperator.Equal,
-                1);
+                true);
 
             EntityCollection list = service.RetrieveMultiple(query);
 
