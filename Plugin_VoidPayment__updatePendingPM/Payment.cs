@@ -759,6 +759,8 @@ namespace Plugin_VoidPayment_updatePendingPM
 
             //tmp_Ins["bsd_interestwaspaid"] = new Money(d_PmsDtlInterestchargePaid > 0 ? d_PmsDtlInterestchargePaid:0);
             service.Update(en_tmp1);
+            bool bsd_installmentforeda = en_Ins.Contains("bsd_installmentforeda") ? (bool)en_Ins["bsd_installmentforeda"] : false;
+            if (i_Pms_bsd_ordernumber == 1 || bsd_installmentforeda) revertInvoice_1st(enOptionEntry);
 
         }
         private void checkPaidInstalment(Entity paymentEn)
@@ -1025,6 +1027,27 @@ namespace Plugin_VoidPayment_updatePendingPM
             service.Update(en_voidTmp);
             strMess.AppendLine("23");
             //throw new InvalidPluginExecutionException("aaaaaaaaaaaaaaaaaa");
+        }
+        private void revertInvoice_1st(Entity enOE)
+        {
+            strMess.AppendLine("revertInvoice_1st");
+            // Instantiate QueryExpression QEbsd_invoice
+            var QEbsd_invoice = new QueryExpression("bsd_invoice");
+
+            // Add all columns to QEbsd_invoice.ColumnSet
+            QEbsd_invoice.ColumnSet.AllColumns = true;
+
+            // Define filter QEbsd_invoice.Criteria
+            QEbsd_invoice.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enOE.Id);
+            QEbsd_invoice.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            QEbsd_invoice.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);
+            EntityCollection encolInvoice = service.RetrieveMultiple(QEbsd_invoice);
+            foreach (Entity enInvoice in encolInvoice.Entities)
+            {
+                Entity enInvoiceUpdate = new Entity(enInvoice.LogicalName, enInvoice.Id);
+                enInvoiceUpdate["statuscode"] = new OptionSetValue(100000001);//Revert
+                service.Update(enInvoiceUpdate);
+            }
         }
         private void revertInvoice(Entity enPayment)
         {

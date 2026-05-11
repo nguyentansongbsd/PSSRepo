@@ -749,7 +749,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
             decimal bsd_handoveramount)
         {
             traceService.Trace("vào CreateInvoice");
-
+            if (bsd_type == 100000003 && checkInvaldInvoice1st(optionentry_invoive.Id)) return;
+            traceService.Trace("CreateInvoice");
             Entity invoice = new Entity("bsd_invoice");
 
             invoice["bsd_name"] = bsd_name;
@@ -860,7 +861,17 @@ namespace Plugin_Create_Invoice_ApplyDocument
 
             traceService.Trace("ra CreateInvoice");
         }
-
+        private bool checkInvaldInvoice1st(Guid optionEntryId)
+        {
+            var query = new QueryExpression("bsd_invoice");
+            query.TopCount = 1;
+            query.ColumnSet.AddColumn("bsd_invoiceid");
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
+            EntityCollection list = service.RetrieveMultiple(query);
+            return list.Entities.Count > 0 ? true : false;
+        }
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
             int? timeZoneCode = RetrieveCurrentUsersSettings(service);

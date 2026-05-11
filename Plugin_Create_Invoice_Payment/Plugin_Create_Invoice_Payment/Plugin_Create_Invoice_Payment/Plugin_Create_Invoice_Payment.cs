@@ -811,8 +811,9 @@ namespace Plugin_Create_Invoice_Payment
             decimal invoiceAmount,
             decimal handoverAmount)
         {
+            traceService.Trace("vào CreateInvoice");
+            if (invoiceType == 100000003 && checkInvaldInvoice1st(optionEntry.Id)) return;
             traceService.Trace("CreateInvoice");
-
             Entity invoice = new Entity("bsd_invoice");
 
             invoice["bsd_name"] = invoiceName;
@@ -914,6 +915,17 @@ namespace Plugin_Create_Invoice_Payment
                 : taxValue;
 
             service.Create(invoice);
+        }
+        private bool checkInvaldInvoice1st(Guid optionEntryId)
+        {
+            var query = new QueryExpression("bsd_invoice");
+            query.TopCount = 1;
+            query.ColumnSet.AddColumn("bsd_invoiceid");
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
+            EntityCollection list = service.RetrieveMultiple(query);
+            return list.Entities.Count > 0 ? true : false;
         }
 
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)

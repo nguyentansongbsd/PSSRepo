@@ -394,6 +394,8 @@ namespace Plugin_VoidPayment_updatePendingPM
                         en_InsUp["bsd_interestchargeamount"] = new Money(0);
                     en_InsUp["bsd_actualgracedays"] = i_bsd_actualgracedays;
                     service.Update(en_InsUp);
+                    bool bsd_installmentforeda = en_pms.Contains("bsd_installmentforeda") ? (bool)en_pms["bsd_installmentforeda"] : false;
+                    if (i_phaseNum == 1 || bsd_installmentforeda) revertInvoice_1st(en_OE);
                     Entity en_OEup = new Entity(en_OE.LogicalName);
                     en_OEup.Id = en_OE.Id;
 
@@ -407,6 +409,26 @@ namespace Plugin_VoidPayment_updatePendingPM
                     service.Update(en_Unit_up);
                 } // end for each installmnet from array
             } // end  if (s_bsd_arraypsdid != "")
+        }
+        private void revertInvoice_1st(Entity enOE)
+        {
+            // Instantiate QueryExpression QEbsd_invoice
+            var QEbsd_invoice = new QueryExpression("bsd_invoice");
+
+            // Add all columns to QEbsd_invoice.ColumnSet
+            QEbsd_invoice.ColumnSet.AllColumns = true;
+
+            // Define filter QEbsd_invoice.Criteria
+            QEbsd_invoice.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enOE.Id);
+            QEbsd_invoice.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            QEbsd_invoice.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);
+            EntityCollection encolInvoice = service.RetrieveMultiple(QEbsd_invoice);
+            foreach (Entity enInvoice in encolInvoice.Entities)
+            {
+                Entity enInvoiceUpdate = new Entity(enInvoice.LogicalName, enInvoice.Id);
+                enInvoiceUpdate["statuscode"] = new OptionSetValue(100000001);//Revert
+                service.Update(enInvoiceUpdate);
+            }
         }
         private void voidPayInterest(Entity en_voidPM, Entity en_app, Entity en_OE)
         {
@@ -566,6 +588,7 @@ namespace Plugin_VoidPayment_updatePendingPM
                 <attribute name='bsd_paymentscheme' />
                 <attribute name='bsd_paymentschemedetailid' />
                 <attribute name='bsd_paiddate' />
+                <attribute name='bsd_installmentforeda' />
                 <filter type='and' >
                   <condition attribute='bsd_paymentschemedetailid' operator='in' >";
             for (int i = 0; i < list.Count; i++)
