@@ -258,6 +258,7 @@ namespace Action_SignedContract
                                 <attribute name=""bsd_depositamount"" />
                                 <attribute name=""bsd_amountofthisphase"" />
                                 <attribute name=""bsd_paiddate"" />
+                                <attribute name=""bsd_ordernumber"" />
                                 <filter>
                                   <condition attribute=""bsd_ordernumber"" operator=""eq"" value=""{1}"" />
                                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
