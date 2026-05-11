@@ -262,7 +262,6 @@ namespace Action_SignedContract
                                 <attribute name=""statuscode"" />
                                 <attribute name=""bsd_depositamount"" />
                                 <attribute name=""bsd_amountofthisphase"" />
-                                <attribute name=""bsd_paiddate"" />
                                 <attribute name=""bsd_ordernumber"" />
                                 <filter>
                                   <condition attribute=""bsd_ordernumber"" operator=""eq"" value=""{1}"" />
@@ -288,8 +287,7 @@ namespace Action_SignedContract
                                 name = "Thu tiền căn hộ " + unitName;
                             }
                             string guidID = enIns.Id.ToString();
-                            DateTime bsd_paiddate = RetrieveLocalTimeFromUTCTime((DateTime)enIns["bsd_paiddate"]);
-                            CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, bsd_paiddate, bsd_depositamount, amountPay, 0);
+                            CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, amountPay, 0);
                         }
                     }
                 }
