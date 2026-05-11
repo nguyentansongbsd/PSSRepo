@@ -1,341 +1,619 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Action_SignedContract.Action_SignedContract
-// Assembly: Action_SignedContract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=91af1975bd46f505
-// MVID: 64A057F8-04D7-4937-A84E-D4EF3DDC89DB
-// Assembly location: C:\Users\ngoct\Downloads\Action_SignedContract_1.0.0.0.dll
-
-using BSDLibrary;
+﻿using BSDLibrary;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.IdentityModel.Metadata;
-using System.Runtime.InteropServices;
 
 namespace Action_SignedContract
 {
     public class Action_SignedContract : IPlugin
     {
         private IPluginExecutionContext context;
-        private IOrganizationService service = (IOrganizationService)null;
-        private IOrganizationServiceFactory factory = (IOrganizationServiceFactory)null;
-        public ITracingService traceService = (ITracingService)null;
-        private ParameterCollection target = (ParameterCollection)null;
-        public Entity enBulkWaiver;
+        private IOrganizationService service;
+        private IOrganizationServiceFactory factory;
+        private ITracingService traceService;
+        private ParameterCollection target;
         private Common common;
-        private IServiceProvider serviceProvider;
+
+        #region CONSTANT
+
+        private const int STATUS_OPTION = 100000001;
+        private const int STATUS_SIGNED = 100000002;
+        private const int STATUS_PAID = 100000001;
+        private const int STATUS_ACTIVE = 100000000;
+
+        private const int PROJECT_LAND = 100000000;
+        private const int PROJECT_HIGHRISE = 100000001;
+
+        private const int CONTRACT_LOCAL_SPA = 100000001;
+        private const int CONTRACT_FOREIGNER_SPA = 100000002;
+        private const int CONTRACT_LOCAL_VK = 100000003;
+
+        private const int INVOICE_TYPE_FIRST = 100000003;
+
+        #endregion
 
         public void Execute(IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
-            this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            this.factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-            this.service = this.factory.CreateOrganizationService(new Guid?(this.context.UserId));
-            this.traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-            this.target = this.context.InputParameters;
-            EntityReference entityReference = this.target["Target"] as EntityReference;
-            this.common = new Common(this.service);
-            Entity enOptionEntry = this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(true));
-            int num1 = ((OptionSetValue)enOptionEntry["statuscode"]).Value;
-            bool flag = new OptionEntry(serviceProvider, enOptionEntry).checkShortFallAmount(enOptionEntry);
-            Guid id = ((EntityReference)enOptionEntry["bsd_paymentscheme"]).Id;
-            if (num1 == 100000001 | flag)
-            {
-                if (!enOptionEntry.Contains("customerid"))
-                    throw new InvalidPluginExecutionException("Contract does not contain Purchaser!");
-                if (!enOptionEntry.Contains("ordernumber"))
-                    throw new InvalidPluginExecutionException("Contract does not contain 'Option Number'!");
-                if (!enOptionEntry.Contains("bsd_project"))
-                    throw new InvalidPluginExecutionException("Contract does not contain 'Project'!");
-                if (!enOptionEntry.Contains("bsd_contractprinteddate"))
-                    throw new InvalidPluginExecutionException("Option Entry must be printed before signing!");
-                DateTime dateTime1 = this.common.RetrieveLocalTimeFromUTCTime(DateTime.Now);
-                this.service.Update(new Entity(enOptionEntry.LogicalName)
-                {
-                    Id = enOptionEntry.Id,
-                    ["statuscode"] = (object)new OptionSetValue(100000002)
-                });
-                int num2 = enOptionEntry.Contains("bsd_numberofmonthspaidmf") ? (int)enOptionEntry["bsd_numberofmonthspaidmf"] : 0;
-                if (!enOptionEntry.Contains("bsd_project"))
-                    throw new InvalidPluginExecutionException("Cannot find project information on Option Entry: " + (string)enOptionEntry["name"] + "!");
-                Entity entity1 = this.service.Retrieve(((EntityReference)enOptionEntry["bsd_unitnumber"]).LogicalName, ((EntityReference)enOptionEntry["bsd_unitnumber"]).Id, new ColumnSet(new string[2]
-                {
-          "bsd_numberofmonthspaidmf",
-          "bsd_managementamountmonth"
-                }));
-                Entity entity2 = this.service.Retrieve(((EntityReference)enOptionEntry["bsd_project"]).LogicalName, ((EntityReference)enOptionEntry["bsd_project"]).Id, new ColumnSet(new string[2]
-                {
-          "bsd_name",
-          "bsd_managementamount"
-                }));
-                Decimal num3 = !entity1.Contains("bsd_managementamountmonth") ? (entity2.Contains("bsd_managementamount") ? ((Money)entity2["bsd_managementamount"]).Value : 0M) : (entity1.Contains("bsd_managementamountmonth") ? ((Money)entity1["bsd_managementamountmonth"]).Value : 0M);
-                DateTime dateTime2 = this.common.RetrieveLocalTimeFromUTCTime(enOptionEntry.Contains("bsd_signedcontractdate") ? (DateTime)enOptionEntry["bsd_signedcontractdate"] : dateTime1);
-                Entity entity3 = this.service.Retrieve(((EntityReference)enOptionEntry["bsd_unitnumber"]).LogicalName, ((EntityReference)enOptionEntry["bsd_unitnumber"]).Id, new ColumnSet(new string[6]
-                {
-          "name",
-          "statuscode",
-          "bsd_signedcontractdate",
-          "bsd_actualarea",
-          "bsd_netsaleablearea",
-          "bsd_optionnumber"
-                }));
-                Decimal num4 = entity3.Contains("bsd_netsaleablearea") ? (Decimal)entity3["bsd_netsaleablearea"] : 0M;
-                Entity entity4 = this.service.Retrieve(((EntityReference)enOptionEntry["customerid"]).LogicalName, ((EntityReference)enOptionEntry["customerid"]).Id, new ColumnSet(new string[1]
-                {
-          "bsd_totaltransaction"
-                }));
-                int num5 = (entity4.Contains("bsd_totaltransaction") ? (int)entity4["bsd_totaltransaction"] : 0) + 1;
-                this.service.Update(new Entity(entity3.LogicalName)
-                {
-                    Id = entity3.Id,
-                    ["statuscode"] = (object)new OptionSetValue(100000002),
-                    ["bsd_signedcontractdate"] = (object)dateTime2,
-                    ["bsd_optionnumber"] = enOptionEntry["bsd_optionno"]
-                });
-                this.service.Update(new Entity(entity4.LogicalName)
-                {
-                    Id = entity4.Id,
-                    ["bsd_totaltransaction"] = (object)num5
-                });
-                EntityCollection instFee = this.get_Inst_Fee(this.service, enOptionEntry.Id, id);
-                if (instFee.Entities.Count > 0)
-                {
-                    Entity entity5 = instFee.Entities[0];
-                    entity5.Id = instFee.Entities[0].Id;
-                    Decimal num6 = instFee.Entities[0].Contains("bsd_managementamount") ? ((Money)instFee.Entities[0]["bsd_managementamount"]).Value : 0M;
-                    Decimal num7 = num3 * (Decimal)num2 * num4;
-                    this.service.Update(new Entity(entity5.LogicalName)
-                    {
-                        Id = entity5.Id,
-                        ["bsd_managementamount"] = (object)new Money(num7)
-                    });
-                }
-            }
-            #region  Qua lại TĐTT kiểm tra đợt nào có sts = Paid => Update field Due Date wordtemplate trong đợt = null
+            context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
 
-            var query_bsd_optionentry = enOptionEntry.Id.ToString();
+            if (context.Depth > 2)
+                return;
 
-            var query = new QueryExpression("bsd_paymentschemedetail");
-            query.ColumnSet.AllColumns = true;
-            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, query_bsd_optionentry);
-            var rs = service.RetrieveMultiple(query);
-            if (rs.Entities.Count > 0)
+            factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            service = factory.CreateOrganizationService(context.UserId);
+            traceService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            target = context.InputParameters;
+
+            common = new Common(service);
+
+            try
             {
-                foreach (var item in rs.Entities)
-                {
-                    if (((OptionSetValue)item["statuscode"]).Value == 100000001)
-                    {
-                        var itemEnUpdate = new Entity(item.LogicalName, item.Id);
-                        itemEnUpdate["bsd_duedatewordtemplate"] = null;
-                        service.Update(itemEnUpdate);
-                    }
-                }
+                traceService.Trace("START Action_SignedContract");
+
+                if (!target.Contains("Target"))
+                    throw new InvalidPluginExecutionException("Target is missing.");
+
+                EntityReference optionEntryRef = target["Target"] as EntityReference;
+
+                if (optionEntryRef == null)
+                    throw new InvalidPluginExecutionException("Target is invalid.");
+
+                Entity optionEntry = service.Retrieve(
+                    optionEntryRef.LogicalName,
+                    optionEntryRef.Id,
+                    new ColumnSet(true));
+
+                ProcessSignedContract(optionEntry);
+
+                context.OutputParameters["output"] = "done";
+
+                traceService.Trace("END Action_SignedContract");
             }
-            enOptionEntry = this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(
-                    "bsd_landvaluededuction",
-                    "bsd_taxcode",
-                    "customerid",
-                    "bsd_contractnumber",
-                    "bsd_contracttypedescription",
-                    "bsd_contractdate",
+            catch (Exception ex)
+            {
+                traceService.Trace("ERROR: " + ex.ToString());
+                throw;
+            }
+        }
+
+        #region MAIN PROCESS
+
+        private void ProcessSignedContract(Entity optionEntry)
+        {
+            int statusCode =
+                optionEntry.GetAttributeValue<OptionSetValue>("statuscode")?.Value ?? 0;
+
+            bool isShortfall =
+                new OptionEntry(GetServiceProvider(), optionEntry)
+                .checkShortFallAmount(optionEntry);
+
+            if (statusCode != STATUS_OPTION && !isShortfall)
+                return;
+
+            ValidateOptionEntry(optionEntry);
+
+            DateTime localNow =
+                common.RetrieveLocalTimeFromUTCTime(DateTime.Now);
+
+            DateTime signedDate =
+                RetrieveLocalTimeFromUTCTime(
+                    optionEntry.Contains("bsd_signedcontractdate")
+                    ? optionEntry.GetAttributeValue<DateTime>("bsd_signedcontractdate")
+                    : localNow);
+
+            Entity unit = service.Retrieve(
+                optionEntry.GetAttributeValue<EntityReference>("bsd_unitnumber").LogicalName,
+                optionEntry.GetAttributeValue<EntityReference>("bsd_unitnumber").Id,
+                new ColumnSet(
+                    "name",
+                    "statuscode",
                     "bsd_signedcontractdate",
-                    "bsd_project",
-                    "bsd_unitnumber"
+                    "bsd_actualarea",
+                    "bsd_netsaleablearea",
+                    "bsd_optionnumber",
+                    "bsd_managementamountmonth"
                 ));
-            create_Invoice(enOptionEntry);
-            #endregion
-            this.context.OutputParameters["output"] = (object)"done";
+
+            Entity project = service.Retrieve(
+                optionEntry.GetAttributeValue<EntityReference>("bsd_project").LogicalName,
+                optionEntry.GetAttributeValue<EntityReference>("bsd_project").Id,
+                new ColumnSet(
+                    "bsd_name",
+                    "bsd_managementamount",
+                    "bsd_formno",
+                    "bsd_serialno",
+                    "bsd_project_type",
+                    "bsd_optioncheckeinvoice"
+                ));
+
+            Entity customer = service.Retrieve(
+                optionEntry.GetAttributeValue<EntityReference>("customerid").LogicalName,
+                optionEntry.GetAttributeValue<EntityReference>("customerid").Id,
+                new ColumnSet("bsd_totaltransaction"));
+
+            UpdateOptionEntryStatus(optionEntry);
+            UpdateUnit(unit, optionEntry, signedDate);
+            UpdateCustomer(customer);
+            UpdateManagementFee(optionEntry, unit, project);
+
+            ClearDueDateWordTemplate(optionEntry.Id);
+
+            CreateFirstInvoice(optionEntry, unit, project);
+
+            traceService.Trace("ProcessSignedContract DONE");
         }
 
-        private EntityCollection get_Inst_Fee(IOrganizationService crmservices, Guid oeID, Guid pmsID)
+        #endregion
+
+        #region VALIDATE
+
+        private void ValidateOptionEntry(Entity optionEntry)
         {
-            string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\r\n                  <entity name='bsd_paymentschemedetail' >\r\n                    <attribute name='bsd_duedate' />\r\n                    <attribute name='bsd_name' />\r\n                    <attribute name='bsd_duedatecalculatingmethod' />\r\n                    <attribute name='bsd_maintenanceamount' />\r\n                    <attribute name='bsd_maintenancefees' />\r\n                    <attribute name='bsd_managementfee' />\r\n                    <attribute name='bsd_amountofthisphase' />\r\n                    <attribute name='bsd_managementfeesstatus' />\r\n                    <attribute name='bsd_managementamount' />\r\n                    <attribute name='bsd_maintenancefeesstatus' />\r\n                    <attribute name='bsd_paymentschemedetailid' />\r\n                    <filter type='and' >\r\n                      <condition attribute='bsd_optionentry' operator='eq' value='{0}' />\r\n                      <condition attribute='bsd_managementamount' operator='gt' value='0' />\r\n                      <condition attribute='statecode' operator='eq' value='0' />\r\n                    </filter>\r\n                  </entity>\r\n                </fetch>", (object)oeID, (object)pmsID);
-            return crmservices.RetrieveMultiple((QueryBase)new FetchExpression(query));
+            if (!optionEntry.Contains("customerid"))
+                throw new InvalidPluginExecutionException("Contract does not contain Purchaser!");
+
+            if (!optionEntry.Contains("ordernumber"))
+                throw new InvalidPluginExecutionException("Contract does not contain 'Option Number'!");
+
+            if (!optionEntry.Contains("bsd_project"))
+                throw new InvalidPluginExecutionException("Contract does not contain 'Project'!");
+
+            if (!optionEntry.Contains("bsd_contractprinteddate"))
+                throw new InvalidPluginExecutionException("Option Entry must be printed before signing!");
         }
-        private void create_Invoice(Entity enOptionEntry)
+
+        #endregion
+
+        #region UPDATE DATA
+
+        private void UpdateOptionEntryStatus(Entity optionEntry)
         {
-            if (!checkInvaldInvoice1st(enOptionEntry.Id))//chưa có invoice type 1st
-            {
-                Entity project_invoive = service.Retrieve("bsd_project", ((EntityReference)enOptionEntry["bsd_project"]).Id,
-                new ColumnSet(new string[] {
-                            "bsd_formno","bsd_serialno", "bsd_project_type"
-                }));
-                int bsd_project_type = project_invoive.Contains("bsd_project_type") ? ((OptionSetValue)project_invoive["bsd_project_type"]).Value : 0;
-                EntityReference units = (EntityReference)enOptionEntry["bsd_unitnumber"];
-                Entity iv_units = service.Retrieve(units.LogicalName, units.Id, new ColumnSet(new string[] { "name" }));
-                string unitName = (string)iv_units["name"];
-                var fetchXmltaxcode = $@"
-                <fetch>
-                  <entity name='bsd_taxcode'>
-                    <attribute name='bsd_name' />
-                    <attribute name='bsd_value' />
-                    <filter type='and'>
-                      <condition attribute='bsd_taxcodeid' operator='eq' value='{((EntityReference)enOptionEntry["bsd_taxcode"]).Id}'/>
-                    </filter>
-                  </entity>
-                </fetch>";
-                var EnColtaxcode = service.RetrieveMultiple(new FetchExpression(fetchXmltaxcode.ToString()));
-                Entity EnTaxcode = EnColtaxcode.Entities[0];
-                DateTime date_EDA = DateTime.Now;
-                bool checkEDA = false;
-                if (enOptionEntry.Contains("bsd_contractnumber") && enOptionEntry.Contains("bsd_contracttypedescription"))
-                {
-                    int bsd_contracttypedescription = ((OptionSetValue)enOptionEntry["bsd_contracttypedescription"]).Value;
-                    if (bsd_contracttypedescription == 100000001 && enOptionEntry.Contains("bsd_contractdate"))//Local SPA
-                    {
-                        checkEDA = true;
-                        date_EDA = RetrieveLocalTimeFromUTCTime((DateTime)enOptionEntry["bsd_contractdate"]);
-                    }
-                    else if ((bsd_contracttypedescription == 100000002 || bsd_contracttypedescription == 100000003) && enOptionEntry.Contains("bsd_signedcontractdate"))
-                    //Foreigner SPA or Local SPA (VK)
-                    {
-                        checkEDA = true;
-                        date_EDA = RetrieveLocalTimeFromUTCTime((DateTime)enOptionEntry["bsd_signedcontractdate"]);
-                    }
-                }
-                if (checkEDA)
-                {
-                    if (checkInstallmentEDAyes(enOptionEntry.Id))// installment có eda = yes
-                    {
-                        string name = "";
-                        if (bsd_project_type == 100000000)//land
-                        {
-                            name = "Thu tiền căn nhà ở số " + unitName;
-                        }
-                        else if (bsd_project_type == 100000001)//higt
-                        {
-                            name = "Thu tiền căn hộ " + unitName;
-                        }
-                        decimal bsd_amountofthisphase = 0;
-                        decimal bsd_depositamount = 0;
-                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                            <fetch>
-                              <entity name=""bsd_paymentschemedetail"">
-                                <attribute name=""bsd_paymentschemedetailid"" />
-                                <filter>
-                                  <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
-                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
-                                </filter>
-                              </entity>
-                            </fetch>";
-                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                        if (list.Entities.Count == 0)
-                        {
-                            var fetchXml2 = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                                <fetch>
-                                  <entity name=""bsd_paymentschemedetail"">
-                                    <attribute name=""bsd_paymentschemedetailid"" />
-                                    <attribute name=""bsd_amountofthisphase"" />
-                                    <attribute name=""bsd_depositamount"" />
-                                    <attribute name=""bsd_ordernumber"" />
-                                    <filter>
-                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
-                                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
-                                    </filter>
-                                    <order descending=""true"" attribute=""bsd_ordernumber"" />
-                                  </entity>
-                                </fetch>";
-                            EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
-                            string guidID = "";
-                            foreach (Entity entity in list2.Entities)
-                            {
-                                bsd_amountofthisphase += entity.Contains("bsd_amountofthisphase") ? ((Money)entity["bsd_amountofthisphase"]).Value : 0;
-                                if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
-                                if (guidID == "") guidID = entity.Id.ToString();
-                            }
-                            createInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
-                        }
-                    }
-                    else//ko installment có eda = yes
-                    {
-                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                            <fetch>
-                              <entity name=""bsd_paymentschemedetail"">
-                                <attribute name=""bsd_paymentschemedetailid"" />
-                                <attribute name=""statuscode"" />
-                                <attribute name=""bsd_depositamount"" />
-                                <attribute name=""bsd_amountofthisphase"" />
-                                <attribute name=""bsd_paiddate"" />
-                                <attribute name=""bsd_ordernumber"" />
-                                <filter>
-                                  <condition attribute=""bsd_ordernumber"" operator=""eq"" value=""{1}"" />
-                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
-                                </filter>
-                              </entity>
-                            </fetch>";
-                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                        foreach (Entity enIns in list.Entities)
-                        {
-                            int statuscode = ((OptionSetValue)enIns["statuscode"]).Value;
-                            int bsd_ordernumber = (int)enIns["bsd_ordernumber"];
-                            decimal bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
-                            decimal amountPay = enIns.Contains("bsd_amountofthisphase") ? ((Money)enIns["bsd_amountofthisphase"]).Value : 0;
-                            string name = "";
-                            if (bsd_project_type == 100000000)//land
-                            {
-                                name = "Thu tiền căn nhà ở số " + unitName;
-                            }
-                            else if (bsd_project_type == 100000001)//higt
-                            {
-                                name = "Thu tiền căn hộ " + unitName;
-                            }
-                            string guidID = enIns.Id.ToString();
-                            DateTime bsd_paiddate = RetrieveLocalTimeFromUTCTime((DateTime)enIns["bsd_paiddate"]);
-                            createInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, bsd_paiddate, bsd_depositamount, amountPay, 0);
-                        }
-                    }
-                }
-            }
+            Entity update = new Entity(optionEntry.LogicalName, optionEntry.Id);
+            update["statuscode"] = new OptionSetValue(STATUS_SIGNED);
+
+            service.Update(update);
         }
-        private void createInvoice(string bsd_name, Entity project_invoive, Entity optionentry_invoive, Entity iv_units, Entity EnTaxcode, int bsd_type, DateTime bsd_issueddate
-            , decimal bsd_depositamount, decimal bsd_invoiceamount, decimal bsd_handoveramount)
+
+        private void UpdateUnit(
+            Entity unit,
+            Entity optionEntry,
+            DateTime signedDate)
         {
-            traceService.Trace("vào createInvoice");
-            Entity invoice = new Entity("bsd_invoice");
-            invoice.Id = new Guid();
-            invoice["bsd_name"] = bsd_name;
-            invoice["bsd_project"] = project_invoive.ToEntityReference();
-            invoice["bsd_optionentry"] = optionentry_invoive.ToEntityReference();
-            string formno = project_invoive.Contains("bsd_formno") ? (string)project_invoive["bsd_formno"] : "";
-            string serialno = project_invoive.Contains("bsd_serialno") ? (string)project_invoive["bsd_serialno"] : "";
-            invoice["bsd_formno"] = formno;
-            invoice["bsd_serialno"] = serialno;
-            invoice["bsd_issueddate"] = bsd_issueddate;
-            invoice["bsd_units"] = iv_units.ToEntityReference();
-            invoice["bsd_purchaser"] = (EntityReference)optionentry_invoive["customerid"];
-            invoice["bsd_paymentmethod"] = new OptionSetValue(100000000);
-            invoice["bsd_type"] = new OptionSetValue(bsd_type);
-            invoice["statuscode"] = new OptionSetValue(1);
-            invoice["bsd_depositamount"] = bsd_depositamount;
-            if (bsd_invoiceamount > 0)
-            {
-                traceService.Trace("vào bsd_invoiceamount > 0");
-                decimal bsd_vatamount = Math.Round(bsd_invoiceamount / (decimal)EnTaxcode["bsd_value"] * 100, MidpointRounding.AwayFromZero);
-                invoice["bsd_invoiceamount"] = new Money(bsd_invoiceamount);
-                invoice["bsd_vatamount"] = new Money(bsd_vatamount);
-                invoice["bsd_invoiceamountb4vat"] = new Money(bsd_invoiceamount - bsd_vatamount);
-            }
-            invoice["bsd_handoveramount"] = new Money(bsd_handoveramount);
-            if (bsd_handoveramount > 0 && bsd_invoiceamount > 0) invoice["bsd_namelandvalue"] = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
-            invoice["bsd_taxcodevalue"] = EnTaxcode["bsd_value"];
-            service.Create(invoice);
-            traceService.Trace("ra createInvoice");
+            Entity update = new Entity(unit.LogicalName, unit.Id);
+
+            update["statuscode"] = new OptionSetValue(STATUS_SIGNED);
+            update["bsd_signedcontractdate"] = signedDate;
+
+            if (optionEntry.Contains("bsd_optionno"))
+                update["bsd_optionnumber"] = optionEntry["bsd_optionno"];
+
+            service.Update(update);
         }
-        private bool checkInvaldInvoice1st(Guid optionEntryId)
+
+        private void UpdateCustomer(Entity customer)
         {
-            var query = new QueryExpression("bsd_invoice");
-            query.TopCount = 1;
-            query.ColumnSet.AddColumn("bsd_invoiceid");
-            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
-            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
-            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
+            int totalTransaction =
+                customer.GetAttributeValue<int>("bsd_totaltransaction");
+
+            Entity update = new Entity(customer.LogicalName, customer.Id);
+
+            update["bsd_totaltransaction"] = totalTransaction + 1;
+
+            service.Update(update);
+        }
+
+        private void UpdateManagementFee(
+            Entity optionEntry,
+            Entity unit,
+            Entity project)
+        {
+            int numberOfMonths =
+                optionEntry.GetAttributeValue<int>("bsd_numberofmonthspaidmf");
+
+            decimal netSaleableArea =
+                unit.GetAttributeValue<decimal>("bsd_netsaleablearea");
+
+            decimal managementAmountMonth =
+                unit.Contains("bsd_managementamountmonth")
+                ? unit.GetAttributeValue<Money>("bsd_managementamountmonth").Value
+                : project.GetAttributeValue<Money>("bsd_managementamount").Value;
+
+            decimal totalManagementFee =
+                managementAmountMonth * numberOfMonths * netSaleableArea;
+
+            EntityCollection installmentFees =
+                GetInstallmentFee(optionEntry.Id);
+
+            if (installmentFees.Entities.Count == 0)
+                return;
+
+            Entity firstInstallment = installmentFees.Entities[0];
+
+            Entity update = new Entity(firstInstallment.LogicalName, firstInstallment.Id);
+
+            update["bsd_managementamount"] =
+                new Money(totalManagementFee);
+
+            service.Update(update);
+        }
+
+        private void ClearDueDateWordTemplate(Guid optionEntryId)
+        {
+            QueryExpression query = new QueryExpression("bsd_paymentschemedetail");
+
+            query.ColumnSet = new ColumnSet(
+                "statuscode",
+                "bsd_duedatewordtemplate");
+
+            query.Criteria.AddCondition(
+                "bsd_optionentry",
+                ConditionOperator.Equal,
+                optionEntryId);
+
             EntityCollection list = service.RetrieveMultiple(query);
-            return list.Entities.Count > 0 ? true : false;
+
+            foreach (Entity item in list.Entities)
+            {
+                int status =
+                    item.GetAttributeValue<OptionSetValue>("statuscode")?.Value ?? 0;
+
+                if (status != STATUS_PAID)
+                    continue;
+
+                Entity update = new Entity(item.LogicalName, item.Id);
+
+                update["bsd_duedatewordtemplate"] = null;
+
+                service.Update(update);
+            }
         }
-        private bool checkInstallmentEDAyes(Guid optionEntryId)
+
+        #endregion
+
+        #region INVOICE
+
+        private void CreateFirstInvoice(
+            Entity optionEntry,
+            Entity unit,
+            Entity project)
+        {
+            if (CheckExistFirstInvoice(optionEntry.Id))
+                return;
+
+            bool enableEInvoice =
+                project.GetAttributeValue<bool>("bsd_optioncheckeinvoice");
+
+            if (!enableEInvoice)
+                return;
+
+            if (!optionEntry.Contains("bsd_taxcode"))
+                return;
+
+            Entity taxCode = service.Retrieve(
+                "bsd_taxcode",
+                optionEntry.GetAttributeValue<EntityReference>("bsd_taxcode").Id,
+                new ColumnSet("bsd_name", "bsd_value"));
+
+            bool checkEDA = false;
+            DateTime invoiceDate = DateTime.Now;
+
+            if (optionEntry.Contains("bsd_contractnumber")
+                && optionEntry.Contains("bsd_contracttypedescription"))
+            {
+                int contractType =
+                    optionEntry.GetAttributeValue<OptionSetValue>("bsd_contracttypedescription").Value;
+
+                if (contractType == CONTRACT_LOCAL_SPA
+                    && optionEntry.Contains("bsd_contractdate"))
+                {
+                    checkEDA = true;
+
+                    invoiceDate = RetrieveLocalTimeFromUTCTime(
+                        optionEntry.GetAttributeValue<DateTime>("bsd_contractdate"));
+                }
+                else if (
+                    (contractType == CONTRACT_FOREIGNER_SPA
+                    || contractType == CONTRACT_LOCAL_VK)
+                    && optionEntry.Contains("bsd_signedcontractdate"))
+                {
+                    checkEDA = true;
+
+                    invoiceDate = RetrieveLocalTimeFromUTCTime(
+                        optionEntry.GetAttributeValue<DateTime>("bsd_signedcontractdate"));
+                }
+            }
+
+            if (!checkEDA)
+                return;
+
+            bool hasInstallmentEDA =
+                CheckInstallmentEDA(optionEntry.Id);
+
+            if (hasInstallmentEDA)
+            {
+                CreateInvoiceForEDAInstallment(
+                    optionEntry,
+                    unit,
+                    project,
+                    taxCode,
+                    invoiceDate);
+            }
+            else
+            {
+                CreateInvoiceForNormalInstallment(
+                    optionEntry,
+                    unit,
+                    project,
+                    taxCode);
+            }
+        }
+
+        private void CreateInvoiceForEDAInstallment(
+            Entity optionEntry,
+            Entity unit,
+            Entity project,
+            Entity taxCode,
+            DateTime invoiceDate)
+        {
+            var unpaidFetch = $@"
+            <fetch>
+              <entity name='bsd_paymentschemedetail'>
+                <attribute name='bsd_paymentschemedetailid' />
+                <filter>
+                  <condition attribute='bsd_installmentforeda' operator='eq' value='1' />
+                  <condition attribute='bsd_optionentry' operator='eq' value='{optionEntry.Id}' />
+                  <condition attribute='statuscode' operator='eq' value='{STATUS_ACTIVE}' />
+                </filter>
+              </entity>
+            </fetch>";
+
+            EntityCollection unpaid =
+                service.RetrieveMultiple(new FetchExpression(unpaidFetch));
+
+            if (unpaid.Entities.Count > 0)
+                return;
+
+            var paidFetch = $@"
+            <fetch>
+              <entity name='bsd_paymentschemedetail'>
+                <attribute name='bsd_amountofthisphase' />
+                <attribute name='bsd_depositamount' />
+                <filter>
+                  <condition attribute='bsd_installmentforeda' operator='eq' value='1' />
+                  <condition attribute='bsd_optionentry' operator='eq' value='{optionEntry.Id}' />
+                  <condition attribute='statuscode' operator='eq' value='{STATUS_PAID}' />
+                </filter>
+              </entity>
+            </fetch>";
+
+            EntityCollection paidList =
+                service.RetrieveMultiple(new FetchExpression(paidFetch));
+
+            decimal amount = 0;
+            decimal deposit = 0;
+
+            foreach (Entity item in paidList.Entities)
+            {
+                amount +=
+                    item.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
+
+                deposit =
+                    item.GetAttributeValue<Money>("bsd_depositamount")?.Value ?? 0;
+            }
+
+            string invoiceName =
+                GetInvoiceName(
+                    project.GetAttributeValue<OptionSetValue>("bsd_project_type")?.Value ?? 0,
+                    unit.GetAttributeValue<string>("name"));
+
+            CreateInvoice(
+                invoiceName,
+                project,
+                optionEntry,
+                unit,
+                taxCode,
+                INVOICE_TYPE_FIRST,
+                invoiceDate,
+                deposit,
+                amount,
+                0);
+        }
+
+        private void CreateInvoiceForNormalInstallment(
+            Entity optionEntry,
+            Entity unit,
+            Entity project,
+            Entity taxCode)
+        {
+            var fetch = $@"
+            <fetch>
+              <entity name='bsd_paymentschemedetail'>
+                <attribute name='bsd_depositamount' />
+                <attribute name='bsd_amountofthisphase' />
+                <attribute name='bsd_paiddate' />
+                <filter>
+                  <condition attribute='bsd_ordernumber' operator='eq' value='1' />
+                  <condition attribute='bsd_optionentry' operator='eq' value='{optionEntry.Id}' />
+                  <condition attribute='statuscode' operator='eq' value='{STATUS_PAID}' />
+                </filter>
+              </entity>
+            </fetch>";
+
+            EntityCollection list =
+                service.RetrieveMultiple(new FetchExpression(fetch));
+
+            foreach (Entity item in list.Entities)
+            {
+                decimal deposit =
+                    item.GetAttributeValue<Money>("bsd_depositamount")?.Value ?? 0;
+
+                decimal amount =
+                    item.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
+
+                DateTime paidDate =
+                    RetrieveLocalTimeFromUTCTime(
+                        item.GetAttributeValue<DateTime>("bsd_paiddate"));
+
+                string invoiceName =
+                    GetInvoiceName(
+                        project.GetAttributeValue<OptionSetValue>("bsd_project_type")?.Value ?? 0,
+                        unit.GetAttributeValue<string>("name"));
+
+                CreateInvoice(
+                    invoiceName,
+                    project,
+                    optionEntry,
+                    unit,
+                    taxCode,
+                    INVOICE_TYPE_FIRST,
+                    paidDate,
+                    deposit,
+                    amount,
+                    0);
+            }
+        }
+
+        private void CreateInvoice(
+            string invoiceName,
+            Entity project,
+            Entity optionEntry,
+            Entity unit,
+            Entity taxCode,
+            int invoiceType,
+            DateTime issueDate,
+            decimal depositAmount,
+            decimal invoiceAmount,
+            decimal handoverAmount)
+        {
+            traceService.Trace("CreateInvoice");
+
+            Entity invoice = new Entity("bsd_invoice");
+
+            invoice["bsd_name"] = invoiceName;
+            invoice["bsd_project"] = project.ToEntityReference();
+            invoice["bsd_optionentry"] = optionEntry.ToEntityReference();
+            invoice["bsd_units"] = unit.ToEntityReference();
+
+            invoice["bsd_formno"] =
+                project.GetAttributeValue<string>("bsd_formno");
+
+            invoice["bsd_serialno"] =
+                project.GetAttributeValue<string>("bsd_serialno");
+
+            invoice["bsd_issueddate"] = issueDate;
+
+            EntityReference purchaser =
+                optionEntry.GetAttributeValue<EntityReference>("customerid");
+
+            if (purchaser != null)
+            {
+                invoice["bsd_purchaser"] = purchaser;
+
+                if (purchaser.LogicalName == "contact")
+                    invoice["bsd_purchasernamecustomer"] = purchaser;
+                else
+                    invoice["bsd_purchasernamecompany"] = purchaser;
+            }
+
+            invoice["bsd_paymentmethod"] =
+                new OptionSetValue(100000000);
+
+            invoice["bsd_type"] =
+                new OptionSetValue(invoiceType);
+
+            invoice["statuscode"] =
+                new OptionSetValue(1);
+
+            invoice["bsd_depositamount"] =
+                new Money(depositAmount);
+
+            decimal taxValue =
+                taxCode.GetAttributeValue<decimal>("bsd_value");
+
+            if (invoiceAmount > 0)
+            {
+                decimal vatAmount =
+                    Math.Round(
+                        invoiceAmount * taxValue / 100,
+                        MidpointRounding.AwayFromZero);
+
+                invoice["bsd_invoiceamount"] =
+                    new Money(invoiceAmount);
+
+                invoice["bsd_vatamount"] =
+                    new Money(vatAmount);
+
+                invoice["bsd_invoiceamountb4vat"] =
+                    new Money(invoiceAmount - vatAmount);
+            }
+
+            if (handoverAmount > 0)
+            {
+                invoice["bsd_handoveramount"] =
+                    new Money(handoverAmount);
+            }
+
+            invoice["bsd_taxcodevalue"] = taxValue;
+
+            service.Create(invoice);
+        }
+
+        #endregion
+
+        #region QUERY
+
+        private EntityCollection GetInstallmentFee(Guid optionEntryId)
+        {
+            string fetch = $@"
+            <fetch>
+              <entity name='bsd_paymentschemedetail'>
+                <attribute name='bsd_paymentschemedetailid' />
+                <filter>
+                  <condition attribute='bsd_optionentry' operator='eq' value='{optionEntryId}' />
+                  <condition attribute='bsd_managementamount' operator='gt' value='0' />
+                  <condition attribute='statecode' operator='eq' value='0' />
+                </filter>
+              </entity>
+            </fetch>";
+
+            return service.RetrieveMultiple(
+                new FetchExpression(fetch));
+        }
+
+        private bool CheckExistFirstInvoice(Guid optionEntryId)
+        {
+            QueryExpression query =
+                new QueryExpression("bsd_invoice");
+
+            query.TopCount = 1;
+
+            query.ColumnSet =
+                new ColumnSet("bsd_invoiceid");
+
+            query.Criteria.AddCondition(
+                "statuscode",
+                ConditionOperator.In,
+                1,
+                STATUS_ACTIVE);
+
+            query.Criteria.AddCondition(
+                "bsd_type",
+                ConditionOperator.Equal,
+                INVOICE_TYPE_FIRST);
+
+            query.Criteria.AddCondition(
+                "bsd_optionentry",
+                ConditionOperator.Equal,
+                optionEntryId);
+
+            EntityCollection list =
+                service.RetrieveMultiple(query);
+
+            return list.Entities.Count > 0;
+        }
+
+        private bool CheckInstallmentEDA(Guid optionEntryId)
         {
             QueryExpression query =
                 new QueryExpression("bsd_paymentschemedetail");
@@ -352,44 +630,82 @@ namespace Action_SignedContract
                 "bsd_ordernumber",
                 ConditionOperator.Equal,
                 1);
+
             query.Criteria.AddCondition(
                 "bsd_installmentforeda",
                 ConditionOperator.Equal,
                 true);
 
-            EntityCollection list = service.RetrieveMultiple(query);
+            EntityCollection list =
+                service.RetrieveMultiple(query);
 
-            return list.Entities.Count > 0 ? true : false;
+            return list.Entities.Count > 0;
         }
+
+        #endregion
+
+        #region HELPER
+
+        private string GetInvoiceName(
+            int projectType,
+            string unitName)
+        {
+            if (projectType == PROJECT_LAND)
+                return "Thu tiền căn nhà ở số " + unitName;
+
+            if (projectType == PROJECT_HIGHRISE)
+                return "Thu tiền căn hộ " + unitName;
+
+            return string.Empty;
+        }
+
+        private IServiceProvider GetServiceProvider()
+        {
+            return (IServiceProvider)context;
+        }
+
         private DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
-            int? timeZoneCode = RetrieveCurrentUsersSettings(service);
+            int? timeZoneCode =
+                RetrieveCurrentUsersSettings(service);
+
             if (!timeZoneCode.HasValue)
                 throw new InvalidPluginExecutionException("Can't find time zone code");
-            var request = new LocalTimeFromUtcTimeRequest
-            {
-                TimeZoneCode = timeZoneCode.Value,
-                UtcTime = utcTime.ToUniversalTime()
-            };
 
-            LocalTimeFromUtcTimeResponse response = (LocalTimeFromUtcTimeResponse)service.Execute(request);
+            LocalTimeFromUtcTimeRequest request =
+                new LocalTimeFromUtcTimeRequest
+                {
+                    TimeZoneCode = timeZoneCode.Value,
+                    UtcTime = utcTime.ToUniversalTime()
+                };
+
+            LocalTimeFromUtcTimeResponse response =
+                (LocalTimeFromUtcTimeResponse)service.Execute(request);
+
             return response.LocalTime;
-            //var utcTime = utcTime.ToString("MM/dd/yyyy HH:mm:ss");
-            //var localDateOnly = response.LocalTime.ToString("dd-MM-yyyy");
         }
+
         private int? RetrieveCurrentUsersSettings(IOrganizationService service)
         {
-            var currentUserSettings = service.RetrieveMultiple(
-            new QueryExpression("usersettings")
-            {
-                ColumnSet = new ColumnSet("localeid", "timezonecode"),
-                Criteria = new FilterExpression
-                {
-                    Conditions = { new ConditionExpression("systemuserid", ConditionOperator.EqualUserId) }
-                }
-            }).Entities[0].ToEntity<Entity>();
+            Entity currentUserSettings =
+                service.RetrieveMultiple(
+                    new QueryExpression("usersettings")
+                    {
+                        ColumnSet = new ColumnSet("timezonecode"),
+                        Criteria = new FilterExpression
+                        {
+                            Conditions =
+                            {
+                                new ConditionExpression(
+                                    "systemuserid",
+                                    ConditionOperator.EqualUserId)
+                            }
+                        }
+                    }).Entities[0];
 
-            return (int?)currentUserSettings.Attributes["timezonecode"];
+            return currentUserSettings.GetAttributeValue<int?>("timezonecode");
         }
+
+        #endregion
     }
 }
