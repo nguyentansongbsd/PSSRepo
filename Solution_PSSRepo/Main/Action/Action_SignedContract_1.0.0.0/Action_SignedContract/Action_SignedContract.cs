@@ -200,7 +200,23 @@ namespace Action_SignedContract
                     }
                     decimal bsd_amountwaspaid = 0;
                     decimal bsd_depositamount = 0;
-                    var fetchXml2 = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    if (checkInstallmentEDAyes(enOptionEntry.Id))// installment có eda = yes
+                    {
+                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_paymentschemedetail"">
+                                <attribute name=""bsd_paymentschemedetailid"" />
+                                <filter>
+                                  <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
+                                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                                </filter>
+                              </entity>
+                            </fetch>";
+                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                        if (list.Entities.Count == 0)
+                        {
+                            var fetchXml2 = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                                 <fetch>
                                   <entity name=""bsd_paymentschemedetail"">
                                     <attribute name=""bsd_paymentschemedetailid"" />
@@ -208,20 +224,51 @@ namespace Action_SignedContract
                                     <attribute name=""bsd_depositamount"" />
                                     <attribute name=""bsd_ordernumber"" />
                                     <filter>
+                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
                                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                      <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
-                                      <condition attribute=""bsd_amountwaspaid"" operator=""gt"" value=""{0}"" />
+                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
                                     </filter>
                                     <order descending=""true"" attribute=""bsd_ordernumber"" />
                                   </entity>
                                 </fetch>";
-                    EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
-                    foreach (Entity entity in list2.Entities)
-                    {
-                        bsd_amountwaspaid += entity.Contains("bsd_amountwaspaid") ? ((Money)entity["bsd_amountwaspaid"]).Value : 0;
-                        if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
+                            EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
+                            foreach (Entity entity in list2.Entities)
+                            {
+                                bsd_amountwaspaid += entity.Contains("bsd_amountwaspaid") ? ((Money)entity["bsd_amountwaspaid"]).Value : 0;
+                                if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
+                            }
+                            CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
+                        }
                     }
-                    CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
+                    else//ko installment có eda = yes
+                    {
+                        bool isCreate = false;
+                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_paymentschemedetail"">
+                                <attribute name=""bsd_paymentschemedetailid"" />
+                                <attribute name=""statuscode"" />
+                                <attribute name=""bsd_depositamount"" />
+                                <attribute name=""bsd_amountwaspaid"" />
+                                <attribute name=""bsd_ordernumber"" />
+                                <filter>
+                                  <condition attribute=""bsd_amountwaspaid"" operator=""gt"" value=""{0}"" />
+                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
+                                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                                </filter>
+                              </entity>
+                            </fetch>";
+                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                        foreach (Entity enIns in list.Entities)
+                        {
+                            bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
+                            bsd_amountwaspaid += enIns.Contains("bsd_amountwaspaid") ? ((Money)enIns["bsd_amountwaspaid"]).Value : 0;
+                            int statusCode = enIns.GetAttributeValue<OptionSetValue>("statuscode")?.Value ?? 0;
+                            int orderNumber = enIns.GetAttributeValue<int>("bsd_ordernumber");
+                            if (orderNumber == 1 && statusCode == 100000001) isCreate = true;
+                        }
+                        if (isCreate) CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
+                    }
                 }
             }
         }
