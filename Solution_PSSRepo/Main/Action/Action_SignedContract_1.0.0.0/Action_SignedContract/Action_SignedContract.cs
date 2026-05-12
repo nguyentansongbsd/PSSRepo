@@ -224,9 +224,9 @@ namespace Action_SignedContract
                                     <attribute name=""bsd_depositamount"" />
                                     <attribute name=""bsd_ordernumber"" />
                                     <filter>
-                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
+                                      <condition attribute=""bsd_amountwaspaid"" operator=""gt"" value=""0"" />
                                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
+                                      <condition attribute=""statecode"" operator=""eq"" value=""0"" />
                                     </filter>
                                     <order descending=""true"" attribute=""bsd_ordernumber"" />
                                   </entity>
