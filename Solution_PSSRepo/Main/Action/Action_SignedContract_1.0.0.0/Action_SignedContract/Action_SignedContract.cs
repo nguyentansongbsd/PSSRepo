@@ -236,6 +236,7 @@ namespace Action_SignedContract
                             {
                                 bsd_amountwaspaid += entity.Contains("bsd_amountwaspaid") ? ((Money)entity["bsd_amountwaspaid"]).Value : 0;
                                 if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
+                                bsd_amountwaspaid += bsd_depositamount;
                             }
                             CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
                         }
@@ -266,6 +267,7 @@ namespace Action_SignedContract
                             int statusCode = enIns.GetAttributeValue<OptionSetValue>("statuscode")?.Value ?? 0;
                             int orderNumber = enIns.GetAttributeValue<int>("bsd_ordernumber");
                             if (orderNumber == 1 && statusCode == 100000001) isCreate = true;
+                            bsd_amountwaspaid += bsd_depositamount;
                         }
                         if (isCreate) CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
                     }

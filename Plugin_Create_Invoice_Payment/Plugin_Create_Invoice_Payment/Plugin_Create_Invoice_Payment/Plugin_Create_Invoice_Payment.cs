@@ -458,7 +458,7 @@ namespace Plugin_Create_Invoice_Payment
 
                 depositAmount =
                     item.GetAttributeValue<Money>("bsd_depositamount")?.Value ?? 0;
-
+                amountPhase += depositAmount;
                 int order =
                     item.GetAttributeValue<int>("bsd_ordernumber");
 
@@ -521,7 +521,7 @@ namespace Plugin_Create_Invoice_Payment
 
                 decimal amountPhase =
                     enIns.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
-
+                amountPhase += depositAmount;
                 decimal amountPay = item.Amount;
 
                 if (dueDateMethod == 100000002)

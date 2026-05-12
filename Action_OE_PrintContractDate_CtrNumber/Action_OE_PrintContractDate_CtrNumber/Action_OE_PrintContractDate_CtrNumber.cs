@@ -222,6 +222,7 @@ namespace Action_OE_PrintContractDate_CtrNumber
                             {
                                 bsd_amountwaspaid += entity.Contains("bsd_amountwaspaid") ? ((Money)entity["bsd_amountwaspaid"]).Value : 0;
                                 if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
+                                bsd_amountwaspaid += bsd_depositamount;
                             }
                             CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
                         }

@@ -270,7 +270,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                         bsd_depositamount =
                             ((Money)entity["bsd_depositamount"]).Value;
                     }
-
+                    bsd_amountofthisphase += bsd_depositamount;
                     int bsd_ordernumber = (int)entity["bsd_ordernumber"];
 
                     if (bsd_ordernumber == 1)
@@ -345,7 +345,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     enIns.Contains("bsd_amountofthisphase")
                     ? ((Money)enIns["bsd_amountofthisphase"]).Value
                     : 0;
-
+                bsd_amountofthisphase += bsd_depositamount;
                 decimal amountPay = item.amount;
 
                 if (bsd_duedatecalculatingmethod == 100000002)
