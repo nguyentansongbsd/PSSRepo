@@ -216,7 +216,7 @@ namespace Plugin_Create_Invoice_Payment
             }
 
             // EDA
-            if (checkEDA && edaInstallments.Count > 0)
+            if (checkEDA)
             {
                 // NON EDA
                 if (edaInstallments.Count > 0)
