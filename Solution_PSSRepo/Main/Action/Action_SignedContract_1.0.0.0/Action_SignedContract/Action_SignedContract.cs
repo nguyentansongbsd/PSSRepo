@@ -1,30 +1,20 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Action_SignedContract.Action_SignedContract
-// Assembly: Action_SignedContract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=91af1975bd46f505
-// MVID: 64A057F8-04D7-4937-A84E-D4EF3DDC89DB
-// Assembly location: C:\Users\ngoct\Downloads\Action_SignedContract_1.0.0.0.dll
-
-using BSDLibrary;
+﻿using BSDLibrary;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.IdentityModel.Metadata;
-using System.Runtime.InteropServices;
-
 namespace Action_SignedContract
 {
     public class Action_SignedContract : IPlugin
     {
         private IPluginExecutionContext context;
-        private IOrganizationService service = (IOrganizationService)null;
-        private IOrganizationServiceFactory factory = (IOrganizationServiceFactory)null;
-        public ITracingService traceService = (ITracingService)null;
-        private ParameterCollection target = (ParameterCollection)null;
+        private IOrganizationService service = null;
+        private IOrganizationServiceFactory factory = null;
+        public ITracingService traceService = null;
+        private ParameterCollection target = null;
         public Entity enBulkWaiver;
         private Common common;
         private IServiceProvider serviceProvider;
-
         public void Execute(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
@@ -146,7 +136,6 @@ namespace Action_SignedContract
             #endregion
             this.context.OutputParameters["output"] = (object)"done";
         }
-
         private EntityCollection get_Inst_Fee(IOrganizationService crmservices, Guid oeID, Guid pmsID)
         {
             string query = string.Format("<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >\r\n                  <entity name='bsd_paymentschemedetail' >\r\n                    <attribute name='bsd_duedate' />\r\n                    <attribute name='bsd_name' />\r\n                    <attribute name='bsd_duedatecalculatingmethod' />\r\n                    <attribute name='bsd_maintenanceamount' />\r\n                    <attribute name='bsd_maintenancefees' />\r\n                    <attribute name='bsd_managementfee' />\r\n                    <attribute name='bsd_amountofthisphase' />\r\n                    <attribute name='bsd_managementfeesstatus' />\r\n                    <attribute name='bsd_managementamount' />\r\n                    <attribute name='bsd_maintenancefeesstatus' />\r\n                    <attribute name='bsd_paymentschemedetailid' />\r\n                    <filter type='and' >\r\n                      <condition attribute='bsd_optionentry' operator='eq' value='{0}' />\r\n                      <condition attribute='bsd_managementamount' operator='gt' value='0' />\r\n                      <condition attribute='statecode' operator='eq' value='0' />\r\n                    </filter>\r\n                  </entity>\r\n                </fetch>", (object)oeID, (object)pmsID);
@@ -200,96 +189,39 @@ namespace Action_SignedContract
                 }
                 if (checkEDA)
                 {
-                    if (checkInstallmentEDAyes(enOptionEntry.Id))// installment có eda = yes
+                    string name = "";
+                    if (bsd_project_type == 100000000)//land
                     {
-                        string name = "";
-                        if (bsd_project_type == 100000000)//land
-                        {
-                            name = "Thu tiền căn nhà ở số " + unitName;
-                        }
-                        else if (bsd_project_type == 100000001)//higt
-                        {
-                            name = "Thu tiền căn hộ " + unitName;
-                        }
-                        decimal bsd_amountofthisphase = 0;
-                        decimal bsd_depositamount = 0;
-                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                            <fetch>
-                              <entity name=""bsd_paymentschemedetail"">
-                                <attribute name=""bsd_paymentschemedetailid"" />
-                                <filter>
-                                  <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
-                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
-                                </filter>
-                              </entity>
-                            </fetch>";
-                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                        if (list.Entities.Count == 0)
-                        {
-                            var fetchXml2 = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                        name = "Thu tiền căn nhà ở số " + unitName;
+                    }
+                    else if (bsd_project_type == 100000001)//higt
+                    {
+                        name = "Thu tiền căn hộ " + unitName;
+                    }
+                    decimal bsd_amountwaspaid = 0;
+                    decimal bsd_depositamount = 0;
+                    var fetchXml2 = $@"<?xml version=""1.0"" encoding=""utf-16""?>
                                 <fetch>
                                   <entity name=""bsd_paymentschemedetail"">
                                     <attribute name=""bsd_paymentschemedetailid"" />
-                                    <attribute name=""bsd_amountofthisphase"" />
+                                    <attribute name=""bsd_amountwaspaid"" />
                                     <attribute name=""bsd_depositamount"" />
                                     <attribute name=""bsd_ordernumber"" />
                                     <filter>
-                                      <condition attribute=""bsd_installmentforeda"" operator=""eq"" value=""{true}"" />
                                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
+                                      <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                                      <condition attribute=""bsd_amountwaspaid"" operator=""gt"" value=""{0}"" />
                                     </filter>
                                     <order descending=""true"" attribute=""bsd_ordernumber"" />
                                   </entity>
                                 </fetch>";
-                            EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
-                            string guidID = "";
-                            foreach (Entity entity in list2.Entities)
-                            {
-                                bsd_amountofthisphase += entity.Contains("bsd_amountofthisphase") ? ((Money)entity["bsd_amountofthisphase"]).Value : 0;
-                                if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
-                                if (guidID == "") guidID = entity.Id.ToString();
-                            }
-                            CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountofthisphase, 0);
-                        }
-                    }
-                    else//ko installment có eda = yes
+                    EntityCollection list2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
+                    foreach (Entity entity in list2.Entities)
                     {
-                        var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
-                            <fetch>
-                              <entity name=""bsd_paymentschemedetail"">
-                                <attribute name=""bsd_paymentschemedetailid"" />
-                                <attribute name=""statuscode"" />
-                                <attribute name=""bsd_depositamount"" />
-                                <attribute name=""bsd_amountofthisphase"" />
-                                <attribute name=""bsd_ordernumber"" />
-                                <filter>
-                                  <condition attribute=""bsd_ordernumber"" operator=""eq"" value=""{1}"" />
-                                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{enOptionEntry.Id}"" />
-                                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000001}"" />
-                                </filter>
-                              </entity>
-                            </fetch>";
-                        EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
-                        foreach (Entity enIns in list.Entities)
-                        {
-                            int statuscode = ((OptionSetValue)enIns["statuscode"]).Value;
-                            int bsd_ordernumber = (int)enIns["bsd_ordernumber"];
-                            decimal bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
-                            decimal amountPay = enIns.Contains("bsd_amountofthisphase") ? ((Money)enIns["bsd_amountofthisphase"]).Value : 0;
-                            string name = "";
-                            if (bsd_project_type == 100000000)//land
-                            {
-                                name = "Thu tiền căn nhà ở số " + unitName;
-                            }
-                            else if (bsd_project_type == 100000001)//higt
-                            {
-                                name = "Thu tiền căn hộ " + unitName;
-                            }
-                            string guidID = enIns.Id.ToString();
-                            CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, amountPay, 0);
-                        }
+                        bsd_amountwaspaid += entity.Contains("bsd_amountwaspaid") ? ((Money)entity["bsd_amountwaspaid"]).Value : 0;
+                        if (entity.Contains("bsd_depositamount")) bsd_depositamount = ((Money)entity["bsd_depositamount"]).Value;
                     }
+                    CreateInvoice(name, project_invoive, enOptionEntry, iv_units, EnTaxcode, 100000003, date_EDA, bsd_depositamount, bsd_amountwaspaid, 0);
                 }
             }
         }

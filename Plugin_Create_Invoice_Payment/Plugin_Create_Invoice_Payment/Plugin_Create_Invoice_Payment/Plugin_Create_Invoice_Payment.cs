@@ -218,7 +218,10 @@ namespace Plugin_Create_Invoice_Payment
             // EDA
             if (checkEDA && edaInstallments.Count > 0)
             {
-                ProcessEDAInvoice(
+                // NON EDA
+                if (edaInstallments.Count > 0)
+                {
+                    ProcessEDAInvoice(
                     project,
                     optionEntry,
                     unit,
@@ -227,38 +230,38 @@ namespace Plugin_Create_Invoice_Payment
                     projectType,
                     unitName,
                     dateEDA);
-            }
+                }
 
-            // NON EDA
-            if (nonEdaInstallments.Count > 0)
-            {
-                ProcessNonEDAInvoice(
-                    nonEdaInstallments,
-                    installmentCache,
+                // NON EDA
+                if (nonEdaInstallments.Count > 0)
+                {
+                    ProcessNonEDAInvoice(
+                        nonEdaInstallments,
+                        installmentCache,
+                        project,
+                        optionEntry,
+                        unit,
+                        payment,
+                        taxCode,
+                        projectType,
+                        unitName,
+                        landValue,
+                        paymentActualTime,
+                        checkEDA,
+                        dateEDA);
+                }
+
+                // MAIN FEE
+                ProcessMainFeeInvoice(
+                    payment,
                     project,
                     optionEntry,
                     unit,
-                    payment,
                     taxCode,
                     projectType,
                     unitName,
-                    landValue,
-                    paymentActualTime,
-                    checkEDA,
-                    dateEDA);
+                    paymentActualTime);
             }
-
-            // MAIN FEE
-            ProcessMainFeeInvoice(
-                payment,
-                project,
-                optionEntry,
-                unit,
-                taxCode,
-                projectType,
-                unitName,
-                paymentActualTime);
-
             traceService.Trace("End ProcessApplyDocument");
         }
 

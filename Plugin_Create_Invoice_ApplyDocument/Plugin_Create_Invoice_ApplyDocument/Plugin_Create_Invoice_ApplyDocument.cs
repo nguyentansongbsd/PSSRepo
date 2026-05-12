@@ -195,7 +195,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 EnTaxcode,
                 bsd_paymentactualtime,
                 bsd_project_type,
-                unitName);
+                unitName,
+                checkEDA);
 
             traceService.Trace("ra ProcessApplyDocument");
         }
@@ -309,7 +310,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
         {
             traceService.Trace("vào ProcessNonEDAInvoice");
 
-            if (ins_NOT_EDA.Count <= 0)
+            if (!checkEDA || ins_NOT_EDA.Count <= 0)
                 return;
 
             decimal sumTypeIns = 0;
@@ -468,7 +469,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
             Entity EnTaxcode,
             DateTime bsd_paymentactualtime,
             int bsd_project_type,
-            string unitName)
+            string unitName,
+            bool checkEDA)
         {
             traceService.Trace("vào ProcessMaintenanceFee");
 
@@ -500,7 +502,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
 
             EntityCollection listMainFee =
                 service.RetrieveMultiple(new FetchExpression(fetchXmlMainFee));
-
+            if (!checkEDA || listMainFee.Entities.Count <= 0)
+                return;
             foreach (Entity item in listMainFee.Entities)
             {
                 string name = "";
