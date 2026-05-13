@@ -347,7 +347,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     : 0;
                 bsd_amountofthisphase += bsd_depositamount;
                 decimal amountPay = item.amount;
-
+                amountPay += bsd_depositamount;
                 if (bsd_duedatecalculatingmethod == 100000002)
                 {
                     decimal landvalueIN =

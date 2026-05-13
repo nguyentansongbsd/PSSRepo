@@ -523,7 +523,7 @@ namespace Plugin_Create_Invoice_Payment
                     enIns.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
                 amountPhase += depositAmount;
                 decimal amountPay = item.Amount;
-
+                amountPay += depositAmount;
                 if (dueDateMethod == 100000002)
                 {
                     decimal landValueInvoice =
