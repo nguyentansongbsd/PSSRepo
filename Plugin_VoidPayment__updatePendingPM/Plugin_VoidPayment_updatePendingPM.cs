@@ -135,6 +135,25 @@ namespace Plugin_VoidPayment_updatePendingPM
                                 service.Update(entity);
                             }
                         }
+                        else if (en_tmp.LogicalName == "bsd_applydocument")
+                        {
+                            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                            <fetch>
+                              <entity name=""bsd_advancepayment"">
+                                <attribute name=""bsd_advancepaymentid"" />
+                                <filter>
+                                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                                  <condition attribute=""bsd_applydocument"" operator=""eq"" value=""{en_tmp.Id}"" />
+                                </filter>
+                              </entity>
+                            </fetch>";
+                            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                            foreach (Entity entity in entc.Entities)
+                            {
+                                entity["statuscode"] = new OptionSetValue(100000000);//Collected
+                                service.Update(entity);
+                            }
+                        }
                     }
                     // --------------- end reject --------------------------------------------
                 } // END OF CONTEXT = UPDATE

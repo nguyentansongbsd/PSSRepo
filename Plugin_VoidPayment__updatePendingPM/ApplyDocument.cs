@@ -115,7 +115,28 @@ namespace Plugin_VoidPayment_updatePendingPM
                     service.Update(en_dtl);
                 }
             }
+            revertInvoice(en_app);
+        }
+        private void revertInvoice(Entity en_app)
+        {
+            // Define Condition Values
+            var QEbsd_invoice_bsd_payment = en_app.Id;
 
+            // Instantiate QueryExpression QEbsd_invoice
+            var QEbsd_invoice = new QueryExpression("bsd_invoice");
+
+            // Add all columns to QEbsd_invoice.ColumnSet
+            QEbsd_invoice.ColumnSet.AllColumns = true;
+
+            // Define filter QEbsd_invoice.Criteria
+            QEbsd_invoice.Criteria.AddCondition("bsd_applydocument", ConditionOperator.Equal, QEbsd_invoice_bsd_payment);
+            EntityCollection encolInvoice = service.RetrieveMultiple(QEbsd_invoice);
+            foreach (Entity enInvoice in encolInvoice.Entities)
+            {
+                Entity enInvoiceUpdate = new Entity(enInvoice.LogicalName, enInvoice.Id);
+                enInvoiceUpdate["statuscode"] = new OptionSetValue(100000001);//Revert
+                service.Update(enInvoiceUpdate);
+            }
         }
         public void checkInput(Entity en_app)
         {
