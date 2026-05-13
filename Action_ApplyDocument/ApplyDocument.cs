@@ -864,9 +864,6 @@ namespace Action_ApplyDocument
 
             int i_phaseNum = en_Ins.Contains("bsd_ordernumber") ? (int)en_Ins["bsd_ordernumber"] : 1;
             decimal psd_deposit = en_Ins.Contains("bsd_depositamount") ? ((Money)en_Ins["bsd_depositamount"]).Value : 0;
-            int psd_statuscodeInterest = en_Ins.Contains("bsd_interestchargestatus") ? ((OptionSetValue)en_Ins["bsd_interestchargestatus"]).Value : 100000000;//check interest đã thanh toán chưa
-            bool psd_statuscodeFeeMain = en_Ins.Contains("bsd_maintenancefeesstatus") ? ((bool)en_Ins["bsd_maintenancefeesstatus"]) : false;//check fee đã thanh toán chưa
-            bool psd_statuscodeFeeMana = en_Ins.Contains("bsd_managementfeesstatus") ? ((bool)en_Ins["bsd_managementfeesstatus"]) : false;//check fee đã thanh toán chưa
             var enmis = get_All_MIS_NotPaid(en_OE.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
             int sttOE = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 100000000; // option
                                                                                                                 //tính trễ
@@ -944,8 +941,8 @@ namespace Action_ApplyDocument
                 {
                     sttUnit = 100000002;
                     sttOE = 100000003; //Being Payment (khi da sign contract)
-                    if (detailLastID == en_Ins.Id.ToString() && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
-                                        psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                    if (checkPaid_Installment(en_OE.Id) && checkPaid_interest_main_mana_Installment(en_OE.Id)
+                    && enmis != null && enmis.Entities.Count == 0)
                         sttOE = 100000004; //Complete Payment
                 }
             }
@@ -961,6 +958,42 @@ namespace Action_ApplyDocument
 
             en_OEup["statuscode"] = new OptionSetValue(sttOE);
             service.Update(en_OEup);
+        }
+        private bool checkPaid_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <attribute name=""bsd_ordernumber"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <filter type=""or"">
+                    <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                  </filter>
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
         }
         private bool check_Ins_Paid(IOrganizationService crmservices, Guid oeID, int i_ordernumber)
         {
