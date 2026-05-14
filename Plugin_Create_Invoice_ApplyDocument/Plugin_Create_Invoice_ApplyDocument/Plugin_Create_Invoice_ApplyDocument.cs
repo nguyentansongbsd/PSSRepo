@@ -812,10 +812,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 {
                     decimal taxValue = Convert.ToDecimal(EnTaxcode["bsd_value"]);
 
-                    decimal bsd_vatamount =
-                        Math.Round(
-                            bsd_invoiceamount * taxValue / 100,
-                            MidpointRounding.AwayFromZero);
+                    decimal bsd_vatamount = taxValue == 0 ? 0 : Math.Round(bsd_invoiceamount / 11 / taxValue / 10, MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(bsd_invoiceamount);
