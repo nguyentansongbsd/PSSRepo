@@ -332,7 +332,7 @@ namespace Action_OE_PrintContractDate_CtrNumber
                 }
                 else
                 {
-                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round(invoiceAmount / 11 / taxValue / 10, MidpointRounding.AwayFromZero);
+                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round(invoiceAmount / ((100 + taxValue) / 100), MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(invoiceAmount);
