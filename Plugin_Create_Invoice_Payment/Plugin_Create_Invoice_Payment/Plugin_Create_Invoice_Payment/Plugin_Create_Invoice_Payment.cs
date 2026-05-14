@@ -873,7 +873,7 @@ namespace Plugin_Create_Invoice_Payment
                 }
                 else
                 {
-                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round(invoiceAmount / ((100 + taxValue) / 100), MidpointRounding.AwayFromZero);
+                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round((invoiceAmount / (((100 + taxValue) / 100)) / 10), MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(invoiceAmount);
