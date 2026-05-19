@@ -560,8 +560,6 @@ namespace Plugin_Create_Invoice_Payment
                     else
                     {
                         invoiceType = 100000007;
-                        amountPay -= handoverAmount;
-
                         name = GetInvoiceName(projectType, unitName);
                     }
                     CreateInvoice(

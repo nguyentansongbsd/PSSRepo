@@ -86,6 +86,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     "bsd_contractnumber",
                     "bsd_contracttypedescription",
                     "bsd_contractdate",
+                    "bsd_totalpercent",
                     "bsd_signedcontractdate"));
 
             bool checkEDA = false;
@@ -359,22 +360,29 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     string name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
 
                     int inType;
-
-                    if (amountPay <= bsd_handoveramount)
+                    decimal bsd_totalpercent = optionentry_invoive.GetAttributeValue<decimal>("bsd_totalpercent");
+                    if (bsd_totalpercent >= 85)
                     {
-                        bsd_handoveramount = amountPay;
-                        amountPay = 0;
-                        inType = 100000006;
+                        if (amountPay <= bsd_handoveramount)
+                        {
+                            bsd_handoveramount = amountPay;
+                            amountPay = 0;
+                            inType = 100000006;
+                        }
+                        else
+                        {
+                            inType = bsd_handoveramount == 0
+                                ? 100000007
+                                : 100000005;
+
+                            amountPay -= bsd_handoveramount;
+
+                            name = GetInvoiceName(bsd_project_type, unitName);
+                        }
                     }
                     else
                     {
-                        inType = 100000005;
-
-                        if (bsd_handoveramount == 0)
-                            inType = 100000007;
-
-                        amountPay -= bsd_handoveramount;
-
+                        inType = 100000007;
                         name = GetInvoiceName(bsd_project_type, unitName);
                     }
 
