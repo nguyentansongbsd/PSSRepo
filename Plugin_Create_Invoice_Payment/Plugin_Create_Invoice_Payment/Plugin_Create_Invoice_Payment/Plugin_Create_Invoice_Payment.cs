@@ -56,6 +56,7 @@ namespace Plugin_Create_Invoice_Payment
                         "bsd_units",
                         "bsd_paymentschemedetail",
                         "bsd_amountpay",
+                        "bsd_documentno",
                         "bsd_balance"
                     ));
 
@@ -107,7 +108,8 @@ namespace Plugin_Create_Invoice_Payment
                     "bsd_contractnumber",
                     "bsd_contracttypedescription",
                     "bsd_contractdate",
-                    "bsd_signedcontractdate"
+                    "bsd_signedcontractdate",
+                    "bsd_totalpercent"
                 ));
 
             Entity unit = service.Retrieve(
@@ -458,7 +460,6 @@ namespace Plugin_Create_Invoice_Payment
 
                 depositAmount =
                     item.GetAttributeValue<Money>("bsd_depositamount")?.Value ?? 0;
-                amountPhase += depositAmount;
                 int order =
                     item.GetAttributeValue<int>("bsd_ordernumber");
 
@@ -521,9 +522,7 @@ namespace Plugin_Create_Invoice_Payment
 
                 decimal amountPhase =
                     enIns.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
-                amountPhase += depositAmount;
                 decimal amountPay = item.Amount;
-
                 if (dueDateMethod == 100000002)
                 {
                     decimal landValueInvoice =
@@ -538,24 +537,31 @@ namespace Plugin_Create_Invoice_Payment
                     string name = "Giá trị quyền sử dụng đất không chịu thuế GTGT";
 
                     int invoiceType;
-
-                    if (amountPay <= handoverAmount)
+                    decimal bsd_totalpercent = optionEntry.GetAttributeValue<decimal>("bsd_totalpercent");
+                    if (bsd_totalpercent >= 85)
                     {
-                        handoverAmount = amountPay;
-                        amountPay = 0;
-                        invoiceType = 100000006;
+                        if (amountPay <= handoverAmount)
+                        {
+                            handoverAmount = amountPay;
+                            amountPay = 0;
+                            invoiceType = 100000006;
+                        }
+                        else
+                        {
+                            invoiceType = handoverAmount == 0
+                                ? 100000007
+                                : 100000005;
+
+                            amountPay -= handoverAmount;
+
+                            name = GetInvoiceName(projectType, unitName);
+                        }
                     }
                     else
                     {
-                        invoiceType = handoverAmount == 0
-                            ? 100000007
-                            : 100000005;
-
-                        amountPay -= handoverAmount;
-
+                        invoiceType = 100000007;
                         name = GetInvoiceName(projectType, unitName);
                     }
-
                     CreateInvoice(
                         name,
                         project,
@@ -829,6 +835,8 @@ namespace Plugin_Create_Invoice_Payment
 
             invoice["bsd_serialno"] =
                 project.GetAttributeValue<string>("bsd_serialno");
+            invoice["bsd_documentno"] =
+                payment.GetAttributeValue<string>("bsd_documentno");
 
             invoice["bsd_issueddate"] = issueDate;
             invoice["bsd_units"] = unit.ToEntityReference();
@@ -876,10 +884,7 @@ namespace Plugin_Create_Invoice_Payment
                 }
                 else
                 {
-                    decimal vatAmount =
-                        Math.Round(
-                            invoiceAmount * taxValue / 100,
-                            MidpointRounding.AwayFromZero);
+                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round((invoiceAmount / (((100 + taxValue) / 100)) / 10), MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(invoiceAmount);

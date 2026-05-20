@@ -159,9 +159,6 @@ namespace Action_Payment
                     {
                         PaymentDetailEn = service.Retrieve("bsd_paymentschemedetail", ((EntityReference)paymentEn["bsd_paymentschemedetail"]).Id, new ColumnSet(true));
                     }
-                    int psd_statuscodeInterest = PaymentDetailEn.Contains("bsd_interestchargestatus") ? ((OptionSetValue)PaymentDetailEn["bsd_interestchargestatus"]).Value : 100000000;//check interest đã thanh toán chưa
-                    bool psd_statuscodeFeeMain = PaymentDetailEn.Contains("bsd_maintenancefeesstatus") ? ((bool)PaymentDetailEn["bsd_maintenancefeesstatus"]) : false;//check fee đã thanh toán chưa
-                    bool psd_statuscodeFeeMana = PaymentDetailEn.Contains("bsd_managementfeesstatus") ? ((bool)PaymentDetailEn["bsd_managementfeesstatus"]) : false;//check fee đã thanh toán chưa
                     int psd_statuscode = PaymentDetailEn.Contains("statuscode") ? ((OptionSetValue)PaymentDetailEn["statuscode"]).Value : 100000000;
                     int phaseNum = PaymentDetailEn.Contains("bsd_ordernumber") ? (int)PaymentDetailEn["bsd_ordernumber"] : 0;
 
@@ -237,8 +234,8 @@ namespace Action_Payment
                                 sttUnit = 100000002;
                                 sttOE = 100000003; //Being Payment (khi da sign contract)
 
-                                if ((detailLastID == PaymentDetailEn.Id.ToString()) && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
-                                        psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                                if (checkPaid_Installment(optionentryEn.Id) && checkPaid_interest_main_mana_Installment(optionentryEn.Id)
+                                    && enmis != null && enmis.Entities.Count == 0)
                                     sttOE = 100000004; //Complete Payment
                             }
                         }
@@ -405,6 +402,42 @@ namespace Action_Payment
             //    TracingSe.Trace(ex.Message);
             //    throw new InvalidPluginExecutionException(strMess.ToString());
             //}
+        }
+        private bool checkPaid_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <attribute name=""bsd_ordernumber"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <filter type=""or"">
+                            <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                          </filter>
+                          <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
         }
         private void checkPaidInstalment(Entity paymentEn)
         {

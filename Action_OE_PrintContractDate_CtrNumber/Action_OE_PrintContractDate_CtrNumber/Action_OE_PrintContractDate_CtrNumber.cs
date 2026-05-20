@@ -250,6 +250,7 @@ namespace Action_OE_PrintContractDate_CtrNumber
                         {
                             bsd_depositamount = enIns.Contains("bsd_depositamount") ? ((Money)enIns["bsd_depositamount"]).Value : 0;
                             bsd_amountwaspaid += enIns.Contains("bsd_amountwaspaid") ? ((Money)enIns["bsd_amountwaspaid"]).Value : 0;
+                            bsd_amountwaspaid += bsd_depositamount;
                             int statusCode = enIns.GetAttributeValue<OptionSetValue>("statuscode")?.Value ?? 0;
                             int orderNumber = enIns.GetAttributeValue<int>("bsd_ordernumber");
                             if (orderNumber == 1 && statusCode == 100000001) isCreate = true;
@@ -331,10 +332,7 @@ namespace Action_OE_PrintContractDate_CtrNumber
                 }
                 else
                 {
-                    decimal vatAmount =
-                        Math.Round(
-                            invoiceAmount * taxValue / 100,
-                            MidpointRounding.AwayFromZero);
+                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round((invoiceAmount / (((100 + taxValue) / 100)) / 10), MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(invoiceAmount);

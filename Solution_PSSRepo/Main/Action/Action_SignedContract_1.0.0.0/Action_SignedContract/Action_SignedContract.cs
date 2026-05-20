@@ -346,10 +346,7 @@ namespace Action_SignedContract
                 }
                 else
                 {
-                    decimal vatAmount =
-                        Math.Round(
-                            invoiceAmount * taxValue / 100,
-                            MidpointRounding.AwayFromZero);
+                    decimal vatAmount = taxValue == 0 ? 0 : Math.Round((invoiceAmount / (((100 + taxValue) / 100)) / 10), MidpointRounding.AwayFromZero);
 
                     invoice["bsd_invoiceamount"] =
                         new Money(invoiceAmount);
