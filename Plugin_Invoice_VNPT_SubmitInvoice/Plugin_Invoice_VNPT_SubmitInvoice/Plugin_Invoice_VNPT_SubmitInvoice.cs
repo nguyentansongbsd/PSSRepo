@@ -31,6 +31,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         ImportInvByPatternRequest importInvByPatternRequest = new ImportInvByPatternRequest();
 
         string projectCode = string.Empty;
+        string email = string.Empty;
         public void Execute(IServiceProvider serviceProvider)
         {
             this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -47,12 +48,12 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 if (this.context.Depth > 3) return;
                 this.Target = (Entity)context.InputParameters["Target"];
                 this.enInvoice = service.Retrieve(Target.LogicalName, Target.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-                if (((OptionSetValue)enInvoice["statuscode"]).Value != 100000000) return; // Confirm = 100000000
+                if (((OptionSetValue)enInvoice["statuscode"]).Value != 100000003) return; // Approved = 100000003
                 enAccount = GetAccount();
                 enCustomer = GetCustomer();
                 if (enAccount == null) return;
-                if (!enAccount.Contains("bsd_webinvoice") || !enAccount.Contains("bsd_adminaccount") || !enAccount.Contains("bsd_adminpassword")
-                    || !enAccount.Contains("bsd_webserviceaccount") || !enAccount.Contains("bsd_webservicepassword")) throw new InvalidPluginExecutionException("Cau hinh thieu thong tin vnpt.");
+                if (!enAccount.Contains("bsd_webpublishservice") || !enAccount.Contains("bsd_adminaccount") || !enAccount.Contains("bsd_adminpassword")
+                    || !enAccount.Contains("bsd_webserviceaccount") || !enAccount.Contains("bsd_webservicepassword")) throw new InvalidPluginExecutionException("The VNPT configuration is missing information.");
 
                 importInvByPatternRequest.Account = enAccount["bsd_adminaccount"].ToString();
                 importInvByPatternRequest.ACpass = enAccount["bsd_adminpassword"].ToString();
@@ -71,8 +72,9 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 ns.Add("", "http://tempuri.org/");
                 ns.Add("soap", "http://schemas.xmlsoap.org/soap/envelope/");
                 string dataxml = XmlFormatHelper.FormatXml<SoapEnvelope>(soapEnvelope, ns);
-
-                ApiHelper.PostVNPT(enAccount["bsd_webinvoice"].ToString(), dataxml,this.tracingService);
+                tracingService.Trace("xmldata: " + dataxml);
+                
+                ApiHelper.PostVNPT(enAccount["bsd_webpublishservice"].ToString(), dataxml,this.tracingService);
             }
             catch (Exception ex)
             {
@@ -81,12 +83,13 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         }
         private Entity GetAccount() // Chu dau tu
         {
-            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode"));
+            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode", "bsd_emailinvoice"));
             this.projectCode = enProject.Contains("bsd_projectcode") ? enProject["bsd_projectcode"].ToString() + "-" : null;
+            this.email = enProject.Contains("bsd_emailinvoice") ? enProject["bsd_emailinvoice"].ToString() : null;
             if (!enProject.Contains("bsd_investor")) return null;
             Entity enAccount = service.Retrieve(((EntityReference)enProject["bsd_investor"]).LogicalName, 
                 ((EntityReference)enProject["bsd_investor"]).Id,
-                new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_webinvoice", "bsd_adminaccount", "bsd_adminpassword", 
+                new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_webpublishservice", "bsd_adminaccount", "bsd_adminpassword", 
                 "bsd_webserviceaccount", "bsd_webservicepassword", "bsd_name"));
             return enAccount;
         }
@@ -94,8 +97,8 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         {
             if (!enInvoice.Contains("bsd_purchaser")) return null;
             string[] attibutes = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? 
-                new string[] { "bsd_permanentaddress1", "bsd_fullname" } :
-                new string[] { "bsd_address", "bsd_name" };
+                new string[] { "bsd_permanentaddress1", "bsd_fullname", "bsd_identitycardnumber", "bsd_passport" } :
+                new string[] { "bsd_address", "bsd_name", "bsd_registrationcode", "emailaddress1" };
             //string attibuteID = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? "bsd_identitycardnumber" : "bsd_address";
             Entity enCustomer = service.Retrieve(((EntityReference)enInvoice["bsd_purchaser"]).LogicalName, ((EntityReference)enInvoice["bsd_purchaser"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(attibutes));
             return enCustomer;
@@ -121,11 +124,16 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             {
                 invoice.Buyer = this.enCustomer.Contains("bsd_fullname") ? this.enCustomer["bsd_fullname"].ToString() : null;
                 invoice.CusAddress = this.enCustomer.Contains("bsd_permanentaddress1") ? this.enCustomer["bsd_permanentaddress1"].ToString() : null;
+                invoice.SHChieu = this.enCustomer.Contains("bsd_passport") ? this.enCustomer["bsd_passport"].ToString() : null;
+                invoice.CCCDan = this.enCustomer.Contains("bsd_identitycardnumber") ? this.enCustomer["bsd_identitycardnumber"].ToString() : null;
+                invoice.EmailDeliver = this.email;
             }
             else if (this.enInvoice.Contains("bsd_purchaser") && ((EntityReference)this.enInvoice["bsd_purchaser"]).LogicalName == "account")
             {
                 invoice.CusName = this.enCustomer.Contains("bsd_name") ? this.enCustomer["bsd_name"].ToString() : null;
                 invoice.CusAddress = this.enCustomer.Contains("bsd_address") ? this.enCustomer["bsd_address"].ToString() : null;
+                invoice.CusTaxCode = this.enCustomer.Contains("bsd_registrationcode") ? this.enCustomer["bsd_registrationcode"].ToString() : null;
+                invoice.EmailDeliver = this.enCustomer.Contains("emailaddress1") ? this.enCustomer["emailaddress1"].ToString() : null;
             }
 
             invoice.ArisingDate = this.enInvoice.Contains("bsd_issueddate") ? ((DateTime)this.enInvoice["bsd_issueddate"]).ToString("dd/MM/yyyy") : null;
@@ -135,8 +143,11 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             invoice.CurrencyUnit = "VND";
             invoice.ExchangeRate = "1";
 
+            var invoiceCode = this.enInvoice.Contains("bsd_documentno") ? this.enInvoice["bsd_documentno"].ToString() : null;
+            invoice.Extra2 = invoiceCode; //!string.IsNullOrEmpty(invoiceCode) && invoiceCode.Length >= 6 ? invoiceCode.Substring(invoiceCode.Length - 6) : invoiceCode;
+
             decimal totalNoVat = 0;
-            decimal bsd_invoiceamount = this.enInvoice.Contains("bsd_invoiceamount") ? ((Money)this.enInvoice["bsd_invoiceamount"]).Value : 0;
+            decimal bsd_invoiceamount = this.enInvoice.Contains("bsd_invoiceamountb4vat") ? ((Money)this.enInvoice["bsd_invoiceamountb4vat"]).Value : 0;
             decimal bsd_vatamount = this.enInvoice.Contains("bsd_vatamount") ? ((Money)this.enInvoice["bsd_vatamount"]).Value : 0;
 
             Product product1 = new Product()
@@ -150,7 +161,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             if (enInvoice.Contains("bsd_namelandvalue"))
             {
                 totalNoVat = this.enInvoice.Contains("bsd_handoveramount") ? ((Money)this.enInvoice["bsd_handoveramount"]).Value : 0;
-                invoice.GrossValue_NonTax = totalNoVat != 0 ? Math.Round(totalNoVat, 0).ToString() : null;
+                invoice.GrossValue = totalNoVat != 0 ? Math.Round(totalNoVat, 0).ToString() : null;
                 Product product2 = new Product()
                 {
                     ProdName = this.enInvoice.Contains("bsd_namelandvalue") ? this.enInvoice["bsd_namelandvalue"].ToString() : null,

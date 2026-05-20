@@ -76,6 +76,12 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice.Models
                
         public string VatAmount8 { get; set; }
 
+        public string SHChieu { get; set; }
+
+        public string CCCDan { get; set; }
+
+        public string Extra2 { get; set; }
+
         public Products Products { get; set; }
     }
 }

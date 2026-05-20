@@ -66,6 +66,7 @@ namespace Action_ConfirmInvoice_Approve
                     {
                         Entity enInvoice = new Entity(invoice.LogicalName, invoice.Id);
                         enInvoice["bsd_issueddate"] = (DateTime)enConfirmInvoice["bsd_invoicedate"];
+                        enInvoice["statuscode"] = new OptionSetValue(100000003);//Approved
                         service.Update(enInvoice);
                         tracingService.Trace(((DateTime)enConfirmInvoice["bsd_invoicedate"]).ToString());
                     }
@@ -77,7 +78,7 @@ namespace Action_ConfirmInvoice_Approve
         {
             tracingService.Trace("Start Update Confirm Invoices");
             Entity enUpdate = new Entity(enConfirmInvoice.LogicalName, enConfirmInvoice.Id);
-            enUpdate["statuscode"] = new OptionSetValue(100000002);
+            enUpdate["statuscode"] = new OptionSetValue(100000002);//Approved
             enUpdate["bsd_approvedby"] = new EntityReference("systemuser",this.context.UserId);
             enUpdate["bsd_approvaldate"] = DateTime.Now;
             service.Update(enUpdate);
