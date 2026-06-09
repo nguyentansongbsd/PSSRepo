@@ -35,9 +35,12 @@
     &lt;attribute name="bsd_optioncodesams" alias="optOptionCodeSams" /&gt;
     &lt;attribute name="bsd_exchangeratesams" alias="optExchangeRateSams" /&gt;
     &lt;attribute name="bsd_contractnumber" alias="optContractNumber" /&gt;
+    &lt;attribute name="bsd_danumber" alias="optDanumber" /&gt;
     &lt;attribute name="bsd_dadate" alias="optDaDate" /&gt;
     &lt;attribute name="bsd_signeddadate" alias="optSignDaDate" /&gt;
     &lt;attribute name="bsd_contractdate" alias="optSpaDate" /&gt;
+    &lt;attribute name="bsd_contracttype" alias="opt_contracttype" /&gt;
+    &lt;attribute name="bsd_contracttypedescription" alias="opt_contracttypedescription" /&gt;
     &lt;attribute name="bsd_signedcontractdate" alias="optSignedSpaDate" /&gt;
     &lt;attribute name="bsd_paymentscheme" alias="optPaymentScheme" /&gt;
     &lt;attribute name="bsd_project" alias="optProject" /&gt;
@@ -98,7 +101,9 @@
       &lt;attribute name="bsd_diachi" alias="ac_ContactAddressEN" /&gt;
       &lt;attribute name="bsd_permanentaddress1" alias="ac_PermanentAddVN" /&gt;
       &lt;attribute name="bsd_diachithuongtru" alias="ac_PermanentAddEN" /&gt;
+      &lt;attribute name="bsd_membershiptier" alias="ac_membershiptier" /&gt;
       &lt;attribute name="telephone1" alias="ac_Phone" /&gt;
+      &lt;attribute name="bsd_specialbuyerdetails" alias="ac_specialbuyerdetails" /&gt;
       &lt;link-entity name="contact" from="contactid" to="primarycontactid" link-type="outer" alias="Primary"&gt;
         &lt;attribute name="telephone2" alias="Pri_HomePhone" /&gt;
         &lt;attribute name="fullname" alias="Pri_NameSys" /&gt;
@@ -119,12 +124,16 @@
     &lt;/link-entity&gt;
     &lt;link-entity name="contact" from="contactid" to="customerid" link-type="outer" alias="contact"&gt;
       &lt;attribute name="fullname" alias="contNameSys" /&gt;
+      &lt;attribute name="bsd_membershiptier" alias="cont_membershiptier" /&gt;
       &lt;attribute name="bsd_fullname" alias="contName" /&gt;
       &lt;attribute name="address1_country" alias="cont_Country1" /&gt;
       &lt;attribute name="bsd_country" alias="cont_Country" /&gt;
       &lt;attribute name="bsd_localization" alias="cont_Cityzen" /&gt;
       &lt;attribute name="emailaddress1" alias="cont_email" /&gt;
       &lt;attribute name="bsd_email2" alias="cont_email2" /&gt;
+      &lt;attribute name="bsd_passport" alias="Passport" /&gt;
+        &lt;attribute name="bsd_issuedonpassport" alias="Passport_IssuedOn" /&gt;
+        &lt;attribute name="bsd_placeofissuepassport" alias="Passport_PlaceOfIssueon" /&gt;
       &lt;attribute name="bsd_identitycardnumber" alias="ID" /&gt;
       &lt;attribute name="bsd_placeofissue" alias="ID_placeofissue" /&gt;
       &lt;attribute name="bsd_dategrant" alias="ID_dategrant" /&gt;
@@ -137,6 +146,7 @@
       &lt;attribute name="bsd_permanentcountry" alias="cont_PermanentCountry" /&gt;
       &lt;attribute name="mobilephone" alias="cont_Phone" /&gt;
       &lt;attribute name="telephone1" alias="contBusinessPhone" /&gt;
+      &lt;attribute name="bsd_specialbuyerdetails" alias="cont_specialbuyerdetails" /&gt;
     &lt;/link-entity&gt;
     &lt;link-entity name="bsd_coowner" from="bsd_optionentry" to="salesorderid" link-type="outer" alias="coowner"&gt;
       &lt;attribute name="bsd_name" alias="CooName" /&gt;
@@ -185,6 +195,9 @@
     &lt;/link-entity&gt;
     &lt;link-entity name="bsd_bankingloan" from="bsd_optionentry" to="salesorderid" alias="bank" link-type="outer" &gt;
       &lt;attribute name="bsd_bank" alias="bankName"/&gt;
+     &lt;filter&gt;
+        &lt;condition attribute="statuscode" operator="eq" value="100000000" /&gt;
+      &lt;/filter&gt;
     &lt;/link-entity&gt;
   &lt;/entity&gt;
 &lt;/fetch&gt;</CommandText>
@@ -228,6 +241,10 @@
           <DataField>optContractNumber</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="optDanumber">
+          <DataField>optDanumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="optDaDate">
           <DataField>optDaDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -252,17 +269,33 @@
           <DataField>optSpaDateValue</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
+        <Field Name="opt_contracttype">
+          <DataField>opt_contracttype</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="optSignedSpaDate">
           <DataField>optSignedSpaDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="opt_contracttypeValue">
+          <DataField>opt_contracttypeValue</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="optSignedSpaDateValue">
           <DataField>optSignedSpaDateValue</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
+        <Field Name="opt_contracttypedescription">
+          <DataField>opt_contracttypedescription</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="optPaymentScheme">
           <DataField>optPaymentScheme</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="opt_contracttypedescriptionValue">
+          <DataField>opt_contracttypedescriptionValue</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="optPaymentSchemeValue">
           <DataField>optPaymentSchemeValue</DataField>
@@ -580,12 +613,28 @@
           <DataField>cont_Country</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ac_membershiptier">
+          <DataField>ac_membershiptier</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="ac_PermanentAddVN">
           <DataField>ac_PermanentAddVN</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="cont_email">
           <DataField>cont_email</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ac_membershiptierValue">
+          <DataField>ac_membershiptierValue</DataField>
+          <rd:TypeName>System.Guid</rd:TypeName>
+        </Field>
+        <Field Name="ac_specialbuyerdetails">
+          <DataField>ac_specialbuyerdetails</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ac_membershiptierEntityName">
+          <DataField>ac_membershiptierEntityName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ac_CountryEntityName">
@@ -612,6 +661,10 @@
           <DataField>ccontNameSys</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Passport">
+          <DataField>Passport</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Pri_ID_card">
           <DataField>Pri_ID_card</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -620,12 +673,24 @@
           <DataField>Pri_Job_VN</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Passport_IssuedOn">
+          <DataField>Passport_IssuedOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Passport_IssuedOnValue">
+          <DataField>Passport_IssuedOnValue</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
         <Field Name="Pri_date">
           <DataField>Pri_date</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ac_Phone">
           <DataField>ac_Phone</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Passport_PlaceOfIssueon">
+          <DataField>Passport_PlaceOfIssueon</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Pri_dateValue">
@@ -672,12 +737,24 @@
           <DataField>Pri_Job</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="cont_membershiptier">
+          <DataField>cont_membershiptier</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="coo_email2">
           <DataField>coo_email2</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="cont_membershiptierValue">
+          <DataField>cont_membershiptierValue</DataField>
+          <rd:TypeName>System.Guid</rd:TypeName>
+        </Field>
         <Field Name="Pri__email">
           <DataField>Pri__email</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="cont_membershiptierEntityName">
+          <DataField>cont_membershiptierEntityName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Pri_MobiePhone">
@@ -762,6 +839,10 @@
         </Field>
         <Field Name="contBusinessPhone">
           <DataField>contBusinessPhone</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="cont_specialbuyerdetails">
+          <DataField>cont_specialbuyerdetails</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="CooName">
@@ -965,12 +1046,14 @@
     <DataSet Name="dsListProject">
       <Query>
         <DataSourceName>CRM</DataSourceName>
-        <CommandText>&lt;fetch distinct="true" &gt;
-  &lt;entity name="bsd_project" &gt;
+        <CommandText>&lt;fetch distinct="true"&gt;
+  &lt;entity name="bsd_project"&gt;
     &lt;attribute name="bsd_projectid" alias="projID" /&gt;
     &lt;attribute name="bsd_name" alias="projName" /&gt;
+    &lt;order attribute="bsd_name" descending="false" /&gt;
   &lt;/entity&gt;
-&lt;/fetch&gt;</CommandText>
+&lt;/fetch&gt;
+</CommandText>
         <Timeout>300</Timeout>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
@@ -1018,6 +1101,9 @@
                   <Width>4.0875cm</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>3.0027cm</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -1036,7 +1122,16 @@
                   <Width>3.10854cm</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>2.8175cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.85983cm</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>8.16208cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.38383cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>4.74896cm</Width>
@@ -1184,6 +1279,15 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>5.95313cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.96048cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.68016cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.87583cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1491,6 +1595,43 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox55">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>DA Number</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox55</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox86">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1713,6 +1854,81 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox62">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>
+Contract Type</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox62</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox65">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Contract Type Description</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox65</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox66">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1733,6 +1949,43 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox59">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Agent code</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox59</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3575,6 +3828,119 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox63">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Membership Tier</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox63</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox71">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>
+Special Buyer Details (Contact)</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox71</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox68">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>
+Special Buyer Details(Account)</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox68</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -3866,6 +4232,39 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="optDanumber">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!optDanumber.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>optDanumber</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="optOptionDate4">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -4092,6 +4491,72 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="opt_contracttype">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!opt_contracttype.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>opt_contracttype</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="opt_contracttypedescription">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!opt_contracttypedescription.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>opt_contracttypedescription</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox160">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -4107,6 +4572,37 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox154</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox61">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!accNameEN.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox61</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -4468,7 +4964,15 @@ Year(Today()) - Year(Fields!cont_birthdateValue.Value))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF((IsNothing((Fields!ID.Value))) = true,(Fields!Registrationcode.Value), (Fields!ID.Value))</Value>
+                                  <Value>=IIF(
+    Not IsNothing(Fields!ID.Value),
+    Fields!ID.Value,
+    IIF(
+        Not IsNothing(Fields!Passport.Value),
+        Fields!Passport.Value,
+        Fields!Registrationcode.Value
+    )
+)</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>ARIAL</FontFamily>
@@ -4507,17 +5011,29 @@ Year(Today()) - Year(Fields!cont_birthdateValue.Value))</Value>
                               <TextRuns>
                                 <TextRun>
                                   <Value>=IIF(
-    IsNothing(Fields!ID.Value),
+    IsNothing(Fields!ID.Value) AND IsNothing(Fields!Passport_IssuedOn.Value),
     IIF(
         IsNothing(Fields!accIssuedOnValue.Value),
         "(no date)",
         DateAdd("h", 7, Fields!accIssuedOnValue.Value)
     ),
     IIF(
-        IsNothing(Fields!ID_dategrant.Value),
+    Not IsNothing(Fields!Passport.Value),
+    IIF(
+        IsNothing(Fields!Passport_IssuedOn.Value),
         "(no date)",
-        Fields!ID_dategrant.Value
+        Fields!Passport_IssuedOn.Value
+    ),
+    IIF(
+        Not IsNothing(Fields!ID.Value),
+        IIF(
+            IsNothing(Fields!ID_dategrant.Value),
+            "(no date)",
+            Fields!ID_dategrant.Value
+        ),
+        "(no date)"
     )
+)
 )</Value>
                                   <Style>
                                     <Format>dd/MM/yyyy</Format>
@@ -4553,9 +5069,15 @@ Year(Today()) - Year(Fields!cont_birthdateValue.Value))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF((IsNothing((Fields!ID.Value))) = true,
-Fields!accPlaceofissue.Value,
-Fields!ID_placeofissue.Value)</Value>
+                                  <Value>=IIF(
+    Not IsNothing(Fields!ID.Value),
+    Fields!ID_placeofissue.Value,
+    IIF(
+        Not IsNothing(Fields!Passport_PlaceOfIssueon.Value),
+        Fields!Passport_PlaceOfIssueon.Value,
+        Fields!accPlaceofissue.Value
+    )
+)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -5443,8 +5965,10 @@ Fields!ccont_ID_dategrant.Value)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!optLandValue.Value</Value>
-                                  <Style />
+                                  <Value>=Fields!optLandValueValue.Value</Value>
+                                  <Style>
+                                    <Format>n0</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -5476,8 +6000,10 @@ Fields!ccont_ID_dategrant.Value)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!optMainFee.Value</Value>
-                                  <Style />
+                                  <Value>=Fields!optMainFeeValue.Value</Value>
+                                  <Style>
+                                    <Format>n0</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -5815,12 +6341,122 @@ Fields!optNetSellingPriceValue.Value/Fields!prdNetAreaValue.Value/Fields!RateVal
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox67">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ac_membershiptier.Value</Value>
+                                  <Style />
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!cont_membershiptier.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox67</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>5pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox72">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!cont_specialbuyerdetails.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox72</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>5pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox74">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ac_specialbuyerdetails.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox74</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>5pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -5900,7 +6536,7 @@ Fields!optNetSellingPriceValue.Value/Fields!prdNetAreaValue.Value/Fields!RateVal
             <Top>0.37924cm</Top>
             <Left>0.02646cm</Left>
             <Height>2.25832cm</Height>
-            <Width>274.83979cm</Width>
+            <Width>299.91742cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -5911,7 +6547,7 @@ Fields!optNetSellingPriceValue.Value/Fields!prdNetAreaValue.Value/Fields!RateVal
         <Height>3.28084cm</Height>
         <Style />
       </Body>
-      <Width>274.86625cm</Width>
+      <Width>299.94388cm</Width>
       <Page>
         <PageHeader>
           <Height>1.37583cm</Height>

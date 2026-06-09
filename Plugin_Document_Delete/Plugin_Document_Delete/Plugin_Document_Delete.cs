@@ -54,6 +54,7 @@ namespace Plugin_Document_Delete
                     </filter>
                   </entity>
                 </fetch>";
+                tracingService.Trace("fetch: " + fetchXml);
                 EntityCollection enTemplate = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
                 if (enTemplate == null || enTemplate.Entities.Count <= 0) return Guid.Empty;
                 return (Guid)enTemplate.Entities[0]["documenttemplateid"];
