@@ -435,7 +435,6 @@ namespace Action_Resv_GenPMS
             bool f_ESmanagementfee = false;
             bool f_signcontractinstallment = false;
             bool f_installmentForEDA = false;
-            DateTime d_estimate = get_EstimatehandoverDate(QO);
 
             bool f_last_ES = true;
             int i_dueCalMethod = -1;
@@ -498,6 +497,7 @@ namespace Action_Resv_GenPMS
             {
                 f_ESmaintenancefees = false;
                 f_ESmanagementfee = false;
+                f_es = false;
                 if (ents.Entities[i].Contains("bsd_maintenancefees"))
                 {
                     f_ESmaintenancefees = (bool)ents.Entities[i]["bsd_maintenancefees"];
@@ -519,35 +519,29 @@ namespace Action_Resv_GenPMS
                     throw new InvalidPluginExecutionException("Please select field 'Percent (%)' for '" + (string)ents.Entities[i]["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
                 decimal percent = (decimal)ents.Entities[i]["bsd_amountpercent"];
 
-                if (ents.Entities[i].Contains("bsd_duedatecalculatingmethod"))
-                {
-                    i_dueCalMethod = ((OptionSetValue)ents.Entities[i]["bsd_duedatecalculatingmethod"]).Value;
-                    if (i_dueCalMethod == 100000002)
-                        f_es = true;
-                    else f_es = false;
-                }
-                else f_es = false;
                 if (ents.Entities[i].Contains("bsd_lastinstallment") && (bool)ents.Entities[i]["bsd_lastinstallment"] == true)
                     f_lastinstallment = true;
-                else f_lastinstallment = false;
-
-                if (f_es)
-                {
-                }
-
-                if ((f_lastinstallment) || (f_es))
-                {
-
-                    CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount,
-                        percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
-
-                }
                 else
                 {
+                    f_lastinstallment = false;
+
                     if (!ents.Entities[i].Contains("bsd_duedatecalculatingmethod"))
                         throw new InvalidPluginExecutionException("Please choose Duedate Calculating Method for '" + (string)ents.Entities[i]["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
 
                     i_dueCalMethod = ((OptionSetValue)ents.Entities[i]["bsd_duedatecalculatingmethod"]).Value;
+                    if (i_dueCalMethod == 100000002) //Estimate handover date
+                        f_es = true;
+                }
+
+                traceService.Trace("i_dueCalMethod " + i_dueCalMethod);
+
+                if (f_lastinstallment || f_es || i_dueCalMethod == 100000000 || i_dueCalMethod == 100000003) // fixx
+                {
+                    CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount,
+                        percent, ref date, false, i_localization, f_lastinstallment, f_es, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA, i_dueCalMethod);
+                }
+                else
+                {
                     if (i_dueCalMethod == 100000001) // auto
                     {
                         // auto chia lam 2 truong hop
@@ -567,7 +561,6 @@ namespace Action_Resv_GenPMS
 
                         #region repair data --------------
                         f_lastinstallment = false;
-                        f_es = false;
                         if (!ents.Entities[i].Contains("bsd_nextperiodtype")) throw new InvalidPluginExecutionException("Please choose 'Next period type' for " + (string)ents.Entities[i]["bsd_name"] + " of Payment scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
 
                         int i_bsd_nextperiodtype = (int)((OptionSetValue)ents.Entities[i]["bsd_nextperiodtype"]).Value;
@@ -646,12 +639,6 @@ namespace Action_Resv_GenPMS
                         }
 
                     } // end of if i_duedateCal =100000000
-                    else if (i_dueCalMethod == 100000000) // fixx
-                    {
-                        traceService.Trace("QUA DAY ");
-                        //CreatePaymentPhase_fixDate(0, total_TMP, bsd_freightamount, ref f_last_ES, PM, ref orderNumber, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, trac);
-                        CreatePaymentPhase_fixDate(PM, ref orderNumber, bsd_managementfee, total_TMP, bsd_freightamount, ref f_last_ES, ents.Entities[i], QO, productId, totalAmount, percent, ref date, false, i_localization, f_lastinstallment, f_es, d_estimate, i_ESmethod, d_ESpercent, f_ESmaintenancefees, f_ESmanagementfee, len, trac, f_signcontractinstallment, graceDays, eda, spa, wordTemplateList, wordTemplateList_EN, f_installmentForEDA);
-                    }
                 }
             }
         }
@@ -896,7 +883,7 @@ namespace Action_Resv_GenPMS
                 isSignContract = true;
                 tmp["bsd_signcontractinstallment"] = true;
             }
-            tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
+            tmp["bsd_interestchargeper"] = orderNumber == 1 ? 0 : (f_installmentForEDA ? eda : spa);
             tmp["bsd_gracedays"] = graceDays;
             tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
@@ -914,36 +901,33 @@ namespace Action_Resv_GenPMS
 
         // fixx date
         private void CreatePaymentPhase_fixDate(Entity PM, ref int orderNumber, decimal bsd_managementfee, decimal totalTMP, decimal bsd_maintenancefees, ref bool f_last_ES, Entity en, Entity quoteEN, EntityReference productId,
-            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, DateTime d_esDate, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_installmentForEDA)
+            decimal reservationAmount, decimal percent, ref DateTime date, bool isLastTime, int i_localization, bool f_last, bool f_es, int i_ESmethod, decimal d_ESpercent, bool f_ESmaintenancefees, bool f_ESmanagementfee, int InstallmentCount, ITracingService trac, bool f_signcontractinstallment, int graceDays, decimal eda, decimal spa, EntityCollection wordTemplateList, EntityCollection wordTemplateList_EN, bool f_installmentForEDA, int i_dueCalMethod)
         {
             //throw new InvalidPluginExecutionException("CreatePaymentPhase_fixDate");
             Entity tmp = new Entity(en.LogicalName);
 
             if (f_last == false)
             {
-                if (f_es == false)
+                if (!en.Contains("bsd_fixeddate"))
                 {
-                    if (!en.Contains("bsd_fixeddate"))
+                    if (!quoteEN.Contains("bsd_quotecodesams"))
+                        throw new InvalidPluginExecutionException("Please choose field 'Fixeddate' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
+                }
+                if (orderNumber < totalNumber - 1)
+                {
+                    if (!quoteEN.Contains("bsd_quotecodesams"))
                     {
-                        if (!quoteEN.Contains("bsd_quotecodesams"))
-                            throw new InvalidPluginExecutionException("Please choose field 'Fixeddate' on '" + (string)en["bsd_name"] + "' of Payment Scheme " + (string)PM["bsd_paymentschemecode"] + " on Master data!");
+                        tmp["bsd_duedate"] = en["bsd_fixeddate"];
+                        tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
+                        date = (DateTime)en["bsd_fixeddate"];
                     }
-                    if (orderNumber < totalNumber - 1)
+                    else
                     {
-                        if (!quoteEN.Contains("bsd_quotecodesams"))
+                        if (en.Contains("bsd_fixeddate"))
                         {
                             tmp["bsd_duedate"] = en["bsd_fixeddate"];
                             tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
-                            date = (DateTime)en["bsd_fixeddate"];
-                        }
-                        else
-                        {
-                            if (en.Contains("bsd_fixeddate"))
-                            {
-                                tmp["bsd_duedate"] = en["bsd_fixeddate"];
-                                tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
 
-                            }
                         }
                     }
                 }
@@ -1064,7 +1048,7 @@ namespace Action_Resv_GenPMS
                     isSignContract = true;
                     tmp["bsd_signcontractinstallment"] = true;
                 }
-                tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
+                tmp["bsd_interestchargeper"] = orderNumber == 1 ? 0 : (f_installmentForEDA ? eda : spa);
                 tmp["bsd_gracedays"] = graceDays;
                 tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
@@ -1089,7 +1073,23 @@ namespace Action_Resv_GenPMS
                 if (f_last == false)
                 {
                     traceService.Trace("HUNG: " + f_last);
-                    tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(100000000);
+                    tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(i_dueCalMethod);
+
+                    // new up 1/6/2026
+                    if (!quoteEN.Contains("bsd_quotecodesams"))
+                    {
+                        tmp["bsd_duedate"] = en["bsd_fixeddate"];
+                        tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
+                        date = (DateTime)en["bsd_fixeddate"];
+                    }
+                    else
+                    {
+                        if (en.Contains("bsd_fixeddate"))
+                        {
+                            tmp["bsd_duedate"] = en["bsd_fixeddate"];
+                            tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
+                        }
+                    }
 
                     if (f_es == true)
                     {
@@ -1124,14 +1124,7 @@ namespace Action_Resv_GenPMS
                         tmp["bsd_estimateamount"] = new Money(tmpamount);
                         tmp["bsd_taxlandvalue"] = new Money(d_es_LandPercent);
                         tmp["bsd_tmpamount"] = new Money(tmpamount - d_es_LandPercent);
-                        if (!quoteEN.Contains("bsd_quotecodesams"))
-                            tmp["bsd_duedate"] = d_esDate;
-                        else
-                        {
-                            if (d_esDate != null)
-                                tmp["bsd_duedate"] = d_esDate;
-                        }
-                        tmp["bsd_duedatecalculatingmethod"] = new OptionSetValue(100000002);
+
                         // tmp["bsd_method"] = new OptionSetValue(i_ESmethod);
                         // tmp["bsd_percent"] = d_ESpercent;
 
@@ -1147,22 +1140,6 @@ namespace Action_Resv_GenPMS
                     }
                     else // f_es = falses
                     {
-
-                        if (!quoteEN.Contains("bsd_quotecodesams"))
-                        {
-                            tmp["bsd_duedate"] = en["bsd_fixeddate"];
-                            tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
-                            date = (DateTime)en["bsd_fixeddate"];
-                        }
-                        else
-                        {
-                            if (en.Contains("bsd_fixeddate"))
-                            {
-                                tmp["bsd_duedate"] = en["bsd_fixeddate"];
-                                tmp["bsd_fixeddate"] = en["bsd_fixeddate"];
-                            }
-                        }
-
                         //tmp["bsd_amountofthisphase"] = new Money(tmpamount + (tmpamount * tax / 100));
                         tmp["bsd_amountofthisphase"] = new Money(tmpamount);
                         tmp["bsd_amountofthisphasetext"] = GetTienBangChu_VN(tmpamount);
@@ -1215,7 +1192,7 @@ namespace Action_Resv_GenPMS
                         isSignContract = true;
                         tmp["bsd_signcontractinstallment"] = true;
                     }
-                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
+                    tmp["bsd_interestchargeper"] = orderNumber == 1 ? 0 : (f_installmentForEDA ? eda : spa);
                     tmp["bsd_gracedays"] = graceDays;
                     tmp["bsd_installmentforeda"] = f_installmentForEDA;
 
@@ -1257,7 +1234,7 @@ namespace Action_Resv_GenPMS
                         isSignContract = true;
                         tmp["bsd_signcontractinstallment"] = true;
                     }
-                    tmp["bsd_interestchargeper"] = f_installmentForEDA ? eda : spa;
+                    tmp["bsd_interestchargeper"] = orderNumber == 1 ? 0 : (f_installmentForEDA ? eda : spa);
                     tmp["bsd_gracedays"] = graceDays;
                     tmp["bsd_installmentforeda"] = f_installmentForEDA;
 

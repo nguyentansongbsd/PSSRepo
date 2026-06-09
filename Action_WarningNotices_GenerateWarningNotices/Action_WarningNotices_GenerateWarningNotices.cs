@@ -163,7 +163,8 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                                 warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
                                             }
                                             #endregion
-                                            var id = service.Create(warningNotices);
+                                            Guid id = service.Create(warningNotices);
+                                            copy_CownerForOE(OE.Id, id, warningNotices.LogicalName, "bsd_warningnotice");
                                             var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet("bsd_date", "bsd_noticesnumber"));
                                             dem++;
 
@@ -271,7 +272,8 @@ namespace Action_WarningNotices_GenerateWarningNotices
                                         warningNotices["bsd_odernumber_e"] = $"{((int)PSD["bsd_ordernumber"])}th";
                                     }
                                     #endregion
-                                    var id = service.Create(warningNotices);
+                                    Guid id = service.Create(warningNotices);
+                                    copy_CownerForOE(OE.Id, id, warningNotices.LogicalName, "bsd_warningnotice");
                                     var enWRN = service.Retrieve("bsd_warningnotices", id, new ColumnSet("bsd_date", "bsd_noticesnumber"));
                                     dem++;
 
@@ -299,6 +301,35 @@ namespace Action_WarningNotices_GenerateWarningNotices
             traceService.Trace("dem: " + dem);
             context.OutputParameters["returnN"] = dem.ToString();
         }
+        private void copy_CownerForOE(Guid idSource, Guid id, string localName, string fieldName)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_coowner"">
+                    <filter>
+                      <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idSource}"" />
+                      <condition attribute=""bsd_current"" operator=""eq"" value=""1"" />
+                    </filter>
+                  </entity>
+                </fetch>";
+            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            if (result.Entities.Count <= 0) return;
+            foreach (var item in result.Entities)
+            {
+                Entity it = new Entity(item.LogicalName);
+                item.Attributes.Remove(item.LogicalName + "id");
+                if(item.Contains("bsd_optionentry"))
+                    item.Attributes.Remove("bsd_optionentry");
+                if (item.Contains("bsd_reservation"))
+                    item.Attributes.Remove("bsd_reservation");
+                if (item.Contains("ownerid"))
+                    item.Attributes.Remove("ownerid");
+                item[fieldName] = new EntityReference(localName, id);
+                item.Id = Guid.NewGuid();
+                it = item;
+                service.Create(it);
+            }
+        }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
         {
             QueryExpression q = new QueryExpression(entity);
@@ -319,15 +350,20 @@ namespace Action_WarningNotices_GenerateWarningNotices
                     <attribute name='bsd_balance' />
                     <attribute name='bsd_ordernumber' />
                     <attribute name='bsd_gracedays' />
-
                     <attribute name='bsd_paymentscheme' />
-
-
                     <order attribute='bsd_duedate' descending='false' />
+
                     <filter type='and'>
                       <condition attribute='bsd_optionentry' operator='eq'  uitype='salesorder' value='{0}' />
                         <condition attribute='statuscode' operator='eq' value='100000000' />
                       <condition attribute='bsd_duedate' operator='not-null' />
+                    <condition attribute='bsd_duedatecalculatingmethod' operator='not-in'>
+                      <value>100000002</value>
+                      <value>100000003</value>
+                      <value>100000004</value>
+                      <value>100000005</value>
+                      <value>100000006</value>
+                    </condition>
                     </filter>
                   </entity>
                 </fetch>";

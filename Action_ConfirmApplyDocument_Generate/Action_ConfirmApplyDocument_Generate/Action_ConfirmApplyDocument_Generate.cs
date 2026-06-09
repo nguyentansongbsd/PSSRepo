@@ -37,25 +37,26 @@ namespace Action_ConfirmApplyDocument_Generate
             {
                 input04 = context.InputParameters["input04"].ToString();
             }
-            if (input01 == "Bước 01" && input02 != "")
+            if (input01 == "Buoc 01" && input02 != "")
             {
                 traceS.Trace("Bước 01");
                 Entity enTarget = new Entity("bsd_confirmapplydocument");
                 enTarget.Id = Guid.Parse(input02);
                 enTarget["bsd_powerautomate"] = true;
+                enTarget["bsd_generate"] = true;
                 service.Update(enTarget);
-                context.OutputParameters["output01"] = context.UserId.ToString();
-                string url = "";
-                EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
-                    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Apply Document Generate");
-                foreach (Entity item in configGolive.Entities)
-                {
-                    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
-                }
-                if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
-                context.OutputParameters["output02"] = url;
+                //context.OutputParameters["output01"] = context.UserId.ToString();
+                //string url = "";
+                //EntityCollection configGolive = RetrieveMultiRecord(service, "bsd_configgolive",
+                //    new ColumnSet(new string[] { "bsd_url" }), "bsd_name", "Confirm Apply Document Generate");
+                //foreach (Entity item in configGolive.Entities)
+                //{
+                //    if (item.Contains("bsd_url")) url = (string)item["bsd_url"];
+                //}
+                //if (url == "") throw new InvalidPluginExecutionException("Link to run PA not found. Please check again.");
+                //context.OutputParameters["output02"] = url;
             }
-            else if (input01 == "Bước 02" && input02 != "" && input03 != "")
+            else if (input01 == "Buoc 02" && input02 != "" && input03 != "")
             {
                 traceS.Trace("Bước 02");
                 EntityReferenceCollection collection = new EntityReferenceCollection();
@@ -64,7 +65,7 @@ namespace Action_ConfirmApplyDocument_Generate
                 Relationship relationship = new Relationship("bsd_bsd_confirmapplydocument_bsd_applydocum"); //schema name of N:N relationship
                 service.Disassociate("bsd_confirmapplydocument", Guid.Parse(input02), relationship, collection); //Pass the entity reference collections to be disassociated from the specific Email Send record
             }
-            else if (input01 == "Bước 03" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 03" && input02 != "" && input04 != "")
             {
                 traceS.Trace("Bước 03");
                 Entity enConfirmPayment = service.Retrieve("bsd_confirmapplydocument", Guid.Parse(input02), new ColumnSet(new string[]
@@ -119,7 +120,7 @@ namespace Action_ConfirmApplyDocument_Generate
                 }
                 context.OutputParameters["output02"] = string.Join(";", list);
             }
-            else if (input01 == "Bước 04" && input02 != "" && input03 != "" && input04 != "")
+            else if (input01 == "Buoc 04" && input02 != "" && input03 != "" && input04 != "")
             {
                 traceS.Trace("Bước 04");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
@@ -129,13 +130,14 @@ namespace Action_ConfirmApplyDocument_Generate
                 Relationship relationship = new Relationship("bsd_bsd_confirmapplydocument_bsd_applydocum"); //schema name of N:N relationship
                 service.Associate("bsd_confirmapplydocument", Guid.Parse(input02), relationship, collection);
             }
-            else if (input01 == "Bước 05" && input02 != "" && input04 != "")
+            else if (input01 == "Buoc 05" && input02 != "" && input04 != "")
             {
                 traceS.Trace("Bước 05");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
                 Entity enTarget = new Entity("bsd_confirmapplydocument");
                 enTarget.Id = Guid.Parse(input02);
                 enTarget["bsd_powerautomate"] = false;
+                enTarget["bsd_generate"] = false;
                 service.Update(enTarget);
             }
         }

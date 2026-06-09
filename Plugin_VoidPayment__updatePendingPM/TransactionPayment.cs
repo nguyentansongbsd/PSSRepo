@@ -11,7 +11,7 @@ namespace Plugin_VoidPayment_updatePendingPM
         IOrganizationService service = null;
         IPluginExecutionContext context;
         StringBuilder strMess = new StringBuilder();
-        public TransactionPayment(IOrganizationService service , IPluginExecutionContext context)
+        public TransactionPayment(IOrganizationService service, IPluginExecutionContext context)
         {
             this.service = service;
             this.context = context;
@@ -132,9 +132,9 @@ namespace Plugin_VoidPayment_updatePendingPM
             //    "bsd_managementfeepaid",
             //    "bsd_paiddate"
             //}));
-            Entity enInstallment = service.Retrieve("bsd_paymentschemedetail", ((EntityReference)en_trans["bsd_installment"]).Id,new ColumnSet(true));
+            Entity enInstallment = service.Retrieve("bsd_paymentschemedetail", ((EntityReference)en_trans["bsd_installment"]).Id, new ColumnSet(true));
             #endregion
-            strMess.AppendLine("Installment ID: "+ enInstallment.Id.ToString());
+            strMess.AppendLine("Installment ID: " + enInstallment.Id.ToString());
             decimal d_bsd_amountofthisphase = enInstallment.Contains("bsd_amountofthisphase") ? ((Money)enInstallment["bsd_amountofthisphase"]).Value : 0;
             decimal d_bsd_amountwaspaid = enInstallment.Contains("bsd_amountwaspaid") ? ((Money)enInstallment["bsd_amountwaspaid"]).Value : 0;
             int i_INS_statuscode = enInstallment.Contains("statuscode") ? ((OptionSetValue)enInstallment["statuscode"]).Value : 0;
@@ -174,15 +174,15 @@ namespace Plugin_VoidPayment_updatePendingPM
             if (i_trans_bsd_transactiontype == 100000001) // update interestcharge trong installment
             {
                 // revert - thi ins da tre- k can revert lai so ngay outstanding day
-                updateInterestcharge(en_trans,enInstallment);
+                updateInterestcharge(en_trans, enInstallment);
             }
             #endregion
 
             #region ----------- transaction type = Installment = 100000000 -------------------------
             if (i_trans_bsd_transactiontype == 100000000) // update installment
             {
-                updateInstallment(en_trans, enInstallment,ref d_oePiad);
-                
+                updateInstallment(en_trans, enInstallment, ref d_oePiad);
+
             }
             #endregion ------------
             strMess.AppendLine("Fees = 100000002");
@@ -190,7 +190,7 @@ namespace Plugin_VoidPayment_updatePendingPM
             if (i_trans_bsd_transactiontype == 100000002)
             {
                 updateFees(en_trans, enInstallment, ref d_oePiad);
-                
+
             }
             #endregion ------------
 
@@ -198,7 +198,7 @@ namespace Plugin_VoidPayment_updatePendingPM
             if (i_trans_bsd_transactiontype == 100000003)
             {
                 updateMiscellaneous(en_trans, enInstallment, ref d_oePiad);
-                
+
 
 
             }
@@ -213,13 +213,13 @@ namespace Plugin_VoidPayment_updatePendingPM
             decimal d_trans_bsd_amount = en_trans.Contains("bsd_amount") ? ((Money)en_trans["bsd_amount"]).Value : 0;
             if (i_bsd_interestchargestatus == 100000001) i_bsd_interestchargestatus = 100000000;
             d_bsd_interestwaspaid -= d_trans_bsd_amount;
-            Entity enInstallment_Update = new Entity(enInstallment.LogicalName,enInstallment.Id);
+            Entity enInstallment_Update = new Entity(enInstallment.LogicalName, enInstallment.Id);
             // k update lai lateday cua installment & OE vi interestcharge nay co san trong installment r
             enInstallment_Update["bsd_interestchargestatus"] = new OptionSetValue(i_bsd_interestchargestatus);
             enInstallment_Update["bsd_interestwaspaid"] = new Money(d_bsd_interestwaspaid);
             service.Update(enInstallment_Update);
         }
-        private void updateInstallment(Entity en_trans, Entity enInstallment,ref decimal d_oePiad)
+        private void updateInstallment(Entity en_trans, Entity enInstallment, ref decimal d_oePiad)
         {
             int i_INS_statuscode = enInstallment.Contains("statuscode") ? ((OptionSetValue)enInstallment["statuscode"]).Value : 0;
             decimal d_bsd_amountwaspaid = enInstallment.Contains("bsd_amountwaspaid") ? ((Money)enInstallment["bsd_amountwaspaid"]).Value : 0;
@@ -254,6 +254,30 @@ namespace Plugin_VoidPayment_updatePendingPM
             enInstallment_Update["bsd_actualgracedays"] = i_bsd_actualgracedays;
 
             service.Update(enInstallment_Update);
+            bool bsd_installmentforeda = enInstallment.Contains("bsd_installmentforeda") ? (bool)enInstallment["bsd_installmentforeda"] : false;
+            int i_Pms_bsd_ordernumber = enInstallment.Contains("bsd_ordernumber") ? (int)enInstallment["bsd_ordernumber"] : 1;
+            if (i_Pms_bsd_ordernumber == 1 || bsd_installmentforeda) revertInvoice_1st(((EntityReference)enInstallment["bsd_optionentry"]).Id);
+        }
+        private void revertInvoice_1st(Guid enOE)
+        {
+            strMess.AppendLine("revertInvoice_1st");
+            // Instantiate QueryExpression QEbsd_invoice
+            var QEbsd_invoice = new QueryExpression("bsd_invoice");
+
+            // Add all columns to QEbsd_invoice.ColumnSet
+            QEbsd_invoice.ColumnSet.AllColumns = true;
+
+            // Define filter QEbsd_invoice.Criteria
+            QEbsd_invoice.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, enOE);
+            QEbsd_invoice.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            QEbsd_invoice.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);
+            EntityCollection encolInvoice = service.RetrieveMultiple(QEbsd_invoice);
+            foreach (Entity enInvoice in encolInvoice.Entities)
+            {
+                Entity enInvoiceUpdate = new Entity(enInvoice.LogicalName, enInvoice.Id);
+                enInvoiceUpdate["statuscode"] = new OptionSetValue(100000001);//Revert
+                service.Update(enInvoiceUpdate);
+            }
         }
         private void updateFees(Entity en_trans, Entity enInstallment, ref decimal d_oePiad)
         {
@@ -266,7 +290,7 @@ namespace Plugin_VoidPayment_updatePendingPM
             decimal d_bsd_managementamount = enInstallment.Contains("bsd_managementamount") ? ((Money)enInstallment["bsd_managementamount"]).Value : 0;
             decimal d_bsd_maintenancefeepaid = enInstallment.Contains("bsd_maintenancefeepaid") ? ((Money)enInstallment["bsd_maintenancefeepaid"]).Value : 0;
             decimal d_bsd_managementfeepaid = enInstallment.Contains("bsd_managementfeepaid") ? ((Money)enInstallment["bsd_managementfeepaid"]).Value : 0;
-            strMess.AppendLine("bsd_maintenancefeepaid befor voide : "+ d_bsd_maintenancefeepaid.ToString());
+            strMess.AppendLine("bsd_maintenancefeepaid befor voide : " + d_bsd_maintenancefeepaid.ToString());
             strMess.AppendLine("bsd_managementfeepaid befor voide : " + d_bsd_managementfeepaid.ToString());
             Entity enInstallment_Update = new Entity(enInstallment.LogicalName, enInstallment.Id);
             if (i_bsd_feetype == 100000000) // main
@@ -303,7 +327,7 @@ namespace Plugin_VoidPayment_updatePendingPM
             decimal d_MI_balance = en_MIS.Contains("bsd_balance") ? ((Money)en_MIS["bsd_balance"]).Value : 0;
             decimal d_MI_am = en_MIS.Contains("bsd_amount") ? ((Money)en_MIS["bsd_amount"]).Value : 0;
             strMess.AppendLine("updateMiscellaneous");
-            
+
             Entity en_MIS_up = new Entity(en_MIS.LogicalName);
             en_MIS_up.Id = en_MIS.Id;
             en_MIS_up["bsd_paidamount"] = new Money(d_MI_paid - d_trans_bsd_amount);

@@ -7,10 +7,11 @@
     <ProjectGuid>{C270878D-AF06-46D0-94C5-FAA7D0FB3FE1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Plugin_AutoShare_All</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>Plugin_AppendixContract_CreateAdvancePayment</RootNamespace>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

@@ -175,8 +175,8 @@ namespace Plugin_PaymentNotices_CreateQRCode
             string finalCustomerName = RemoveDiacritics(customerName ?? "").ToUpper();
             string finalUnitName = (unitName ?? "").ToUpper();
             
-            // 5. Kết hợp và trả về kết quả
-            return $"{finalUnitName}_{projectname}_{finalCustomerName}_Thanh toan dot {ordernumber}";
+            // 5. Kết hợp và trả về kết quả1
+            return $"{finalUnitName} {projectname} {finalCustomerName} Thanh toan dot {ordernumber}";
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Plugin_PaymentNotices_CreateQRCode
                 bankNumber: bankNumber,
                 purpose: purpose
             );
-
+            qrPay.PointOfInitiationMethod = "11";
             // Xây dựng chuỗi VietQR và trả về
             return qrPay.Build();
         }

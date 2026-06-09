@@ -38,7 +38,7 @@ namespace Plugin_OE_NumberToText
                     Up_totalpaidincludecoa(enIns, "bsd_totalamountpaidinstallment");
                     break;
                 case "bsd_advancepayment":
-                    if (!(target.Contains("statuscode") && ((OptionSetValue)target["statuscode"]).Value == 100000000))  //Collected
+                    if (!(target.Contains("statuscode") && (((OptionSetValue)target["statuscode"]).Value == 100000000 || ((OptionSetValue)target["statuscode"]).Value == 100000004)))
                         return;
 
                     Entity enAdvencePayment = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_optionentry" }));
@@ -48,13 +48,23 @@ namespace Plugin_OE_NumberToText
                     Up_totalpaidincludecoa(enAdvencePayment, "bsd_totaladvancepayment");
                     break;
                 case "salesorder":
-                    Entity enSalesOrder = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_totalpaidincludecoa", "bsd_refundableamount" }));
+                    Entity enSalesOrder = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(new string[] { "bsd_totalpaidincludecoa", "bsd_refundableamount",
+                                                                            "bsd_additionalpayment", "bsd_finalrefundamount", "bsd_confirmationamount"}));
                     Entity enUp = new Entity(enSalesOrder.LogicalName, enSalesOrder.Id);
                     enUp["bsd_totalpaidincludecoatext"] = GetTienBangChu_VN(enSalesOrder, "bsd_totalpaidincludecoa");
                     enUp["bsd_totalpaidincludecoatexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_totalpaidincludecoa");
 
                     enUp["bsd_refundableamounttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_refundableamount");
                     enUp["bsd_refundableamounttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_refundableamount");
+
+                    enUp["bsd_additionalpaymenttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_additionalpayment");
+                    enUp["bsd_additionalpaymenttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_additionalpayment");
+
+                    enUp["bsd_finalrefundamounttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_finalrefundamount");
+                    enUp["bsd_finalrefundamounttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_finalrefundamount");
+
+                    enUp["bsd_confirmationamounttext"] = GetTienBangChu_VN(enSalesOrder, "bsd_confirmationamount");
+                    enUp["bsd_confirmationamounttexten"] = GetTienBangChu_ENG(enSalesOrder, "bsd_confirmationamount");
 
                     service.Update(enUp);
                     break;

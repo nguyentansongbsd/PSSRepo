@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Remoting.Services;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,39 +65,67 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                         AprroveDetail(item);
                         break;
                     default: //khác Update Only for Units
-                        if(!en.Contains("bsd_optionentry"))
+                        //if(!en.Contains("bsd_optionentry"))
+                        //{
+                        //    HandleError(item, "The product does not have a contract. Please check again.");
+                        //    return;
+                        //}
+                        Entity enHD = null;
+                        Entity enInstallment = null;
+                        if (en.Contains("bsd_optionentry") && en["bsd_optionentry"] != null)
                         {
-                            HandleError(item, "The product does not have a contract. Please check again.");
-                            return;
-                        }    
-                        EntityReference enHDRef = (EntityReference)en["bsd_optionentry"];
-                        Entity enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
-                        EntityReference enInstallmentRef = (EntityReference)en["bsd_installment"];
-                        Entity enInstallment = service.Retrieve(enInstallmentRef.LogicalName, enInstallmentRef.Id, new ColumnSet(true));
+                            EntityReference enHDRef = (EntityReference)en["bsd_optionentry"];
+                            enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
+                        }
+                        
+                        if (en.Contains("bsd_installment") && en["bsd_installment"] != null)
+                        {
+                            EntityReference enInstallmentRef = (EntityReference)en["bsd_installment"];
+                            enInstallment = service.Retrieve(enInstallmentRef.LogicalName, enInstallmentRef.Id, new ColumnSet(true));
+                        }
                         tracingService.Trace($"CheckExistParentInDetail");
                         CheckExistParentInDetail(ref result, item);
                         if (!result) return;
                         tracingService.Trace($"CheckStatusHD");
-                        CheckStatusHD(ref result, item, enHD);
+                        if(enHD != null)
+                        {
+                            CheckStatusHD(ref result, item, enHD);
+                        }
                         if (!result) return;
                         tracingService.Trace($"CheckPaid");
                         //CheckPaid(ref result, item, enInstallment);
                         //if (!result) return;
                         //tracingService.Trace($"CheckDueDate");
-                        CheckDueDate(ref result, item, enInstallment, enHD);
+                        if (enHD != null && enInstallment != null)
+                        {
+                            CheckDueDate(ref result, item, enInstallment, enHD);
+                        }
                         if (!result) return;
                         if (bsd_types == 100000001)// Update all
                         {
+                            tracingService.Trace("upadate all");
                             tracingService.Trace($"UpdateFromDetailToUnitToInstallmentToHD");
-                            UpdateFromDetailToUnitToInstallmentToHD(ref result, item, enInstallment, enUnit, enHD);
+                            if (enHD != null && enInstallment != null)
+                            {
+                                UpdateFromDetailToUnitToInstallmentToHD(ref result, item, enInstallment, enUnit, enHD);
+                            }
+                            if (enInstallment != null)
+                            {
+                                UpdateFromDetailToInstallment(ref result, item, enInstallment);
+                            }
                             UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
+                            UpdateEstimateHandoverDateFromDetailToUnit(ref result, item, enUnit);
                         }
                         else
                         {
                             if (bsd_types == 100000002)
                             {
                                 tracingService.Trace($"UpdateFromDetailToInstallment");
-                                UpdateFromDetailToInstallment(ref result, item, enInstallment);
+                                if (enInstallment != null)
+                                {
+                                    UpdateFromDetailToInstallment(ref result, item, enInstallment);
+
+                                }
                                 UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
                             }
                         }
@@ -166,6 +195,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         /// </summary>
         public void UpdateOPDateFromMasterToUnit(ref bool result, Entity master, Entity enUnit)
         {
+            tracingService.Trace("vô UpdateOPDateFromMasterToUnit");
             Entity enUnitUpdate = new Entity(enUnit.LogicalName, enUnit.Id);
             if (!item.Contains("bsd_estimatehandoverdatenew")) return;
             enUnitUpdate["bsd_opdate"] = item["bsd_estimatehandoverdatenew"];
@@ -221,8 +251,8 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             }
         }
         /// <summary>
-        /// Kiểm tra ngày đến hạn mới trên entity con (Payment due date [bsd_paymentduedate] có lớn hơn đợt phía trước?
-        /// Kiểm tra ngày đến hạn mới trên entity con (Payment due date [bsd_paymentduedate] có nhỏ hơn đợt phía sau?
+        /// Kiểm tra ngày đến hạn mới trên entity con (Estimate Handover Date (New) [bsd_estimatehandoverdatenew] có lớn hơn đợt phía trước?
+        /// Kiểm tra ngày đến hạn mới trên entity con (Estimate Handover Date (New) [bsd_estimatehandoverdatenew] có nhỏ hơn đợt phía sau?
         /// </summary>
         /// <param name="result"></param>
         /// <param name="item"></param>
@@ -230,8 +260,8 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
         /// <param name="enHD"></param>
         public void CheckDueDate(ref bool result, Entity item, Entity enInstallment, Entity enHD)
         {
-
-            var newDate = (DateTime)item["bsd_paymentduedate"];
+            if (enHD == null || enInstallment == null) return;
+            var newDate = (DateTime)item["bsd_estimatehandoverdatenew"];
 
             var query = new QueryExpression(enInstallment.LogicalName);
             query.ColumnSet.AllColumns = true;
@@ -273,40 +303,48 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             }
         }
 
-        /// <summary>
-        /// Cập nhật field Estimate Handover Date (New) [bsd_estimatehandoverdatenew] trên entity Con qua 2 field 
-        ///-Estimate Handover Date[bsd_estimatehandoverdate] trêm entity Unit 
-        ///-Estimate Handover Date(Contract) [bsd_estimatehandoverdatecontract]
-        ///Cập nhật field Payment due date[bsd_paymentduedate] trên entity Con qua field Due Date của installment
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="item"></param>
-        /// <param name="enInstallment"></param>
-        /// <param name="enHD"></param>
+        // <summary>
+        // Cập nhật field Estimate Handover Date (New) [bsd_estimatehandoverdatenew] trên entity Con qua 2 field 
+        //-Estimate Handover Date[bsd_estimatehandoverdate] trêm entity Unit 
+        //-Estimate Handover Date(Contract) [bsd_estimatehandoverdatecontract]
+        //Cập nhật field Estimate Handover Date(New)[bsd_estimatehandoverdatenew] trên entity Con qua field Due Date của installment
+        // </summary>
+        //<param name="result"></param>
+        // <param name="item"></param>
+        // <param name="enInstallment"></param>
+        // <param name="enHD"></param>
         public void UpdateFromDetailToUnitToInstallmentToHD(ref bool result, Entity item, Entity enInstallment, Entity unit, Entity enHD)
         {
             Entity enUnitUpdate = new Entity(unit.LogicalName, unit.Id);
             enUnitUpdate["bsd_estimatehandoverdate"] = item["bsd_estimatehandoverdatenew"];
             service.Update(enUnitUpdate);
-
-            Entity enInstallmentUpdate = new Entity(enInstallment.LogicalName, enInstallment.Id);
-            enInstallmentUpdate["bsd_duedate"] = item["bsd_paymentduedate"];
-            service.Update(enInstallmentUpdate);
-
-            Entity enHDUpdate = new Entity(enHD.LogicalName, enHD.Id);
-            enHDUpdate["bsd_estimatehandoverdatecontract"] = item["bsd_estimatehandoverdatenew"];
-            service.Update(enHDUpdate);
+            if(enInstallment != null)
+            {
+                Entity enInstallmentUpdate = new Entity(enInstallment.LogicalName, enInstallment.Id);
+                enInstallmentUpdate["bsd_duedate"] = item["bsd_estimatehandoverdatenew"];
+                service.Update(enInstallmentUpdate);
+            }
+            
+            if (enHD != null)
+            {
+                Entity enHDUpdate = new Entity(enHD.LogicalName, enHD.Id);
+                enHDUpdate["bsd_estimatehandoverdatecontract"] = item["bsd_estimatehandoverdatenew"];
+                service.Update(enHDUpdate);
+            }
+            
+        //
         }
-        /// <summary>
-        /// Cập nhật field Payment due date [bsd_paymentduedate] trên entity Con qua field  Due Date của installment  
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="item"></param>
-        /// <param name="enInstallment"></param>
+        // <summary>
+        // Cập nhật field Estimate Handover Date(New)[bsd_estimatehandoverdatenew] trên entity Con qua field  Due Date của installment  
+        // </summary>
+        // <param name="result"></param>
+        // <param name="item"></param>
+        // <param name="enInstallment"></param>
         public void UpdateFromDetailToInstallment(ref bool result, Entity item, Entity enInstallment)
         {
+            if (enInstallment == null) return;
             Entity enInstallmentUpdate = new Entity(enInstallment.LogicalName, enInstallment.Id);
-            enInstallmentUpdate["bsd_duedate"] = item["bsd_paymentduedate"];
+            enInstallmentUpdate["bsd_duedate"] = item["bsd_estimatehandoverdatenew"];
             service.Update(enInstallmentUpdate);
         }
     }

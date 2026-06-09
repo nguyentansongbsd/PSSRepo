@@ -7,10 +7,11 @@
     <ProjectGuid>{A4499E9B-4C19-41A4-B8D0-FF233BD70E6A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Action_Termination_Refund</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>Action_Termination_Refund</RootNamespace>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

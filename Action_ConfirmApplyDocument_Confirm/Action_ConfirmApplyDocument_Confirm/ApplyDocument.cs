@@ -74,6 +74,11 @@ namespace Action_ConfirmApplyDocument_Confirm
         public void paymentInstallment(Entity en_app, ref decimal totalapplyamout, string type, ref string str0, ref string str00, ArrayList listCheckFee)
         {
             Entity en_OE = service.Retrieve("salesorder", ((EntityReference)en_app["bsd_optionentry"]).Id, new ColumnSet(true));
+            int statuscode_OE = en_OE.Contains("statuscode") ? ((OptionSetValue)en_OE["statuscode"]).Value : 0;
+            if (statuscode_OE == 100000006)
+                throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+            if (statuscode_OE == 100000004)
+                throw new InvalidPluginExecutionException("Option Entry has been completed.");
             string optionentryID = en_OE.Id.ToString();
             if (!en_OE.Contains("bsd_unitnumber")) throw new InvalidPluginExecutionException("Cannot find Unit information in Option Entry " + (string)en_OE["name"] + "!");
             d_oe_bsd_totalamountpaid = en_OE.Contains("bsd_totalamountpaid") ? ((Money)en_OE["bsd_totalamountpaid"]).Value : 0;
@@ -780,8 +785,8 @@ namespace Action_ConfirmApplyDocument_Confirm
                 {
                     sttUnit = 100000002;
                     sttOE = 100000003; //Being Payment (khi da sign contract)
-                    if (detailLastID == en_Ins.Id.ToString() && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
-                                        psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                    if (checkPaid_Installment(en_OE.Id) && checkPaid_interest_main_mana_Installment(en_OE.Id)
+                    && enmis != null && enmis.Entities.Count == 0)
                         sttOE = 100000004; //Complete Payment
                 }
             }
@@ -797,6 +802,42 @@ namespace Action_ConfirmApplyDocument_Confirm
 
             en_OEup["statuscode"] = new OptionSetValue(sttOE);
             service.Update(en_OEup);
+        }
+        private bool checkPaid_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <attribute name=""bsd_ordernumber"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <filter type=""or"">
+                    <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                  </filter>
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
         }
         private bool check_Ins_Paid(IOrganizationService crmservices, Guid oeID, int i_ordernumber)
         {

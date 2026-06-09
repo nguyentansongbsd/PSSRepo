@@ -187,56 +187,56 @@ namespace Plugin_AutoShareRecord
                     //            }
                     //        }
                     //    }
-                    if (inputParameter.LogicalName == "bsd_coowner")
-                    {
-                        Entity entity13 = this.service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(new string[3]
-                        {
-            "bsd_reservation",
-            "bsd_optionentry",
-            "bsd_subsale"
-                        }));
-                        Entity entity14 = new Entity();
-                        Guid guid = new Guid();
-                        Guid id;
-                        if (entity13.Contains("bsd_reservation"))
-                            id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_reservation"]).LogicalName, ((EntityReference)entity13["bsd_reservation"]).Id, new ColumnSet(new string[1]
-                            {
-              "bsd_projectid"
-                            }))["bsd_projectid"]).Id;
-                        else if (entity13.Contains("bsd_optionentry"))
-                        {
-                            id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_optionentry"]).LogicalName, ((EntityReference)entity13["bsd_optionentry"]).Id, new ColumnSet(new string[1]
-                            {
-              "bsd_project"
-                            }))["bsd_project"]).Id;
-                        }
-                        else
-                        {
-                            if (!entity13.Contains("bsd_subsale"))
-                                throw new InvalidPluginExecutionException("Cannot create Co-owner!");
-                            id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_subsale"]).LogicalName, ((EntityReference)entity13["bsd_subsale"]).Id, new ColumnSet(new string[1]
-                            {
-              "bsd_project"
-                            }))["bsd_project"]).Id;
-                        }
-                        Entity entity15 = this.service.Retrieve("bsd_project", id, new ColumnSet(new string[2]
-                        {
-            "bsd_projectcode",
-            "bsd_name"
-                        }));
-                        string ProjectCode = entity15.Contains("bsd_projectcode") ? (string)entity15["bsd_projectcode"] : "";
-                        int num;
-                        bool FinTeam = (num = 1) != 0;
-                        bool CcrTeam = num != 0;
-                        bool SaleTeam = num != 0;
-                        bool SaleMgtTeam = num != 0;
-                        EntityCollection teamAccess = this.Get_TeamAccess(ProjectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
-                        if (teamAccess.Entities.Count > 0)
-                        {
-                            foreach (Entity entity16 in (Collection<Entity>)teamAccess.Entities)
-                                this.Role_SharePrivileges(logicalName, inputParameter.Id, entity16.Id, true, true, true, this.service, false);
-                        }
-                    }
+            //        if (inputParameter.LogicalName == "bsd_coowner")
+            //        {
+            //            Entity entity13 = this.service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(new string[3]
+            //            {
+            //"bsd_reservation",
+            //"bsd_optionentry",
+            //"bsd_subsale"
+            //            }));
+            //            Entity entity14 = new Entity();
+            //            Guid guid = new Guid();
+            //            Guid id;
+            //            if (entity13.Contains("bsd_reservation"))
+            //                id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_reservation"]).LogicalName, ((EntityReference)entity13["bsd_reservation"]).Id, new ColumnSet(new string[1]
+            //                {
+            //  "bsd_projectid"
+            //                }))["bsd_projectid"]).Id;
+            //            else if (entity13.Contains("bsd_optionentry"))
+            //            {
+            //                id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_optionentry"]).LogicalName, ((EntityReference)entity13["bsd_optionentry"]).Id, new ColumnSet(new string[1]
+            //                {
+            //  "bsd_project"
+            //                }))["bsd_project"]).Id;
+            //            }
+            //            else
+            //            {
+            //                if (!entity13.Contains("bsd_subsale"))
+            //                    throw new InvalidPluginExecutionException("Cannot create Co-owner!");
+            //                id = ((EntityReference)this.service.Retrieve(((EntityReference)entity13["bsd_subsale"]).LogicalName, ((EntityReference)entity13["bsd_subsale"]).Id, new ColumnSet(new string[1]
+            //                {
+            //  "bsd_project"
+            //                }))["bsd_project"]).Id;
+            //            }
+            //            Entity entity15 = this.service.Retrieve("bsd_project", id, new ColumnSet(new string[2]
+            //            {
+            //"bsd_projectcode",
+            //"bsd_name"
+            //            }));
+            //            string ProjectCode = entity15.Contains("bsd_projectcode") ? (string)entity15["bsd_projectcode"] : "";
+            //            int num;
+            //            bool FinTeam = (num = 1) != 0;
+            //            bool CcrTeam = num != 0;
+            //            bool SaleTeam = num != 0;
+            //            bool SaleMgtTeam = num != 0;
+            //            EntityCollection teamAccess = this.Get_TeamAccess(ProjectCode, SaleTeam, CcrTeam, FinTeam, SaleMgtTeam);
+            //            if (teamAccess.Entities.Count > 0)
+            //            {
+            //                foreach (Entity entity16 in (Collection<Entity>)teamAccess.Entities)
+            //                    this.Role_SharePrivileges(logicalName, inputParameter.Id, entity16.Id, true, true, true, this.service, false);
+            //            }
+            //        }
                     //    if (inputParameter.LogicalName == "bsd_assign")
                     //    {
                     //        Entity entity17 = this.service.Retrieve(logicalName, inputParameter.Id, new ColumnSet(new string[3]

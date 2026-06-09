@@ -219,6 +219,11 @@ namespace Action_ConfirmPayment_Confirm
                     Entity optionentryEn = paymentEn.Contains("bsd_optionentry") ? service.Retrieve("salesorder", ((EntityReference)paymentEn["bsd_optionentry"]).Id, new ColumnSet(true)) : null;
                     if (optionentryEn != null)
                     {
+                        int statuscode_OE = optionentryEn.Contains("statuscode") ? ((OptionSetValue)optionentryEn["statuscode"]).Value : 0;
+                        if (statuscode_OE == 100000006)
+                            throw new InvalidPluginExecutionException("Option Entry has been terminated.");
+                        if (statuscode_OE == 100000004)
+                            throw new InvalidPluginExecutionException("Option Entry has been completed.");
                         strMess.AppendLine("21");
                         var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
                         string optionentryID = optionentryEn.Id.ToString();
@@ -287,8 +292,8 @@ namespace Action_ConfirmPayment_Confirm
                                 sttUnit = 100000002;
                                 sttOE = 100000003; //Being Payment (khi da sign contract)
 
-                                if ((detailLastID == PaymentDetailEn.Id.ToString()) && psd_statuscode == 100000001 && psd_statuscodeInterest == 100000001 && psd_statuscodeFeeMain &&
-                                        psd_statuscodeFeeMana && enmis != null && enmis.Entities.Count == 0)
+                                if (checkPaid_Installment(optionentryEn.Id) && checkPaid_interest_main_mana_Installment(optionentryEn.Id)
+                                && enmis != null && enmis.Entities.Count == 0)
                                     sttOE = 100000004; //Complete Payment
                             }
                         }
@@ -486,6 +491,42 @@ namespace Action_ConfirmPayment_Confirm
                 enConfirmPayment["statuscode"] = new OptionSetValue(100000000);
                 service.Update(enConfirmPayment);
             }
+        }
+        private bool checkPaid_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <attribute name=""bsd_ordernumber"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <filter type=""or"">
+                    <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                  </filter>
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
         }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
         {

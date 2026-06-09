@@ -127,11 +127,20 @@ namespace Action_ConfirmPayment_Generate
             {
                 traceS.Trace("Bước 04");
                 service = factory.CreateOrganizationService(Guid.Parse(input04));
-                EntityReferenceCollection collection = new EntityReferenceCollection();
-                var reference = new EntityReference("bsd_payment", Guid.Parse(input03));
-                collection.Add(reference); //Create a collection of entity references
-                Relationship relationship = new Relationship("bsd_bsd_confirmpayment_bsd_payment"); //schema name of N:N relationship
-                service.Associate("bsd_confirmpayment", Guid.Parse(input02), relationship, collection);
+                var qe = new QueryExpression("bsd_bsd_confirmpayment_bsd_payment");
+                qe.ColumnSet = new ColumnSet("bsd_confirmpaymentid", "bsd_paymentid");
+                qe.Criteria.AddCondition("bsd_confirmpaymentid", ConditionOperator.Equal, input02);
+                qe.Criteria.AddCondition("bsd_paymentid", ConditionOperator.Equal, input03);
+                var exists = service.RetrieveMultiple(qe).Entities.Any();
+                if (!exists)
+                {
+                    EntityReferenceCollection collection = new EntityReferenceCollection();
+                    var reference = new EntityReference("bsd_payment", Guid.Parse(input03));
+                    collection.Add(reference); //Create a collection of entity references
+                    Relationship relationship = new Relationship("bsd_bsd_confirmpayment_bsd_payment"); //schema name of N:N relationship
+                    service.Associate("bsd_confirmpayment", Guid.Parse(input02), relationship, collection);
+                }
+
             }
             else if (input01 == "Bước 05" && input02 != "" && input04 != "")
             {

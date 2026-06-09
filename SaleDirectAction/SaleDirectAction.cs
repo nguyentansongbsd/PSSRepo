@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IdentityModel.Metadata;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -56,9 +57,9 @@ namespace SaleDirectAction
                         throw new InvalidPluginExecutionException("This unit is not public!");
                     if (((OptionSetValue)entity1["statuscode"]).Value == 100000002)
                         throw new InvalidPluginExecutionException("This unit was sold!");
-                    if (!entity1.Contains("bsd_floor"))
+                    if (!entity1.Contains("bsd_floor") && !entity1.Contains("bsd_plotnumber"))
                         throw new InvalidPluginExecutionException("Please select floor for this unit!");
-                    if (!entity1.Contains("bsd_blocknumber"))
+                    if (!entity1.Contains("bsd_blocknumber") && !entity1.Contains("bsd_landlot"))
                         throw new InvalidPluginExecutionException("Please select block for this unit!");
                     if (!entity1.Contains("bsd_projectcode"))
                         throw new InvalidPluginExecutionException("Please select project for this unit!");
@@ -111,8 +112,8 @@ namespace SaleDirectAction
                     Entity entity4 = new Entity("opportunityproduct");
                     entity4["opportunityid"] = entity4["bsd_booking"] = new EntityReference("opportunity", guid);
                     entity4["uomid"] = entity1["defaultuomid"];
-                    entity4["bsd_floor"] = entity1["bsd_floor"];
-                    entity4["bsd_block"] = entity1["bsd_blocknumber"];
+                    entity4["bsd_floor"] = entity1.Contains("bsd_floor") ? entity1["bsd_floor"] : (entity1.Contains("bsd_plotnumber") ? entity1["bsd_plotnumber"] : null);
+                    entity4["bsd_block"] = entity1.Contains("bsd_blocknumber") ? entity1["bsd_blocknumber"] : (entity1.Contains("bsd_landlot") ? entity1["bsd_landlot"] : null);
                     entity4["bsd_project"] = entity1["bsd_projectcode"];
                     entity4["productid"] = entity4["bsd_units"] = entityReference1;
                     entity4["isproductoverridden"] = false;
@@ -193,9 +194,9 @@ namespace SaleDirectAction
                         throw new InvalidPluginExecutionException("Unit is sold!");
                     if (!enUnit.Contains("bsd_phaseslaunchid"))
                         throw new InvalidPluginExecutionException("Unit is not launched!");
-                    if (!enUnit.Contains("bsd_floor"))
+                    if (!enUnit.Contains("bsd_floor") && !enUnit.Contains("bsd_plotnumber"))
                         throw new InvalidPluginExecutionException("Please select floor for this unit!");
-                    if (!enUnit.Contains("bsd_blocknumber"))
+                    if (!enUnit.Contains("bsd_blocknumber") && !enUnit.Contains("bsd_landlot"))
                         throw new InvalidPluginExecutionException("Please select block for this unit!");
                     if (!enUnit.Contains("bsd_projectcode"))
                         throw new InvalidPluginExecutionException("Please select project for this unit!");
@@ -399,9 +400,9 @@ namespace SaleDirectAction
                         throw new InvalidPluginExecutionException("Unit must be available or on hold!");
                     if (!entity1.Contains("bsd_phaseslaunchid"))
                         throw new InvalidPluginExecutionException("Unit is not launched");
-                    if (!entity1.Contains("bsd_floor"))
+                    if (!entity1.Contains("bsd_floor") && !entity1.Contains("bsd_plotnumber"))
                         throw new InvalidPluginExecutionException("Please select floor for this unit!");
-                    if (!entity1.Contains("bsd_blocknumber"))
+                    if (!entity1.Contains("bsd_blocknumber") && !entity1.Contains("bsd_landlot"))
                         throw new InvalidPluginExecutionException("Please select block for this unit!");
                     if (!entity1.Contains("bsd_projectcode"))
                         throw new InvalidPluginExecutionException("Please select project for this unit!");
@@ -445,13 +446,11 @@ namespace SaleDirectAction
                 throw ex;
             }
         }
-
         private EntityCollection findTaxCode()
         {
             string str = string.Format("<fetch version='1.0' output-format='xml-platform' count='1' mapping='logical' distinct='false'>\r\n                      <entity name='bsd_taxcode'>\r\n                        <attribute name='bsd_taxcodeid' />\r\n                        <filter type='and'>\r\n                          <condition attribute='bsd_default' operator='eq' value='1' />\r\n                        </filter>\r\n                      </entity>\r\n                    </fetch>");
             return service.RetrieveMultiple((QueryBase)new FetchExpression(str));
         }
-
         private Entity RetrieveValidUnit(Guid unitId)
         {
             QueryExpression q = new QueryExpression();
@@ -459,57 +458,13 @@ namespace SaleDirectAction
             q.ColumnSet = new ColumnSet(true);
             q.Criteria = new FilterExpression(LogicalOperator.And);
             q.Criteria.AddCondition(new ConditionExpression("productid", ConditionOperator.Equal, unitId));
-            LinkEntity link_floor_unit = new LinkEntity("product", "bsd_floor", "bsd_floor", "bsd_floorid", JoinOperator.Inner);
-            link_floor_unit.EntityAlias = "fl";
-            link_floor_unit.Columns = new ColumnSet(new string[] { "bsd_block" });
-            q.LinkEntities.Add(link_floor_unit);
-            LinkEntity link_block_floor = new LinkEntity("bsd_floor", "bsd_block", "bsd_block", "bsd_blockid", JoinOperator.Inner);
-            link_block_floor.EntityAlias = "bl";
-            link_block_floor.Columns = new ColumnSet(new string[] { "bsd_project" });
-            link_floor_unit.LinkEntities.Add(link_block_floor);
-            LinkEntity link_project_block = new LinkEntity("bsd_block", "bsd_project", "bsd_project", "bsd_projectid", JoinOperator.Inner);
-            link_project_block.EntityAlias = "pj";
-            link_project_block.Columns = new ColumnSet(new string[] { "bsd_defaultpaymentscheme", "bsd_pricelistdefault" });
-            link_block_floor.LinkEntities.Add(link_project_block);
             q.TopCount = 1;
-
-            #region FetchXML
-
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("");
-            //sb.AppendLine("<fetch mapping='logical' count='1' output-format='xml-platform'>");
-            //sb.AppendLine("<entity name='product'>");
-            //sb.AppendLine("<attribute name='name'/>");
-            //sb.AppendLine("<attribute name='productid'/>");
-            //sb.AppendLine("<attribute name='bsd_floor'/>");
-            //sb.AppendLine("<attribute name='bsd_blocknumber'/>");
-            //sb.AppendLine("<attribute name='bsd_projectcode'/>");
-            //sb.AppendLine("<attribute name='bsd_phaseslaunchid'/>");
-            //sb.AppendLine("<attribute name='bsd_listprice'/>");
-            //sb.AppendLine("<attribute name='defaultuomid'/>");
-            //sb.AppendLine("<attribute name='statuscode'/>");
-            //sb.AppendLine("<attribute name='statecode'/>");
-            //sb.AppendLine("<filter type='and'>");
-            //sb.AppendLine("<condition attribute='productid' operator='eq' value='" + unitId.ToString() + "'></condition>");
-            //sb.AppendLine("</filter>");
-            //sb.AppendLine("<link-entity name='bsd_floor' from='bsd_floorid' to='bsd_floor' link-type='inner'>");
-            //sb.AppendLine("<attribute name='bsd_block'/>");
-            //sb.AppendLine("<link-entity name='bsd_block' from='bsd_blockid' to='bsd_block' link-type='inner'>");
-            //sb.AppendLine("<attribute name='bsd_project'/>");
-            //sb.AppendLine("<link-entity name='bsd_project' from='bsd_projectid' to='bsd_project' link-type='inner'></link-entity>");
-            //sb.AppendLine("</link-entity>");
-            //sb.AppendLine("</link-entity>");
-            //sb.AppendLine("</entity>");
-            //sb.AppendLine("</fetch>"); 
-            #endregion
-            //EntityCollection entcs = service.RetrieveMultiple(new FetchExpression(sb.ToString()));
             EntityCollection entcs = service.RetrieveMultiple(q);
             if (entcs.Entities.Count == 0)
                 return null;
             else
                 return entcs.Entities[0];
         }
-
         private EntityReference PhasesLaunchPriceList(EntityReference phaseLaunch)
         {
             Entity en = service.Retrieve(phaseLaunch.LogicalName, phaseLaunch.Id, new ColumnSet(new string[] { "bsd_pricelistid" }));
@@ -517,35 +472,6 @@ namespace SaleDirectAction
                 return (EntityReference)en["bsd_pricelistid"];
             else
                 return null;
-        }
-
-        private Money GetQueuefee(EntityReference phaseF)
-        {
-            Money m = new Money(0);
-            if (phaseF != null)
-            {
-                Entity tmp = service.Retrieve(phaseF.LogicalName, phaseF.Id, new ColumnSet(new string[] {
-                    "bsd_bookingfee"
-                }));
-                if (tmp.Contains("bsd_bookingfee"))
-                    m = (Money)tmp["bsd_bookingfee"];
-            }
-            return m;
-        }
-
-        private Money GetQepositfee(EntityReference pmSchRef)
-        {
-            Money money = new Money(Decimal.Zero);
-            if (pmSchRef != null)
-            {
-                Entity entity = service.Retrieve(pmSchRef.LogicalName, pmSchRef.Id, new ColumnSet(new string[1]
-                {
-          "bsd_depositamount"
-                }));
-                if (entity.Contains("bsd_depositamount"))
-                    money = (Money)entity["bsd_depositamount"];
-            }
-            return money;
         }
         private EntityCollection getListByIDCopy(IOrganizationService service, Guid idcopy)
         {
@@ -584,7 +510,6 @@ namespace SaleDirectAction
             var rs = service.RetrieveMultiple(new FetchExpression(fetchXml.ToString()));
             return rs;
         }
-
         private EntityReference getBankAccount(Guid customerId)
         {
             var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -601,7 +526,6 @@ namespace SaleDirectAction
             if (result.Entities.Count <= 0) return null;
             return result.Entities[0].ToEntityReference();
         }
-
         [DataContract]
         public class InputParameter
         {
