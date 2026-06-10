@@ -372,7 +372,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                         else
                         {
                             inType = bsd_handoveramount == 0
-                                ? 100000007
+                                ? 100000000
                                 : 100000005;
 
                             amountPay -= bsd_handoveramount;
@@ -382,7 +382,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     }
                     else
                     {
-                        inType = 100000007;
+                        inType = 100000000;
                         name = GetInvoiceName(bsd_project_type, unitName);
                     }
 

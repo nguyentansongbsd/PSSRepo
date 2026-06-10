@@ -550,7 +550,7 @@ namespace Plugin_Create_Invoice_Payment
                         {
                             invoiceType = handoverAmount == 0
                                 ? 100000007
-                                : 100000005;
+                                : 100000000;
 
                             amountPay -= handoverAmount;
 
@@ -559,7 +559,7 @@ namespace Plugin_Create_Invoice_Payment
                     }
                     else
                     {
-                        invoiceType = 100000007;
+                        invoiceType = 100000000;
                         name = GetInvoiceName(projectType, unitName);
                     }
                     CreateInvoice(
