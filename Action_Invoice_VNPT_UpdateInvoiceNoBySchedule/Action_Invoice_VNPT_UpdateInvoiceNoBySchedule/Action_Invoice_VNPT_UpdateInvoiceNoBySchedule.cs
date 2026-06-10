@@ -41,7 +41,7 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
                     "bsd_serialno", "bsd_formno"));
                 this.enAccount = GetAccount();
                 if (enAccount == null) return;
-                if (!enAccount.Contains("bsd_webinvoice") || !enAccount.Contains("bsd_adminaccount") || !enAccount.Contains("bsd_adminpassword")
+                if (!enAccount.Contains("bsd_webpublishservice") || !enAccount.Contains("bsd_adminaccount") || !enAccount.Contains("bsd_adminpassword")
                     || !enAccount.Contains("bsd_webserviceaccount") || !enAccount.Contains("bsd_webservicepassword")) throw new InvalidPluginExecutionException("Cau hinh thieu thong tin vnpt.");
 
                 var request = new SoapEnvelope
@@ -65,7 +65,7 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
                 string dataxml = XmlFormatHelper.FormatXml<SoapEnvelope>(request, ns);
                 tracingService.Trace("xml: " + dataxml);
 
-                SoapEnvelopeResponse soapEnvelopeResponse = ApiHelper.PostVNPT(enAccount["bsd_webinvoice"].ToString(), dataxml, this.tracingService);
+                SoapEnvelopeResponse soapEnvelopeResponse = ApiHelper.PostVNPT(enAccount["bsd_webpublishservice"].ToString(), dataxml, this.tracingService);
 
                 /// Lấy kết quả trả về, giải mã base64 và deserialize thành object DSHDon
                 string dataxmlresponseBase64 = soapEnvelopeResponse.Body.GetMCCQThueByFkeysNoXMLSignResponse.Result;
@@ -98,7 +98,7 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
             if (!enProject.Contains("bsd_investor")) return null;
             Entity enAccount = service.Retrieve(((EntityReference)enProject["bsd_investor"]).LogicalName,
                 ((EntityReference)enProject["bsd_investor"]).Id,
-                new ColumnSet("bsd_webinvoice", "bsd_adminaccount", "bsd_adminpassword",
+                new ColumnSet("bsd_webpublishservice", "bsd_adminaccount", "bsd_adminpassword",
                 "bsd_webserviceaccount", "bsd_webservicepassword", "bsd_name"));
             return enAccount;
         }

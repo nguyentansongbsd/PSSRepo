@@ -30,7 +30,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         SoapBody soapBody = new SoapBody();
         ImportInvByPatternRequest importInvByPatternRequest = new ImportInvByPatternRequest();
 
-        string projectCode = string.Empty;
+        string invoicecode = string.Empty;
         string email = string.Empty;
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -83,8 +83,8 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         }
         private Entity GetAccount() // Chu dau tu
         {
-            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode", "bsd_emailinvoice"));
-            this.projectCode = enProject.Contains("bsd_projectcode") ? enProject["bsd_projectcode"].ToString() + "-" : null;
+            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode", "bsd_emailinvoice", "bsd_invoicecode"));
+            this.invoicecode = enProject.Contains("bsd_invoicecode") ? enProject["bsd_invoicecode"].ToString() : null;
             this.email = enProject.Contains("bsd_emailinvoice") ? enProject["bsd_emailinvoice"].ToString() : null;
             if (!enProject.Contains("bsd_investor")) return null;
             Entity enAccount = service.Retrieve(((EntityReference)enProject["bsd_investor"]).LogicalName, 
@@ -138,7 +138,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
 
             invoice.ArisingDate = this.enInvoice.Contains("bsd_issueddate") ? ((DateTime)this.enInvoice["bsd_issueddate"]).ToString("dd/MM/yyyy") : null;
             invoice.PaymentMethod = this.enInvoice.Contains("bsd_paymentmethod") ? this.enInvoice.FormattedValues["bsd_paymentmethod"] : null;
-            invoice.CusCode = this.projectCode + ((EntityReference)this.enInvoice["bsd_units"]).Name;
+            invoice.CusCode = this.invoicecode + ((EntityReference)this.enInvoice["bsd_units"]).Name;
             invoice.PaymentStatus = "0";
             invoice.CurrencyUnit = "VND";
             invoice.ExchangeRate = "1";
