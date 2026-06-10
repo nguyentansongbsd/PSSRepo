@@ -261,7 +261,7 @@ namespace Action_GenHandoverNotices_Generate
                 if (enTarget.Contains("bsd_date"))
                     hn["bsd_billdate"] = RetrieveLocalTimeFromUTCTime((DateTime)enTarget["bsd_date"], service);
                 Guid id = service.Create(hn);
-                copy_CownerForOE(OE.Id, id, hn.LogicalName, "bsd_warningnotice");
+                //copy_CownerForOE(OE.Id, id, hn.LogicalName, "bsd_warningnotice");
                 //UPDATE UEHD
                 Entity uehd = new Entity("bsd_updateestimatehandoverdate");
                 uehd.Id = ((EntityReference)detail["bsd_updateestimatehandoverdate"]).Id;
