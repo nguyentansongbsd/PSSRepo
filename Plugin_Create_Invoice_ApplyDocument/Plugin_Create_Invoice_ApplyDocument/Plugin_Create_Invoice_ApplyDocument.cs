@@ -314,7 +314,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 return;
 
             decimal sumTypeIns = 0;
-
+            decimal is_handoveramount = 0;
+            decimal is_depositamount = 0;
             foreach (Installment item in ins_NOT_EDA)
             {
                 Entity enIns = service.Retrieve(
@@ -346,6 +347,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     ? ((Money)enIns["bsd_amountofthisphase"]).Value
                     : 0;
                 decimal amountPay = item.amount;
+
                 if (bsd_duedatecalculatingmethod == 100000002)
                 {
                     decimal amountLand = amountPay;
@@ -384,22 +386,9 @@ namespace Plugin_Create_Invoice_ApplyDocument
                         }
                         else if (bsd_handoveramount > 0)
                         {
-                            inType = 100000005;
-                            CreateInvoice(
-                            name,
-                            project_invoive,
-                            optionentry_invoive,
-                            iv_units,
-                            EnApplyDocument,
-                            EnTaxcode,
-                            inType,
-                            bsd_paymentactualtime,
-                            bsd_depositamount,
-                            amountLand,
-                            bsd_handoveramount);
-                            amountLand -= bsd_handoveramount;
-
-                            name = GetInvoiceName(bsd_project_type, unitName);
+                            is_handoveramount += bsd_handoveramount;
+                            is_depositamount += bsd_depositamount;
+                            sumTypeIns += (amountLand - bsd_handoveramount);
                         }
                         else
                         {
@@ -459,8 +448,22 @@ namespace Plugin_Create_Invoice_ApplyDocument
             if (sumTypeIns > 0)
             {
                 string name = GetInvoiceName(bsd_project_type, unitName);
-
-                CreateInvoice(
+                if (is_handoveramount > 0)
+                {
+                    CreateInvoice(
+                    name,
+                    project_invoive,
+                    optionentry_invoive,
+                    iv_units,
+                    EnApplyDocument,
+                    EnTaxcode,
+                    100000005,
+                    bsd_paymentactualtime,
+                    is_depositamount,
+                    sumTypeIns,
+                    is_handoveramount);
+                }
+                else CreateInvoice(
                     name,
                     project_invoive,
                     optionentry_invoive,

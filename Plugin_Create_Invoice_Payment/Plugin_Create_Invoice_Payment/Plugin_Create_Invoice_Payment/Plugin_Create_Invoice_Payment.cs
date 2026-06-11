@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Plugin_Create_Invoice_Payment
 {
@@ -500,7 +501,8 @@ namespace Plugin_Create_Invoice_Payment
             DateTime dateEDA)
         {
             decimal sumTypeIns = 0;
-
+            decimal is_handoveramount = 0;
+            decimal is_depositamount = 0;
             foreach (Installment item in installments)
             {
                 if (!cache.ContainsKey(item.Id))
@@ -563,22 +565,10 @@ namespace Plugin_Create_Invoice_Payment
                         }
                         else if (handoverAmount > 0)
                         {
-                            invoiceType = 100000005;
-                            amountLand -= handoverAmount;
-                            name = GetInvoiceName(projectType, unitName);
+                            is_handoveramount += handoverAmount;
+                            is_depositamount += depositAmount;
+                            sumTypeIns += (amountLand - handoverAmount);
 
-                            CreateInvoice(
-                            name,
-                            project,
-                            optionEntry,
-                            unit,
-                            payment,
-                            taxCode,
-                            invoiceType,
-                            paymentActualTime,
-                            depositAmount,
-                            amountLand,
-                            handoverAmount);
                         }
                         else
                         {
@@ -634,7 +624,22 @@ namespace Plugin_Create_Invoice_Payment
 
             if (sumTypeIns > 0)
             {
-                CreateInvoice(
+                if (is_handoveramount > 0)
+                {
+                    CreateInvoice(
+                            GetInvoiceName(projectType, unitName),
+                            project,
+                            optionEntry,
+                            unit,
+                            payment,
+                            taxCode,
+                            100000005,
+                            paymentActualTime,
+                            is_depositamount,
+                            sumTypeIns,
+                            is_handoveramount);
+                }
+                else CreateInvoice(
                     GetInvoiceName(projectType, unitName),
                     project,
                     optionEntry,
