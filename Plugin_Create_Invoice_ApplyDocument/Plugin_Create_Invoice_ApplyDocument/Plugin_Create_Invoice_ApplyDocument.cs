@@ -348,6 +348,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 decimal amountPay = item.amount;
                 if (bsd_duedatecalculatingmethod == 100000002)
                 {
+                    decimal amountLand = amountPay;
                     decimal landvalueIN =
                         SumLandValueVoice(optionentry_invoive.Id);
 
@@ -363,10 +364,10 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     decimal bsd_totalpercent = optionentry_invoive.GetAttributeValue<decimal>("bsd_totalpercent");
                     if (bsd_totalpercent >= 85)
                     {
-                        if (amountPay <= bsd_handoveramount)
+                        if (amountLand <= bsd_handoveramount)
                         {
-                            bsd_handoveramount = amountPay;
-                            amountPay = 0;
+                            bsd_handoveramount = amountLand;
+                            amountLand = 0;
                             inType = 100000006;
                             CreateInvoice(
                             name,
@@ -378,7 +379,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                             inType,
                             bsd_paymentactualtime,
                             bsd_depositamount,
-                            amountPay,
+                            amountLand,
                             bsd_handoveramount);
                         }
                         else if (bsd_handoveramount > 0)
@@ -394,9 +395,9 @@ namespace Plugin_Create_Invoice_ApplyDocument
                             inType,
                             bsd_paymentactualtime,
                             bsd_depositamount,
-                            amountPay,
+                            amountLand,
                             bsd_handoveramount);
-                            amountPay -= bsd_handoveramount;
+                            amountLand -= bsd_handoveramount;
 
                             name = GetInvoiceName(bsd_project_type, unitName);
                         }
