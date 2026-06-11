@@ -368,37 +368,47 @@ namespace Plugin_Create_Invoice_ApplyDocument
                             bsd_handoveramount = amountPay;
                             amountPay = 0;
                             inType = 100000006;
+                            CreateInvoice(
+                            name,
+                            project_invoive,
+                            optionentry_invoive,
+                            iv_units,
+                            EnApplyDocument,
+                            EnTaxcode,
+                            inType,
+                            bsd_paymentactualtime,
+                            bsd_depositamount,
+                            amountPay,
+                            bsd_handoveramount);
                         }
-                        else
+                        else if (bsd_handoveramount > 0)
                         {
-                            inType = bsd_handoveramount == 0
-                                ? 100000000
-                                : 100000005;
-
+                            inType = 100000005;
+                            CreateInvoice(
+                            name,
+                            project_invoive,
+                            optionentry_invoive,
+                            iv_units,
+                            EnApplyDocument,
+                            EnTaxcode,
+                            inType,
+                            bsd_paymentactualtime,
+                            bsd_depositamount,
+                            amountPay,
+                            bsd_handoveramount);
                             amountPay -= bsd_handoveramount;
 
                             name = GetInvoiceName(bsd_project_type, unitName);
                         }
+                        else
+                        {
+                            sumTypeIns += amountPay;
+                        }
                     }
                     else
                     {
-                        inType = 100000000;
-                        name = GetInvoiceName(bsd_project_type, unitName);
+                        sumTypeIns += amountPay;
                     }
-
-                    CreateInvoice(
-                        name,
-                        project_invoive,
-                        optionentry_invoive,
-                        iv_units,
-                        EnApplyDocument,
-                        EnTaxcode,
-                        inType,
-                        bsd_paymentactualtime,
-                        bsd_depositamount,
-                        amountPay,
-                        bsd_handoveramount);
-
                     if (statuscode == 100000001)
                     {
                         CreateInvoice(

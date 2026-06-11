@@ -523,8 +523,10 @@ namespace Plugin_Create_Invoice_Payment
                 decimal amountPhase =
                     enIns.GetAttributeValue<Money>("bsd_amountofthisphase")?.Value ?? 0;
                 decimal amountPay = item.Amount;
+
                 if (dueDateMethod == 100000002)
                 {
+                    decimal amountLand = amountPay;
                     decimal landValueInvoice =
                         SumLandValueInvoice(optionEntry.Id);
 
@@ -540,41 +542,53 @@ namespace Plugin_Create_Invoice_Payment
                     decimal bsd_totalpercent = optionEntry.GetAttributeValue<decimal>("bsd_totalpercent");
                     if (bsd_totalpercent >= 85)
                     {
-                        if (amountPay <= handoverAmount)
+                        if (amountLand <= handoverAmount)
                         {
-                            handoverAmount = amountPay;
-                            amountPay = 0;
+                            handoverAmount = amountLand;
+                            amountLand = 0;
                             invoiceType = 100000006;
+
+                            CreateInvoice(
+                            name,
+                            project,
+                            optionEntry,
+                            unit,
+                            payment,
+                            taxCode,
+                            invoiceType,
+                            paymentActualTime,
+                            depositAmount,
+                            amountLand,
+                            handoverAmount);
+                        }
+                        else if (handoverAmount > 0)
+                        {
+                            invoiceType = 100000005;
+                            amountLand -= handoverAmount;
+                            name = GetInvoiceName(projectType, unitName);
+
+                            CreateInvoice(
+                            name,
+                            project,
+                            optionEntry,
+                            unit,
+                            payment,
+                            taxCode,
+                            invoiceType,
+                            paymentActualTime,
+                            depositAmount,
+                            amountLand,
+                            handoverAmount);
                         }
                         else
                         {
-                            invoiceType = handoverAmount == 0
-                                ? 100000007
-                                : 100000000;
-
-                            amountPay -= handoverAmount;
-
-                            name = GetInvoiceName(projectType, unitName);
+                            sumTypeIns += amountPay;
                         }
                     }
                     else
                     {
-                        invoiceType = 100000000;
-                        name = GetInvoiceName(projectType, unitName);
+                        sumTypeIns += amountPay;
                     }
-                    CreateInvoice(
-                        name,
-                        project,
-                        optionEntry,
-                        unit,
-                        payment,
-                        taxCode,
-                        invoiceType,
-                        paymentActualTime,
-                        depositAmount,
-                        amountPay,
-                        handoverAmount);
-
                     if (statusCode == 100000001)
                     {
                         CreateInvoice(
