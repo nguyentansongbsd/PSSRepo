@@ -79,6 +79,25 @@ namespace Action_ConfirmInvoice
                 enTarget["bsd_powerautomate"] = false;
                 service.Update(enTarget);
             }
+            else if (type == "Approve_Buoc01" && idRecord != "" && idUser != "" && input != "")
+            {
+                traceService.Trace("Approve Bước 01");
+                service = factory.CreateOrganizationService(Guid.Parse(idUser));
+                Entity enTarget = new Entity("bsd_invoice");
+                enTarget.Id = Guid.Parse(idRecord);
+                enTarget["statuscode"] = new OptionSetValue(100000003);
+                enTarget["bsd_issueddate"] = DateTime.Parse(input);
+                service.Update(enTarget);
+            }
+            else if (type == "Approve_Buoc02" && idRecord != "" && idUser != "")
+            {
+                traceService.Trace("Approve Bước 02");
+                service = factory.CreateOrganizationService(Guid.Parse(idUser));
+                Entity enTarget = new Entity("bsd_confirminvoice");
+                enTarget.Id = Guid.Parse(idRecord);
+                enTarget["bsd_powerautomate"] = false;
+                service.Update(enTarget);
+            }
         }
         public DateTime RetrieveLocalTimeFromUTCTime(DateTime utcTime)
         {
