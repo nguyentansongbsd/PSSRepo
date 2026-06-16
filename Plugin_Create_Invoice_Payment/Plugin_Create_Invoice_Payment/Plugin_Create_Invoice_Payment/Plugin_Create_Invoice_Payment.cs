@@ -582,7 +582,7 @@ namespace Plugin_Create_Invoice_Payment
                     if (statusCode == 100000001)
                     {
                         CreateInvoice(
-                            name,
+                            GetInvoiceName(projectType, unitName),
                             project,
                             optionEntry,
                             unit,

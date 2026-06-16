@@ -402,7 +402,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     if (statuscode == 100000001)
                     {
                         CreateInvoice(
-                            name,
+                            GetInvoiceName(bsd_project_type, unitName),
                             project_invoive,
                             optionentry_invoive,
                             iv_units,
