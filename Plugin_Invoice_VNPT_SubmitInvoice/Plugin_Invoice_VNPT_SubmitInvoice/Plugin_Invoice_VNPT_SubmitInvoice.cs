@@ -156,6 +156,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 VATRate = this.enInvoice.Contains("bsd_taxcodevalue") && Math.Round((decimal)this.enInvoice["bsd_taxcodevalue"],0) == 0 ? "-1" : "10",
                 VATAmount = bsd_vatamount != 0 ? Math.Round(bsd_vatamount, 0).ToString() : null,
                 Total = bsd_invoiceamount != 0 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
+                ProdPrice = bsd_invoiceamount != 0 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
             };
             products.Product.Add(product1);
             if (enInvoice.Contains("bsd_namelandvalue"))
@@ -166,6 +167,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 {
                     ProdName = this.enInvoice.Contains("bsd_namelandvalue") ? this.enInvoice["bsd_namelandvalue"].ToString() : null,
                     Total = this.enInvoice.Contains("bsd_handoveramount") ? Math.Round(((Money)this.enInvoice["bsd_handoveramount"]).Value, 0).ToString() : null,
+                    ProdPrice = this.enInvoice.Contains("bsd_handoveramount") ? Math.Round(((Money)this.enInvoice["bsd_handoveramount"]).Value, 0).ToString() : null,
                     VATRate = "-1"
                 };
                 products.Product.Add(product2);
