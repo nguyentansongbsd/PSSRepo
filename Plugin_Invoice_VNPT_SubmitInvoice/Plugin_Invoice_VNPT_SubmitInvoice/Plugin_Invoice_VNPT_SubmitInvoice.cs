@@ -32,6 +32,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
 
         string invoicecode = string.Empty;
         string email = string.Empty;
+        int site = 0;
         public void Execute(IServiceProvider serviceProvider)
         {
             this.context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
@@ -73,8 +74,8 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 ns.Add("soap", "http://schemas.xmlsoap.org/soap/envelope/");
                 string dataxml = XmlFormatHelper.FormatXml<SoapEnvelope>(soapEnvelope, ns);
                 tracingService.Trace("xmldata: " + dataxml);
-                
-                ApiHelper.PostVNPT(enAccount["bsd_webpublishservice"].ToString(), dataxml,this.tracingService);
+
+                ApiHelper.PostVNPT(enAccount["bsd_webpublishservice"].ToString(), dataxml, this.tracingService);
             }
             catch (Exception ex)
             {
@@ -83,20 +84,22 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         }
         private Entity GetAccount() // Chu dau tu
         {
-            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode", "bsd_emailinvoice", "bsd_invoicecode"));
+            Entity enProject = service.Retrieve(((EntityReference)enInvoice["bsd_project"]).LogicalName, ((EntityReference)enInvoice["bsd_project"]).Id,
+                new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_investor", "bsd_projectcode", "bsd_emailinvoice", "bsd_invoicecode", "bsd_site"));
             this.invoicecode = enProject.Contains("bsd_invoicecode") ? enProject["bsd_invoicecode"].ToString() : null;
             this.email = enProject.Contains("bsd_emailinvoice") ? enProject["bsd_emailinvoice"].ToString() : null;
+            this.site = enProject.Contains("bsd_site") ? ((OptionSetValue)enProject["bsd_site"]).Value : 0;
             if (!enProject.Contains("bsd_investor")) return null;
-            Entity enAccount = service.Retrieve(((EntityReference)enProject["bsd_investor"]).LogicalName, 
+            Entity enAccount = service.Retrieve(((EntityReference)enProject["bsd_investor"]).LogicalName,
                 ((EntityReference)enProject["bsd_investor"]).Id,
-                new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_webpublishservice", "bsd_adminaccount", "bsd_adminpassword", 
+                new Microsoft.Xrm.Sdk.Query.ColumnSet("bsd_webpublishservice", "bsd_adminaccount", "bsd_adminpassword",
                 "bsd_webserviceaccount", "bsd_webservicepassword", "bsd_name"));
             return enAccount;
         }
         private Entity GetCustomer()
         {
             if (!enInvoice.Contains("bsd_purchaser")) return null;
-            string[] attibutes = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? 
+            string[] attibutes = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ?
                 new string[] { "bsd_permanentaddress1", "bsd_fullname", "bsd_identitycardnumber", "bsd_passport" } :
                 new string[] { "bsd_address", "bsd_name", "bsd_registrationcode", "emailaddress1" };
             //string attibuteID = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? "bsd_identitycardnumber" : "bsd_address";
@@ -153,10 +156,10 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             Product product1 = new Product()
             {
                 ProdName = this.enInvoice.Contains("bsd_name") ? this.enInvoice["bsd_name"].ToString() : null,
-                VATRate = this.enInvoice.Contains("bsd_taxcodevalue") && Math.Round((decimal)this.enInvoice["bsd_taxcodevalue"],0) == 0 ? "-1" : "10",
+                VATRate = this.enInvoice.Contains("bsd_taxcodevalue") && Math.Round((decimal)this.enInvoice["bsd_taxcodevalue"], 0) == 0 ? "-1" : "10",
                 VATAmount = bsd_vatamount != 0 ? Math.Round(bsd_vatamount, 0).ToString() : null,
                 Total = bsd_invoiceamount != 0 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
-                ProdPrice = bsd_invoiceamount != 0 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
+                ProdPrice = bsd_invoiceamount != 0 && this.site == 100000001 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
             };
             products.Product.Add(product1);
             if (enInvoice.Contains("bsd_namelandvalue"))
@@ -167,7 +170,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 {
                     ProdName = this.enInvoice.Contains("bsd_namelandvalue") ? this.enInvoice["bsd_namelandvalue"].ToString() : null,
                     Total = this.enInvoice.Contains("bsd_handoveramount") ? Math.Round(((Money)this.enInvoice["bsd_handoveramount"]).Value, 0).ToString() : null,
-                    ProdPrice = this.enInvoice.Contains("bsd_handoveramount") ? Math.Round(((Money)this.enInvoice["bsd_handoveramount"]).Value, 0).ToString() : null,
+                    ProdPrice = this.enInvoice.Contains("bsd_handoveramount") && this.site == 100000001 ? Math.Round(((Money)this.enInvoice["bsd_handoveramount"]).Value, 0).ToString() : null,
                     VATRate = "-1"
                 };
                 products.Product.Add(product2);
@@ -181,8 +184,8 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             invoice.Total = Math.Round(bsd_invoiceamount + totalNoVat, 0).ToString();
             invoice.VATAmount = Math.Round(bsd_vatamount, 0).ToString();
             invoice.Amount = Math.Round(amount, 0).ToString();
-            invoice.AmountInWords = MoneyToTextHelper.TienBangChu(invoice.Amount,false);
-            
+            invoice.AmountInWords = MoneyToTextHelper.TienBangChu(invoice.Amount, false);
+
             invWrapper.Invoice = invoice;
             inv.Inv.Add(invWrapper);
 
