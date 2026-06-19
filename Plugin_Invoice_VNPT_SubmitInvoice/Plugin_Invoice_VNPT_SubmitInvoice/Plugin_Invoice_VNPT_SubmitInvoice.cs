@@ -152,6 +152,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             decimal totalNoVat = 0;
             decimal bsd_invoiceamount = this.enInvoice.Contains("bsd_invoiceamountb4vat") ? ((Money)this.enInvoice["bsd_invoiceamountb4vat"]).Value : 0;
             decimal bsd_vatamount = this.enInvoice.Contains("bsd_vatamount") ? ((Money)this.enInvoice["bsd_vatamount"]).Value : 0;
+            decimal bsd_invoiceamount2 = this.enInvoice.Contains("bsd_invoiceamount") ? ((Money)this.enInvoice["bsd_invoiceamount"]).Value : 0;
 
             Product product1 = new Product()
             {
@@ -160,6 +161,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
                 VATAmount = bsd_vatamount != 0 ? Math.Round(bsd_vatamount, 0).ToString() : null,
                 Total = bsd_invoiceamount != 0 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
                 ProdPrice = bsd_invoiceamount != 0 && this.site == 100000001 ? Math.Round(bsd_invoiceamount, 0).ToString() : null,
+                Amount = bsd_invoiceamount2 != 0 && this.site == 100000001 ? Math.Round(bsd_invoiceamount2, 0).ToString() : null,
             };
             products.Product.Add(product1);
             if (enInvoice.Contains("bsd_namelandvalue"))
