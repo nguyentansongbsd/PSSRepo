@@ -31,7 +31,7 @@ namespace Plugin_Coowner_Create_Update
                 {
                     traceService.Trace("bsd_subsale");
                     EntityCollection l_co_owner_Subsale = findCo_owner_subsale(service, ((EntityReference)enTarget["bsd_subsale"]).Id);
-                    int dem = 2; 
+                    int dem = 2;
                     traceService.Trace("count " + l_co_owner_Subsale.Entities.Count);
                     foreach (Entity co in l_co_owner_Subsale.Entities)
                     {
@@ -125,6 +125,14 @@ namespace Plugin_Coowner_Create_Update
             else enUp["bsd_mobilephone"] = "";
             if (en.Contains("emailaddress1")) enUp["bsd_email"] = (string)en["emailaddress1"];
             else enUp["bsd_email"] = "";
+            if (en.Contains("bsd_dategrant")) enUp["bsd_dategrant"] = (DateTime)en["bsd_dategrant"];
+            else enUp["bsd_dategrant"] = null;
+            if (en.Contains("bsd_placeofissue")) enUp["bsd_placeofissue"] = (string)en["bsd_placeofissue"];
+            else enUp["bsd_placeofissue"] = "";
+            if (en.Contains("bsd_diachithuongtru")) enUp["bsd_permanentaddressen"] = (string)en["bsd_diachithuongtru"];
+            else enUp["bsd_permanentaddressen"] = "";
+            if (en.Contains("bsd_diachi")) enUp["bsd_contactaddressen"] = (string)en["bsd_diachi"];
+            else enUp["bsd_contactaddressen"] = "";
         }
         private void setInforAccount_Customer(Guid id, string name, Entity enUp)
         {
@@ -154,6 +162,8 @@ namespace Plugin_Coowner_Create_Update
             if (en.Contains("emailaddress1")) enUp["bsd_email"] = (string)en["emailaddress1"];
             else enUp["bsd_email"] = "";
             //traceService.Trace("1111");
+            if (en.Contains("bsd_diachithuongtru")) enUp["bsd_permanentaddressen"] = (string)en["bsd_diachithuongtru"];
+            else enUp["bsd_permanentaddressen"] = "";
         }
         private EntityCollection findCo_owner_subsale(IOrganizationService crmservices, Guid id)
         {
