@@ -2,9 +2,11 @@
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Metadata;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 
 namespace Plugin_OptionEntry_ConvertToOption_MappingFields
 {
@@ -32,8 +34,8 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
                 if (this.context.Depth > 3) return;
                 if (this.context.MessageName != "Update") return;
                 Entity _target = (Entity)this.context.InputParameters["Target"];
-                this.target = this.service.Retrieve(_target.LogicalName,_target.Id,new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
-                
+                this.target = this.service.Retrieve(_target.LogicalName, _target.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+
                 if (((OptionSetValue)this.target["statuscode"]).Value != 100000000) return; // 100000000 = Option
 
                 MappingFielUnitType();
@@ -68,20 +70,44 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             {
                 Entity enOption = new Entity(this.target.LogicalName, this.target.Id);
                 EntityReference enDeveloper = null;
-                if(!this.target.Contains("bsd_developer"))
+                if (!this.target.Contains("bsd_developer"))
                     enOption["bsd_developer"] = enDeveloper = getDeveloper();
                 if (!this.target.Contains("bsd_developer") && enDeveloper != null)
                     enOption["bsd_mandatoryprimary"] = getMandatoryPrimary(enDeveloper);
                 if (!this.target.Contains("bsd_floor"))
                     enOption["bsd_floor"] = getFloor();
-                //if (!this.target.Contains("bsd_theunitpriceof01sqm"))
-                //{
-                //    decimal totalamount = this.target.Contains("totalamount") ? ((Money)this.target["totalamount"]).Value : 0;
-                //    decimal netusablearea = this.target.Contains("bsd_netusablearea") ? (decimal)this.target["bsd_netusablearea"] : 0;
-                //    tracingService.Trace(totalamount + " - " + netusablearea);
-                //    enOption["bsd_theunitpriceof01sqm"] = netusablearea > 0 ?  totalamount / netusablearea : 0;
-                //}    
-                    
+                var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_paymentschemedetail"">
+                   <attribute name=""bsd_fixeddate"" />
+                      <filter>
+                        <condition attribute=""bsd_reservation"" operator=""eq"" value=""{((EntityReference)this.target["quoteid"]).Id}"" />
+                        <condition attribute=""bsd_duedatecalculatingmethod"" operator=""eq"" value=""{100000002}"" />
+                        <condition attribute=""bsd_fixeddate"" operator=""not-null"" />
+                      </filter>
+                  </entity>
+                </fetch>";
+                var result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                foreach (var item in result.Entities)
+                {
+                    enOption["bsd_estimatehandoverdatecontract"] = (DateTime)item["bsd_fixeddate"];
+                }
+                fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                <fetch>
+                  <entity name=""bsd_paymentschemedetail"">
+                   <attribute name=""bsd_fixeddate"" />
+                      <filter>
+                        <condition attribute=""bsd_reservation"" operator=""eq"" value=""{((EntityReference)this.target["quoteid"]).Id}"" />
+                        <condition attribute=""bsd_duedatecalculatingmethod"" operator=""eq"" value=""{100000003}"" />
+                        <condition attribute=""bsd_fixeddate"" operator=""not-null"" />
+                      </filter>
+                  </entity>
+                </fetch>";
+                result = this.service.RetrieveMultiple(new FetchExpression(fetchXml));
+                foreach (var item in result.Entities)
+                {
+                    enOption["bsd_temporaryhandoverdate"] = (DateTime)item["bsd_fixeddate"];
+                }
                 this.service.Update(enOption);
             }
             catch (InvalidPluginExecutionException ex)
@@ -175,5 +201,6 @@ namespace Plugin_OptionEntry_ConvertToOption_MappingFields
             }
             return enfUnitSpec;
         }
+
     }
 }
