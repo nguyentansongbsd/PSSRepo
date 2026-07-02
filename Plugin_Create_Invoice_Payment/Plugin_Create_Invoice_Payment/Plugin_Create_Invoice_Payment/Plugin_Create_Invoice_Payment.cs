@@ -777,7 +777,7 @@ namespace Plugin_Create_Invoice_Payment
             query1.Criteria.AddCondition(
                 "statuscode",
                 ConditionOperator.In,
-                new object[] { 1, 100000000 });
+                new object[] { 1, 100000000, 100000002, 100000003 });
 
             EntityCollection list1 =
                 service.RetrieveMultiple(query1);
@@ -812,7 +812,7 @@ namespace Plugin_Create_Invoice_Payment
             query2.Criteria.AddCondition(
                 "statuscode",
                 ConditionOperator.In,
-                new object[] { 1, 100000000 });
+                new object[] { 1, 100000000, 100000002, 100000003 });
 
             EntityCollection list2 =
                 service.RetrieveMultiple(query2);

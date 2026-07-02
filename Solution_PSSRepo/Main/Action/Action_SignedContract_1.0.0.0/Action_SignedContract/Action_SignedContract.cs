@@ -391,7 +391,7 @@ namespace Action_SignedContract
             var query = new QueryExpression("bsd_invoice");
             query.TopCount = 1;
             query.ColumnSet.AddColumn("bsd_invoiceid");
-            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000, 100000002, 100000003);
             query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
             EntityCollection list = service.RetrieveMultiple(query);

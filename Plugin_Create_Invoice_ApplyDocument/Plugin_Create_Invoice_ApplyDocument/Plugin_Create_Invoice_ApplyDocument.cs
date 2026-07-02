@@ -706,6 +706,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
                   <condition attribute=""statuscode"" operator=""in"">
                     <value>1</value>
                     <value>100000000</value>
+                    <value>100000002</value>
+                    <value>100000003</value>
                   </condition>
 
                 </filter>
@@ -736,6 +738,8 @@ namespace Plugin_Create_Invoice_ApplyDocument
                   <condition attribute=""statuscode"" operator=""in"">
                     <value>1</value>
                     <value>100000000</value>
+                    <value>100000002</value>
+                    <value>100000003</value>
                   </condition>
 
                 </filter>
