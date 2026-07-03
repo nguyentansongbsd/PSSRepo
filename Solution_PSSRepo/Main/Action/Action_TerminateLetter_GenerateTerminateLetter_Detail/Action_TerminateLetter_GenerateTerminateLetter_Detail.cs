@@ -211,8 +211,8 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         //    entity3["bsd_penaty"] = new Money((bsd_spforfeiture / 100) * ((Money)entity1["bsd_totalamountlessfreight"]).Value);
 
                         //}
-                        double percent =0.2;
-                        var money = ((Money)entity1["bsd_totalamountlessfreight"]).Value *  (decimal)percent;
+                        double percent = 0.2;
+                        var money = ((Money)entity1["bsd_totalamountlessfreight"]).Value * (decimal)percent;
                         tracingService.Trace("(20 / 100 " + money);
                         tracingService.Trace("bsd_totalamountlessfreight * 20% " + money.ToString());
                         entity3["bsd_penaty"] = new Money(money);
@@ -255,11 +255,11 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
                         }
 
                         var lateDays = ((int)((_date - bsd_duedate).TotalDays) - bsd_gracedays);
-                        var latedays2 = lateDays;
-                        var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, entity1, bsd_signedcontractdate, bsd_signeddadate, _date, ref lateDays);
-                        lateDays = latedays2 <= lateDays ? latedays2 : lateDays;
+                        //var latedays2 = lateDays;
+                        //var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, entity1, bsd_signedcontractdate, bsd_signeddadate, _date, ref lateDays);
+                        //lateDays = latedays2 <= lateDays ? latedays2 : lateDays;
                         #endregion
-                        if (resCheckCaseSign)
+                        if (lateDays > 0)
                         {
                             tracingService.Trace($"resCheckCaseSign:true");
                             entity3["bsd_overdue_interest"] = bsd_termsinterestpercentage / 100 * lateDays * (installment.Contains("bsd_balance") ? ((Money)installment["bsd_balance"]).Value : 1);
