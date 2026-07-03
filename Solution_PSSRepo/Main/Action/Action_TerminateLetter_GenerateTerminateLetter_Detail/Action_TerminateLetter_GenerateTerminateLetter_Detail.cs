@@ -256,7 +256,7 @@ namespace Action_TerminateLetter_GenerateTerminateLetter_Detail
 
                         var lateDays = ((int)((_date - bsd_duedate).TotalDays) - bsd_gracedays);
                         var latedays2 = lateDays;
-                        var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, entity1, bsd_signedcontractdate, bsd_signeddadate, DateTime.UtcNow.AddHours(7), ref lateDays);
+                        var resCheckCaseSign = checkCaseSignAndCalLateDays(installment, entity1, bsd_signedcontractdate, bsd_signeddadate, _date, ref lateDays);
                         lateDays = latedays2 <= lateDays ? latedays2 : lateDays;
                         #endregion
                         if (resCheckCaseSign)
