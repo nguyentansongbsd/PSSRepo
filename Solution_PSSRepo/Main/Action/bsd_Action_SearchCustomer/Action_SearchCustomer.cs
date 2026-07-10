@@ -30,11 +30,13 @@ namespace Action_SearchCustomer
                 string telephone = (string)context.InputParameters["telephone"];
                 string email = (string)context.InputParameters["email"];
 
+                traceService.Trace($"{cmnd} || {passport}");
+                if (string.IsNullOrWhiteSpace(cmnd) && string.IsNullOrWhiteSpace(passport)) return;
+
                 var queryKHCN = new QueryExpression("contact");
                 traceService.Trace(cmnd);
                 queryKHCN.ColumnSet.AllColumns = true;
                 if (cmnd != "") queryKHCN.Criteria.AddCondition("bsd_identitycardnumber", ConditionOperator.Equal,cmnd);
-                if (cmnd == "") return;
                 //if (cccd != "") queryKHCN.Criteria.AddCondition("bsd_identitycard", ConditionOperator.Equal,cccd);
                 if (passport != "") queryKHCN.Criteria.AddCondition("bsd_passport", ConditionOperator.Equal, passport);
                 //if (otherCode != "") queryKHCN.Criteria.AddCondition("bsd_othercode", ConditionOperator.Equal, otherCode);
