@@ -72,6 +72,7 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
                 if (string.IsNullOrWhiteSpace(dataxmlresponseBase64))
                 {
                     tracingService.Trace("VNPT trả về Result = null");
+                    return;
                 }
                 string dataxmlresponse = ConvertBase64Helper.ConvertBase64ToString(dataxmlresponseBase64);
 
