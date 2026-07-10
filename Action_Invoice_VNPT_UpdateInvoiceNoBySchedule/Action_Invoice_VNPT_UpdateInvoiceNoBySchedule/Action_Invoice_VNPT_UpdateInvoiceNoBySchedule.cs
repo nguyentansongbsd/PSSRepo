@@ -69,6 +69,10 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
 
                 /// Lấy kết quả trả về, giải mã base64 và deserialize thành object DSHDon
                 string dataxmlresponseBase64 = soapEnvelopeResponse.Body.GetMCCQThueByFkeysNoXMLSignResponse.Result;
+                if (string.IsNullOrWhiteSpace(dataxmlresponseBase64))
+                {
+                    tracingService.Trace("VNPT trả về Result = null");
+                }
                 string dataxmlresponse = ConvertBase64Helper.ConvertBase64ToString(dataxmlresponseBase64);
 
                 /// update so hoa don vao invoice
