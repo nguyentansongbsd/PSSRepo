@@ -101,7 +101,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             if (!enInvoice.Contains("bsd_purchaser")) return null;
             string[] attibutes = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ?
                 new string[] { "bsd_permanentaddress1", "bsd_fullname", "bsd_identitycardnumber", "bsd_passport" } :
-                new string[] { "bsd_address", "bsd_name", "bsd_registrationcode", "emailaddress1" };
+                new string[] { "bsd_permanentaddress1", "bsd_name", "bsd_registrationcode", "emailaddress1" };
             //string attibuteID = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? "bsd_identitycardnumber" : "bsd_address";
             Entity enCustomer = service.Retrieve(((EntityReference)enInvoice["bsd_purchaser"]).LogicalName, ((EntityReference)enInvoice["bsd_purchaser"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(attibutes));
             return enCustomer;
@@ -134,7 +134,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             else if (this.enInvoice.Contains("bsd_purchaser") && ((EntityReference)this.enInvoice["bsd_purchaser"]).LogicalName == "account")
             {
                 invoice.CusName = this.enCustomer.Contains("bsd_name") ? this.enCustomer["bsd_name"].ToString() : null;
-                invoice.CusAddress = this.enCustomer.Contains("bsd_address") ? this.enCustomer["bsd_address"].ToString() : null;
+                invoice.CusAddress = this.enCustomer.Contains("bsd_permanentaddress1") ? this.enCustomer["bsd_permanentaddress1"].ToString() : null;
                 invoice.CusTaxCode = this.enCustomer.Contains("bsd_registrationcode") ? this.enCustomer["bsd_registrationcode"].ToString() : null;
                 invoice.EmailDeliver = this.enCustomer.Contains("emailaddress1") ? this.enCustomer["emailaddress1"].ToString() : null;
             }
