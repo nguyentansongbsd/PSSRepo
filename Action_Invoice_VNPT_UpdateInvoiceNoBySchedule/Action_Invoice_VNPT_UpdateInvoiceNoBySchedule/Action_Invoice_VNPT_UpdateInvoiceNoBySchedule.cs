@@ -74,6 +74,11 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
                     tracingService.Trace("VNPT trả về Result = null");
                     return;
                 }
+                if (dataxmlresponseBase64.StartsWith("ERR:", StringComparison.OrdinalIgnoreCase))
+                {
+                    tracingService.Trace("VNPT trả về Result = ERR");
+                    return;
+                }
                 string dataxmlresponse = ConvertBase64Helper.ConvertBase64ToString(dataxmlresponseBase64);
 
                 /// update so hoa don vao invoice
@@ -84,7 +89,7 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
                     dSHDon = (DSHDon)serializer.Deserialize(reader);
                 }
                 HDon hdon = dSHDon.HDon.FirstOrDefault();
-                if(hdon.TThai == 2)
+                if (hdon.TThai == 2)
                 {
                     Entity enUpInvoie = new Entity(Target.LogicalName, Target.Id);
                     enUpInvoie["bsd_invoiceno"] = hdon.SHDon.ToString("D8");
