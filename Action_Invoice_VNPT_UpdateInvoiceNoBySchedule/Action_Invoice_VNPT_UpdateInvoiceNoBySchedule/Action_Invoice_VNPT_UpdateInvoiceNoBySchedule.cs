@@ -99,7 +99,8 @@ namespace Action_Invoice_VNPT_UpdateInvoiceNoBySchedule
             }
             catch (Exception ex)
             {
-                throw new InvalidPluginExecutionException(ex.Message);
+                tracingService.Trace("VNPT trả về Result = " + ex.ToString());
+                return;
             }
         }
         private Entity GetAccount() // Chu dau tu
