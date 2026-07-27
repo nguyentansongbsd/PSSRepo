@@ -30,6 +30,9 @@ namespace Plugin_SubSale_Update_Coowner
                 OE.Id = ((EntityReference)SubSale["bsd_optionentry"]).Id;
 
                 Entity optionEntry = service.Retrieve(OE.LogicalName, OE.Id, new ColumnSet(true));
+                bool bsd_pinkbookstatus = optionEntry.Contains("bsd_pinkbookstatus") ? (bool)optionEntry["bsd_pinkbookstatus"] : false;
+                if (bsd_pinkbookstatus == true)
+                    throw new InvalidPluginExecutionException("Transfer cannot be performed because the transaction has already submitted the Pink book.");
                 EntityReference pro = (EntityReference)optionEntry["bsd_project"];
                 EntityReference unit = (EntityReference)optionEntry["bsd_unitnumber"];
 
@@ -167,7 +170,7 @@ namespace Plugin_SubSale_Update_Coowner
             foreach (Entity entity in entc.Entities)
             {
                 decimal bsd_value = (decimal)entity["bsd_value"];
-                enUp["bsd_tax"] = (Math.Round(bsd_value,2)).ToString();
+                enUp["bsd_tax"] = (Math.Round(bsd_value, 2)).ToString();
             }
             if (entc.Entities.Count == 0) enUp["bsd_tax"] = "";
         }
