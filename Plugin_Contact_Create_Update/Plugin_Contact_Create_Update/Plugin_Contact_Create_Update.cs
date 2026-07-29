@@ -190,7 +190,7 @@ namespace Plugin_Contact_Create_Update
                       <entity name='bsd_country'>
                         <attribute name='bsd_countryid' />
                         <filter>
-                          <condition attribute='bsd_id' operator='eq' value='VN'/>
+                          <condition attribute='bsd_id' operator='eq' value='Vietnam'/>
                           <condition attribute='statecode' operator='eq' value='0'/>
                         </filter>
                       </entity>
