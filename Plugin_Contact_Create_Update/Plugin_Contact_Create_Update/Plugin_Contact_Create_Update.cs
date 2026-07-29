@@ -25,6 +25,11 @@ namespace Plugin_Contact_Create_Update
                 traceService.Trace("Import");
                 Entity target = (Entity)context.InputParameters["Target"];
                 Entity enTarget = service.Retrieve(target.LogicalName, target.Id, new ColumnSet(true));
+                int bsd_localization = enTarget.Contains("bsd_localization") ? ((OptionSetValue)enTarget["bsd_localization"]).Value : 0;
+                if (bsd_localization == 100000000 && !enTarget.Contains("bsd_identitycardnumber"))
+                    throw new InvalidPluginExecutionException("ID information is missing. Please check again.");
+                else if ((bsd_localization == 100000001 || bsd_localization == 100000002) && !enTarget.Contains("bsd_passport"))
+                    throw new InvalidPluginExecutionException("Passport information is missing. Please check again.");
                 traceService.Trace("step 1");
                 string line = "";
                 string line1 = "";
