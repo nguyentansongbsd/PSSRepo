@@ -183,6 +183,24 @@ namespace Plugin_Contact_Create_Update
                 enUp["bsd_diachi"] = line1;
                 enUp["bsd_permanentaddress1"] = line0;
                 enUp["bsd_diachithuongtru"] = line10;
+                if (bsd_localization == 100000000)
+                {
+                    var fetchXml = $@"
+                    <fetch>
+                      <entity name='bsd_country'>
+                        <attribute name='bsd_countryid' />
+                        <filter>
+                          <condition attribute='bsd_id' operator='eq' value='VN'/>
+                          <condition attribute='statecode' operator='eq' value='0'/>
+                        </filter>
+                      </entity>
+                    </fetch>";
+                    EntityCollection list = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                    foreach (Entity item in list.Entities)
+                    {
+                        enUp["bsd_nationality"] = item.ToEntityReference();
+                    }
+                }
                 service.Update(enUp);
             }
             else if (context.MessageName == "Update")
