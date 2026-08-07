@@ -100,7 +100,7 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
         {
             if (!enInvoice.Contains("bsd_purchaser")) return null;
             string[] attibutes = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ?
-                new string[] { "bsd_permanentaddress1", "bsd_fullname", "bsd_identitycardnumber", "bsd_passport" } :
+                new string[] { "bsd_permanentaddress1", "bsd_fullname", "bsd_identitycardnumber", "bsd_passport", "bsd_localization" } :
                 new string[] { "bsd_permanentaddress1", "bsd_name", "bsd_registrationcode", "emailaddress1" };
             //string attibuteID = ((EntityReference)enInvoice["bsd_purchaser"]).LogicalName == "contact" ? "bsd_identitycardnumber" : "bsd_address";
             Entity enCustomer = service.Retrieve(((EntityReference)enInvoice["bsd_purchaser"]).LogicalName, ((EntityReference)enInvoice["bsd_purchaser"]).Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(attibutes));
@@ -127,8 +127,9 @@ namespace Plugin_Invoice_VNPT_SubmitInvoice
             {
                 invoice.Buyer = this.enCustomer.Contains("bsd_fullname") ? this.enCustomer["bsd_fullname"].ToString() : null;
                 invoice.CusAddress = this.enCustomer.Contains("bsd_permanentaddress1") ? this.enCustomer["bsd_permanentaddress1"].ToString() : null;
-                invoice.SHChieu = this.enCustomer.Contains("bsd_passport") ? this.enCustomer["bsd_passport"].ToString() : null;
-                invoice.CCCDan = this.enCustomer.Contains("bsd_identitycardnumber") ? this.enCustomer["bsd_identitycardnumber"].ToString() : null;
+                int bsd_localization = enCustomer.Contains("bsd_localization") ? ((OptionSetValue)enCustomer["bsd_localization"]).Value : 0;
+                if (bsd_localization == 100000001 || bsd_localization == 100000002) invoice.SHChieu = this.enCustomer.Contains("bsd_passport") ? this.enCustomer["bsd_passport"].ToString() : null;
+                else if (bsd_localization == 100000000) invoice.CCCDan = this.enCustomer.Contains("bsd_identitycardnumber") ? this.enCustomer["bsd_identitycardnumber"].ToString() : null;
                 invoice.EmailDeliver = this.email;
             }
             else if (this.enInvoice.Contains("bsd_purchaser") && ((EntityReference)this.enInvoice["bsd_purchaser"]).LogicalName == "account")
