@@ -325,12 +325,12 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                 service.Update(enInstallmentUpdate);
             }
             
-            if (enHD != null)
-            {
-                Entity enHDUpdate = new Entity(enHD.LogicalName, enHD.Id);
-                enHDUpdate["bsd_estimatehandoverdatecontract"] = item["bsd_estimatehandoverdatenew"];
-                service.Update(enHDUpdate);
-            }
+            //if (enHD != null)
+            //{
+            //    Entity enHDUpdate = new Entity(enHD.LogicalName, enHD.Id);
+            //    enHDUpdate["bsd_estimatehandoverdatecontract"] = item["bsd_estimatehandoverdatenew"];
+            //    service.Update(enHDUpdate);
+            //}
             
         //
         }
