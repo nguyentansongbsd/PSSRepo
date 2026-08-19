@@ -27,10 +27,11 @@ namespace Plugin_CalculateReservation
             if (!this.proLine.Contains("priceperunit"))
                 return;
             decimal unitPrice = ((Money)proLine["priceperunit"]).Value;
-            Entity pro = service.Retrieve(proRef.LogicalName, proRef.Id, new ColumnSet(new string[3]
+            Entity pro = service.Retrieve(proRef.LogicalName, proRef.Id, new ColumnSet(new string[4]
             {
                 "bsd_landvalue",
                 "bsd_maintenancefeespercent",
+                "bsd_netsaleablearea",
                 "bsd_projectcode"
             }));
             if (pro == null)
@@ -39,6 +40,7 @@ namespace Plugin_CalculateReservation
                 throw new InvalidPluginExecutionException(string.Format("Please select project for product '{0}'!", proRef.Name));
             EntityReference projRef = (EntityReference)pro["bsd_projectcode"];
             decimal landValue = pro.Contains("bsd_landvalue") ? ((Money)pro["bsd_landvalue"]).Value : decimal.Zero;
+            decimal bsd_netsaleablearea = pro.Contains("bsd_netsaleablearea") ? (decimal)pro["bsd_netsaleablearea"] : decimal.Zero;
             decimal maintenancePercent = 0;
             //decimal managementPercent = 0;
             Entity rsv = service.Retrieve(reserRef.LogicalName, reserRef.Id, new ColumnSet(new string[]
@@ -115,15 +117,16 @@ namespace Plugin_CalculateReservation
             EntityReference disRef = rsv.Contains("bsd_discountlist") ? (EntityReference)rsv["bsd_discountlist"] : null;
             string selectedDiscount = rsv.Contains("bsd_discounts") ? rsv["bsd_discounts"].ToString() : string.Empty;
             decimal amount = 0;
+            decimal NSA = 0;
             List<decimal> percents = new List<decimal>();
-            GetDiscount(disRef, selectedDiscount, out amount,unitPrice, out percents);
+            GetDiscount(disRef, selectedDiscount, out amount,unitPrice, out percents, bsd_netsaleablearea, out NSA);
 
 
             List<decimal> specialDiscounts = GetSpecialDiscount(reserRef);
             decimal percent = 0;
             //decimal totalDiscount = amount + (specialDiscount + percent) * unitPrice / 100;
             //decimal totalDiscount = amount + Math.Round(specialDiscount * unitPrice / 100) + Math.Round(percent * unitPrice / 100);
-            decimal totalDiscount = amount;
+            decimal totalDiscount = amount + NSA;
 
             foreach (decimal d in specialDiscounts)
             {
@@ -206,9 +209,10 @@ namespace Plugin_CalculateReservation
 
         }
 
-        private void GetDiscount(EntityReference disRef, string selectedDiscount, out decimal amount,decimal unitprice, out List<decimal> percents)
+        private void GetDiscount(EntityReference disRef, string selectedDiscount, out decimal amount,decimal unitprice, out List<decimal> percents, decimal bsd_netsaleablearea, out decimal NSA)
         {
             amount = 0;
+            NSA = 0;
             percents = new List<decimal>();
             QueryExpression queryExpression = new QueryExpression("bsd_discounttransaction");
             queryExpression.ColumnSet = new ColumnSet(new string[0]);
@@ -230,10 +234,12 @@ namespace Plugin_CalculateReservation
                 }
                 else
                 {
-                    Entity pro = this.service.Retrieve("bsd_discount", guid, new ColumnSet(new string[4]
+                    Entity pro = this.service.Retrieve("bsd_discount", guid, new ColumnSet(new string[6]
                     {
                         "bsd_name",
                         "new_type",
+                        "bsd_numberofmonths",
+                        "bsd_managementamount",
                         "bsd_amount",
                         "bsd_percentage"
                     }));
@@ -253,7 +259,17 @@ namespace Plugin_CalculateReservation
                         str.Append("ITEM: " + a);
                         rsv["bsd_totaldiscountamount"]= new Money(Math.Round(((decimal)pro["bsd_percentage"] * unitprice / 100),MidpointRounding.AwayFromZero));
                     }
-                    
+                    else if (num == 100000002)//NSA
+                    {
+                        if (!pro.Contains("bsd_numberofmonths") || !pro.Contains("bsd_managementamount"))
+                            throw new InvalidPluginExecutionException(string.Format("Please provide discount NSA for discount'{0}'", pro["bsd_name"]));
+                        rsv["bsd_name"] = pro["bsd_name"];
+                        decimal a = Math.Round(((int)pro["bsd_numberofmonths"] * ((Money)pro["bsd_managementamount"]).Value * bsd_netsaleablearea), MidpointRounding.AwayFromZero);
+                        str.Append("ITEM: " + a);
+                        NSA += a;
+                        rsv["bsd_discountnsa"] = new Money(a);
+                        rsv["bsd_totaldiscountamount"] = new Money(a);
+                    }
                     else
                     {
                         if (num != 100000001)//amount

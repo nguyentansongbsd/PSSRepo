@@ -33,7 +33,7 @@ namespace Plugin_CalculateOptionEntry
             if (this.proLine.Contains("priceperunit"))
             {
                 decimal value = ((Money)this.proLine["priceperunit"]).Value;
-                Entity entity = this.service.Retrieve(this.proRef.LogicalName, this.proRef.Id, new ColumnSet(new string[] { "bsd_landvalue", "bsd_maintenancefees", "bsd_maintenancefeespercent", "bsd_projectcode" }));
+                Entity entity = this.service.Retrieve(this.proRef.LogicalName, this.proRef.Id, new ColumnSet(new string[] { "bsd_landvalue", "bsd_maintenancefees", "bsd_maintenancefeespercent", "bsd_projectcode", "bsd_netsaleablearea" }));
                 if (entity == null)
                 {
                     throw new Exception(string.Format("Unit with name '{0}' is unavailable in system or deleted by user!", this.proRef.Name));
@@ -42,6 +42,7 @@ namespace Plugin_CalculateOptionEntry
                 {
                     throw new InvalidPluginExecutionException(string.Format("Please select project for product '{0}'!", this.proRef.Name));
                 }
+                decimal bsd_netsaleablearea = entity.Contains("bsd_netsaleablearea") ? (decimal)entity["bsd_netsaleablearea"] : decimal.Zero;
                 EntityReference entityReference = (EntityReference)entity["bsd_projectcode"];
                 decimal num = (entity.Contains("bsd_landvalue") ? ((Money)entity["bsd_landvalue"]).Value : decimal.Zero);
                 decimal item1 = new decimal();
@@ -149,9 +150,10 @@ namespace Plugin_CalculateOptionEntry
                 List<decimal> nums = new List<decimal>();
                 List<decimal> nums1 = new List<decimal>();
                 decimal num6 = new decimal();
+                decimal NSA = new decimal();
                 if (num3 == decimal.Zero)
                 {
-                    this.GetDiscount(entityReference2, str, out num4, out nums);
+                    this.GetDiscount(entityReference2, str, out num4, out nums, bsd_netsaleablearea, out NSA);
                     num6 = num4;
                     foreach (decimal specialDiscount in this.GetSpecialDiscount(this.opRef))
                     {
@@ -164,7 +166,7 @@ namespace Plugin_CalculateOptionEntry
                         num6 += Math.Round((num7 * value) / new decimal(100), MidpointRounding.AwayFromZero);
                     }
                 }
-                num6 += num3;
+                num6 += num3 + NSA;
                 num6 = Math.Round(num6, MidpointRounding.AwayFromZero);
                 decimal num8 = new decimal();
                 decimal test = 0;
@@ -248,9 +250,10 @@ namespace Plugin_CalculateOptionEntry
             return this.service.RetrieveMultiple(queryExpression);
         }
 
-        private void GetDiscount(EntityReference disRef, string selectedDiscount, out decimal amount, out List<decimal> percents)
+        private void GetDiscount(EntityReference disRef, string selectedDiscount, out decimal amount, out List<decimal> percents, decimal bsd_netsaleablearea, out decimal NSA)
         {
             amount = new decimal();
+            NSA = new decimal();
             percents = new List<decimal>();
             QueryExpression queryExpression = new QueryExpression("bsd_discounttransaction");
             queryExpression.ColumnSet = new ColumnSet(true);
@@ -274,7 +277,7 @@ namespace Plugin_CalculateOptionEntry
                 Guid guid = Guid.Parse(strArrays1[i]);
                 if (!guids.ContainsKey(guid))
                 {
-                    Entity entity1 = this.service.Retrieve("bsd_discount", guid, new ColumnSet(new string[] { "bsd_name", "new_type", "bsd_amount", "bsd_percentage" }));
+                    Entity entity1 = this.service.Retrieve("bsd_discount", guid, new ColumnSet(new string[] { "bsd_name", "new_type", "bsd_amount", "bsd_percentage", "bsd_managementamount", "bsd_numberofmonths" }));
                     if (entity1 == null)
                     {
                         throw new InvalidPluginExecutionException(string.Format("Discount '{0}' dose not exist or deleted.", Array.Empty<object>()));
@@ -285,12 +288,8 @@ namespace Plugin_CalculateOptionEntry
                     }
                     int value = ((OptionSetValue)entity1["new_type"]).Value;
                     Entity entity2 = new Entity("bsd_discounttransaction");
-                    if (value != 100000000)
+                    if (value == 100000001)
                     {
-                        if (value != 100000001)
-                        {
-                            throw new InvalidPluginExecutionException(string.Format("Please discount '{0}' is not valid!", entity1["bsd_name"]));
-                        }
                         if (!entity1.Contains("bsd_amount"))
                         {
                             throw new InvalidPluginExecutionException(string.Format("Please provide discount amount for discount'{0}'", entity1["bsd_name"]));
@@ -298,7 +297,18 @@ namespace Plugin_CalculateOptionEntry
                         entity2["bsd_name"]= entity1["bsd_name"];
                         entity2["bsd_discountamount"]= entity1["bsd_amount"];
                     }
-                    else
+                    else if (value == 100000002)
+                    {
+                        if (!entity1.Contains("bsd_numberofmonths") && !entity1.Contains("bsd_managementamount"))
+                        {
+                            throw new InvalidPluginExecutionException(string.Format("Please provide discount NSA for discount'{0}'", entity1["bsd_name"]));
+                        }
+                        entity2["bsd_name"] = entity1["bsd_name"];
+                        decimal a = Math.Round(((int)entity1["bsd_numberofmonths"] * ((Money)entity1["bsd_managementamount"]).Value * bsd_netsaleablearea), MidpointRounding.AwayFromZero);
+                        NSA += a;
+                        entity2["bsd_discountnsa"] = new Money(a);
+                    }
+                    else if (value == 100000000)
                     {
                         if (!entity1.Contains("bsd_percentage"))
                         {
@@ -307,6 +317,7 @@ namespace Plugin_CalculateOptionEntry
                         entity2["bsd_name"] = entity1["bsd_name"];
                         entity2["bsd_discountpercent"]= entity1["bsd_percentage"];
                     }
+                    else throw new InvalidPluginExecutionException(string.Format("Please discount '{0}' is not valid!", entity1["bsd_name"]));
                     entity2["bsd_discount"]= entity1.ToEntityReference();
                     entity2["bsd_optionentry"] = this.opRef;
                     this.service.Create(entity2);
