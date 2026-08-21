@@ -182,8 +182,6 @@ namespace Action_Payment
                         if (d_oe_bsd_totalamountlessfreight == 0) throw new InvalidPluginExecutionException("'Net Selling Price' must be larger than 0");
 
                         decimal d_oe_bsd_freightamount = optionentryEn.Contains("bsd_freightamount") ? ((Money)optionentryEn["bsd_freightamount"]).Value : 0;
-
-
                         EntityCollection psdFirst = GetPSD(optionentryID);
                         Entity detailFirst = psdFirst.Entities[0];
                         //////  string detailFirstID = detailFirst.Id.ToString();
@@ -247,7 +245,9 @@ namespace Action_Payment
                         oe_tmp["bsd_unitstatus"] = new OptionSetValue(sttUnit);
                         oe_tmp["statuscode"] = new OptionSetValue(sttOE);
                         oe_tmp["bsd_totalamountpaid"] = new Money(d_oe_bsd_totalamountpaid);
-                        //oe_tmp["bsd_totalpercent"] = (d_oe_bsd_totalamountpaid / d_oe_amountCalcPercent) * 100;
+                        decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
+                        if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 95 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
+                            oe_tmp["bsd_qualifieddate"] = d_now;
                         service.Update(oe_tmp);
                         // -------------------- check FUL - OE -------------------------------
                         // check if FUL exist Unit in this PM

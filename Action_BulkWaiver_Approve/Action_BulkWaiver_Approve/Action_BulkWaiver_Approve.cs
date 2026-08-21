@@ -311,6 +311,9 @@ namespace Action_BulkWaiver_Approve
                     oe_tmp.Id = optionentryEn.Id;
                     oe_tmp["bsd_unitstatus"] = new OptionSetValue(sttUnit);
                     oe_tmp["statuscode"] = new OptionSetValue(sttOE);
+                    decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
+                    if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 95 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
+                        oe_tmp["bsd_qualifieddate"] = RetrieveLocalTimeFromUTCTime(DateTime.Now);
                     service.Update(oe_tmp);
                 }
 
@@ -332,6 +335,26 @@ namespace Action_BulkWaiver_Approve
                 else enBulkWaiver["bsd_error"] = "The detail list is invalid. Please check again.";
                 service.Update(enBulkWaiver);
             }
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+            <fetch top=""1"">
+              <entity name=""bsd_paymentschemedetail"">
+                <attribute name=""bsd_paymentschemedetailid"" />
+                <filter>
+                  <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                  <filter type=""or"">
+                    <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                    <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                  </filter>
+                  <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                </filter>
+              </entity>
+            </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
         }
         EntityCollection RetrieveMultiRecord(IOrganizationService crmservices, string entity, ColumnSet column, string condition, object value)
         {
