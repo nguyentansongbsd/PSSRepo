@@ -312,7 +312,7 @@ namespace Action_BulkWaiver_Approve
                     oe_tmp["bsd_unitstatus"] = new OptionSetValue(sttUnit);
                     oe_tmp["statuscode"] = new OptionSetValue(sttOE);
                     decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
-                    if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 95 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
+                    if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 94 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
                         oe_tmp["bsd_qualifieddate"] = RetrieveLocalTimeFromUTCTime(DateTime.Now);
                     service.Update(oe_tmp);
                 }

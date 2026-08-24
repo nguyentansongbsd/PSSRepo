@@ -306,7 +306,7 @@ namespace Action_ConfirmPayment_Confirm
                         oe_tmp["statuscode"] = new OptionSetValue(sttOE);
                         oe_tmp["bsd_totalamountpaid"] = new Money(d_oe_bsd_totalamountpaid);
                         decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
-                        if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 95 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
+                        if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 94 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
                             oe_tmp["bsd_qualifieddate"] = d_now;
                         service.Update(oe_tmp);
                         // -------------------- check FUL - OE -------------------------------
