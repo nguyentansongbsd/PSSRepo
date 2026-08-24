@@ -101,9 +101,9 @@ namespace Action_ConfirmApplyDocument_Confirm
             {
                 applyMicellaneous(en_app, en_OE, ref totalapplyamout);
             }
-            updateQualifieddate(en_OE.ToEntityReference());
+            updateQualifieddate(en_OE.ToEntityReference(), RetrieveLocalTimeFromUTCTime((DateTime)en_app["bsd_receiptdate"]));
         }
-        public void updateQualifieddate(EntityReference ref_OE)
+        public void updateQualifieddate(EntityReference ref_OE, DateTime bsd_receiptdate)
         {
             Entity optionentryEn = service.Retrieve(ref_OE.LogicalName, ref_OE.Id, new ColumnSet(new string[] { "bsd_totalpercent" }));
             Entity oe_tmp = new Entity(ref_OE.LogicalName);
@@ -111,7 +111,7 @@ namespace Action_ConfirmApplyDocument_Confirm
             decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
             var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
             if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 94 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
-                oe_tmp["bsd_qualifieddate"] = RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                oe_tmp["bsd_qualifieddate"] = bsd_receiptdate;
             service.Update(oe_tmp);
         }
         public void createCOA(Entity en_app, decimal totalapplyamout, ArrayList s_eachAdv, ArrayList s_amAdv)
