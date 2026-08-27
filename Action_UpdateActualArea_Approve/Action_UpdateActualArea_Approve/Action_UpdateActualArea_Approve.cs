@@ -91,6 +91,9 @@ namespace Action_UpdateActualArea_Approve
                 enTarget.Id = Guid.Parse(input02);
                 enTarget["bsd_powerautomate"] = false;
                 enTarget["statuscode"] = new OptionSetValue(100000001);
+                enTarget["bsd_approvedrejecteddate"] = DateTime.Now;
+                enTarget["bsd_approvedrejectedperson"] = new EntityReference("systemuser", Guid.Parse(input04));
+
                 service.Update(enTarget);
             }
         }
