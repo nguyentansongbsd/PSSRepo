@@ -400,7 +400,7 @@ namespace Plugin_Payment_Import
                                                     target["bsd_purchaser"] = oe.Contains("customerid") ? oe["customerid"] : null;
                                                     service.Update(target);
                                                 }
-                                                if (amount_pay > maitainfree)
+                                                if (amount_pay > managementfree)
                                                 {
                                                     traceService.Trace("vào if 2");
                                                     throw new InvalidPluginExecutionException("Giá trị thanh toán lớn hơn giá trị còn lại cần thanh toán.");
