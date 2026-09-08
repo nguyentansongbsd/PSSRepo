@@ -255,19 +255,99 @@ namespace Plugin_Create_Invoice_Payment
                 }
 
                 // MAIN FEE
-                ProcessMainFeeInvoice(
-                    payment,
-                    project,
-                    optionEntry,
-                    unit,
-                    taxCode,
-                    projectType,
-                    unitName,
-                    paymentActualTime);
+                //ProcessMainFeeInvoice(
+                //    payment,
+                //    project,
+                //    optionEntry,
+                //    unit,
+                //    taxCode,
+                //    projectType,
+                //    unitName,
+                //    paymentActualTime);
+                //Installment Last
+                var enmis = get_All_MIS_NotPaid(optionEntry.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
+                if (checkPaid_Est_Installment(optionEntry.Id) && checkPaid_interest_main_mana_Installment(optionEntry.Id) && enmis != null && enmis.Entities.Count == 0)
+                {
+                    CreateInvoice(
+                        GetInvoiceName(projectType, unitName),
+                        project,
+                        optionEntry,
+                        unit,
+                        null,
+                        taxCode,
+                        100000004,
+                        paymentActualTime,
+                        0,
+                        GetInstallmentLast(optionEntry.Id),
+                        0);
+                }
             }
             traceService.Trace("End ProcessApplyDocument");
         }
-
+        private bool checkPaid_Est_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <condition attribute=""statuscode"" operator=""eq"" value=""100000001"" />
+                          <condition attribute=""bsd_duedatecalculatingmethod"" operator=""eq"" value=""100000002"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? true : false;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <filter type=""or"">
+                            <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                          </filter>
+                          <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        public EntityCollection get_All_MIS_NotPaid(string oeID)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                <entity name='bsd_miscellaneous' >
+                <attribute name='bsd_balance' />
+                <attribute name='statuscode' />
+                <attribute name='bsd_miscellaneousnumber' />
+                <attribute name='bsd_units' />
+                <attribute name='bsd_optionentry' />
+                <attribute name='bsd_miscellaneousid' />
+                <attribute name='bsd_amount' />
+                <attribute name='bsd_paidamount' />
+                <attribute name='bsd_installment' />
+                <attribute name='bsd_name' />
+                <attribute name='bsd_project' />
+                <attribute name='bsd_installmentnumber' />
+                <filter type='and' >
+                    <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
+                    <condition attribute='statecode' operator='eq' value='0' />
+                    <condition attribute='statuscode' operator='eq' value='1' />
+                </filter>                           
+                </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, oeID);
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
         private void AddInstallment(
             Installment installment,
             Dictionary<Guid, Entity> cache,
@@ -579,21 +659,21 @@ namespace Plugin_Create_Invoice_Payment
                     {
                         sumTypeIns += amountPay;
                     }
-                    if (statusCode == 100000001)
-                    {
-                        CreateInvoice(
-                            GetInvoiceName(projectType, unitName),
-                            project,
-                            optionEntry,
-                            unit,
-                            payment,
-                            taxCode,
-                            100000004,
-                            paymentActualTime,
-                            0,
-                            GetInstallmentLast(optionEntry.Id),
-                            0);
-                    }
+                    //if (statusCode == 100000001)
+                    //{
+                    //    CreateInvoice(
+                    //        GetInvoiceName(projectType, unitName),
+                    //        project,
+                    //        optionEntry,
+                    //        unit,
+                    //        payment,
+                    //        taxCode,
+                    //        100000004,
+                    //        paymentActualTime,
+                    //        0,
+                    //        GetInstallmentLast(optionEntry.Id),
+                    //        0);
+                    //}
                 }
                 else
                 {
@@ -840,22 +920,21 @@ namespace Plugin_Create_Invoice_Payment
             decimal handoverAmount)
         {
             traceService.Trace("vào CreateInvoice");
-            if (invoiceType == 100000003 && checkInvaldInvoice1st(optionEntry.Id)) return;
+            if ((invoiceType == 100000003 || invoiceType == 100000004) && checkInvaldInvoice_1st_or_last(optionEntry.Id, invoiceType)) return;
             traceService.Trace("CreateInvoice");
             Entity invoice = new Entity("bsd_invoice");
 
             invoice["bsd_name"] = invoiceName;
             invoice["bsd_project"] = project.ToEntityReference();
             invoice["bsd_optionentry"] = optionEntry.ToEntityReference();
-            invoice["bsd_payment"] = payment.ToEntityReference();
+            if (invoiceType != 100000004) invoice["bsd_payment"] = payment.ToEntityReference();
 
             invoice["bsd_formno"] =
                 project.GetAttributeValue<string>("bsd_formno");
 
             invoice["bsd_serialno"] =
                 project.GetAttributeValue<string>("bsd_serialno");
-            invoice["bsd_documentno"] =
-                payment.GetAttributeValue<string>("bsd_documentno");
+            if (invoiceType != 100000004) invoice["bsd_documentno"] = payment.GetAttributeValue<string>("bsd_documentno");
 
             invoice["bsd_issueddate"] = issueDate;
             invoice["bsd_units"] = unit.ToEntityReference();
@@ -943,13 +1022,13 @@ namespace Plugin_Create_Invoice_Payment
 
             service.Create(invoice);
         }
-        private bool checkInvaldInvoice1st(Guid optionEntryId)
+        private bool checkInvaldInvoice_1st_or_last(Guid optionEntryId, int type)
         {
             var query = new QueryExpression("bsd_invoice");
             query.TopCount = 1;
             query.ColumnSet.AddColumn("bsd_invoiceid");
-            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
-            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000, 100000002, 100000003);
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, type);
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
             EntityCollection list = service.RetrieveMultiple(query);
             return list.Entities.Count > 0 ? true : false;
