@@ -355,7 +355,6 @@ namespace Plugin_Payment_Import
                                     <attribute name=""bsd_managementfeeremaining"" />
                                     <filter>
                                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{oe.Id}"" />
-                                      <condition attribute=""statuscode"" operator=""eq"" value=""{100000000}"" />
                                       <condition attribute=""bsd_duedatecalculatingmethod"" operator=""eq"" value=""{100000002}"" />
                                     </filter>
                                   </entity>
