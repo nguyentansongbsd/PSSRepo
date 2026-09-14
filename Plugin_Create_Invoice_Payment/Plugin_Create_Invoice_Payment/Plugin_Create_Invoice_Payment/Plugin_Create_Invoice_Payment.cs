@@ -920,7 +920,8 @@ namespace Plugin_Create_Invoice_Payment
             decimal handoverAmount)
         {
             traceService.Trace("vào CreateInvoice");
-            if ((invoiceType == 100000003 || invoiceType == 100000004) && checkInvaldInvoice_1st_or_last(optionEntry.Id, invoiceType)) return;
+            if ((invoiceType == 100000003) && checkInvaldInvoice_1st(optionEntry.Id, invoiceType)) return;
+            if (invoiceType == 100000004 && checkInvaldInvoice_last(optionEntry.Id, invoiceType)) return;
             traceService.Trace("CreateInvoice");
             Entity invoice = new Entity("bsd_invoice");
 
@@ -1022,7 +1023,18 @@ namespace Plugin_Create_Invoice_Payment
 
             service.Create(invoice);
         }
-        private bool checkInvaldInvoice_1st_or_last(Guid optionEntryId, int type)
+        private bool checkInvaldInvoice_1st(Guid optionEntryId, int type)
+        {
+            var query = new QueryExpression("bsd_invoice");
+            query.TopCount = 1;
+            query.ColumnSet.AddColumn("bsd_invoiceid");
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, type);
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
+            EntityCollection list = service.RetrieveMultiple(query);
+            return list.Entities.Count > 0 ? true : false;
+        }
+        private bool checkInvaldInvoice_last(Guid optionEntryId, int type)
         {
             var query = new QueryExpression("bsd_invoice");
             query.TopCount = 1;
