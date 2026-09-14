@@ -3,6 +3,8 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
+using System.Web.UI.WebControls;
 
 namespace Plugin_Create_Invoice_ApplyDocument
 {
@@ -188,17 +190,32 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 date_EDA,
                 land_value);
 
-            ProcessMaintenanceFee(
-                EnApplyDocument,
-                project_invoive,
-                optionentry_invoive,
-                iv_units,
-                EnTaxcode,
-                bsd_paymentactualtime,
-                bsd_project_type,
-                unitName,
-                checkEDA);
-
+            //ProcessMaintenanceFee(
+            //    EnApplyDocument,
+            //    project_invoive,
+            //    optionentry_invoive,
+            //    iv_units,
+            //    EnTaxcode,
+            //    bsd_paymentactualtime,
+            //    bsd_project_type,
+            //    unitName,
+            //    checkEDA);
+            var enmis = get_All_MIS_NotPaid(optionentry_invoive.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
+            if (checkPaid_Est_Installment(optionentry_invoive.Id) && checkPaid_interest_main_mana_Installment(optionentry_invoive.Id) && enmis != null && enmis.Entities.Count == 0)
+            {
+                CreateInvoice(
+                    GetInvoiceName(bsd_project_type, unitName),
+                    project_invoive,
+                    optionentry_invoive,
+                    iv_units,
+                    null,
+                    EnTaxcode,
+                    100000004,
+                    bsd_paymentactualtime,
+                    0,
+                    GetInstallmentLast(optionentry_invoive.Id),
+                    0);
+            }
             traceService.Trace("ra ProcessApplyDocument");
         }
 
@@ -399,21 +416,21 @@ namespace Plugin_Create_Invoice_ApplyDocument
                     {
                         sumTypeIns += amountPay;
                     }
-                    if (statuscode == 100000001)
-                    {
-                        CreateInvoice(
-                            GetInvoiceName(bsd_project_type, unitName),
-                            project_invoive,
-                            optionentry_invoive,
-                            iv_units,
-                            EnApplyDocument,
-                            EnTaxcode,
-                            100000004,
-                            bsd_paymentactualtime,
-                            0,
-                            GetInstallmentLast(optionentry_invoive.Id),
-                            0);
-                    }
+                    //if (statuscode == 100000001)
+                    //{
+                    //    CreateInvoice(
+                    //        GetInvoiceName(bsd_project_type, unitName),
+                    //        project_invoive,
+                    //        optionentry_invoive,
+                    //        iv_units,
+                    //        EnApplyDocument,
+                    //        EnTaxcode,
+                    //        100000004,
+                    //        bsd_paymentactualtime,
+                    //        0,
+                    //        GetInstallmentLast(optionentry_invoive.Id),
+                    //        0);
+                    //}
                 }
                 else
                 {
@@ -557,7 +574,70 @@ namespace Plugin_Create_Invoice_ApplyDocument
 
             traceService.Trace("ra ProcessMaintenanceFee");
         }
-
+        private bool checkPaid_Est_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <condition attribute=""statuscode"" operator=""eq"" value=""100000001"" />
+                          <condition attribute=""bsd_duedatecalculatingmethod"" operator=""eq"" value=""100000002"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? true : false;
+        }
+        private bool checkPaid_interest_main_mana_Installment(Guid idOE)
+        {
+            var fetchXml = $@"<?xml version=""1.0"" encoding=""utf-16""?>
+                    <fetch top=""1"">
+                      <entity name=""bsd_paymentschemedetail"">
+                        <attribute name=""bsd_paymentschemedetailid"" />
+                        <filter>
+                          <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
+                          <filter type=""or"">
+                            <condition attribute=""bsd_interestchargeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
+                            <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
+                          </filter>
+                          <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
+                        </filter>
+                      </entity>
+                    </fetch>";
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc.Entities.Count > 0 ? false : true;
+        }
+        public EntityCollection get_All_MIS_NotPaid(string oeID)
+        {
+            string fetchXml =
+              @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' >
+                <entity name='bsd_miscellaneous' >
+                <attribute name='bsd_balance' />
+                <attribute name='statuscode' />
+                <attribute name='bsd_miscellaneousnumber' />
+                <attribute name='bsd_units' />
+                <attribute name='bsd_optionentry' />
+                <attribute name='bsd_miscellaneousid' />
+                <attribute name='bsd_amount' />
+                <attribute name='bsd_paidamount' />
+                <attribute name='bsd_installment' />
+                <attribute name='bsd_name' />
+                <attribute name='bsd_project' />
+                <attribute name='bsd_installmentnumber' />
+                <filter type='and' >
+                    <condition attribute='bsd_optionentry' operator='eq' value='{0}' />
+                    <condition attribute='statecode' operator='eq' value='0' />
+                    <condition attribute='statuscode' operator='eq' value='1' />
+                </filter>                           
+                </entity>
+            </fetch>";
+            fetchXml = string.Format(fetchXml, oeID);
+            EntityCollection entc = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            return entc;
+        }
         private EntityCollection GetInstallments(Guid applyDocumentId)
         {
             var fetchXmlListIns = $@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -775,14 +855,15 @@ namespace Plugin_Create_Invoice_ApplyDocument
             decimal bsd_handoveramount)
         {
             traceService.Trace("vào CreateInvoice");
-            if (bsd_type == 100000003 && checkInvaldInvoice1st(optionentry_invoive.Id)) return;
+            if ((bsd_type == 100000003) && checkInvaldInvoice_1st(optionentry_invoive.Id, bsd_type)) return;
+            if (bsd_type == 100000004 && checkInvaldInvoice_last(optionentry_invoive.Id, bsd_type)) return;
             traceService.Trace("CreateInvoice");
             Entity invoice = new Entity("bsd_invoice");
 
             invoice["bsd_name"] = bsd_name;
             invoice["bsd_project"] = project_invoive.ToEntityReference();
             invoice["bsd_optionentry"] = optionentry_invoive.ToEntityReference();
-            invoice["bsd_applydocument"] = EnApplyDocument.ToEntityReference();
+            if (bsd_type != 100000004) invoice["bsd_applydocument"] = EnApplyDocument.ToEntityReference();
 
             invoice["bsd_formno"] =
                 project_invoive.Contains("bsd_formno")
@@ -884,13 +965,24 @@ namespace Plugin_Create_Invoice_ApplyDocument
 
             traceService.Trace("ra CreateInvoice");
         }
-        private bool checkInvaldInvoice1st(Guid optionEntryId)
+        private bool checkInvaldInvoice_1st(Guid optionEntryId, int type)
         {
             var query = new QueryExpression("bsd_invoice");
             query.TopCount = 1;
             query.ColumnSet.AddColumn("bsd_invoiceid");
             query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000);
-            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, 100000003);//1st
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, type);
+            query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
+            EntityCollection list = service.RetrieveMultiple(query);
+            return list.Entities.Count > 0 ? true : false;
+        }
+        private bool checkInvaldInvoice_last(Guid optionEntryId, int type)
+        {
+            var query = new QueryExpression("bsd_invoice");
+            query.TopCount = 1;
+            query.ColumnSet.AddColumn("bsd_invoiceid");
+            query.Criteria.AddCondition("statuscode", ConditionOperator.In, 1, 100000000, 100000002, 100000003);
+            query.Criteria.AddCondition("bsd_type", ConditionOperator.Equal, type);
             query.Criteria.AddCondition("bsd_optionentry", ConditionOperator.Equal, optionEntryId);
             EntityCollection list = service.RetrieveMultiple(query);
             return list.Entities.Count > 0 ? true : false;
