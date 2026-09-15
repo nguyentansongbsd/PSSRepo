@@ -680,8 +680,10 @@ namespace Action_CustomerNotices_GenerateCustomerNotices
                 item.Attributes.Remove(item.LogicalName + "id");
                 item.Attributes.Remove("bsd_optionentry");
                 item.Attributes.Remove("bsd_reservation");
+                item.Attributes.Remove("bsd_subsale");
                 item.Attributes.Remove("ownerid");
                 item[fieldName] = new EntityReference(localName, id);
+                item["bsd_system"] = true;
                 item.Id = Guid.NewGuid();
                 it = item;
                 service.Create(it);
