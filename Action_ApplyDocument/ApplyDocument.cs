@@ -109,7 +109,7 @@ namespace Action_ApplyDocument
             oe_tmp.Id = ref_OE.Id;
             decimal bsd_totalpercent = optionentryEn.Contains("bsd_totalpercent") ? (decimal)optionentryEn["bsd_totalpercent"] : 0;
             var enmis = get_All_MIS_NotPaid(optionentryEn.Id.ToString());//dùng để kiểm tra xem có misc nào chưa thanh toán hay không
-            if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= 94 && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
+            if (!optionentryEn.Contains("bsd_qualifieddate") && bsd_totalpercent >= decimal.Parse((949 / 10).ToString()) && checkPaid_interest_main_mana_Installment(optionentryEn.Id) && enmis != null && enmis.Entities.Count == 0)
                 oe_tmp["bsd_qualifieddate"] = bsd_receiptdate;
             service.Update(oe_tmp);
         }
