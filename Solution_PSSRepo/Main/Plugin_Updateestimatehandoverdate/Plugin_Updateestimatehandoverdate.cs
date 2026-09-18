@@ -62,6 +62,8 @@ namespace Plugin_Updateestimatehandoverdate
                 enDetailUpdate["bsd_processing_pa"] = true; //
                 enDetailUpdate["bsd_error"] = false;
                 enDetailUpdate["bsd_errordetail"] = "";
+                enDetailUpdate["bsd_publishedby"] = (object)new EntityReference("systemuser", this.context.UserId);
+                enDetailUpdate["bsd_publisheddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
 
                 service.Update(enDetailUpdate);
                 var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");
