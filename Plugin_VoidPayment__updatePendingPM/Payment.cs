@@ -235,8 +235,8 @@ namespace Plugin_VoidPayment_updatePendingPM
                             {
                                 sttUnit = 100000002; // sold
                                 sttOE = 100000003; //Being Payment (khi da sign contract)
-                                if (detailLastID == en_Ins.Id.ToString() && i_PmsDtlStatuscode == 100000001)
-                                    sttOE = 100000004; //Complete Payment
+                                //if (detailLastID == en_Ins.Id.ToString() && i_PmsDtlStatuscode == 100000001)
+                                //    sttOE = 100000004; //Complete Payment
                             }
                         }
 
