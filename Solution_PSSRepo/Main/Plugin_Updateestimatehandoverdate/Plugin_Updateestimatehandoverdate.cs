@@ -29,9 +29,12 @@ namespace Plugin_Updateestimatehandoverdate
             Guid recordId = entity.Id;
             en = service.Retrieve(entity.LogicalName, entity.Id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             var status = ((OptionSetValue)en["statuscode"]).Value;
+            var bsd_officialhandoverdate = en.Contains("bsd_officialhandoverdate") ? (bool)en["bsd_officialhandoverdate"] : false;
+            var bsd_publish = en.Contains("bsd_publish") ? (bool)en["bsd_publish"] : false;
             tracingService.Trace("start :" + status);
+            tracingService.Trace("bsd_officialhandoverdate :" + bsd_officialhandoverdate);
             //check status
-            if (status == 100000001)
+            if (status == 100000001 && bsd_officialhandoverdate == true)
             {
                 var result = true;
                 var rs = ExistDetail(ref result);
@@ -42,6 +45,23 @@ namespace Plugin_Updateestimatehandoverdate
                 enDetailUpdate["bsd_errordetail"] = "";
                 enDetailUpdate["bsd_approvedrejectedperson"] = (object)new EntityReference("systemuser", this.context.UserId);
                 enDetailUpdate["bsd_approvedrejecteddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
+
+                service.Update(enDetailUpdate);
+                var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");
+                string listid = string.Join(",", rs.Entities.Select(x => x.Id.ToString()));
+                request["listid"] = listid;
+                request["idmaster"] = entity.Id.ToString();
+                service.Execute(request);
+            }
+            else if (status == 100000001 && bsd_officialhandoverdate != true && bsd_publish == true)
+            {
+                var result = true;
+                var rs = ExistDetail(ref result);
+                tracingService.Trace("count: " + rs.Entities.Count);
+                Entity enDetailUpdate = new Entity(entity.LogicalName, entity.Id);
+                enDetailUpdate["bsd_processing_pa"] = true; //
+                enDetailUpdate["bsd_error"] = false;
+                enDetailUpdate["bsd_errordetail"] = "";
 
                 service.Update(enDetailUpdate);
                 var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");

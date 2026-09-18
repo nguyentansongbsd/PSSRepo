@@ -34,7 +34,10 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             en = service.Retrieve(detailName, new Guid(enDetailid), new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
             EntityReference enMasterRef = (EntityReference)en["bsd_updateestimatehandoverdate"];
             Entity enMaster = service.Retrieve(masterName, enMasterRef.Id, new ColumnSet(true));
-            
+            bool bsd_officialhandoverdate = enMaster.Contains("bsd_officialhandoverdate") ? (bool)enMaster["bsd_officialhandoverdate"] : false;
+            bool bsd_publish = enMaster.Contains("bsd_publish") ? (bool)enMaster["bsd_publish"] : false;
+            int statuscode = enMaster.Contains("statuscode") ? ((OptionSetValue)enMaster["statuscode"]).Value : 0;
+            bool check_Update = (statuscode == 100000001 && (bsd_officialhandoverdate || bsd_publish)) ? true : false;
             item = en;
             bool result = true;
             if (!CheckConditionRun(en))
@@ -43,7 +46,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             }
             try
             {
-                
+
                 tracingService.Trace("CheckExistParentInDetail");
                 CheckExistParentInDetail(ref result, item);
                 if (!result) return;
@@ -59,9 +62,9 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                     case 100000000://Update Only for Units
 
                         tracingService.Trace($"UpdateEstimateHandoverDateFromDetailToUnit");
-                        UpdateEstimateHandoverDateFromDetailToUnit(ref result, item, enUnit);
+                        if (check_Update) UpdateEstimateHandoverDateFromDetailToUnit(ref result, item, enUnit);
                         tracingService.Trace($"UpdateOPDateFromMasterToUnit");
-                        UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
+                        if (check_Update) UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
                         AprroveDetail(item);
                         break;
                     default: //khác Update Only for Units
@@ -77,7 +80,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                             EntityReference enHDRef = (EntityReference)en["bsd_optionentry"];
                             enHD = service.Retrieve(enHDRef.LogicalName, enHDRef.Id, new ColumnSet(true));
                         }
-                        
+
                         if (en.Contains("bsd_installment") && en["bsd_installment"] != null)
                         {
                             EntityReference enInstallmentRef = (EntityReference)en["bsd_installment"];
@@ -87,7 +90,7 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                         CheckExistParentInDetail(ref result, item);
                         if (!result) return;
                         tracingService.Trace($"CheckStatusHD");
-                        if(enHD != null)
+                        if (enHD != null)
                         {
                             CheckStatusHD(ref result, item, enHD);
                         }
@@ -101,32 +104,35 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
                             CheckDueDate(ref result, item, enInstallment, enHD);
                         }
                         if (!result) return;
-                        if (bsd_types == 100000001)// Update all
+                        if (check_Update)
                         {
-                            tracingService.Trace("upadate all");
-                            tracingService.Trace($"UpdateFromDetailToUnitToInstallmentToHD");
-                            if (enHD != null && enInstallment != null)
+                            if (bsd_types == 100000001)// Update all
                             {
-                                UpdateFromDetailToUnitToInstallmentToHD(ref result, item, enInstallment, enUnit, enHD);
-                            }
-                            if (enInstallment != null)
-                            {
-                                UpdateFromDetailToInstallment(ref result, item, enInstallment);
-                            }
-                            UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
-                            UpdateEstimateHandoverDateFromDetailToUnit(ref result, item, enUnit);
-                        }
-                        else
-                        {
-                            if (bsd_types == 100000002)
-                            {
-                                tracingService.Trace($"UpdateFromDetailToInstallment");
+                                tracingService.Trace("upadate all");
+                                tracingService.Trace($"UpdateFromDetailToUnitToInstallmentToHD");
+                                if (enHD != null && enInstallment != null)
+                                {
+                                    UpdateFromDetailToUnitToInstallmentToHD(ref result, item, enInstallment, enUnit, enHD);
+                                }
                                 if (enInstallment != null)
                                 {
                                     UpdateFromDetailToInstallment(ref result, item, enInstallment);
-
                                 }
                                 UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
+                                UpdateEstimateHandoverDateFromDetailToUnit(ref result, item, enUnit);
+                            }
+                            else
+                            {
+                                if (bsd_types == 100000002)
+                                {
+                                    tracingService.Trace($"UpdateFromDetailToInstallment");
+                                    if (enInstallment != null)
+                                    {
+                                        UpdateFromDetailToInstallment(ref result, item, enInstallment);
+
+                                    }
+                                    UpdateOPDateFromMasterToUnit(ref result, enMaster, enUnit);
+                                }
                             }
                         }
                         AprroveDetail(item);
@@ -318,21 +324,21 @@ namespace Action_Approved_Updateestimatehandoverdate_Detail
             Entity enUnitUpdate = new Entity(unit.LogicalName, unit.Id);
             enUnitUpdate["bsd_estimatehandoverdate"] = item["bsd_estimatehandoverdatenew"];
             service.Update(enUnitUpdate);
-            if(enInstallment != null)
+            if (enInstallment != null)
             {
                 Entity enInstallmentUpdate = new Entity(enInstallment.LogicalName, enInstallment.Id);
                 enInstallmentUpdate["bsd_duedate"] = item["bsd_estimatehandoverdatenew"];
                 service.Update(enInstallmentUpdate);
             }
-            
+
             //if (enHD != null)
             //{
             //    Entity enHDUpdate = new Entity(enHD.LogicalName, enHD.Id);
             //    enHDUpdate["bsd_estimatehandoverdatecontract"] = item["bsd_estimatehandoverdatenew"];
             //    service.Update(enHDUpdate);
             //}
-            
-        //
+
+            //
         }
         // <summary>
         // Cập nhật field Estimate Handover Date(New)[bsd_estimatehandoverdatenew] trên entity Con qua field  Due Date của installment  
