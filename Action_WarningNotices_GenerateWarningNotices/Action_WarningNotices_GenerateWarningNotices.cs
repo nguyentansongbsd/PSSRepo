@@ -309,6 +309,7 @@ namespace Action_WarningNotices_GenerateWarningNotices
                     <filter>
                       <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idSource}"" />
                       <condition attribute=""bsd_current"" operator=""eq"" value=""1"" />
+                      <condition attribute=""statuscode"" operator=""eq"" value=""1"" />
                     </filter>
                   </entity>
                 </fetch>";
