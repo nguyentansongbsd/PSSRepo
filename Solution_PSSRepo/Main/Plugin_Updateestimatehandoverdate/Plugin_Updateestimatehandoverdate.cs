@@ -53,7 +53,7 @@ namespace Plugin_Updateestimatehandoverdate
                 request["idmaster"] = entity.Id.ToString();
                 service.Execute(request);
             }
-            else if (status == 100000001 && bsd_officialhandoverdate != true && bsd_publish == true)
+            else if (status == 100000001 && bsd_officialhandoverdate != true)
             {
                 var result = true;
                 var rs = ExistDetail(ref result);
@@ -62,9 +62,11 @@ namespace Plugin_Updateestimatehandoverdate
                 enDetailUpdate["bsd_processing_pa"] = true; //
                 enDetailUpdate["bsd_error"] = false;
                 enDetailUpdate["bsd_errordetail"] = "";
-                enDetailUpdate["bsd_publishedby"] = (object)new EntityReference("systemuser", this.context.UserId);
-                enDetailUpdate["bsd_publisheddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
-
+                if (bsd_publish == true)
+                {
+                    enDetailUpdate["bsd_publishedby"] = (object)new EntityReference("systemuser", this.context.UserId);
+                    enDetailUpdate["bsd_publisheddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                }
                 service.Update(enDetailUpdate);
                 var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");
                 string listid = string.Join(",", rs.Entities.Select(x => x.Id.ToString()));
