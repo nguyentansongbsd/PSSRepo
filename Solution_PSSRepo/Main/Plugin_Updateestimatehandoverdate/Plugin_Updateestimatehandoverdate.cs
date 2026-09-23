@@ -67,6 +67,11 @@ namespace Plugin_Updateestimatehandoverdate
                     enDetailUpdate["bsd_publishedby"] = (object)new EntityReference("systemuser", this.context.UserId);
                     enDetailUpdate["bsd_publisheddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
                 }
+                else
+                {
+                    enDetailUpdate["bsd_approvedrejectedperson"] = (object)new EntityReference("systemuser", this.context.UserId);
+                    enDetailUpdate["bsd_approvedrejecteddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                }    
                 service.Update(enDetailUpdate);
                 var request = new OrganizationRequest("bsd_Action_Active_Approved_Updateestimatehandoverdate_Detail");
                 string listid = string.Join(",", rs.Entities.Select(x => x.Id.ToString()));
