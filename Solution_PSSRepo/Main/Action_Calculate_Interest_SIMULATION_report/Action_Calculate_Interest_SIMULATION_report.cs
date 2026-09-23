@@ -98,11 +98,12 @@ namespace Action_Calculate_Interest_SIMULATION_report
             //ngày bắt đầu tính lãi
             TracingSe.Trace("step3");
             var graceDate = enInterestrateMaster.Contains("bsd_gracedays") ? (int)enInterestrateMaster["bsd_gracedays"] : 0;
-            var interestStarDate = ((DateTime)enInstallment["bsd_duedate"]).AddDays(graceDate);
-            strMess.AppendLine($"InterestStarDate:{interestStarDate}");
+            var interestStarDate = (RetrieveLocalTimeFromUTCTime((DateTime)enInstallment["bsd_duedate"])).AddDays(graceDate);
+            strMess.AppendLine($"resultReport. InterestStarDate:{interestStarDate}");
 
 
-            resultReport.InterestStarDate = interestStarDate;
+            
+            //resultReport.str_InterestStarDate = interestStarDate.Day + "/" + interestStarDate.Month + "/" + interestStarDate.Year;
             //số ngày chậm thanh toán
             TracingSe.Trace("step4");
             var lateDays = (int)(receiptdate - interestStarDate).TotalDays;//<A>
@@ -163,48 +164,16 @@ namespace Action_Calculate_Interest_SIMULATION_report
             strMess.AppendLine($"laiConLai:{bsd_interestchargeamount}");
             resultReport.laiConLai = bsd_interestchargeamount;
             //Tiền lãi (VND)(Ước tính)
-            TracingSe.Trace("step8");
-            //var bsd_toleranceinterestamount = enInterestrateMaster.Contains("bsd_toleranceinterestamount") ? ((Money)enInterestrateMaster["bsd_toleranceinterestamount"]).Value : 0;
-            //var totalamount = enOptionEntry.Contains("totalamount") ? ((Money)enOptionEntry["totalamount"]).Value : 0;
-            //var cal1 = bsd_toleranceinterestamount * totalamount;
-            //decimal CAP = 0;
-            //if(cal1< bsd_toleranceinterestamount)
-            //{
-            //    CAP = cal1;
-            //} 
-            //else
-            //{
-            //    CAP = bsd_toleranceinterestamount;
-            //}
-            //var bsd_termsinterestpercentage= enInterestrateMaster.Contains("bsd_termsinterestpercentage") ? ((decimal)enInterestrateMaster["bsd_termsinterestpercentage"]) : 0;
-            //decimal tonglaiUT = bsd_balance* (decimal)lateDays* bsd_termsinterestpercentage;
-            //decimal interestCharge = 0;
-            //if (tonglaiUT<=CAP)
-            //{
-            //    interestCharge = tonglaiUT;
-
-            //}
-            //else
-            //{
-            //    interestCharge =CAP- bsd_toleranceinterestamount;
-            //}
-            //strMess.AppendLine($"InterestCharge:{interestCharge}");
-            //resultReport.InterestCharge = interestCharge;
-
-
-            getInterestStartDate();
+            TracingSe.Trace("step8");getInterestStartDate();
             objIns.LateDays = getLateDays(receiptdate);
             var latedate = objIns.LateDays;
             resCheckCaseSign = checkCaseSignAndCalLateDays(bsd_signedcontractdate, bsd_signeddadate, receiptdate, ref latedate);
             objIns.LateDays = latedate <= objIns.LateDays ? latedate : objIns.LateDays;
             TracingSe.Trace("objIns.LateDays " + objIns.LateDays);
             objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay);
-
             resultReport.InterestCharge = objIns.InterestCharge;
-
-            //getInterestStartDate();
-            //objIns.LateDays = getLateDays(receiptdate);
-            //objIns.InterestCharge = calc_InterestCharge(receiptdate, amountpay);
+            TracingSe.Trace("resultReport.InterestStarDate " + interestStarDate);
+            resultReport.InterestStarDate = interestStarDate.AddDays(1);
             var serializer = new JavaScriptSerializer();
             serializedResult = serializer.Serialize(resultReport);
         }
@@ -791,6 +760,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
     public class Installment
     {
         public DateTime InterestStarDate { get; set; }
+        public string str_InterestStarDate { get; set; }
         public int Intereststartdatetype { get; set; }
         public int Gracedays { get; set; }
         public int LateDays { get; set; }
@@ -818,7 +788,7 @@ namespace Action_Calculate_Interest_SIMULATION_report
         public decimal Balance { get; set; }
         public decimal laiConLai { get; set; }
         public DateTime InterestStarDate { get; set; }
-
+        public string str_InterestStarDate { get; set; }
 
     }
 }
