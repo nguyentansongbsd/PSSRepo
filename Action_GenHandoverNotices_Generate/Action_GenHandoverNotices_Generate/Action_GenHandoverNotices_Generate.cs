@@ -77,6 +77,7 @@ namespace Action_GenHandoverNotices_Generate
                 List<string> listUnit = new List<string>();
                 foreach (Entity detail in list.Entities)
                 {
+                    traceService.Trace("vào for " + ((EntityReference)detail["bsd_optionentry"]).Id);
                     if (!CheckExistHandoverNotices(service, (EntityReference)detail["bsd_optionentry"], (EntityReference)detail["bsd_installment"]))
                         listUnit.Add(detail.Id.ToString());
                 }
