@@ -217,7 +217,9 @@ namespace Action_GenHandoverNotices_Generate
                     orther = (e.Contains("sumMis") && ((AliasedValue)e["sumMis"]).Value != null) ? ((Money)((AliasedValue)e.Attributes["sumMis"]).Value).Value : decimal.Zero;
                 }
                 //estimateInterest = Interest(service, OE, today.Date);
-                estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date);
+                estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date, 
+                    ((EntityReference)detail["bsd_installment"]).Id, 
+                    RetrieveLocalTimeFromUTCTime((DateTime)detail["bsd_estimatehandoverdatenew"], service));
                 traceService.Trace("estimateInterest :" + estimateInterest);
                 hn["bsd_installment"] = detail["bsd_installment"];
                 Entity ins = service.Retrieve(((EntityReference)detail["bsd_installment"]).LogicalName, ((EntityReference)detail["bsd_installment"]).Id,
@@ -344,7 +346,7 @@ namespace Action_GenHandoverNotices_Generate
             EntityCollection entc = crmservices.RetrieveMultiple(new FetchExpression(fetchXml));
             return (entc.Entities.Count > 0 ? true : false);
         }
-        private decimal Interest(IOrganizationService crmservices, Entity oe, DateTime dateCalculate)
+        private decimal Interest(IOrganizationService crmservices, Entity oe, DateTime dateCalculate, Guid idInstallment, DateTime dateNewInstallment)
         {
             decimal interest = 0;
             //GET INSTALLMENT
@@ -398,6 +400,7 @@ namespace Action_GenHandoverNotices_Generate
                     int bsd_ordernumber = ins.Contains("bsd_ordernumber") ? (int)ins["bsd_ordernumber"] : 0;
                     //TINH LAI
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
+                    if (ins.Id == idInstallment) duedate = dateNewInstallment;
                     //DateTime InterestStarDate = duedate.AddDays(Graceday);
                     traceService.Trace("dateCalculate " + dateCalculate);
                     traceService.Trace("duedate " + duedate);
