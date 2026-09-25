@@ -401,7 +401,9 @@ namespace Action_GenHandoverNotices_Generate
                     int bsd_ordernumber = ins.Contains("bsd_ordernumber") ? (int)ins["bsd_ordernumber"] : 0;
                     //TINH LAI
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
-                    if (ins.Id == idInstallment) duedate = dateNewInstallment;
+                    if (ins.Id == idInstallment)
+                        break;
+                        //duedate = dateNewInstallment;
                     //DateTime InterestStarDate = duedate.AddDays(Graceday);
                     traceService.Trace("dateCalculate " + dateCalculate);
                     traceService.Trace("duedate " + duedate);
