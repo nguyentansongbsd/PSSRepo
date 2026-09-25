@@ -66,6 +66,7 @@ namespace Plugin_Updateestimatehandoverdate
                 {
                     enDetailUpdate["bsd_publishedby"] = (object)new EntityReference("systemuser", this.context.UserId);
                     enDetailUpdate["bsd_publisheddate"] = (object)RetrieveLocalTimeFromUTCTime(DateTime.Now);
+                    enDetailUpdate["bsd_officialhandoverdate"] = true;
                 }
                 else
                 {

@@ -121,7 +121,10 @@ namespace Action_GenHandoverNotices_Generate
                 Entity hn = new Entity("bsd_handovernotice");
                 hn["bsd_name"] = "Handover Notices of " + ((EntityReference)detail["bsd_optionentry"]).Name;
                 Entity OE = service.Retrieve(((EntityReference)detail["bsd_optionentry"]).LogicalName, ((EntityReference)detail["bsd_optionentry"]).Id,
-                    new ColumnSet(new string[] { "name", "bsd_paymentscheme", "bsd_totalpercent", "customerid", "bsd_estimatehandoverdatecontract", "bsd_freightamount", "bsd_managementfee", "bsd_depositamount", "bsd_project", "bsd_numberofmonthspaidmf", "bsd_signedcontractdate", "bsd_signeddadate" }));
+                    new ColumnSet(new string[] { "name", "bsd_paymentscheme", "bsd_totalpercent", "customerid",
+                        "bsd_estimatehandoverdatecontract", "bsd_freightamount", "bsd_managementfee", "bsd_depositamount",
+                        "bsd_project", "bsd_numberofmonthspaidmf", "bsd_signedcontractdate", "bsd_signeddadate", "bsd_interestcap4percent" }));
+                decimal bsd_interestcap4percent = OE.Contains("bsd_interestcap4percent") ? ((Money)OE["bsd_interestcap4percent"]).Value : 0;
                 if (OE.Contains("customerid"))
                 {
                     hn["bsd_customer"] = OE["customerid"];
@@ -154,7 +157,7 @@ namespace Action_GenHandoverNotices_Generate
                     traceService.Trace("thinhtests2_" + isMainFeeChecked);
                     if (isMainFeeChecked == true)
                     {
-                        number = OE.Contains("bsd_numberofmonthspaidmf") ? (int)OE["bsd_numberofmonthspaidmf"]: 0;
+                        number = OE.Contains("bsd_numberofmonthspaidmf") ? (int)OE["bsd_numberofmonthspaidmf"] : 0;
                         if (e.Contains("MainFeeReAmt") && ((AliasedValue)e["MainFeeReAmt"]).Value != null)
                             maintenanceF = ((Money)((AliasedValue)e.Attributes["MainFeeReAmt"]).Value).Value;
                     }
@@ -163,10 +166,10 @@ namespace Action_GenHandoverNotices_Generate
                         maintenanceF = 0;
                         number = 0;
                     }
-                        bool isManaFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_managementfee");
+                    bool isManaFeeChecked = realInstallment.GetAttributeValue<bool>("bsd_managementfee");
                     if (isManaFeeChecked == true)
                     {
-                        
+
                         if (e.Contains("ManaFeeReAmt") && ((AliasedValue)e["ManaFeeReAmt"]).Value != null)
                             managementF = ((Money)((AliasedValue)e.Attributes["ManaFeeReAmt"]).Value).Value;
                     }
@@ -218,8 +221,8 @@ namespace Action_GenHandoverNotices_Generate
                     orther = (e.Contains("sumMis") && ((AliasedValue)e["sumMis"]).Value != null) ? ((Money)((AliasedValue)e.Attributes["sumMis"]).Value).Value : decimal.Zero;
                 }
                 //estimateInterest = Interest(service, OE, today.Date);
-                estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date, 
-                    ((EntityReference)detail["bsd_installment"]).Id, 
+                estimateInterest = Interest(service, OE, UpEHD_SimuDate.Date,
+                    ((EntityReference)detail["bsd_installment"]).Id,
                     RetrieveLocalTimeFromUTCTime((DateTime)detail["bsd_estimatehandoverdatenew"], service));
                 traceService.Trace("estimateInterest :" + estimateInterest);
                 hn["bsd_installment"] = detail["bsd_installment"];
@@ -229,11 +232,17 @@ namespace Action_GenHandoverNotices_Generate
                 hn["bsd_installmentamount"] = new Money(installmentAmount);
                 hn["bsd_advancepaymentamount"] = new Money(advancePaymentAmount);
                 hn["bsd_outstandingincludeinterest"] = new Money(outstandingUnPaid);
-                hn["bsd_actualinterest"] = new Money(actualInterest);
 
+                hn["bsd_actualinterest"] = new Money(actualInterest);
+                decimal totalEST = actualInterest + estimateInterest;
+                if (totalEST > bsd_interestcap4percent)
+                {
+                    estimateInterest = bsd_interestcap4percent - actualInterest;
+                }
                 hn["bsd_estimateintesrest"] = new Money(estimateInterest); // HN = estimateInterest = 0
                 traceService.Trace("estimateInterest :" + estimateInterest);
                 hn["bsd_totalinterestamount"] = new Money(actualInterest + estimateInterest);
+
                 hn["bsd_subject"] = "Handover Notices";
                 hn["bsd_issuedate"] = today.Date;
                 if (detail.Contains("bsd_units"))
@@ -267,10 +276,10 @@ namespace Action_GenHandoverNotices_Generate
                 Entity get_hn = service.Retrieve(hn.LogicalName, id,
                     new ColumnSet(new string[1] { "bsd_noticesnumber" }));
                 //copy_CownerForOE(OE.Id, id, hn.LogicalName, "bsd_warningnotice");
-                Entity uins = new Entity(ins.LogicalName,ins.Id);
+                Entity uins = new Entity(ins.LogicalName, ins.Id);
                 uins["bsd_paymentnotices"] = true;
                 uins["bsd_paymentnoticesnumber"] = (string)get_hn["bsd_noticesnumber"];
-                if (enTarget.Contains("bsd_date")) 
+                if (enTarget.Contains("bsd_date"))
                     uins["bsd_paymentnoticesdate"] = RetrieveLocalTimeFromUTCTime((DateTime)enTarget["bsd_date"], service);
                 service.Update(uins);
                 //UPDATE UEHD
@@ -403,7 +412,7 @@ namespace Action_GenHandoverNotices_Generate
                     DateTime duedate = RetrieveLocalTimeFromUTCTime((DateTime)ins["bsd_duedate"], service);
                     if (ins.Id == idInstallment)
                         break;
-                        //duedate = dateNewInstallment;
+                    //duedate = dateNewInstallment;
                     //DateTime InterestStarDate = duedate.AddDays(Graceday);
                     traceService.Trace("dateCalculate " + dateCalculate);
                     traceService.Trace("duedate " + duedate);
