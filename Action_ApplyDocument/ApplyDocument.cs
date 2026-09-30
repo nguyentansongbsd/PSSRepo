@@ -627,7 +627,7 @@ namespace Action_ApplyDocument
                 <attribute name=""bsd_duedate"" />
                 <attribute name=""bsd_name"" />
                 <filter>
-                  <condition attribute=""bsd_maintenanceamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_maintenancefeeremaining"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
                   <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
                 </filter>
@@ -648,7 +648,7 @@ namespace Action_ApplyDocument
                 <attribute name=""bsd_duedate"" />
                 <attribute name=""bsd_name"" />
                 <filter>
-                  <condition attribute=""bsd_managementamount"" operator=""gt"" value=""{0}"" />
+                  <condition attribute=""bsd_managementfeeremaining"" operator=""gt"" value=""{0}"" />
                   <condition attribute=""bsd_optionentry"" operator=""eq"" value=""{idOE}"" />
                   <condition attribute=""statecode"" operator=""eq"" value=""{0}"" />
                 </filter>
