@@ -67,9 +67,7 @@ namespace Plugin_Create_Invoice_ApplyDocument
                 ? (bool)project_invoive["bsd_optioncheckeinvoice"]
                 : false;
 
-            if ((bsd_paymenttype != 2 && bsd_paymenttype != 4)
-                || !EnApplyDocument.Contains("bsd_optionentry")
-                || !bsd_optioncheckeinvoice)
+            if (!EnApplyDocument.Contains("bsd_optionentry") || !bsd_optioncheckeinvoice)
             {
                 return;
             }
