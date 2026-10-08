@@ -36,9 +36,9 @@ namespace Plugin_UEHDDetail_Import_ver_2
             }));
             if (!entity1.Contains("bsd_projectcode"))
                 throw new InvalidPluginExecutionException("Please input Project in Units!");
-            Entity entity2 = this.service.Retrieve(((EntityReference)inputParameter["bsd_updateestimatehandoverdate"]).LogicalName, ((EntityReference)inputParameter["bsd_updateestimatehandoverdate"]).Id, new ColumnSet(new string[2]
+            Entity entity2 = this.service.Retrieve(((EntityReference)inputParameter["bsd_updateestimatehandoverdate"]).LogicalName, ((EntityReference)inputParameter["bsd_updateestimatehandoverdate"]).Id, new ColumnSet(new string[3]
             {
-        "bsd_project", "bsd_typehandoverdudate"
+        "bsd_project", "bsd_typehandoverdudate", "bsd_paymentduedate"
             }));
             if (!entity2.Contains("bsd_project"))
                 throw new InvalidPluginExecutionException("Please input Project in Update estimate handover date!");
@@ -68,8 +68,8 @@ namespace Plugin_UEHDDetail_Import_ver_2
                         {
                             count++;
                             inputParameter["bsd_installment"] = (object)entity4.ToEntityReference();
-                            if (entity4.Contains("bsd_duedate"))
-                                inputParameter["bsd_paymentduedate"] = entity4["bsd_duedate"];
+                            if (entity2.Contains("bsd_paymentduedate"))
+                                inputParameter["bsd_paymentduedate"] = entity2["bsd_paymentduedate"];
                         }
                         if (count == 0)
                             throw new InvalidPluginExecutionException("Installment not found. Please check again!");
@@ -85,8 +85,8 @@ namespace Plugin_UEHDDetail_Import_ver_2
                         {
                             count++;
                             inputParameter["bsd_installment"] = (object)entity6.ToEntityReference();
-                            if (entity6.Contains("bsd_duedate"))
-                                inputParameter["bsd_paymentduedate"] = entity6["bsd_duedate"];
+                            if (entity2.Contains("bsd_paymentduedate"))
+                                inputParameter["bsd_paymentduedate"] = entity2["bsd_paymentduedate"];
                         }
                         if (count == 0)
                             throw new InvalidPluginExecutionException("Installment not found. Please check again!");
