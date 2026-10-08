@@ -126,6 +126,8 @@ namespace Plugin_UEHDDetail_Import_ver_2
                             throw new InvalidPluginExecutionException("Installment not found. Please check again!");
                     }
                 }
+                if (entity2.Contains("bsd_paymentduedate"))
+                    inputParameter["bsd_paymentduedate"] = entity2["bsd_paymentduedate"];
             }
         }
 
