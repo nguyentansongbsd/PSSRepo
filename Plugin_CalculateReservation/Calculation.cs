@@ -85,7 +85,7 @@ namespace Plugin_CalculateReservation
                     if (a_mtFee != null && a_mtFee.Value != null && (bool)a_mtFee.Value == true)
                     {
                         maintenancePercent = pro.Contains("bsd_maintenancefeespercent") ? (decimal)pro["bsd_maintenancefeespercent"] : decimal.Zero;
-                        if (maintenancePercent == decimal.Zero)
+                        if (!pro.Contains("bsd_maintenancefeespercent"))
                         {
                             proj = service.Retrieve(projRef.LogicalName, projRef.Id, new ColumnSet(new string[2]
                             {
@@ -161,7 +161,8 @@ namespace Plugin_CalculateReservation
             //throw new Exception(taxAmount + "");
 
             decimal net = unitPrice - totalDiscount + pkgSellingAmount;
-            decimal maintenanceFee = Math.Round(net * maintenancePercent / 100,0);
+            decimal maintenanceFee = 0;
+            if(maintenancePercent != decimal.Zero) maintenanceFee = Math.Round(net * maintenancePercent / 100,0);
             if (rsv.Contains("bsd_projectid"))
             {
                 Guid idpro = ((EntityReference)rsv["bsd_projectid"]).Id;

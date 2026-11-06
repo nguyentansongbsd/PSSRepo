@@ -92,7 +92,7 @@ namespace Plugin_CalculateOptionEntry
                         if ((aliasedValue1 == null || aliasedValue1.Value == null ? false : (bool)aliasedValue1.Value))
                         {
                             item1 = (entity.Contains("bsd_maintenancefeespercent") ? (decimal)entity["bsd_maintenancefeespercent"] : decimal.Zero);
-                            if (item1 == decimal.Zero)
+                            if (!entity.Contains("bsd_maintenancefeespercent"))
                             {
                                 entity2 = this.service.Retrieve(entityReference.LogicalName, entityReference.Id, new ColumnSet(new string[] { "bsd_maintenancefeespercent", "bsd_managementfeepercent" }));
                                 if (!entity2.Contains("bsd_maintenancefeespercent"))
@@ -188,7 +188,8 @@ namespace Plugin_CalculateOptionEntry
                     //test = Math.Round(test, MidpointRounding.AwayFromZero);
                 }
                 decimal num9 = Math.Round((value - num6) + num2);
-                decimal num10 = Math.Round((num9 * item1) / new decimal(100));//maintenanceFee
+                decimal num10 = 0;//maintenanceFee
+                if(item1 != decimal.Zero) num10 = Math.Round((num9 * item1) / new decimal(100));//maintenanceFee
                
                 if (entity1.Contains("bsd_project"))
                 {
