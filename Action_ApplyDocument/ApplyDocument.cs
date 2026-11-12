@@ -251,18 +251,17 @@ namespace Action_ApplyDocument
                 {
                     d_receipt1 = (DateTime)en_app["bsd_receiptdate"];
                 }
+                DateTime d_receipt = RetrieveLocalTimeFromUTCTime((DateTime)en_app["bsd_receiptdate"]);
                 if (d_ampay >= psd_bsd_balance) // cap nhat installment
                 {
                     psd_amountPaid += psd_bsd_balance;
                     psd_statuscode = 100000001;
                     if (ec_ins.Entities[i].Contains("bsd_duedate"))
                     {
-                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
                         checkInterest(ec_ins.Entities[i], d_receipt, psd_bsd_balance, ref i_late, ref d_outstandingAM);
                     }
                     d_oe_bsd_totalamountpaid += psd_bsd_balance;
-                    DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
-                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, 0, psd_statuscode, psd_bsd_balance, f_check_1st, d_now, i_late, d_outstandingAM);
+                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, 0, psd_statuscode, psd_bsd_balance, f_check_1st, d_receipt, i_late, d_outstandingAM);
                     create_app_detail(service, en_app, en_pms, en_OE, 100000001, psd_bsd_balance, i_late, d_outstandingAM, 0);
                 }
                 else if (d_ampay < psd_bsd_balance) // not paid
@@ -273,12 +272,10 @@ namespace Action_ApplyDocument
                     psd_bsd_balance -= d_ampay;
                     if (en_pms.Contains("bsd_duedate"))
                     {
-                        DateTime d_receipt = (DateTime)en_app["bsd_receiptdate"];
                         checkInterest(en_pms, d_receipt, d_ampay, ref i_late, ref d_outstandingAM);
                     }
                     d_oe_bsd_totalamountpaid += d_ampay;
-                    DateTime d_now = RetrieveLocalTimeFromUTCTime(DateTime.Now);
-                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, psd_bsd_balance, psd_statuscode, d_ampay, f_check_1st, d_now, i_late, d_outstandingAM);
+                    Up_Ins_OE(en_pms, en_OE, psd_amountPaid, psd_bsd_balance, psd_statuscode, d_ampay, f_check_1st, d_receipt, i_late, d_outstandingAM);
                     create_app_detail(service, en_app, en_pms, en_OE, 100000001, d_ampay, i_late, d_outstandingAM, 0);
                 }
             } // end for each installment
